@@ -3,6 +3,8 @@ import {spawn} from "child_process"
 import ffmpegPath from "ffmpeg-static"
 import { PuppeteerScreenRecorder } from 'puppeteer-screen-recorder';
 import {PassThrough} from 'stream';
+import fs from "fs"
+import tmp from "tmp"
 
 export default class StoreHTMLAsWebP {
     static type = "Store HTML As WebP";
@@ -89,31 +91,27 @@ export default class StoreHTMLAsWebP {
         }, duration * 1000)
         async function mp4BufferToWebP(mp4Buffer) {
             return new Promise((resolve, reject) => {
+                const outputPath = tmp.tmpNameSync({ postfix: ".webp" });
                 const args = [
                     "-loglevel", "error",
                     "-i", "pipe:0",
                     "-an",
                     "-vsync", "0",
                     "-vf", `fps=60`,
-                    "-c:v", "libwebp_anim",
+                    "-c:v", "libwebp",
                     "-lossless", "0",
                     "-q:v", "80",
                     "-preset", "default",
                     "-loop", "0",
-                    "-f", "webp",
-                    "pipe:1"
+                    outputPath
                 ];
-
 
                 const ffmpeg = spawn(ffmpegPath, args);
 
-                const chunks = [];
-                ffmpeg.stdout.on("data", (chunk) => chunks.push(chunk));
-                ffmpeg.stderr.on("data", (err) => console.error("ffmpeg:", err.toString()));
-
                 ffmpeg.on("close", (code) => {
                     if (code === 0) {
-                        resolve(Buffer.concat(chunks));
+                        resolve(fs.readFileSync(outputPath));
+                        fs.unlinkSync(outputPath);
                     } else {
                         reject(new Error(`FFmpeg failed with code ${code}`));
                     }

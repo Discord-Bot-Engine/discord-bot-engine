@@ -22,6 +22,7 @@
     "mediaplex": "^1.0.0",
     "node-fetch": "^3.3.2",
     "puppeteer-screen-recorder": "^3.0.6",
-    "simple-folder-search": "^2.3.0"
+    "simple-folder-search": "^2.3.0",
+    "tmp": "^0.2.5"
   }
 }
