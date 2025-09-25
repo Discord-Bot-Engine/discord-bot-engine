@@ -7,6 +7,7 @@
     import Modal from "$lib/components/Modal.svelte";
     import SearchSelect from "$lib/components/SearchSelect.svelte";
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
+    import ErrorIcon from "$lib/components/ErrorIcon.svelte";
 	let {actions = $bindable(), title} = $props();
     let selectedAction = $state(null)
     let actionType = $state("None")
@@ -39,7 +40,7 @@
 </script>
 {#snippet itemIcon(item, i)}
     {#if !BotManager.selectedBot.actionClasses.find(a => a.type === item.type)}
-        <span class="w-5 bg-destructive/60 rounded-full absolute right-1">!</span>
+       <ErrorIcon />
     {/if}
 {/snippet}
 <List ondblclick={() => {

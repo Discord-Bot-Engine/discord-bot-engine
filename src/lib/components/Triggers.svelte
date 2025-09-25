@@ -8,6 +8,7 @@
     import Modal from "$lib/components/Modal.svelte";
     import SearchSelect from "$lib/components/SearchSelect.svelte";
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
+    import ErrorIcon from "$lib/components/ErrorIcon.svelte";
 	let triggers = $derived(BotManager.selectedBot?.triggers);
     let triggerName = $state()
     let triggerEditName = $state()
@@ -37,7 +38,7 @@
 </script>
 {#snippet itemIcon(item, i)}
     {#if !BotManager.selectedBot.triggerClasses.find(t => t.type === item.type)}
-        <span class="w-5 bg-destructive/60 rounded-full absolute right-1">!</span>
+        <ErrorIcon />
     {/if}
 {/snippet}
 <List ondblclick={() => {
