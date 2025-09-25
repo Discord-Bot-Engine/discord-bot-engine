@@ -3,7 +3,6 @@
     import {Button} from "$lib/components/ui/button/index.js";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
     import {App} from "$lib/classes/App.svelte.js"
-    import {Separator} from "$lib/components/ui/separator/index.js";
     let open = $state(false)
     let x = $state(0)
     let y = $state(0)

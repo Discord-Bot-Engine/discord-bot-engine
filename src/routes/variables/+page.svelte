@@ -7,7 +7,7 @@
     import { getCurrentWebview } from '@tauri-apps/api/webview';
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
     getCurrentWebview().setAutoResize(true);
-    const bot = $derived(App.bots.find(bot => bot.path === page.url.searchParams.get("path")))
+    const bot = $derived(BotManager.bots.find(bot => bot.path === page.url.searchParams.get("path")))
     const trigger = $derived(bot?.debugTrigger)
     const variables = $derived(bot?.triggers.find(t => t.name === trigger?.name && t.type === trigger?.type)?.variables);
 </script>

@@ -1,20 +1,18 @@
 <script>
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { App } from '$lib/classes/App.svelte.js';
 	import {Button} from "$lib/components/ui/button/index.js";
 	import {FolderOpenIcon, SaveIcon, LinkIcon} from "@lucide/svelte";
 	import {Input} from "$lib/components/ui/input/index.js";
 	import {Label} from "$lib/components/ui/label/index.js";
 	import {open} from "@tauri-apps/plugin-dialog";
 	import {Checkbox} from "$lib/components/ui/checkbox/index.js";
-	import * as Alert from "$lib/components/ui/alert/index.js";
-	let botName = $state(App.selectedBot?.name ?? "")
-	let botPath = $state(App.selectedBot?.path ?? "")
-	let botToken = $state(App.selectedBot?.token ?? "")
-	let clientSecret = $state(App.selectedBot?.clientSecret ?? "")
-	let presenceIntent = $state(App.selectedBot?.presenceIntent ?? false)
-	let membersIntent = $state(App.selectedBot?.membersIntent ?? false)
-	let messageContentIntent = $state(App.selectedBot?.messageContentIntent ?? false)
+	let botName = $state(BotManager.selectedBot?.name ?? "")
+	let botPath = $state(BotManager.selectedBot?.path ?? "")
+	let botToken = $state(BotManager.selectedBot?.token ?? "")
+	let clientSecret = $state(BotManager.selectedBot?.clientSecret ?? "")
+	let presenceIntent = $state(BotManager.selectedBot?.presenceIntent ?? false)
+	let membersIntent = $state(BotManager.selectedBot?.membersIntent ?? false)
+	let messageContentIntent = $state(BotManager.selectedBot?.messageContentIntent ?? false)
 	function selectFolder() {
 		open({
 			multiple: false,
@@ -25,11 +23,11 @@
 	}
 	function save() {
 		if(!botName.trim() || !botPath.trim() || !botToken.trim() || !clientSecret.trim()) return
-		if(App.bots.find(b =>  b.name === botName.trim() || b.path === botPath.trim()) && botName.trim() !== App.selectedBot.name && botPath.trim() !== App.selectedBot.path) return alert("Bot already exists!")
-		App.saveBotSettings(botName, botPath, botToken, clientSecret, presenceIntent, membersIntent, messageContentIntent)
+		if(BotManager.bots.find(b =>  b.name === botName.trim() || b.path === botPath.trim()) && botName.trim() !== BotManager.selectedBot.name && botPath.trim() !== BotManager.selectedBot.path) return alert("Bot already exists!")
+		BotManager.saveBotSettings(botName, botPath, botToken, clientSecret, presenceIntent, membersIntent, messageContentIntent)
 	}
 	function copyInviteLink() {
-		const inviteLink = `https://discord.com/oauth2/authorize?client_id=${App.selectedBot.clientId}&permissions=8&integration_type=0&scope=bot+applications.commands`
+		const inviteLink = `https://discord.com/oauth2/authorize?client_id=${BotManager.selectedBot.clientId}&permissions=8&integration_type=0&scope=bot+applications.commands`
 		navigator.clipboard.writeText(inviteLink).then(() => {
 			alert("Invite link copied!")
 		});
@@ -56,7 +54,7 @@
 		<Label for="secret" class="text-right">Client Secret</Label>
 		<Input id="secret" type="password" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={clientSecret} />
 	</div>
-	{#if App.selectedBot.clientId}
+	{#if BotManager.selectedBot.clientId}
 		<Button variant="secondary" class="self-end w-fit" title="Copy Invite Link" onclick={copyInviteLink}><LinkIcon/></Button>
 	{/if}
 		<Card.Root class="w-full h-fit gap-3">

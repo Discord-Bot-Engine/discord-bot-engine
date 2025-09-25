@@ -5,8 +5,8 @@
     import {Label} from "$lib/components/ui/label/index.js";
     import Action from "$lib/classes/Action.svelte.js";
     import Modal from "$lib/components/Modal.svelte";
-    import CustomElement from "$lib/classes/CustomElement.svelte.js";
     import SearchSelect from "$lib/components/SearchSelect.svelte";
+    import {BotManager} from "$lib/classes/BotManager.svelte.js";
 	let {actions = $bindable(), title} = $props();
     let selectedAction = $state(null)
     let actionType = $state("None")
@@ -29,10 +29,24 @@
         App.saveUIData(ref, data)
         isEditingAction = false
     }
+    function itemTitle(item, i) {
+        const actionClass = BotManager.selectedBot.actionClasses.find(a => a.type === item.type)
+        if(!actionClass) return `${i+1}. Unknown Action`
+        const title = actionClass.title?.(item.data)
+        if(item.data.keys().toArray().length === 0 || !title) return `${i+1}. ${item.type}`
+        return `${i+1}. ${title}`
+    }
 </script>
-<List ondblclick={(item) => {
+{#snippet itemIcon(item, i)}
+    {#if !BotManager.selectedBot.actionClasses.find(a => a.type === item.type)}
+        <span class="w-5 bg-destructive/60 rounded-full absolute right-1">!</span>
+    {/if}
+{/snippet}
+<List ondblclick={() => {
+    const actionClass = BotManager.selectedBot.actionClasses.find(act => act.type === selectedAction.type);
+    if(!actionClass) return alert("Action failed to load.");
     isEditingAction = true;
-    let interval = setInterval(() => {
+    let interval = setInterval(async () => {
         if(!ref) return;
         clearInterval(interval);
         const data = selectedAction.data
@@ -40,22 +54,26 @@
         handlersCopy = window.handlers
         Object.freeze(handlersCopy)
         window.handlers = {}
-        App.selectedBot.actionClasses.find(act => act.type === selectedAction.type)?.open?.(selectedAction, window.handlers)
+        try {
+            await actionClass?.open?.(selectedAction, window.handlers)
+        } catch (e) {
+            alert(`${selectedAction.type}\n${e.stack}`)
+        }
     }, 10)
 }} ondelete={() => {
     actions.splice(actions.indexOf(selectedAction), 1);
-}} {title} items={actions ?? []} hideControls={!App.selectedTrigger} onadd={() => isCreatingAction = true} itemTitle={(item, i) => i + 1 + ". "+ (item.data.keys().toArray().length === 0 ? item.type : App.selectedBot.actionClasses.find(a => a.type === item.type)?.title?.(item.data) ?? item.type)} bind:selected={selectedAction}></List>
+}} {title} {itemIcon} items={actions ?? []} hideControls={!App.selectedTrigger} onadd={() => isCreatingAction = true} {itemTitle} bind:selected={selectedAction}></List>
 
 <Modal bind:open={isCreatingAction} title="Add Action" onDone={() => addAction()}>
         <div class="grid gap-4 py-4">
            <div class="grid grid-cols-4 items-center gap-4">
                <Label for="type" class="text-right">Type</Label>
-               <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...(App.selectedBot?.actionClasses ?? []).map(el => el.type).sort().map(el => ({label: el, value: el}))]} bind:value={actionType} class="col-span-3 w-full {actionType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+               <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...(BotManager.selectedBot?.actionClasses ?? []).map(el => el.type).sort().map(el => ({label: el, value: el}))]} bind:value={actionType} class="col-span-3 w-full {actionType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
            </div>
         </div>
 </Modal>
 <Modal bind:open={isEditingAction} title="{actions?.indexOf(selectedAction) + 1}. {selectedAction?.type}" onDone={() => editAction()}>
         <div class="grid gap-4 py-4" bind:this={ref}>
-            {@html App.selectedBot.actionClasses.find(t => t.type === selectedAction.type)?.html ?? ""}
+            {@html BotManager.selectedBot.actionClasses.find(t => t.type === selectedAction.type)?.html ?? ""}
         </div>
 </Modal>

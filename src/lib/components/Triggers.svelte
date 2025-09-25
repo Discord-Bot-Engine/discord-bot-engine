@@ -5,11 +5,10 @@
     import {Label} from "$lib/components/ui/label/index.js";
     import {Input} from "$lib/components/ui/input/index.js";
     import Trigger from "$lib/classes/Trigger.svelte.js";
-    import Action from "$lib/classes/Action.svelte.js";
     import Modal from "$lib/components/Modal.svelte";
-    import CustomElement from "$lib/classes/CustomElement.svelte.js";
     import SearchSelect from "$lib/components/SearchSelect.svelte";
-	let triggers = $derived(App.selectedBot?.triggers);
+    import {BotManager} from "$lib/classes/BotManager.svelte.js";
+	let triggers = $derived(BotManager.selectedBot?.triggers);
     let triggerName = $state()
     let triggerEditName = $state()
     let triggerType = $state("None")
@@ -19,13 +18,13 @@
     let handlersCopy = {}
     function addTrigger() {
         if(!triggerName.trim() || triggerType.toLowerCase() === "none") return;
-        if(App.selectedBot.triggers.find(t => t.name === triggerName.trim() && t.type === triggerType)) return alert("Trigger already exists!");
-        App.selectedBot.triggers.push(new Trigger(uuidv4(), triggerType, triggerName.trim()))
+        if(BotManager.selectedBot.triggers.find(t => t.name === triggerName.trim() && t.type === triggerType)) return alert("Trigger already exists!");
+        BotManager.selectedBot.triggers.push(new Trigger(uuidv4(), triggerType, triggerName.trim()))
         isCreatingTrigger = false;
     }
     function editTrigger() {
         if(!triggerEditName.trim()) return;
-        if(App.selectedBot.triggers.find(t => t.name === triggerEditName.trim() && t.type === App.selectedTrigger.type) && App.selectedTrigger.name !== triggerEditName) return alert("Trigger already exists!");
+        if(BotManager.selectedBot.triggers.find(t => t.name === triggerEditName.trim() && t.type === App.selectedTrigger.type) && App.selectedTrigger.name !== triggerEditName) return alert("Trigger already exists!");
         App.selectedTrigger.name = triggerEditName
         Object.keys(handlersCopy).forEach(handler => {
             window.handlers[handler] = handlersCopy[handler];
@@ -36,10 +35,17 @@
         isEditingTrigger = false
     }
 </script>
-<List ondblclick={(item) => {
+{#snippet itemIcon(item, i)}
+    {#if !BotManager.selectedBot.triggerClasses.find(t => t.type === item.type)}
+        <span class="w-5 bg-destructive/60 rounded-full absolute right-1">!</span>
+    {/if}
+{/snippet}
+<List ondblclick={() => {
     triggerEditName = App.selectedTrigger.name;
+    const triggerClass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type);
+    if(!triggerClass) return alert("Trigger failed to load.");
     isEditingTrigger = true;
-    let interval = setInterval(() => {
+    let interval = setInterval(async () => {
         if(!ref) return;
         clearInterval(interval);
         const data = App.selectedTrigger.data
@@ -47,10 +53,14 @@
         handlersCopy = window.handlers
         Object.freeze(handlersCopy)
         window.handlers = {}
-        App.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type)?.open?.(App.selectedTrigger, window.handlers)
+        try {
+            await triggerClass?.open?.(App.selectedTrigger, window.handlers)
+        } catch (e) {
+            alert(`${triggerClass.type}\n${e.stack}`)
+        }
     }, 10)
-}} items={triggers ?? []} itemTitle={(item) => item.name} onadd={() => isCreatingTrigger = true} ondelete={() => {
-    App.selectedBot.triggers = App.selectedBot.triggers.filter(el => el !== App.selectedTrigger)
+}} {itemIcon} items={triggers ?? []} itemTitle={(item) => item.name} onadd={() => isCreatingTrigger = true} ondelete={() => {
+    BotManager.selectedBot.triggers = BotManager.selectedBot.triggers.filter(el => el !== App.selectedTrigger)
 }} title="Triggers" bind:selected={App.selectedTrigger}></List>
 
 <Modal bind:open={isCreatingTrigger} title="Create Trigger" onDone={addTrigger}>
@@ -61,7 +71,7 @@
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <Label for="type" class="text-right">Type</Label>
-            <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...(App.selectedBot?.triggerClasses ?? []).map(el => el.type).sort().map(el => ({label: el, value: el}))]} bind:value={triggerType} class="col-span-3 w-full {triggerType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+            <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...(BotManager.selectedBot?.triggerClasses ?? []).map(el => el.type).sort().map(el => ({label: el, value: el}))]} bind:value={triggerType} class="col-span-3 w-full {triggerType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
         </div>
     </div>
 </Modal>
@@ -72,6 +82,6 @@
                     <Label for="name" class="text-right">Name</Label>
                     <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={triggerEditName} noVariables />
                 </div>
-                {@html App.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type)?.html ?? ""}
+                {@html BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type)?.html ?? ""}
         </div>
 </Modal>

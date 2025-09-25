@@ -3,9 +3,9 @@
 	import { App } from '$lib/classes/App.svelte.js';
     import {Label} from "$lib/components/ui/label/index.js";
     import {Input} from "$lib/components/ui/input/index.js";
-    import * as Select from "$lib/components/ui/select/index.js";
     import Modal from "$lib/components/Modal.svelte";
     import SearchSelect from "$lib/components/SearchSelect.svelte";
+    import {BotManager} from "$lib/classes/BotManager.svelte.js";
     let selectedVariable = $state("")
     let variableName = $state()
     let variableEditName = $state()
@@ -13,9 +13,7 @@
     let variableEditType = $state("None")
     let isCreatingVariable = $state(false);
     let isEditingVariable = $state(false);
-    const triggerVariableTypes = $derived(App.selectedBot?.triggerClasses?.map(t => t.variableTypes).flat() ?? [])
-    const actionVariableTypes = $derived(App.selectedBot?.actionClasses?.map(t => t.variableTypes).flat() ?? [])
-    const variableTypes = $derived([...new Set([...triggerVariableTypes, ...actionVariableTypes])].sort())
+    const variableTypes = BotManager.selectedBot.variableTypes
     function addVariable() {
         if(!variableName.trim() || variableType.toLowerCase() === "none") return;
         if(App.selectedTrigger?.variables.get(variableName)?.toLowerCase() === variableType.toLowerCase()) return alert("Variable already exists!");
@@ -31,11 +29,17 @@
         isEditingVariable = false
     }
 </script>
-<List ondblclick={(item) => {
+
+{#snippet itemIcon(item, i)}
+    {#if !BotManager.selectedBot.variableTypes.find(t => t === App.selectedTrigger?.variables.get(item))}
+        <span class="w-5 bg-destructive/60 rounded-full absolute right-1">!</span>
+    {/if}
+{/snippet}
+<List ondblclick={() => {
     variableEditName = selectedVariable;
     variableEditType = App.selectedTrigger?.variables.get(variableEditName);
     isEditingVariable = true;
-}} items={App.selectedTrigger?.variables.keys().toArray().sort()} hideControls={!App.selectedTrigger} allowMoving={false} itemTitle={(item) => item} onadd={() => isCreatingVariable = true} ondelete={() => {
+}} {itemIcon} items={App.selectedTrigger?.variables.keys().toArray().sort()} hideControls={!App.selectedTrigger} allowMoving={false} itemTitle={(item) => item} onadd={() => isCreatingVariable = true} ondelete={() => {
     App.selectedTrigger?.variables.delete(selectedVariable);
 }} title="Variables" bind:selected={selectedVariable}></List>
 

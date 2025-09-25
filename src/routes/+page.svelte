@@ -1,5 +1,4 @@
 <script>
-	import { App } from '$lib/classes/App.svelte.js';
 	import LoadingScreen from "$lib/components/LoadingScreen.svelte";
 	import {PlusIcon, FolderOpenIcon} from "@lucide/svelte";
 	import Bot from "$lib/components/Bot.svelte";
@@ -15,10 +14,10 @@
 	let botPath = $state("")
 	async function createBot() {
 		if(!botName.trim() || !botPath.trim()) return;
-		if(App.bots.find(b => b.name === botName.trim() || b.path === botPath.trim())) return alert("Bot already exists!");
+		if(BotManager.bots.find(b => b.name === botName.trim() || b.path === botPath.trim())) return alert("Bot already exists!");
 		isCreating = false
 		isLoading = true;
-		await App.createBot(botName, botPath)
+		await BotManager.createBot(botName, botPath)
 		isLoading = false;
 	}
 	function selectFolder() {
@@ -59,7 +58,7 @@
 </Dialog.Root>
 	<ScrollArea>
 		<div class="w-full h-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-3 gap-3">
-			{#each App.bots as bot}
+			{#each BotManager.bots as bot}
 				<Bot {bot}/>
 			{/each}
 		</div>

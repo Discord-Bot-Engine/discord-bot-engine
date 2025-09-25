@@ -1,7 +1,7 @@
 <script>
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
-	import { Button, buttonVariants } from "$lib/components/ui/button/index.js";
+	import { Button } from "$lib/components/ui/button/index.js";
 	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 	import { PlusIcon, EllipsisVerticalIcon, MinusIcon } from '@lucide/svelte';
 	import { dndzone } from "svelte-dnd-action";
@@ -15,6 +15,7 @@
 		onadd = () => {},
 		ondblclick = () => {},
 		itemTitle = () => {},
+		itemIcon,
 		selected = $bindable()
 	} = $props();
 
@@ -53,6 +54,9 @@
 									ondblclick={() => { selected = item; ondblclick(item) }}
 									onclick={() => selected = item}
 							>
+								{#if itemIcon}
+									{@render itemIcon(item, i)}
+								{/if}
 								{itemTitle(item, i)}
 							</Button>
 						</div>

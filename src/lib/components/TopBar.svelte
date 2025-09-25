@@ -2,11 +2,9 @@
     import * as Menubar from "$lib/components/ui/menubar/index.js";
     import {App} from "$lib/classes/App.svelte.js";
     import Modal from "$lib/components/Modal.svelte";
-    import {Label} from "$lib/components/ui/label/index.js";
-    import {Input} from "$lib/components/ui/input/index.js";
-    import Action from "$lib/classes/Action.svelte.js";
-    import CustomElement from "$lib/classes/CustomElement.svelte.js";
     import Extension from "$lib/classes/Extension.svelte.js";
+    import {BotManager} from "$lib/classes/BotManager.svelte.js";
+    import {Debugger} from "$lib/classes/Debugger.svelte.js";
     let extension = $state({type:""})
     let isEditing = $state(false);
     let ref;
@@ -18,7 +16,7 @@
                 {
                     title: "Save",
                     onclick: () => {
-                        App.saveBotData()
+                        BotManager.saveBotData()
                     }
                 },
             ]
@@ -28,18 +26,18 @@
             items: [
                 {
                     get title(){
-                        if(App.windows.has(`${App.selectedBot.path}-debug`))
+                        if(App.windows.has(`${BotManager.selectedBot.path}-debug`))
                             return "Remove debugger"
                         else return "Attach debugger"
                     },
                     get disable() {
-                        return !App.selectedBot.isRunning
+                        return !BotManager.selectedBot.isRunning
                     },
                     onclick: () => {
-                        if(App.windows.has(`${App.selectedBot.path}-debug`))
-                            App.removeDebugger(App.selectedBot.path)
+                        if(App.windows.has(`${BotManager.selectedBot.path}-debug`))
+                            Debugger.removeDebugger(BotManager.selectedBot.path)
                         else
-                            App.attachDebugger()
+                            Debugger.attachDebugger()
                     }
                 }
             ]
@@ -47,7 +45,7 @@
         {
             title: "Extensions",
             get items() {
-                return App.selectedBot.extensionClasses.map(ext => {
+                return BotManager.selectedBot.extensionClasses.map(ext => {
                     return {
                         title: ext.type,
                         onclick: () => {
@@ -56,12 +54,12 @@
                             let interval = setInterval(() => {
                                 if (!ref) return;
                                 clearInterval(interval);
-                                const data = App.selectedBot.extensions.get(ext.type)?.data ?? new Map()
+                                const data = BotManager.selectedBot.extensions.get(ext.type)?.data ?? new Map()
                                 App.loadUIData(ref, data)
                                 handlersCopy = window.handlers
                                 Object.freeze(handlersCopy)
                                 window.handlers = {}
-                                App.selectedBot.extensionClasses.find(ext => ext.type === extension.type)?.open?.(extension, window.handlers)
+                                BotManager.selectedBot.extensionClasses.find(ext => ext.type === extension.type)?.open?.(extension, window.handlers)
                             }, 10)
                         }
                     }
@@ -70,12 +68,12 @@
         }
     ]
     function editExtension() {
-        if(!App.selectedBot.extensions.get(extension.type)) App.selectedBot.extensions.set(extension.type, new Extension())
+        if(!BotManager.selectedBot.extensions.get(extension.type)) BotManager.selectedBot.extensions.set(extension.type, new Extension())
         Object.keys(handlersCopy).forEach(handler => {
             window.handlers[handler] = handlersCopy[handler];
         })
         handlersCopy = window.handlers
-        const data = App.selectedBot.extensions.get(extension.type)?.data
+        const data = BotManager.selectedBot.extensions.get(extension.type)?.data
         App.saveUIData(ref, data)
         isEditing = false
     }

@@ -1,5 +1,4 @@
 <script>
-    import {App} from "$lib/classes/App.svelte.js";
     import {page} from "$app/state";
     import * as Collapsible from "$lib/components/ui/collapsible/index.js";
     import {ChevronDownIcon, PlayIcon} from "@lucide/svelte";
@@ -8,8 +7,10 @@
     import Action from "$lib/classes/Action.svelte.js";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
     import Trigger from "$lib/classes/Trigger.svelte.js";
+    import {BotManager} from "$lib/classes/BotManager.svelte.js";
+    import {Debugger} from "$lib/classes/Debugger.svelte.js";
     getCurrentWebview().setAutoResize(true);
-    let bot = $derived(App.bots.find(bot => bot.path === page.url.searchParams.get("path")));
+    let bot = $derived(BotManager.bots.find(bot => bot.path === page.url.searchParams.get("path")));
     let init = false
     $effect(() => {
         if(bot && !init) {
@@ -40,8 +41,8 @@
     {#snippet action(trigger, act, prefix)}
         <Collapsible.Root>
             <div class="flex w-full text-xs bg-popover pl-5 pr-2 py-1 border-b-1">
-                <label class="mt-auto mb-auto">{prefix}{act.data.keys().toArray().length === 0 ? act.type : App.selectedBot.actionClasses.find(a => a.type === act.type)?.title?.(act.data) ?? act.type}</label>
-                <Button class="ml-auto mr-1 size-6 mt-auto mb-auto" onclick={() => App.debugAction(page.url.searchParams.get("path"), trigger.id, act.id)}><PlayIcon></PlayIcon></Button>
+                <label class="mt-auto mb-auto">{prefix}{act.data.keys().toArray().length === 0 ? act.type : BotManager.selectedBot.actionClasses.find(a => a.type === act.type)?.title?.(act.data) ?? act.type}</label>
+                <Button class="ml-auto mr-1 size-6 mt-auto mb-auto" onclick={() => Debugger.debugAction(page.url.searchParams.get("path"), trigger.id, act.id)}><PlayIcon></PlayIcon></Button>
                 <Collapsible.Trigger class={buttonVariants({ variant: 'ghost', class: `size-5 ${act.data.keys().toArray().some(key=>Array.isArray(act.data.get(key)) && act.data.get(key).every(el => el.isAction)) ? '' : 'hidden'}` })}
                 >
                     <ChevronDownIcon />

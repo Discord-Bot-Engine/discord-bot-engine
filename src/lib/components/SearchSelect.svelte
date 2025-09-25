@@ -8,7 +8,7 @@
     import { cn } from "$lib/utils.js";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
 
-    let {values, type = "single", value = $bindable(), onValueChange=() => {}, ...prop} = $props()
+    let {values, type = "single", value = $bindable(), onValueChange=() => {}, ...other} = $props()
     let open = $state(false);
     let triggerRef = $state<HTMLButtonElement>(null!);
     if(type === "multiple") value = []
@@ -24,7 +24,7 @@
 </script>
 
 <Popover.Root bind:open>
-    <Popover.Trigger {...prop} class="{prop.class} w-full" bind:ref={triggerRef}>
+    <Popover.Trigger {...other} class="{other.class} w-full" bind:ref={triggerRef}>
         {#snippet child({ props })}
             <Button
                     variant="outline"

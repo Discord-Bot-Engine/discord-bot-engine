@@ -1,12 +1,11 @@
 <script>
 	import '../app.css';
-	import {App} from "$lib/classes/App.svelte.js"
 	import NavBar from '$lib/components/NavBar.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	let { children } = $props();
-	if(!App.selectedBot && !["/", "/debugger", "/variables"].includes(page.route.id)) {
+	if(!BotManager.selectedBot && !["/", "/debugger", "/variables"].includes(page.route.id)) {
 		alert("Please select a bot!")
 		goto("/");
 	}

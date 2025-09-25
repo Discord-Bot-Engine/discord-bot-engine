@@ -1,7 +1,7 @@
 <svelte:options customElement={{tag: "dbe-select", shadow: "none"}} />
 <script>
     import SearchSelect from "$lib/components/SearchSelect.svelte";
-    let {onChange = "() => {}", value, values, ...props} = $props()
+    let {onChange = "() => {}", value, values, ...other} = $props()
     onChange = eval(`(${onChange})`)
     values = values ?? []
     let statevalues = $state(values)
@@ -25,4 +25,4 @@
         onChange(statevalue)
     }, 50)
 </script>
-<SearchSelect {...props} values={customSort(statevalues.split(",").filter(el => el.trim())).map(el=>({label:el, value:el}))} onValueChange={onChange} bind:value={statevalue}/>
+<SearchSelect {...other} values={customSort(statevalues.split(",").filter(el => el.trim())).map(el=>({label:el, value:el}))} onValueChange={onChange} bind:value={statevalue}/>
