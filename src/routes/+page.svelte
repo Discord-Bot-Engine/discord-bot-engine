@@ -8,6 +8,7 @@
 	import { Label } from "$lib/components/ui/label/index.js";
 	import { open } from '@tauri-apps/plugin-dialog';
 	import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
+	import {BotManager} from "$lib/classes/BotManager.svelte.js";
 	let isLoading = $state(false);
 	let isCreating = $state(false)
 	let botName = $state("")

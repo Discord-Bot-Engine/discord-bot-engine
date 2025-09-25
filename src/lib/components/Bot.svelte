@@ -3,7 +3,7 @@
     import {Button} from "$lib/components/ui/button/index.js";
     import {TrashIcon} from "@lucide/svelte";
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
-    let {bot } = $props()
+    let { bot } = $props()
 </script>
 <Card.Root class="w-full h-fit">
     <Card.Header>

@@ -62,7 +62,7 @@ class BotManagerClass {
 			bots.forEach(async (bot, i) => {
 				const botClass = new Bot(bot.name, bot.path);
 				this.bots.push(botClass);
-				if(i === selected) this.selectBot(bot)
+				if(i === selected) this.selectBot(botClass)
 			})
 		})
 	}

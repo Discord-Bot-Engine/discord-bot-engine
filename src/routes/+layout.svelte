@@ -4,6 +4,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import {BotManager} from "$lib/classes/BotManager.svelte.js";
 	let { children } = $props();
 	if(!BotManager.selectedBot && !["/", "/debugger", "/variables"].includes(page.route.id)) {
 		alert("Please select a bot!")
