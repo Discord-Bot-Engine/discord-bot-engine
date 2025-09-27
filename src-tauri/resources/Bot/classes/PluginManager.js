@@ -12,26 +12,26 @@ import {__dirname} from "./Bot.js";
     const extensionsFolder = fs.readdirSync(extensionClassesPath).filter(file => file.endsWith(".js"))
 
     let triggerClasses = await Promise.all(
-        triggersFolder.map(file =>
+        triggersFolder.map(async file =>
             ({
                 file,
-                content: import("file://" + path.join(triggerClassesPath, file)).catch(() => {})
+                content: await import("file://" + path.join(triggerClassesPath, file)).catch(() => {})
             })
         )
     )
     let actionClasses = await Promise.all(
-        actionsFolder.map(file =>
+        actionsFolder.map(async file =>
             ({
                 file,
-                content: import("file://" + path.join(actionClassesPath, file)).catch(() => {})
+                content: await import("file://" + path.join(actionClassesPath, file)).catch(() => {})
             })
         )
     )
     let extensionClasses = await Promise.all(
-        extensionsFolder.map(file =>
+        extensionsFolder.map(async file =>
             ({
                 file,
-                content: import("file://" + path.join(extensionClassesPath, file)).catch(() => {})
+                content: await import("file://" + path.join(extensionClassesPath, file)).catch(() => {})
             })
         )
     )
