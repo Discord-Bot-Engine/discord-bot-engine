@@ -22,7 +22,7 @@
     }
     $host().getValue = () => statevalue
     setTimeout(() => {
-        onChange(statevalue)
+        onChange(statevalue, $host())
     }, 50)
 </script>
-<SearchSelect {...other} values={customSort(statevalues.split(",").filter(el => el.trim())).map(el=>({label:el, value:el}))} onValueChange={onChange} bind:value={statevalue}/>
+<SearchSelect {...other} values={customSort(statevalues.split(",").filter(el => el.trim())).map(el=>({label:el, value:el}))} onValueChange={(v) => onChange(v, $host())} bind:value={statevalue}/>

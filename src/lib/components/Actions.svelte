@@ -33,8 +33,8 @@
     function itemTitle(item, i) {
         const actionClass = BotManager.selectedBot.actionClasses.find(a => a.type === item.type)
         if(!actionClass) return `${i+1}. Unknown Action`
+        if(item.data.keys().toArray().length === 0 || !actionClass.title) return `${i+1}. ${item.type}`
         const title = actionClass.title?.(item.data)
-        if(item.data.keys().toArray().length === 0 || !title) return `${i+1}. ${item.type}`
         return `${i+1}. ${title}`
     }
 </script>
