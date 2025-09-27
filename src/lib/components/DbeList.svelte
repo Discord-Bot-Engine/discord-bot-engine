@@ -13,7 +13,13 @@
     $host().setItems = (values) => items = values
     let selected = $state(new CustomElement())
     let ref;
+    document.getElementById(modalId).querySelectorAll("*").forEach((el) => {
+        el.setAttribute("ignoreParsing", "")
+    })
     let html = document.getElementById(modalId).innerHTML
+    document.getElementById(modalId).querySelectorAll("*").forEach((el) => {
+        el.removeAttribute("ignoreParsing")
+    })
     function editItem() {
         const data = selected.data
         App.saveUIData(ref, data)

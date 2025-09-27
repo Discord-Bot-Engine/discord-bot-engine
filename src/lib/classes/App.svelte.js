@@ -7,6 +7,7 @@ class AppClass {
 		data.clear()
 		const marked = ref.querySelectorAll("*[name]")
 		marked.forEach(el => {
+			if(el.hasAttribute("ignoreParsing")) return;
 			let name = el.getAttribute("name");
 			if(el.tagName.toLowerCase() === "dbe-action-list") {
 				data.set(name, el.getItems())
