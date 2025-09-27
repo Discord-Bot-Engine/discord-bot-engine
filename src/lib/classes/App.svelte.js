@@ -1,3 +1,5 @@
+import CustomElement from "$lib/classes/CustomElement.svelte.js";
+
 class AppClass {
 	selectedTrigger = $state(null);
 	windows = new Map()

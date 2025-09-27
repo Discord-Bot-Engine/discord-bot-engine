@@ -27,7 +27,7 @@ export default class SlashCommand {
             <dbe-variable-list name="server" class="col-span-3" variableType="Server"></dbe-variable-list>
         </div>
         <dbe-list name="options" title="Options" modalId="optionsModal" itemTitle="(item, i) => item.data.get('name') ?? ('Option #'+i)"></dbe-list>
-        <div id="optionsModal">
+        <template id="optionsModal">
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Name"></dbe-label>
                 <dbe-input name="name" class="col-span-3"></dbe-input>
@@ -48,7 +48,7 @@ export default class SlashCommand {
                 <dbe-label name="Store value in variable"></dbe-label>
                 <dbe-variable-list name="value" class="col-span-3" id="var" variableType="Attachment,Boolean,Channel,Mentionable,Number,Role,Text,User"></dbe-variable-list>
             </div>
-        </div>
+        </template>
     `
     static load({data, actionManager}) {
         Bot.commands ??= []

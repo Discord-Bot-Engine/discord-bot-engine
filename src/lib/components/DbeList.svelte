@@ -13,8 +13,7 @@
     $host().setItems = (values) => items = values
     let selected = $state(new CustomElement())
     let ref;
-    const html = document.getElementById(modalId).innerHTML
-    document.getElementById(modalId).remove()
+    let html = document.getElementById(modalId).innerHTML
     function editItem() {
         const data = selected.data
         App.saveUIData(ref, data)
