@@ -145,6 +145,30 @@ async fn load_bot_plugins(
 }
 
 #[tauri::command(rename_all = "snake_case")]
+fn download_action(_app: tauri::AppHandle, bot_path:String, action:String, data:String) {
+    let path = Path::new(&bot_path).join("actions").join(action);
+    tauri::async_runtime::spawn(async move {
+        fs::write(&path, data).unwrap();
+    });
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn download_trigger(_app: tauri::AppHandle, bot_path:String, trigger:String, data:String) {
+    let path = Path::new(&bot_path).join("triggers").join(trigger);
+    tauri::async_runtime::spawn(async move {
+        fs::write(&path, data).unwrap();
+    });
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn download_extension(_app: tauri::AppHandle, bot_path:String, extension:String, data:String) {
+    let path = Path::new(&bot_path).join("extensions").join(extension);
+    tauri::async_runtime::spawn(async move {
+        fs::write(&path, data).unwrap();
+    });
+}
+
+#[tauri::command(rename_all = "snake_case")]
 fn save_bot_triggers(_app: tauri::AppHandle, bot_path:String, triggers_json:String) {
     let triggers_path = Path::new(&bot_path).join("data").join("triggers.json");
     tauri::async_runtime::spawn(async move {
@@ -249,7 +273,27 @@ pub fn run() {
         })
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![debug_action, attach_debugger, remove_debugger, run_bot, stop_bot, is_bot_running, load_bot_plugins, save_bot_triggers, load_bot_triggers, save_bot_extensions, load_bot_extensions, load_bot_settings, save_bot_settings, load_bots, save_bots, copy_bot_files])
+        .invoke_handler(tauri::generate_handler![
+            debug_action,
+            attach_debugger,
+            remove_debugger,
+            run_bot,
+            stop_bot,
+            is_bot_running,
+            load_bot_plugins,
+            download_action,
+            download_trigger,
+            download_extension,
+            save_bot_triggers,
+            load_bot_triggers,
+            save_bot_extensions,
+            load_bot_extensions,
+            load_bot_settings,
+            save_bot_settings,
+            load_bots,
+            save_bots,
+            copy_bot_files
+        ])
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
         .run(tauri::generate_context!())

@@ -1,21 +1,64 @@
-import {fileURLToPath} from "url";
 import path from "node:path"
 import * as fs from "node:fs";
-import { dirname } from 'path';
+import {__dirname} from "./Bot.js";
 
 (async () => {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
     const triggerClassesPath = path.resolve(__dirname, "../triggers")
     const actionClassesPath = path.resolve(__dirname, "../actions")
     const extensionClassesPath = path.resolve(__dirname, "../extensions")
-    let triggerClasses = await Promise.all(fs.readdirSync(triggerClassesPath).filter(file => file.endsWith(".js")).map(file => import("file://" + path.join(triggerClassesPath, file)).catch(() => {})))
-    let actionClasses = await Promise.all(fs.readdirSync(actionClassesPath).filter(file => file.endsWith(".js")).map(file => import("file://" + path.join(actionClassesPath, file)).catch(() => {})))
-    let extensionClasses = await Promise.all(fs.readdirSync(extensionClassesPath).filter(file => file.endsWith(".js")).map(file => import("file://" + path.join(extensionClassesPath, file)).catch(() => {})))
-    triggerClasses = triggerClasses.filter(m => m).map(m => m.default).map(trigger => ({type: trigger.type, variableTypes: trigger.variableTypes, html:trigger.html, open: trigger.open?.toString()}))
-    actionClasses = actionClasses.filter(m => m).map(m => m.default).map(action => ({type: action.type, title:action.title.toString(),variableTypes: action.variableTypes, html: action.html, open: action.open?.toString()}))
-    extensionClasses = extensionClasses.filter(m => m).map(m => m.default).map(extension => ({type: extension.type, html: extension.html, open: extension.open?.toString()}))
-    console.log(JSON.stringify({type:"triggers", data:triggerClasses}))
-    console.log(JSON.stringify({type:"actions", data:actionClasses}))
-    console.log(JSON.stringify({type:"extensions", data:extensionClasses}))
+
+    const triggersFolder = fs.readdirSync(triggerClassesPath).filter(file => file.endsWith(".js"))
+    const actionsFolder = fs.readdirSync(actionClassesPath).filter(file => file.endsWith(".js"))
+    const extensionsFolder = fs.readdirSync(extensionClassesPath).filter(file => file.endsWith(".js"))
+
+    let triggerClasses = await Promise.all(
+        triggersFolder.map(file =>
+            ({
+                file,
+                content: import("file://" + path.join(triggerClassesPath, file)).catch(() => {})
+            })
+        )
+    )
+    let actionClasses = await Promise.all(
+        actionsFolder.map(file =>
+            ({
+                file,
+                content: import("file://" + path.join(actionClassesPath, file)).catch(() => {})
+            })
+        )
+    )
+    let extensionClasses = await Promise.all(
+        extensionsFolder.map(file =>
+            ({
+                file,
+                content: import("file://" + path.join(extensionClassesPath, file)).catch(() => {})
+            })
+        )
+    )
+
+    triggerClasses = triggerClasses.filter(m => m).map(trigger => ({
+        type: trigger.content.default.type,
+        variableTypes: trigger.content.default.variableTypes,
+        html: trigger.content.default.html,
+        open: trigger.content.default.open?.toString(),
+        file: trigger.file
+    }))
+    actionClasses = actionClasses.filter(m => m).map(action => ({
+        type: action.content.default.type,
+        title: action.content.default.title.toString(),
+        variableTypes: action.content.default.variableTypes,
+        html: action.content.default.html,
+        open: action.content.default.open?.toString(),
+        file: action.file
+    }))
+    extensionClasses = extensionClasses.filter(m => m).map(extension => ({
+        type: extension.content.default.type,
+        html: extension.content.default.html,
+        open: extension.content.default.open?.toString(),
+        file: extension.file
+    }))
+
+    console.log(JSON.stringify({ type:"triggers", data: triggerClasses }))
+    console.log(JSON.stringify({ type:"actions", data: actionClasses }))
+    console.log(JSON.stringify({ type:"extensions", data: extensionClasses }))
 })()
