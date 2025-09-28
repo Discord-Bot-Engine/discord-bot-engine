@@ -6,6 +6,7 @@
 	import {Label} from "$lib/components/ui/label/index.js";
 	import {open} from "@tauri-apps/plugin-dialog";
 	import {Checkbox} from "$lib/components/ui/checkbox/index.js";
+	import {BotManager} from "$lib/classes/BotManager.svelte.js";
 	let botName = $state(BotManager.selectedBot?.name ?? "")
 	let botPath = $state(BotManager.selectedBot?.path ?? "")
 	let botToken = $state(BotManager.selectedBot?.token ?? "")

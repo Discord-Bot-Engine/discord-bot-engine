@@ -145,26 +145,50 @@ async fn load_bot_plugins(
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn download_action(_app: tauri::AppHandle, bot_path:String, action:String, data:String) {
-    let path = Path::new(&bot_path).join("actions").join(action);
+fn download_action(_app: tauri::AppHandle, bot_path:String, action:String, sha:String, data:String) {
+    let path = Path::new(&bot_path).join("actions").join(sha+&action);
     tauri::async_runtime::spawn(async move {
         fs::write(&path, data).unwrap();
     });
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn download_trigger(_app: tauri::AppHandle, bot_path:String, trigger:String, data:String) {
-    let path = Path::new(&bot_path).join("triggers").join(trigger);
+fn download_trigger(_app: tauri::AppHandle, bot_path:String, trigger:String, sha:String, data:String) {
+    let path = Path::new(&bot_path).join("triggers").join(sha+&trigger);
     tauri::async_runtime::spawn(async move {
         fs::write(&path, data).unwrap();
     });
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn download_extension(_app: tauri::AppHandle, bot_path:String, extension:String, data:String) {
-    let path = Path::new(&bot_path).join("extensions").join(extension);
+fn download_extension(_app: tauri::AppHandle, bot_path:String, extension:String, sha:String, data:String) {
+    let path = Path::new(&bot_path).join("extensions").join(sha+&extension);
     tauri::async_runtime::spawn(async move {
         fs::write(&path, data).unwrap();
+    });
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn remove_action(_app: tauri::AppHandle, bot_path:String, action:String, sha:String) {
+    let path = Path::new(&bot_path).join("actions").join(sha+&action);
+    tauri::async_runtime::spawn(async move {
+        fs::remove_file(&path).unwrap();
+    });
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn remove_trigger(_app: tauri::AppHandle, bot_path:String, trigger:String, sha:String) {
+    let path = Path::new(&bot_path).join("triggers").join(sha+&trigger);
+    tauri::async_runtime::spawn(async move {
+        fs::remove_file(&path).unwrap();
+    });
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn remove_extension(_app: tauri::AppHandle, bot_path:String, extension:String, sha:String) {
+    let path = Path::new(&bot_path).join("extensions").join(sha+&extension);
+    tauri::async_runtime::spawn(async move {
+        fs::remove_file(&path).unwrap();
     });
 }
 
@@ -284,6 +308,9 @@ pub fn run() {
             download_action,
             download_trigger,
             download_extension,
+            remove_action,
+            remove_trigger,
+            remove_extension,
             save_bot_triggers,
             load_bot_triggers,
             save_bot_extensions,
