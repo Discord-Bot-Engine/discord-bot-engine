@@ -14,11 +14,11 @@
     let selected = $state(new CustomElement())
     let ref;
     document.getElementById(modalId).querySelectorAll("*").forEach((el) => {
-        el.setAttribute("ignoreParsing", "")
+        if(el.getAttribute("ignoreParsing") === modalId) el.removeAttribute("ignoreParsing")
     })
     let html = document.getElementById(modalId).innerHTML
     document.getElementById(modalId).querySelectorAll("*").forEach((el) => {
-        el.removeAttribute("ignoreParsing")
+        if(!el.hasAttribute("ignoreParsing")) el.setAttribute("ignoreParsing", modalId)
     })
     function editItem() {
         const data = selected.data
