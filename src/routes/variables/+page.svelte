@@ -6,6 +6,7 @@
     import { buttonVariants} from "$lib/components/ui/button/index.js";
     import { getCurrentWebview } from '@tauri-apps/api/webview';
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
+    import {BotManager} from "$lib/classes/BotManager.svelte.js";
     getCurrentWebview().setAutoResize(true);
     const bot = $derived(BotManager.bots.find(bot => bot.path === page.url.searchParams.get("path")))
     const trigger = $derived(bot?.debugTrigger)

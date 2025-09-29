@@ -1,8 +1,8 @@
 import CustomElement from "$lib/classes/CustomElement.svelte.js";
+import Action from "$lib/classes/Action.svelte.js";
 
 class AppClass {
 	selectedTrigger = $state(null);
-	windows = new Map()
 	saveUIData(ref, data) {
 		data.clear()
 		const marked = ref.querySelectorAll("*[name]")

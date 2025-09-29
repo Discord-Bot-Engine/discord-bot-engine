@@ -6,8 +6,6 @@ import {Debugger} from "$lib/classes/Debugger.svelte.js";
 
 class BotManagerClass {
 	selectedBot = $state(null);
-	modifiedTriggers = []
-	removedTriggers = []
 	bots = $state([]);
 	constructor() {
 		listen("plugins", ({payload}) => {
@@ -71,7 +69,7 @@ class BotManagerClass {
 	}
 
 	copyBotFiles(path) {
-		return new Promise(async (resolve, reject) => {
+		return new Promise(async (resolve) => {
 			listen('finished_copying', () => {
 				setTimeout(() => resolve(true), 5000)
 			})
@@ -128,9 +126,11 @@ class BotManagerClass {
 		this.selectedBot.extensions.keys().forEach(key => {
 			extensions[key] = this.selectedBot.extensions.get(key)
 		})
-		const triggerContents = this.modifiedTriggers.map(id => JSON.stringify(this.selectedBot.triggers.find(t => t.id === id)))
-		await invoke('save_bot_triggers', {bot_path: this.selectedBot.path, modified_triggers: this.modifiedTriggers, trigger_contents: triggerContents, removed_triggers: this.removedTriggers})
+		const triggerContents = this.selectedBot.modifiedTriggers.map(id => JSON.stringify(this.selectedBot.triggers.find(t => t.id === id)))
+		await invoke('save_bot_triggers', {bot_path: this.selectedBot.path, modified_triggers: this.selectedBot.modifiedTriggers, trigger_contents: triggerContents, removed_triggers: this.selectedBot.removedTriggers})
 		await invoke('save_bot_extensions', {bot_path: this.selectedBot.path, extensions_json: JSON.stringify(extensions)})
+		this.selectedBot.modifiedTriggers = []
+		this.selectedBot.removedTriggers = []
 		alert("Project saved successfully!");
 	}
 
@@ -147,16 +147,6 @@ class BotManagerClass {
 		this.bots.find(bot => bot.path === this.selectedBot.path).isRunning = false;
 		Debugger.removeDebugger(this.selectedBot.path)
 		await invoke('stop_bot', {bot_path: this.selectedBot.path}).catch(() => {})
-	}
-
-	markAsModified(trigger) {
-		if(this.modifiedTriggers.includes(trigger)) return;
-		this.modifiedTriggers.push(trigger)
-	}
-
-	markAsRemoved(trigger) {
-		if(this.removedTriggers.includes(trigger)) return;
-		this.removedTriggers.push(trigger)
 	}
 }
 

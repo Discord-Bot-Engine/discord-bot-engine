@@ -5,6 +5,7 @@ class Action {
 	type = '';
 	data = new SvelteMap();
 	isAction = true
+	isBreakPoint = $state(false)
 
 	constructor(id, type) {
 		this.id = id;

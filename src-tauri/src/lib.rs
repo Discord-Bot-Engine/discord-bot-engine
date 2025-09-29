@@ -30,6 +30,38 @@ fn debug_action(
 }
 
 #[tauri::command(rename_all = "snake_case")]
+fn mark_break_point(
+    _app: tauri::AppHandle,
+    state: tauri::State<'_, BotManager>,
+    bot_path: String,
+    action_id: String,
+) -> Result<(), String> {
+    let mut bots = state.bots.lock().map_err(|e| e.to_string())?;
+
+    let bot = bots.get_mut(&bot_path).ok_or("Bot not found")?;
+    let data = format!("$DEBUGGER$$$ MARK {action_id}");
+    bot.write(data.as_bytes()).map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn remove_break_point(
+    _app: tauri::AppHandle,
+    state: tauri::State<'_, BotManager>,
+    bot_path: String,
+    action_id: String,
+) -> Result<(), String> {
+    let mut bots = state.bots.lock().map_err(|e| e.to_string())?;
+
+    let bot = bots.get_mut(&bot_path).ok_or("Bot not found")?;
+    let data = format!("$DEBUGGER$$$ REMOVE {action_id}");
+    bot.write(data.as_bytes()).map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
+#[tauri::command(rename_all = "snake_case")]
 fn attach_debugger(
     _app: tauri::AppHandle,
     state: tauri::State<'_, BotManager>,
@@ -341,6 +373,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             debug_action,
+            mark_break_point,
+            remove_break_point,
             attach_debugger,
             remove_debugger,
             run_bot,

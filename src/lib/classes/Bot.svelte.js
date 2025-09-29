@@ -4,6 +4,7 @@ import Trigger from "$lib/classes/Trigger.svelte.js";
 import {SvelteMap} from "svelte/reactivity";
 import Extension from "$lib/classes/Extension.svelte.js";
 import {App} from "$lib/classes/App.svelte.js";
+import {BotManager} from "$lib/classes/BotManager.svelte.js";
 
 class Bot {
 	name = '';
@@ -20,13 +21,15 @@ class Bot {
 	triggerClasses = $state([]);
 	actionClasses = $state([]);
 	extensionClasses = $state([]);
-	triggerVariableTypes = $derived(App.selectedBot?.triggerClasses?.map(t => t.variableTypes).flat() ?? [])
-	actionVariableTypes = $derived(App.selectedBot?.actionClasses?.map(t => t.variableTypes).flat() ?? [])
+	triggerVariableTypes = $derived(BotManager.selectedBot?.triggerClasses?.map(t => t.variableTypes).flat() ?? [])
+	actionVariableTypes = $derived(BotManager.selectedBot?.actionClasses?.map(t => t.variableTypes).flat() ?? [])
 	variableTypes = $derived([...new Set([...this.triggerVariableTypes, ...this.actionVariableTypes])].sort())
 	extensions = new SvelteMap();
 	debugTriggers = $state([])
 	debugTrigger = $state(null)
 	isLoading = $state(true)
+	modifiedTriggers = []
+	removedTriggers = []
 
 	constructor(name, path) {
 		this.name = name;
@@ -46,6 +49,16 @@ class Bot {
 		this.messageContentIntent = data.messageContentIntent;
 		this.isRunning = await invoke("is_bot_running", {bot_path: this.path});
 		invoke("load_bot_plugins", {bot_path: this.path});
+	}
+
+	markAsModified(trigger) {
+		if(this.modifiedTriggers.includes(trigger)) return;
+		this.modifiedTriggers.push(trigger)
+	}
+
+	markAsRemoved(trigger) {
+		if(this.removedTriggers.includes(trigger)) return;
+		this.removedTriggers.push(trigger)
 	}
 
 	toJSON() {

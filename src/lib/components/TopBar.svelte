@@ -26,7 +26,7 @@
             items: [
                 {
                     get title(){
-                        if(App.windows.has(`${BotManager.selectedBot.path}-debug`))
+                        if(Debugger.isAttached)
                             return "Remove debugger"
                         else return "Attach debugger"
                     },
@@ -34,7 +34,7 @@
                         return !BotManager.selectedBot.isRunning
                     },
                     onclick: () => {
-                        if(App.windows.has(`${BotManager.selectedBot.path}-debug`))
+                        if(Debugger.isAttached)
                             Debugger.removeDebugger(BotManager.selectedBot.path)
                         else
                             Debugger.attachDebugger()

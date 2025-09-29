@@ -1,13 +1,13 @@
 import { invoke } from '@tauri-apps/api/core';
-import { listen } from '@tauri-apps/api/event';
-import Bot from "$lib/classes/Bot.svelte.js";
 import {Webview} from "@tauri-apps/api/webview";
 import {Window} from "@tauri-apps/api/window";
-import Trigger from "$lib/classes/Trigger.svelte.js";
 import {BotManager} from "$lib/classes/BotManager.svelte.js";
+import {SvelteMap} from "svelte/reactivity";
 
 class DebuggerClass {
-	windows = new Map()
+	windows = new SvelteMap()
+	isAttached = $derived(this.windows.has(`${BotManager.selectedBot.path}-debug`))
+
 	async debugAction(path, trigger, action) {
 		const bot = BotManager.bots.find(bot => bot.path === path);
 		bot.debugTrigger = bot.debugTriggers.find(t => t.id === trigger)
@@ -37,7 +37,7 @@ class DebuggerClass {
 			width: 350,
 			height: 450,
 		});
-		variablesWindow.setTitle(`${this.selectedBot.name[0].toUpperCase()}${BotManager.selectedBot.name.slice(1)}'s variables`)
+		variablesWindow.setTitle(`${BotManager.selectedBot.name[0].toUpperCase()}${BotManager.selectedBot.name.slice(1)}'s variables`)
 		variablesWindow.once('tauri://created', async () => {
 			new Webview(variablesWindow, `variables-${BotManager.selectedBot.name.replace(/\s/g, '_')}`, {
 				url: `/variables?path=${BotManager.selectedBot.path}`,
@@ -49,6 +49,28 @@ class DebuggerClass {
 		});
 		this.windows.set(`${path}-debug`, debugWindow)
 		this.windows.set(`${path}-variables`, variablesWindow)
+		let actions = []
+		BotManager.selectedBot.triggers.forEach(trigger => {
+			getActions(trigger.actions, actions)
+		})
+		actions = actions.flat().filter(act => act.isBreakPoint).map(act => act.id)
+		actions.forEach(id => this.markAsBreakPoint(id))
+		function getActions(acts, actions) {
+			actions.push(acts)
+			acts.forEach((act) => {
+				act.data.keys().toArray().forEach(key => {
+					if(Array.isArray(act.data.get(key)) && act.data.get(key).every(el => el.isAction)) getActions(act.data.get(key), actions)
+				})
+			})
+		}
+	}
+
+	markAsBreakPoint(id) {
+		invoke("mark_break_point", {bot_path: BotManager.selectedBot.path, action_id:id})
+	}
+
+	removeBreakPoint(id) {
+		invoke("remove_break_point", {bot_path: BotManager.selectedBot.path, action_id:id})
 	}
 
 	async removeDebugger(path, close = true) {

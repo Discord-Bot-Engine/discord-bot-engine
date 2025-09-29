@@ -22,14 +22,14 @@
         if(BotManager.selectedBot.triggers.find(t => t.name === triggerName.trim() && t.type === triggerType)) return alert("Trigger already exists!");
         const id = uuidv4()
         BotManager.selectedBot.triggers.push(new Trigger(id, triggerType, triggerName.trim()))
-        BotManager.markAsModified(id)
+        BotManager.selectedBot.markAsModified(id)
         isCreatingTrigger = false;
     }
     function editTrigger() {
         if(!triggerEditName.trim()) return;
         if(BotManager.selectedBot.triggers.find(t => t.name === triggerEditName.trim() && t.type === App.selectedTrigger.type) && App.selectedTrigger.name !== triggerEditName) return alert("Trigger already exists!");
         App.selectedTrigger.name = triggerEditName
-        BotManager.markAsModified(App.selectedTrigger.id)
+        BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
         Object.keys(handlersCopy).forEach(handler => {
             window.handlers[handler] = handlersCopy[handler];
         })
@@ -39,7 +39,7 @@
         isEditingTrigger = false
     }
 </script>
-{#snippet itemIcon(item, i)}
+{#snippet html(item, i)}
     {#if !BotManager.selectedBot.triggerClasses.find(t => t.type === item.type)}
         <ErrorIcon />
     {/if}
@@ -63,9 +63,9 @@
             alert(`${triggerClass.type}\n${e.stack}`)
         }
     }, 10)
-}} {itemIcon} items={triggers ?? []} itemTitle={(item) => item.name} onadd={() => isCreatingTrigger = true} ondelete={() => {
+}} {html} items={triggers ?? []} itemTitle={(item) => item.name} onadd={() => isCreatingTrigger = true} ondelete={() => {
     BotManager.selectedBot.triggers = BotManager.selectedBot.triggers.filter(el => el !== App.selectedTrigger)
-    BotManager.markAsRemoved(App.selectedTrigger.id)
+    BotManager.selectedBot.markAsRemoved(App.selectedTrigger.id)
 }} title="Triggers" bind:selected={App.selectedTrigger}></List>
 
 <Modal bind:open={isCreatingTrigger} title="Create Trigger" onDone={addTrigger}>

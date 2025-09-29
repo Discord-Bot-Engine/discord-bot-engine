@@ -8,6 +8,8 @@
     import SearchSelect from "$lib/components/SearchSelect.svelte";
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     import ErrorIcon from "$lib/components/ErrorIcon.svelte";
+    import { Checkbox } from "$lib/components/ui/checkbox/index.js";
+    import {Debugger} from "$lib/classes/Debugger.svelte.js";
 	let {actions = $bindable(), title} = $props();
     let selectedAction = $state(null)
     let actionType = $state("None")
@@ -19,7 +21,7 @@
     function addAction() {
         if(actionType.toLowerCase() === "none") return;
         actions.push(new Action(uuidv4(), actionType))
-        BotManager.markAsModified(App.selectedTrigger.id)
+        BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
         isCreatingAction = false;
     }
     function editAction() {
@@ -29,7 +31,7 @@
         handlersCopy = window.handlers
         const data = selectedAction.data
         App.saveUIData(ref, data)
-        BotManager.markAsModified(App.selectedTrigger.id)
+        BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
         isEditingAction = false
     }
     function itemTitle(item, i) {
@@ -40,7 +42,10 @@
         return `${i+1}. ${title}`
     }
 </script>
-{#snippet itemIcon(item, i)}
+{#snippet html(item, i)}
+    {#if Debugger.isAttached}
+        <Checkbox bind:checked={item.isBreakPoint} onCheckedChange={(v) => v ? Debugger.markAsBreakPoint(item.id) : Debugger.removeBreakPoint(item.id)} class="absolute left-5" title="Is Break Point?"/>
+    {/if}
     {#if !BotManager.selectedBot.actionClasses.find(a => a.type === item.type)}
        <ErrorIcon />
     {/if}
@@ -65,8 +70,8 @@
     }, 10)
 }} ondelete={() => {
     actions.splice(actions.indexOf(selectedAction), 1);
-    BotManager.markAsModified(App.selectedTrigger.id)
-}} {title} {itemIcon} items={actions ?? []} hideControls={!App.selectedTrigger} onadd={() => isCreatingAction = true} {itemTitle} bind:selected={selectedAction}></List>
+    BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
+}} {title} {html} items={actions ?? []} hideControls={!App.selectedTrigger} onadd={() => isCreatingAction = true} {itemTitle} bind:selected={selectedAction}></List>
 
 <Modal bind:open={isCreatingAction} title="Add Action" onDone={() => addAction()}>
         <div class="grid gap-4 py-4">

@@ -14,7 +14,7 @@
     let variableEditType = $state("None")
     let isCreatingVariable = $state(false);
     let isEditingVariable = $state(false);
-    const variableTypes = BotManager.selectedBot.variableTypes
+    const variableTypes = $derived(BotManager.selectedBot.variableTypes)
     function addVariable() {
         if(!variableName.trim() || variableType.toLowerCase() === "none") return;
         if(App.selectedTrigger?.variables.get(variableName)?.toLowerCase() === variableType.toLowerCase()) return alert("Variable already exists!");
@@ -31,8 +31,8 @@
     }
 </script>
 
-{#snippet itemIcon(item, i)}
-    {#if !BotManager.selectedBot.variableTypes.find(t => t === App.selectedTrigger?.variables.get(item))}
+{#snippet html(item, i)}
+    {#if !variableTypes.find(t => t.toLowerCase() === App.selectedTrigger?.variables.get(item).toLowerCase())}
         <ErrorIcon />
     {/if}
 {/snippet}
@@ -40,7 +40,7 @@
     variableEditName = selectedVariable;
     variableEditType = App.selectedTrigger?.variables.get(variableEditName);
     isEditingVariable = true;
-}} {itemIcon} items={App.selectedTrigger?.variables.keys().toArray().sort()} hideControls={!App.selectedTrigger} allowMoving={false} itemTitle={(item) => item} onadd={() => isCreatingVariable = true} ondelete={() => {
+}} {html} items={App.selectedTrigger?.variables.keys().toArray().sort()} hideControls={!App.selectedTrigger} allowMoving={false} itemTitle={(item) => item} onadd={() => isCreatingVariable = true} ondelete={() => {
     App.selectedTrigger?.variables.delete(selectedVariable);
 }} title="Variables" bind:selected={selectedVariable}></List>
 

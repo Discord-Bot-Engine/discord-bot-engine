@@ -15,7 +15,7 @@
 		onadd = () => {},
 		ondblclick = () => {},
 		itemTitle = () => {},
-		itemIcon,
+		html,
 		selected = $bindable()
 	} = $props();
 
@@ -54,8 +54,8 @@
 									ondblclick={() => { selected = item; ondblclick(item) }}
 									onclick={() => selected = item}
 							>
-								{#if itemIcon}
-									{@render itemIcon(item, i)}
+								{#if html}
+									{@render html(item, i)}
 								{/if}
 								{itemTitle(item, i)}
 							</Button>
@@ -73,6 +73,9 @@
 									ondblclick={() => { selected = item; ondblclick(item) }}
 									onclick={() => selected = item}
 							>
+								{#if html}
+									{@render html(item, i)}
+								{/if}
 								{itemTitle(item, i)}
 							</Button>
 						</div>
