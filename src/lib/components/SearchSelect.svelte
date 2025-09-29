@@ -1,7 +1,7 @@
-<script lang="ts">
+<script>
     import CheckIcon from "@lucide/svelte/icons/check";
     import {ChevronDownIcon} from "@lucide/svelte";
-    import { tick } from "svelte";
+    import {onMount, tick} from "svelte";
     import * as Command from "$lib/components/ui/command/index.js";
     import * as Popover from "$lib/components/ui/popover/index.js";
     import { Button } from "$lib/components/ui/button/index.js";
@@ -9,11 +9,13 @@
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
 
     let {values, type = "single", value = $bindable(), onValueChange=() => {}, ...other} = $props()
+    let search = $state("")
     let open = $state(false);
-    let triggerRef = $state<HTMLButtonElement>(null!);
+    let triggerRef = $state(null);
+    let ref = $state(null);
     if(type === "multiple") value = []
     const selectedValue = $derived(
-        type === "single" ? values.find((f) => f.value === value)?.label : values.filter((f) => value?.includes(f.value))?.map(el => el.label)
+        type === "single" ? values.find((f) => f.value === value)?.label ?? value : values.filter((f) => value?.includes(f.value))?.map(el => el.label).length ? values.filter((f) => value?.includes(f.value))?.map(el => el.label) : value
     );
     function closeAndFocusTrigger() {
         open = false;
@@ -21,6 +23,16 @@
             triggerRef.focus();
         });
     }
+    $effect(() => {
+            if(ref)  {
+                ref.oninput = (ev) => {
+                    if(search.match(/\${(.*?)}/g))
+                        value = search
+                    else
+                        value = type === "single" ? "" : []
+                }
+            }
+    })
 </script>
 
 <Popover.Root bind:open>
@@ -33,14 +45,14 @@
                     role="combobox"
                     aria-expanded={open}
             >
-                <label class="text-ellipsis white-space-nowrap overflow-hidden">{selectedValue || "Select an option"}</label>
+                <label class="text-ellipsis white-space-nowrap overflow-hidden">{selectedValue?.length ? selectedValue : "Select an option"}</label>
                 <ChevronDownIcon class="ml-auto size-4 shrink-0 opacity-50" />
             </Button>
         {/snippet}
     </Popover.Trigger>
     <Popover.Content class="w-full p-0">
         <Command.Root>
-            <Command.Input placeholder="Search option" />
+            <Command.Input bind:ref={ref} bind:value={search} placeholder="Search option" />
             <ScrollArea class="max-h-[30vh]">
             <Command.List class="!overflow-visible !max-h-[200px]">
                 <Command.Empty>No option found.</Command.Empty>
