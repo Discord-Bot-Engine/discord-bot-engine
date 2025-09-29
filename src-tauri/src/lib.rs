@@ -6,6 +6,7 @@ use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
+use serde_json::{json, Value};
 
 struct BotManager {
     bots: Mutex<HashMap<String, CommandChild>>,
@@ -193,17 +194,58 @@ fn remove_extension(_app: tauri::AppHandle, bot_path:String, extension:String, s
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn save_bot_triggers(_app: tauri::AppHandle, bot_path:String, triggers_json:String) {
-    let triggers_path = Path::new(&bot_path).join("data").join("triggers.json");
+fn save_bot_triggers(
+    _app: tauri::AppHandle,
+    bot_path: String,
+    modified_triggers: Vec<String>,
+    trigger_contents: Vec<String>,
+    removed_triggers: Vec<String>,
+) {
     tauri::async_runtime::spawn(async move {
-        fs::write(&triggers_path, triggers_json).unwrap();
+        for (file, content) in modified_triggers.into_iter().zip(trigger_contents.into_iter()) {
+            let trigger_path = Path::new(&bot_path).join("data").join(file + ".json");
+            if let Err(err) = fs::write(&trigger_path, content) {
+                eprintln!("Failed to write to {:?}: {}", trigger_path, err);
+            }
+        }
+        for file in removed_triggers {
+            let trigger_path = Path::new(&bot_path).join("data").join(file + ".json");
+            if let Err(err) = fs::remove_file(&trigger_path) {
+                eprintln!("Failed to remove {:?}: {}", trigger_path, err);
+            }
+        }
     });
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn load_bot_triggers(bot_path:String) -> String {
-    let triggers_path = Path::new(&bot_path).join("data").join("triggers.json");
-    fs::read_to_string(&triggers_path).expect("Failed to read triggers file")
+fn load_bot_triggers(bot_path: String) -> String {
+    let data_dir = Path::new(&bot_path).join("data");
+
+    let mut triggers: Vec<Value> = Vec::new();
+
+    if let Ok(entries) = fs::read_dir(&data_dir) {
+        for entry in entries.flatten() {
+            if let Ok(file_type) = entry.file_type() {
+                if file_type.is_file() {
+                    if let Some(file_name) = entry.file_name().to_str() {
+                        if file_name.len() == 41 {
+                            match fs::read_to_string(entry.path()) {
+                                Ok(content) => {
+                                    match serde_json::from_str::<Value>(&content) {
+                                        Ok(json_obj) => triggers.push(json_obj),
+                                        Err(err) => eprintln!("Invalid JSON in {:?}: {}", entry.path(), err),
+                                    }
+                                }
+                                Err(err) => eprintln!("Failed to read {:?}: {}", entry.path(), err),
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    json!(triggers).to_string()
 }
 
 #[tauri::command(rename_all = "snake_case")]

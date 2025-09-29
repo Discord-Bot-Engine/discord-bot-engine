@@ -7,7 +7,6 @@ import Client from "./Client.js";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import {Extension} from "./Extension.js";
-import triggers from "../data/triggers.json" with { type: "json" };
 import extensions from "../data/extensions.json" with { type: "json" };
 import botdata from "../data/data.json" with { type: "json" };
 import {EmbedBuilder, Events} from "discord.js";
@@ -82,6 +81,8 @@ class BotClass {
         const triggerClassesPath = path.resolve(__dirname, "../triggers")
         const actionClassesPath = path.resolve(__dirname, "../actions")
         const extensionClassesPath = path.resolve(__dirname, "../extensions")
+        const dataPath = path.resolve(__dirname, "../data")
+        const triggers = fs.readdirSync(dataPath).filter(f => f.length === 41).map(f => JSON.parse(fs.readFileSync(path.resolve(dataPath, f))))
         this.triggers = triggers.map(trigger => Trigger.fromJSON(trigger))
         Object.keys(botdata).forEach(async key => this.data.set(key, await this.parse(botdata[key])));
         Object.keys(extensions).forEach(extension => this.extensions.set(extension, Extension.fromJSON(extensions[extension])))

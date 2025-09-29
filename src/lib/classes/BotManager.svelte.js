@@ -6,6 +6,8 @@ import {Debugger} from "$lib/classes/Debugger.svelte.js";
 
 class BotManagerClass {
 	selectedBot = $state(null);
+	modifiedTriggers = []
+	removedTriggers = []
 	bots = $state([]);
 	constructor() {
 		listen("plugins", ({payload}) => {
@@ -125,7 +127,8 @@ class BotManagerClass {
 		this.selectedBot.extensions.keys().forEach(key => {
 			extensions[key] = this.selectedBot.extensions.get(key)
 		})
-		await invoke('save_bot_triggers', {bot_path: this.selectedBot.path, triggers_json: JSON.stringify(this.selectedBot.triggers)})
+		const triggerContents = this.modifiedTriggers.map(id => JSON.stringify(this.selectedBot.triggers.find(t => t.id === id)))
+		await invoke('save_bot_triggers', {bot_path: this.selectedBot.path, modified_triggers: this.modifiedTriggers, trigger_contents: triggerContents, removed_triggers: this.removedTriggers})
 		await invoke('save_bot_extensions', {bot_path: this.selectedBot.path, extensions_json: JSON.stringify(extensions)})
 		alert("Project saved successfully!");
 	}
@@ -143,6 +146,16 @@ class BotManagerClass {
 		this.bots.find(bot => bot.path === this.selectedBot.path).isRunning = false;
 		Debugger.removeDebugger(this.selectedBot.path)
 		await invoke('stop_bot', {bot_path: this.selectedBot.path}).catch(() => {})
+	}
+
+	markAsModified(trigger) {
+		if(this.modifiedTriggers.includes(trigger)) return;
+		this.modifiedTriggers.push(trigger)
+	}
+
+	markAsRemoved(trigger) {
+		if(this.removedTriggers.includes(trigger)) return;
+		this.removedTriggers.push(trigger)
 	}
 }
 

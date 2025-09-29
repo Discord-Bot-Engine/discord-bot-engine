@@ -19,6 +19,7 @@
     function addAction() {
         if(actionType.toLowerCase() === "none") return;
         actions.push(new Action(uuidv4(), actionType))
+        BotManager.markAsModified(App.selectedTrigger.id)
         isCreatingAction = false;
     }
     function editAction() {
@@ -28,6 +29,7 @@
         handlersCopy = window.handlers
         const data = selectedAction.data
         App.saveUIData(ref, data)
+        BotManager.markAsModified(App.selectedTrigger.id)
         isEditingAction = false
     }
     function itemTitle(item, i) {
@@ -63,6 +65,7 @@
     }, 10)
 }} ondelete={() => {
     actions.splice(actions.indexOf(selectedAction), 1);
+    BotManager.markAsModified(App.selectedTrigger.id)
 }} {title} {itemIcon} items={actions ?? []} hideControls={!App.selectedTrigger} onadd={() => isCreatingAction = true} {itemTitle} bind:selected={selectedAction}></List>
 
 <Modal bind:open={isCreatingAction} title="Add Action" onDone={() => addAction()}>
