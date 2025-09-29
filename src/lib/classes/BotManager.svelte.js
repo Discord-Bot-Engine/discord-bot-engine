@@ -13,6 +13,7 @@ class BotManagerClass {
 		listen("plugins", ({payload}) => {
 			const plugins = JSON.parse(payload[1])
 			const bot = this.bots.find(b => b.path === payload[0])
+			bot.isLoading = false
 			if(plugins.type === "extensions") {
 				bot.extensionClasses = plugins.data
 				bot.extensionClasses.forEach(p => {

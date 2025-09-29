@@ -26,6 +26,7 @@ class Bot {
 	extensions = new SvelteMap();
 	debugTriggers = $state([])
 	debugTrigger = $state(null)
+	isLoading = $state(true)
 
 	constructor(name, path) {
 		this.name = name;

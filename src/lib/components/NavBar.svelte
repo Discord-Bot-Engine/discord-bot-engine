@@ -1,6 +1,6 @@
 <script>
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { CodeXmlIcon, HouseIcon, SettingsIcon, ShoppingBagIcon, WifiIcon } from '@lucide/svelte';
+	import { CodeXmlIcon, HouseIcon, SettingsIcon, BlocksIcon } from '@lucide/svelte';
 
 	let selectedItem = $state(0);
 
@@ -22,14 +22,9 @@
 			icon: SettingsIcon
 		},
 		{
-			title: 'Marketplace',
-			url: '/marketplace',
-			icon: ShoppingBagIcon
-		},
-		{
-			title: 'Networking',
-			url: '/networking',
-			icon: WifiIcon
+			title: 'Plugins',
+			url: '/plugins',
+			icon: BlocksIcon
 		}
 	];
 </script>
