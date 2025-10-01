@@ -22,6 +22,7 @@ export class Trigger {
         triggerClass.load({
             id: this.id,
             data: this.actionManager.parseFields(this.data),
+            rawData: this.data,
             actionManager: this.actionManager
         })
         this.actionManager.actionList.forEach(action => action.load({actionManager: this.actionManager}))
@@ -51,6 +52,7 @@ export class Trigger {
             await Bot.triggerClasses.find(t => t.type === this.type).run({
                 id: this.id,
                 data: this.actionManager.parseFields(this.data),
+                rawData: this.data,
                 actionManager: this.actionManager
             }, ...args)
             if(Bot.debugger) Bot.sendVariablesData(this)

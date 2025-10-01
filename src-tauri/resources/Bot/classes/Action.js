@@ -13,7 +13,12 @@ export class Action{
     }
 
     load(context) {
-        Bot.actionClasses.find(t => t.type === this.type)?.load({...context, id:this.id, data:context.actionManager.parseFields(this.data)})
+        Bot.actionClasses.find(t => t.type === this.type)?.load({
+            ...context,
+            id:this.id,
+            data: context.actionManager.parseFields(this.data),
+            rawData: this.data
+        })
     }
 
     async run(context) {
@@ -21,7 +26,8 @@ export class Action{
             await Bot.actionClasses.find(act => act.type === this.type).run({
                 ...context,
                 id: this.id,
-                data: context.actionManager.parseFields(this.data)
+                data: context.actionManager.parseFields(this.data),
+                rawData: this.data
             })
         } catch(error) {
             if(Bot.debugger) return console.log(error.stack)

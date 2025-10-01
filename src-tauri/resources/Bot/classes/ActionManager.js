@@ -7,51 +7,53 @@ export class ActionManager {
     variables = new Map()
     runningActionIndex = 0
     onFinish = () => {}
+    onReturn = () => {}
 
-    constructor(trigger, name, actionList, variables = new Map(), onFinish = () => {})
+    constructor(trigger, name, actionList, variables = new Map(), onFinish = () => {}, onReturn = () => {})
     {
         this.trigger = trigger;
         this.name = name;
-        this.actionList = actionList
-        this.variables = variables
-        this.onFinish = onFinish
+        this.actionList = actionList;
+        this.variables = variables;
+        this.onFinish = onFinish;
+        this.onReturn = onReturn;
     }
 
     reset() {
-        this.variables = new Map()
-        this.runningActionIndex = 0
+        this.variables = new Map();
+        this.runningActionIndex = 0;
     }
 
     runNext() {
-        const action = this.actionList[this.runningActionIndex]
+        const action = this.actionList[this.runningActionIndex];
         if(Bot.debugger.breakPoints.includes(action.id)) return;
-        if(this.runningActionIndex >= this.actionList.length) return this.onFinish()
-        this.runningActionIndex++
+        if(this.runningActionIndex >= this.actionList.length) return this.onFinish();
+        this.runningActionIndex++;
         action.run({
             actionManager: this
-        })
+        });
     }
 
     setVariable(name, value) {
-        this.variables.set(name, value)
+        this.variables.set(name, value);
     }
 
     getVariable(name) {
-        return this.variables.get(name)
+        return this.variables.get(name);
     }
 
     parseFields(data) {
-        const parsed = new Map()
-        const variables = {}
+        const parsed = new Map();
+        const variables = {};
         this.variables.keys().forEach(key => {
-            variables[key] = this.variables.get(key)
-        })
+            variables[key] = this.variables.get(key);
+        });
         data.keys().forEach(item => {
-            let result = data.get(item)
-            if(typeof result !== "string") return parsed.set(item, result)
-            parsed.set(item, this.eval(result))
-        })
-        return parsed
+            let result = data.get(item);
+            if(typeof result !== "string") return parsed.set(item, result);
+            parsed.set(item, this.eval(result));
+        });
+        return parsed;
     }
 
     eval(text) {
