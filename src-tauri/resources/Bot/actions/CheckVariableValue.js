@@ -23,6 +23,10 @@ export default class CheckVariableValue {
             <dbe-label name="Value"></dbe-label>
             <dbe-input name="value" class="col-span-3"></dbe-input>
         </div>
+        <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Run mode"></dbe-label>
+            <dbe-select name="mode" class="col-span-3" value="Continue" values="Continue,Stop"></dbe-select>
+        </div>
         <dbe-action-list name="Run Actions If True" title="Run Actions If True"></dbe-action-list>
         <dbe-action-list name="Run Actions If False" title="Run Actions If False"></dbe-action-list>
     `
@@ -32,6 +36,7 @@ export default class CheckVariableValue {
         const variable = Bot.getVariable(data.get("variable"))
         const condition = data.get("condition")
         const value = data.get("value")
+        const mode = data.get("mode")
         const ifTrue = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Variable Value (Run Actions If True)`, data.get("Run Actions If True"), actionManager.variables)
         const ifFalse = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Variable Value (Run Actions If False)`, data.get("Run Actions If False"), actionManager.variables)
         if(condition === "Equal to") {
@@ -47,6 +52,7 @@ export default class CheckVariableValue {
             if(variable.includes(value)) ifTrue.runNext()
             else ifFalse.runNext()
         }
-        actionManager.runNext()
+        if(mode === "Continue")
+            actionManager.runNext()
     }
 }
