@@ -22,7 +22,7 @@ export default class StoreElementFromList {
     static async run({data, actionManager}) {
         const list = actionManager.getVariable(data.get("list"))
         let returned = false
-        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Store Element From List (Run Actions To Find Element)`, data.get("Run Actions To Find Element"), actionManager.variables, () => {getElement()}, (v) => {
+        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Store Element From List: Run Actions To Find Element`, data.get("Run Actions To Find Element"), actionManager.variables, () => {getElement()}, (v) => {
             returned = true
             actionManager.setVariable(data.get("value"), v)
             actionManager.runNext()

@@ -35,8 +35,8 @@ export default class CheckMentionableType {
         const type = data.get("type")
         const tmode = data.get("tmode")
         const fmode = data.get("fmode")
-        const ifTrue = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Mentionable Type (Run Actions If True)`, data.get("Run Actions If True"), actionManager.variables, () => {}, actionManager.onReturn)
-        const ifFalse = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Mentionable Type (Run Actions If False)`, data.get("Run Actions If False"), actionManager.variables, () => {}, actionManager.onReturn)
+        const ifTrue = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Mentionable Type: Run Actions If True`, data.get("Run Actions If True"), actionManager.variables, () => {}, actionManager.onReturn)
+        const ifFalse = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Mentionable Type: Run Actions If False`, data.get("Run Actions If False"), actionManager.variables, () => {}, actionManager.onReturn)
         if(type === "User") {
             if(mentionable instanceof User) {
                 ifTrue.runNext()

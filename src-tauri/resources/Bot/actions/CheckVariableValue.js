@@ -42,8 +42,8 @@ export default class CheckVariableValue {
         const value = data.get("value")
         const tmode = data.get("tmode")
         const fmode = data.get("fmode")
-        const ifTrue = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Variable Value (Run Actions If True)`, data.get("Run Actions If True"), actionManager.variables)
-        const ifFalse = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Variable Value (Run Actions If False)`, data.get("Run Actions If False"), actionManager.variables)
+        const ifTrue = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Variable Value: Run Actions If True`, data.get("Run Actions If True"), actionManager.variables)
+        const ifFalse = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Variable Value: Run Actions If False`, data.get("Run Actions If False"), actionManager.variables)
         if(condition === "Equal to") {
             if(String(variable) === value) {
                 ifTrue.runNext()
