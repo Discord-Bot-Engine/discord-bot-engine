@@ -1,8 +1,8 @@
 import {Dashboard} from "../classes/Dashboard.js";
 import {Bot} from "../classes/Bot.js";
 
-export default class ReplyWithComponents {
-    static type = "Reply With Components"
+export default class Reply {
+    static type = "Reply"
     static title(data) {
         return `Reply to "${data.get("origin")}" with ${data.get("components").length} components`
     }

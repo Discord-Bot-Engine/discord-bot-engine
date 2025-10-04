@@ -37,7 +37,7 @@ export default class CheckVariableValue {
     static load(context) {
     }
     static async run({data, actionManager}) {
-        const variable = Bot.getVariable(data.get("variable"))
+        const variable = actionManager.getVariable(data.get("variable"))
         const condition = data.get("condition")
         const value = data.get("value")
         const tmode = data.get("tmode")
