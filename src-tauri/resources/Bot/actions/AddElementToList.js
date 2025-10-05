@@ -1,5 +1,3 @@
-import {ActionManager} from "../classes/ActionManager.js";
-
 export default class AddElementToList {
     static type = "Add Element To List"
     static title(data) {
