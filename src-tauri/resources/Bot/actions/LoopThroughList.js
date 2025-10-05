@@ -1,17 +1,17 @@
 import {ActionManager} from "../classes/ActionManager.js";
 
-export default class StoreElementFromList {
-    static type = "Store Element From List"
+export default class LoopThroughList {
+    static type = "Loop Through List"
     static title(data) {
-        return `Store element from list "${data.get("list")}" in "${data.get("value")}"`
+        return `Loop through "${data.get("list")}"`
     }
-    static variableTypes = ["List", "Number"]
+    static variableTypes = ["List"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="List"></dbe-label>
             <dbe-variable-list name="list" class="col-span-3" variableType="List"></dbe-variable-list>
         </div>
-        <dbe-action-list name="Run Actions To Find Element" title="Run Actions To Find Element"></dbe-action-list>
+        <dbe-action-list name="Run Actions" title="Run Actions"></dbe-action-list>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store element in variable"></dbe-label>
             <dbe-variable-list name="value" class="col-span-3" variableType="Any"></dbe-variable-list>
@@ -25,15 +25,11 @@ export default class StoreElementFromList {
     }
     static async run({data, actionManager}) {
         const list = actionManager.getVariable(data.get("list"))
-        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Store Element From List: Run Actions To Find Element`, data.get("Run Actions To Find Element"), actionManager.variables, () => { iterate() }, (v) => {
-            actionManager.setVariable(data.get("value"), v)
-            actionManager.setVariable(data.get("pos"), list.indexOf(v) + 1)
-            actionManager.runNext()
-        })
+        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Loop Through List: Run Actions`, data.get("Run Actions"), actionManager.variables, () => { iterate() }, actionManager.onReturn)
         let i = 0;
         iterate()
         function iterate() {
-            if(i >= list.length) return actionManager.runNext()
+            if(i >= list.length) return actionManager.runNext();
             actions.setVariable(data.get("value"), list[i])
             actions.setVariable(data.get("pos"), i + 1)
             actions.runNext()
