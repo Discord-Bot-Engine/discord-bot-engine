@@ -36,14 +36,14 @@ import {__dirname} from "./Bot.js";
         )
     )
 
-    triggerClasses = triggerClasses.filter(m => m).map(trigger => ({
+    triggerClasses = triggerClasses.filter(m => m.content).map(trigger => ({
         type: trigger.content.default.type,
         variableTypes: trigger.content.default.variableTypes,
         html: trigger.content.default.html,
         open: trigger.content.default.open?.toString(),
         file: trigger.file
     }))
-    actionClasses = actionClasses.filter(m => m).map(action => ({
+    actionClasses = actionClasses.filter(m => m.content).map(action => ({
         type: action.content.default.type,
         title: action.content.default.title.toString(),
         variableTypes: action.content.default.variableTypes,
@@ -51,7 +51,7 @@ import {__dirname} from "./Bot.js";
         open: action.content.default.open?.toString(),
         file: action.file
     }))
-    extensionClasses = extensionClasses.filter(m => m).map(extension => ({
+    extensionClasses = extensionClasses.filter(m => m.content).map(extension => ({
         type: extension.content.default.type,
         html: extension.content.default.html,
         open: extension.content.default.open?.toString(),
