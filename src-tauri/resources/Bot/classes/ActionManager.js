@@ -26,7 +26,7 @@ export class ActionManager {
 
     runNext() {
         const action = this.actionList[this.runningActionIndex];
-        if(Bot.debugger.breakPoints.includes(action.id)) return;
+        if(Bot.debugger?.breakPoints.includes(action.id)) return;
         if(this.runningActionIndex >= this.actionList.length) return this.onFinish();
         this.runningActionIndex++;
         action.run({
