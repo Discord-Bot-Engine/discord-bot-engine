@@ -3,7 +3,7 @@ import {ActionManager} from "../classes/ActionManager.js";
 export default class StoreElementFromList {
     static type = "Store Element From List"
     static title(data) {
-        return `Store element from list "${data.get("list")}" in "${data.get("value")}"`
+        return `Store element from "${data.get("list")}" in "${data.get("value")}"`
     }
     static variableTypes = ["List", "Number"]
     static html = `
