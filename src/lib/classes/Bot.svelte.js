@@ -51,14 +51,14 @@ class Bot {
 		invoke("load_bot_plugins", {bot_path: this.path});
 	}
 
-	markAsModified(trigger) {
-		if(this.modifiedTriggers.includes(trigger)) return;
-		this.modifiedTriggers.push(trigger)
+	markAsModified(triggerId) {
+		if(this.modifiedTriggers.includes(triggerId)) return;
+		this.modifiedTriggers.push(triggerId)
 	}
 
-	markAsRemoved(trigger) {
-		if(this.removedTriggers.includes(trigger)) return;
-		this.removedTriggers.push(trigger)
+	markAsRemoved(triggerId) {
+		if(this.removedTriggers.includes(triggerId)) return;
+		this.removedTriggers.push(triggerId)
 	}
 
 	toJSON() {

@@ -19,6 +19,7 @@
         if(!variableName.trim() || variableType.toLowerCase() === "none") return;
         if(App.selectedTrigger?.variables.get(variableName)?.toLowerCase() === variableType.toLowerCase()) return alert("Variable already exists!");
         App.selectedTrigger?.variables.set(variableName, variableType.toLowerCase());
+        BotManager.selectedBot.markAsModified(App.selectedTrigger.id);
         isCreatingVariable = false;
     }
     function editVariable() {
@@ -26,6 +27,7 @@
         if(App.selectedTrigger?.variables.has(variableEditName) && selectedVariable !== variableEditName) return alert("Variable already exists!");
         App.selectedTrigger?.variables.delete(selectedVariable)
         App.selectedTrigger?.variables.set(variableEditName, variableEditType.toLowerCase())
+        BotManager.selectedBot.markAsModified(App.selectedTrigger.id);
         selectedVariable = variableEditName;
         isEditingVariable = false
     }
