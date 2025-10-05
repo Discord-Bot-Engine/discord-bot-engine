@@ -127,7 +127,6 @@ class BotManagerClass {
 			extensions[key] = this.selectedBot.extensions.get(key)
 		})
 		const triggerContents = this.selectedBot.modifiedTriggers.filter(id => this.selectedBot.triggers.find(t => t.id === id)).map(id => JSON.stringify(this.selectedBot.triggers.find(t => t.id === id)))
-		console.log(triggerContents)
 		await invoke('save_bot_triggers', {bot_path: this.selectedBot.path, modified_triggers: this.selectedBot.modifiedTriggers, trigger_contents: triggerContents, removed_triggers: this.selectedBot.removedTriggers})
 		await invoke('save_bot_extensions', {bot_path: this.selectedBot.path, extensions_json: JSON.stringify(extensions)})
 		this.selectedBot.modifiedTriggers = []
