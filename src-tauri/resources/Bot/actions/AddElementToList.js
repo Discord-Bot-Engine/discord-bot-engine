@@ -10,7 +10,7 @@ export default class AddElementToList {
             <dbe-variable-list name="list" class="col-span-3" variableType="List"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Element in variable"></dbe-label>
+            <dbe-label name="Element"></dbe-label>
             <dbe-variable-list name="value" class="col-span-3" variableType="Any"></dbe-variable-list>
         </div>
     `
