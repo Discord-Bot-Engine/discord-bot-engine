@@ -9,6 +9,7 @@ export class Trigger {
     type = ''
     data = new Map()
     actionManager = null
+    actionManagers = []
     constructor(id, name, type, actions) {
         this.id = id;
         this.name = name
@@ -27,25 +28,40 @@ export class Trigger {
         })
         this.actionManager.actionList.forEach(action => action.load({actionManager: this.actionManager}))
     }
+    addActionManager(manager) {
+        if(this.actionManagers.find(m => m.id === manager.id)) return;
+        this.actionManagers.push(manager)
+        Bot.sendDebugData({
+            type:"ACTION_MANAGERS",
+            data: {
+                id: this.id,
+                actionManagers: this.actionManagers.map(m => ({id: m.id, actions: m.actionList.map(action => action.id)}))
+            }
+        })
+    }
     async run(...args) {
         this.actionManager.reset()
+        this.actionManagers = []
         if(Bot.debugger){
             const data = {}
             this.data.keys().forEach(key => {
                 data[key] = this.data.get(key)
             })
             Bot.sendDebugData({
-                id:this.id,
-                name: this.name,
-                data,
-                type: this.type,
-                actions: this.actionManager.actionList.map(act => {
-                    const data = {}
-                    act.data.keys().forEach(key => {
-                        data[key] = act.data.get(key)
+                type:"TRIGGER",
+                data: {
+                    id: this.id,
+                    name: this.name,
+                    data,
+                    type: this.type,
+                    actions: this.actionManager.actionList.map(act => {
+                        const data = {}
+                        act.data.keys().forEach(key => {
+                            data[key] = act.data.get(key)
+                        })
+                        return {...act, data}
                     })
-                    return {...act, data}
-                })
+                }
             })
         }
         try {

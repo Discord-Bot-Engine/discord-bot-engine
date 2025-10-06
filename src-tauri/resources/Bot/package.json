@@ -23,6 +23,7 @@
     "node-fetch": "^3.3.2",
     "puppeteer-screen-recorder": "^3.0.6",
     "simple-folder-search": "^2.3.0",
-    "tmp": "^0.2.5"
+    "tmp": "^0.2.5",
+    "uuid": "^13.0.0"
   }
 }

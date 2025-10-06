@@ -53,22 +53,12 @@ class BotClass {
     }
 
     attachDebugger() {
-        this.debugger = new Debugger(async (triggerId, actionId) => {
+        this.debugger = new Debugger(async (triggerId, managerId, actionId) => {
             const t = this.triggers.find(t => t.id === triggerId)
-            let actions = []
-            getActions(t.actionManager.actionList, actions)
-            actions = actions.flat()
-            await actions.find(act => act.id === actionId).run({actionManager: t.actionManager})
+            const manager = t.actionManagers.find(m => m.id === managerId) ?? t.actionManager
+            manager.runningActionIndex = manager.actionList.findIndex(act => act.id === actionId)
+            manager.runNext()
             Bot.sendVariablesData(t);
-            function getActions(acts, actions) {
-                acts = acts.map(act => act instanceof Action ? act : Action.fromJSON(act))
-                actions.push(acts)
-                acts.forEach((act) => {
-                    act.data.keys().toArray().forEach(key => {
-                        if(Array.isArray(act.data.get(key)) && act.data.get(key).every(el => el.isAction)) getActions(act.data.get(key), actions)
-                    })
-                })
-            }
         });
     }
 

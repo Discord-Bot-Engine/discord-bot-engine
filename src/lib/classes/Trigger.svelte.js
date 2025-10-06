@@ -9,6 +9,7 @@ class Trigger {
 	actions = $state([]);
 	variables = new SvelteMap()
 	debugVariables = new SvelteMap()
+	actionManagers = $state([])
 
 	constructor(id, type, name) {
 		this.id = id;

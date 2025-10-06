@@ -1,6 +1,8 @@
 import {Bot} from "./Bot.js";
-import {Action} from "./Action.js";
+import { v4 as uuidv4 } from 'uuid';
+
 export class ActionManager {
+    id = uuidv4()
     name = ""
     trigger = {}
     actionList = []
@@ -17,6 +19,7 @@ export class ActionManager {
         this.variables = variables;
         this.onFinish = onFinish;
         this.onReturn = onReturn;
+        trigger.addActionManager(this)
     }
 
     reset() {
@@ -26,8 +29,8 @@ export class ActionManager {
 
     runNext() {
         const action = this.actionList[this.runningActionIndex];
-        if(Bot.debugger?.breakPoints.includes(action.id)) return;
         if(this.runningActionIndex >= this.actionList.length) return this.onFinish();
+        if(Bot.debugger?.breakPoints.includes(action.id)) return;
         this.runningActionIndex++;
         action.run({
             actionManager: this
@@ -50,13 +53,23 @@ export class ActionManager {
         });
         data.keys().forEach(item => {
             let result = data.get(item);
-            if(typeof result !== "string") return parsed.set(item, result);
-            parsed.set(item, this.eval(result));
+            if(typeof result !== "string") {
+                if(Array.isArray(result) && result.every(e => e.isCustom)) {
+                    const elements = []
+                    result.forEach(item => {
+                        const obj = {...item, data: this.parseFields(item.data)}
+                        elements.push(obj)
+                    })
+                    return parsed.set(item, elements);
+                } else
+                    return parsed.set(item, result);
+            }
+            parsed.set(item, this.eval(result, variables));
         });
         return parsed;
     }
 
-    eval(text) {
+    eval(text, variables) {
         let result = "";
         let i = 0;
 
@@ -74,7 +87,7 @@ export class ActionManager {
                 const expr = text.slice(i, j);
                 try {
                     result += eval("`" + expr + "`");
-                } catch {
+                } catch(e) {
                     result += expr;
                 }
                 i = j;
@@ -85,7 +98,6 @@ export class ActionManager {
                 result += text[i++];
             }
         }
-
         return result;
     }
 }

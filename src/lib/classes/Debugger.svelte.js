@@ -3,6 +3,7 @@ import {Webview} from "@tauri-apps/api/webview";
 import {Window} from "@tauri-apps/api/window";
 import {BotManager} from "$lib/classes/BotManager.svelte.js";
 import {SvelteMap} from "svelte/reactivity";
+import Action from "$lib/classes/Action.svelte.js"
 
 class DebuggerClass {
 	windows = new SvelteMap()
@@ -11,7 +12,8 @@ class DebuggerClass {
 	async debugAction(path, trigger, action) {
 		const bot = BotManager.bots.find(bot => bot.path === path);
 		bot.debugTrigger = bot.debugTriggers.find(t => t.id === trigger)
-		await invoke("debug_action", {bot_path: path, trigger_id:trigger, action_id:action})
+		const actionManager = bot.debugTrigger.actionManagers.find(m => m.actions.find(act => act === action))?.id ?? ""
+		await invoke("debug_action", {bot_path: path, trigger_id:trigger, action_id:action, manager_id:actionManager})
 	}
 	attachDebugger() {
 		const path = BotManager.selectedBot.path
@@ -23,7 +25,7 @@ class DebuggerClass {
 		debugWindow.setTitle(`Debugging ${BotManager.selectedBot.name}`)
 		debugWindow.once('tauri://created', async () => {
 			new Webview(debugWindow, `debug-${BotManager.selectedBot.name.replace(/\s/g, '_')}`, {
-				url: `/debugger?path=${BotManager.selectedBot.path}&debugTriggers=${encodeURIComponent(JSON.stringify(BotManager.selectedBot.debugTriggers))}`,
+				url: `/debugger?path=${BotManager.selectedBot.path}`,
 				x: 0,
 				y: 0,
 				width: 350,
@@ -56,10 +58,13 @@ class DebuggerClass {
 		actions = actions.flat().filter(act => act.isBreakPoint).map(act => act.id)
 		actions.forEach(id => this.markAsBreakPoint(id))
 		function getActions(acts, actions) {
+			acts = acts.map(act => act instanceof Action ? act : Action.fromJSON(act))
 			actions.push(acts)
 			acts.forEach((act) => {
 				act.data.keys().toArray().forEach(key => {
-					if(Array.isArray(act.data.get(key)) && act.data.get(key).every(el => el.isAction)) getActions(act.data.get(key), actions)
+					if(Array.isArray(act.data.get(key)) && act.data.get(key).every(el => el.isAction)) {
+						getActions(act.data.get(key), actions)
+					}
 				})
 			})
 		}

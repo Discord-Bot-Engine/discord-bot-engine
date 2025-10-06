@@ -25,15 +25,18 @@ export default class LoopThroughList {
     }
     static async run({data, actionManager}) {
         const list = actionManager.getVariable(data.get("list"))
-        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Loop Through List: Run Actions`, data.get("Run Actions"), actionManager.variables, () => { iterate() }, actionManager.onReturn)
         let i = 0;
+        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Loop Through List: Run Actions`, data.get("Run Actions"), actionManager.variables, () => {
+            actions.runningActionIndex = 0;
+            iterate()
+        }, actionManager.onReturn)
         iterate()
         function iterate() {
             if(i >= list.length) return actionManager.runNext();
             actions.setVariable(data.get("value"), list[i])
             actions.setVariable(data.get("pos"), i + 1)
-            actions.runNext()
             i++;
+            actions.runNext()
         }
     }
 }

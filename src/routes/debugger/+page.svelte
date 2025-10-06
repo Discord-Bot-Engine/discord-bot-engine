@@ -11,13 +11,7 @@
     import {Debugger} from "$lib/classes/Debugger.svelte.js";
     getCurrentWebview().setAutoResize(true);
     let bot = $derived(BotManager.bots.find(bot => bot.path === page.url.searchParams.get("path")));
-    let init = false
-    $effect(() => {
-        if(bot && !init) {
-            init = true;
-            bot.debugTriggers = JSON.parse(decodeURIComponent(page.url.searchParams.get("debugTriggers"))).map(t => Trigger.fromJSON(t))
-        }
-    })
+    $inspect(bot?.debugTriggers)
 </script>
 <ScrollArea class="h-full">
 <div class="w-full h-full flex flex-col gap-1">
@@ -52,7 +46,9 @@
                 {#each act.data.keys().toArray() ?? [] as key}
                     {#if Array.isArray(act.data.get(key)) && act.data.get(key).every(el => el.isAction)}
                         {#each act.data.get(key) as act}
-                            {@render action(trigger, Action.fromJSON(act), `${key}: `)}
+                                {#if trigger.actionManagers.find(m => m.actions.find(a => a === act.id))}
+                                    {@render action(trigger, Action.fromJSON(act), `${key}: `)}
+                                {/if}
                         {/each}
                     {/if}
                 {/each}

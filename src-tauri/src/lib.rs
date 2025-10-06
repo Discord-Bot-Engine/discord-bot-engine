@@ -18,12 +18,13 @@ fn debug_action(
     state: tauri::State<'_, BotManager>,
     bot_path: String,
     trigger_id:String,
+    manager_id:String,
     action_id: String,
 ) -> Result<(), String> {
     let mut bots = state.bots.lock().map_err(|e| e.to_string())?;
 
     let bot = bots.get_mut(&bot_path).ok_or("Bot not found")?;
-    let data = format!("$DEBUGGER$$$ {trigger_id} {action_id}");
+    let data = format!("$DEBUGGER$$$ {trigger_id} {manager_id} {action_id}");
     bot.write(data.as_bytes()).map_err(|e| e.to_string())?;
 
     Ok(())

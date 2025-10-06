@@ -32,6 +32,7 @@ export default class FilterList {
         const filtered = []
         const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Filter List: Run Actions To Filter`, data.get("Run Actions To Filter"), actionManager.variables, () => { iterate() }, (v) => {
             filtered.push(v)
+            actions.runningActionIndex = 0;
             iterate()
         })
         let i = 0;
@@ -44,8 +45,8 @@ export default class FilterList {
             }
             actions.setVariable(data.get("value"), list[i])
             actions.setVariable(data.get("pos"), i + 1)
-            actions.runNext()
             i++;
+            actions.runNext()
         }
     }
 }
