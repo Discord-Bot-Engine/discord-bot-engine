@@ -26,13 +26,18 @@
             </div>
             <Collapsible.Content>
                 {#each trigger.actions as act}
-                    {@render action(trigger, act, "")}
+                    {@render action(trigger, act, "", false)}
                 {/each}
             </Collapsible.Content>
         </Collapsible.Root>
     {/each}
-    {#snippet action(trigger, act, prefix)}
+    {#snippet action(trigger, act, prefix, showReset)}
         <Collapsible.Root>
+            {#if showReset && trigger.actionManagers.find(m => m.actions.find(a => a === act.id))?.canReset}
+                <div class="bg-popover border-b-1">
+                    <Button class="mr-1 size-6 mt-auto mb-auto text-xs w-full" variant="secondary" onclick={() => Debugger.resetManager(page.url.searchParams.get("path"), trigger.id, trigger.actionManagers.find(m => m.actions.find(a => a === act.id))?.id)}>Reset</Button>
+                </div>
+            {/if}
             <div class="flex w-full text-xs bg-popover pl-5 pr-2 py-1 border-b-1">
                 <label class="mt-auto mb-auto">{prefix}{act.data.keys().toArray().length === 0 ? act.type : BotManager.selectedBot.actionClasses.find(a => a.type === act.type)?.title?.(act.data) ?? act.type}</label>
                 <Button class="ml-auto mr-1 size-6 mt-auto mb-auto" onclick={() => Debugger.debugAction(page.url.searchParams.get("path"), trigger.id, act.id)}><PlayIcon></PlayIcon></Button>
@@ -44,9 +49,9 @@
             <Collapsible.Content>
                 {#each act.data.keys().toArray() ?? [] as key}
                     {#if Array.isArray(act.data.get(key)) && act.data.get(key).every(el => el.isAction)}
-                        {#each act.data.get(key) as act}
+                        {#each act.data.get(key) as act, i}
                                 {#if trigger.actionManagers.find(m => m.actions.find(a => a === act.id))}
-                                    {@render action(trigger, Action.fromJSON(act), `${key}: `)}
+                                    {@render action(trigger, Action.fromJSON(act), `${key}: `, i == 0)}
                                 {/if}
                         {/each}
                     {/if}

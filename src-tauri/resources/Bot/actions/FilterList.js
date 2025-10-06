@@ -34,6 +34,10 @@ export default class FilterList {
             filtered.push(v)
             actions.runningActionIndex = 0;
             iterate()
+        }, () => {
+            i = 0;
+            actions.setVariable(data.get("value"), list[i])
+            actions.setVariable(data.get("pos"), i + 1)
         })
         let i = 0;
         iterate()

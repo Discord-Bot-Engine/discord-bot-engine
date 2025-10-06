@@ -29,7 +29,11 @@ export default class LoopThroughList {
         const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Loop Through List: Run Actions`, data.get("Run Actions"), actionManager.variables, () => {
             actions.runningActionIndex = 0;
             iterate()
-        }, actionManager.onReturn)
+        }, actionManager.onReturn, () => {
+            i = 0;
+            actions.setVariable(data.get("value"), list[i])
+            actions.setVariable(data.get("pos"), i + 1)
+        })
         iterate()
         function iterate() {
             if(i >= list.length) return actionManager.runNext();

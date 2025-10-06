@@ -35,7 +35,7 @@ export class Trigger {
             type:"ACTION_MANAGERS",
             data: {
                 id: this.id,
-                actionManagers: this.actionManagers.map(m => ({id: m.id, actions: m.actionList.map(action => action.id)}))
+                actionManagers: this.actionManagers.map(m => ({id: m.id, canReset: m.canReset, actions: m.actionList.map(action => action.id)}))
             }
         })
     }

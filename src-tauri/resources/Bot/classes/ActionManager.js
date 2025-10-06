@@ -8,10 +8,12 @@ export class ActionManager {
     actionList = []
     variables = new Map()
     runningActionIndex = 0
+    canReset = false
     onFinish = () => {}
     onReturn = () => {}
+    onReset = () => {}
 
-    constructor(trigger, name, actionList, variables = new Map(), onFinish = () => {}, onReturn = () => {})
+    constructor(trigger, name, actionList, variables = new Map(), onFinish = () => {}, onReturn = () => {}, onReset = null)
     {
         this.trigger = trigger;
         this.name = name;
@@ -19,6 +21,10 @@ export class ActionManager {
         this.variables = variables;
         this.onFinish = onFinish;
         this.onReturn = onReturn;
+        if(onReset) {
+            this.onReset = onReset;
+            this.canReset = true;
+        }
         trigger.addActionManager(this)
     }
 
@@ -39,6 +45,7 @@ export class ActionManager {
 
     setVariable(name, value) {
         this.variables.set(name, value);
+        Bot.sendVariablesData(this.trigger);
     }
 
     getVariable(name) {

@@ -9,6 +9,10 @@ class DebuggerClass {
 	windows = new SvelteMap()
 	isAttached = $derived(this.windows.has(`${BotManager.selectedBot.path}-debug`))
 
+	async resetManager(path, trigger, manager) {
+		await invoke("reset_manager", {bot_path: path, trigger_id:trigger, manager_id:manager})
+	}
+
 	async debugAction(path, trigger, action) {
 		const bot = BotManager.bots.find(bot => bot.path === path);
 		bot.debugTrigger = bot.debugTriggers.find(t => t.id === trigger)

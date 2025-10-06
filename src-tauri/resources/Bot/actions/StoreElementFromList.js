@@ -30,6 +30,10 @@ export default class StoreElementFromList {
             actionManager.setVariable(data.get("value"), v)
             actionManager.setVariable(data.get("pos"), list.indexOf(v) + 1)
             actionManager.runNext()
+        }, () => {
+            i = 0;
+            actions.setVariable(data.get("value"), list[i])
+            actions.setVariable(data.get("pos"), i + 1)
         })
         let i = 0;
         iterate()
