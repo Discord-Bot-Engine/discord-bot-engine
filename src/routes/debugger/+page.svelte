@@ -11,7 +11,6 @@
     import {Debugger} from "$lib/classes/Debugger.svelte.js";
     getCurrentWebview().setAutoResize(true);
     let bot = $derived(BotManager.bots.find(bot => bot.path === page.url.searchParams.get("path")));
-    $inspect(bot?.debugTriggers)
 </script>
 <ScrollArea class="h-full">
 <div class="w-full h-full flex flex-col gap-1">

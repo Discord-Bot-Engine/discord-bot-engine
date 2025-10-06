@@ -15,6 +15,7 @@ class DebuggerClass {
 		const actionManager = bot.debugTrigger.actionManagers.find(m => m.actions.find(act => act === action))?.id ?? ""
 		await invoke("debug_action", {bot_path: path, trigger_id:trigger, action_id:action, manager_id:actionManager})
 	}
+
 	attachDebugger() {
 		const path = BotManager.selectedBot.path
 		invoke("attach_debugger", {bot_path: path})

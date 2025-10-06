@@ -57,7 +57,7 @@ class BotClass {
             const t = this.triggers.find(t => t.id === triggerId)
             const manager = t.actionManagers.find(m => m.id === managerId) ?? t.actionManager
             manager.runningActionIndex = manager.actionList.findIndex(act => act.id === actionId)
-            manager.runNext()
+            manager.runNext(true)
             Bot.sendVariablesData(t);
         });
     }

@@ -27,10 +27,10 @@ export class ActionManager {
         this.runningActionIndex = 0;
     }
 
-    runNext() {
+    runNext(ignoreCheck) {
         const action = this.actionList[this.runningActionIndex];
         if(this.runningActionIndex >= this.actionList.length) return this.onFinish();
-        if(Bot.debugger?.breakPoints.includes(action.id)) return;
+        if(Bot.debugger?.breakPoints.includes(action.id) && !ignoreCheck) return;
         this.runningActionIndex++;
         action.run({
             actionManager: this
