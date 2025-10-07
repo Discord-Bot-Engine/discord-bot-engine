@@ -18,14 +18,14 @@ export default class StoreSongLyrics {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
+    static async run({data, actionManager, setVariable}) {
         const song = data.get("song")
         const variable = data.get("variable")
         const player = useMainPlayer()
         const lyrics = await player.lyrics.search({
             q: song,
         });
-        actionManager.setVariable(variable, lyrics[0].plainLyrics)
+        setVariable(variable, lyrics[0].plainLyrics)
         actionManager.runNext()
     }
 }

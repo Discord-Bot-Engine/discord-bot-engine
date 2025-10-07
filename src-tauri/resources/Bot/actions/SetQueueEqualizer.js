@@ -25,8 +25,8 @@ export default class SetQueueEqualizer {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const server = actionManager.getVariable(data.get("server"))
+    static async run({data, actionManager, getVariable}) {
+        const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const bands = data.get("bands").map(({data}) => ({band: Number(data.get("band")) - 1, gain: Number(data.get("gain"))}))
         queue.filters.equalizer.setEQ(bands)

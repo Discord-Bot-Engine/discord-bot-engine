@@ -23,7 +23,7 @@ export default class FindUser {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
+    static async run({data, actionManager, setVariable}) {
         const by = data.get("by")
         let user
         if(by === "Id") {
@@ -31,7 +31,7 @@ export default class FindUser {
         } else {
             user = Bot.client.users.cache.find(user => user.username === data.get("value"))
         }
-        actionManager.setVariable(data.get("user"), user)
+        setVariable(data.get("user"), user)
         actionManager.runNext()
     }
 }

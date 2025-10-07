@@ -6,25 +6,17 @@ export class ActionManager {
     name = ""
     trigger = {}
     actionList = []
-    variables = new Map()
     runningActionIndex = 0
-    canReset = false
     onFinish = () => {}
     onReturn = () => {}
-    onReset = () => {}
 
-    constructor(trigger, name, actionList, variables = new Map(), onFinish = () => {}, onReturn = () => {}, onReset = null)
+    constructor(trigger, name, actionList, onFinish = () => {}, onReturn = () => {})
     {
         this.trigger = trigger;
         this.name = name;
         this.actionList = actionList;
-        this.variables = variables;
         this.onFinish = onFinish;
         this.onReturn = onReturn;
-        if(onReset) {
-            this.onReset = onReset;
-            this.canReset = true;
-        }
         trigger.addActionManager(this)
     }
 
@@ -39,24 +31,17 @@ export class ActionManager {
         if(Bot.debugger?.breakPoints.includes(action.id) && !ignoreCheck) return;
         this.runningActionIndex++;
         action.run({
-            actionManager: this
+            actionManager: this,
+            setVariable: this.trigger.setVariable.bind(this.trigger),
+            getVariable: this.trigger.getVariable.bind(this.trigger)
         });
-    }
-
-    setVariable(name, value) {
-        this.variables.set(name, value);
-        Bot.sendVariablesData(this.trigger);
-    }
-
-    getVariable(name) {
-        return this.variables.get(name);
     }
 
     parseFields(data) {
         const parsed = new Map();
         const variables = {};
-        this.variables.keys().forEach(key => {
-            variables[key] = this.variables.get(key);
+        this.trigger.variables.keys().forEach(key => {
+            variables[key] = this.trigger.variables.get(key);
         });
         data.keys().forEach(item => {
             let result = data.get(item);

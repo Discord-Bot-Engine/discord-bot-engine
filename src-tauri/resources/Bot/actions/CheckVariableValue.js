@@ -26,12 +26,12 @@ export default class CheckVariableValue {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const variable = actionManager.getVariable(data.get("variable"))
+    static async run({data, actionManager, getVariable}) {
+        const variable = getVariable(data.get("variable"))
         const condition = data.get("condition")
         const value = data.get("value")
-        const ifTrue = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Variable Value: Run Actions If True`, data.get("Run Actions If True"), actionManager.variables, () => { actionManager.runNext() }, actionManager.onReturn)
-        const ifFalse = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Variable Value: Run Actions If False`, data.get("Run Actions If False"), actionManager.variables, () => { actionManager.runNext() }, actionManager.onReturn)
+        const ifTrue = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Variable Value: Run Actions If True`, data.get("Run Actions If True"), () => { actionManager.runNext() }, actionManager.onReturn)
+        const ifFalse = new ActionManager(actionManager.trigger, `${actionManager.name} -> Check Variable Value: Run Actions If False`, data.get("Run Actions If False"), () => { actionManager.runNext() }, actionManager.onReturn)
         if(condition === "Equal to") {
             if(String(variable) === value) {
                 ifTrue.runNext()

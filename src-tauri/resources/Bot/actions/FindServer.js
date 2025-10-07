@@ -23,7 +23,7 @@ export default class FindServer {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
+    static async run({data, actionManager, setVariable}) {
         const by = data.get("by")
         let server
         if(by === "Id") {
@@ -31,7 +31,7 @@ export default class FindServer {
         } else {
             server = Bot.client.guilds.cache.find(server => server.name === data.get("value"))
         }
-        actionManager.setVariable(data.get("server"), server)
+        setVariable(data.get("server"), server)
         actionManager.runNext()
     }
 }

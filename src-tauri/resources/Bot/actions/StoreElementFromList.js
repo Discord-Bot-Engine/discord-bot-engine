@@ -23,24 +23,15 @@ export default class StoreElementFromList {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const list = actionManager.getVariable(data.get("list"))
-        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Store Element From List: Run Actions To Find Element`, data.get("Run Actions To Find Element"), actionManager.variables, () => { iterate() }, (v) => {
-            actions.runningActionIndex = 0;
-            actionManager.setVariable(data.get("value"), v)
-            actionManager.setVariable(data.get("pos"), list.indexOf(v) + 1)
-            actionManager.runNext()
-        }, () => {
-            i = 0;
-            actions.setVariable(data.get("value"), list[i])
-            actions.setVariable(data.get("pos"), i + 1)
-        })
+    static async run({data, actionManager, getVariable, setVariable}) {
+        const list = getVariable(data.get("list"))
+        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Store Element From List: Run Actions To Find Element`, data.get("Run Actions To Find Element"), () => { iterate() })
         let i = 0;
         iterate()
         function iterate() {
             if(i >= list.length) return actionManager.runNext()
-            actions.setVariable(data.get("value"), list[i])
-            actions.setVariable(data.get("pos"), i + 1)
+            setVariable(data.get("value"), list[i])
+            setVariable(data.get("pos"), i + 1)
             i++;
             actions.runNext()
         }

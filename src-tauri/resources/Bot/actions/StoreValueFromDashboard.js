@@ -22,8 +22,8 @@ export default class StoreValueFromDashboard {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const server = actionManager.getVariable(data.get("server"))
+    static async run({data, actionManager, getVariable, setVariable}) {
+        const server = getVariable(data.get("server"))
         const name = data.get("input")
         let value = Dashboard.getInputValue(server.id, name)
         const input = Dashboard.inputs.find(i => i.name === name)
@@ -42,7 +42,7 @@ export default class StoreValueFromDashboard {
                     } catch {}
             }
         }
-        actionManager.setVariable(data.get("value"), value)
+        setVariable(data.get("value"), value)
         actionManager.runNext()
     }
 }

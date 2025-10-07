@@ -50,7 +50,7 @@ export default class SlashCommand {
             </div>
         </template>
     `
-    static load({data, actionManager}) {
+    static load({data, actionManager, setVariable}) {
         Bot.commands ??= []
         Bot.registeredCommands = false
         const slashCommand = new SlashCommandBuilder()
@@ -82,27 +82,27 @@ export default class SlashCommand {
             );
         })
     }
-    static run({actionManager, data}, interaction) {
+    static run({data, actionManager, setVariable}, interaction) {
         if(!interaction.isChatInputCommand()) return;
         if(interaction.commandName !== actionManager.trigger.name) return;
         data.get("options").forEach(({data}) => {
             const name = data.get("name")
             const type = data.get("type")
             const value = data.get("value")
-            if(type === "Attachment") actionManager.setVariable(value, interaction.options.getAttachment(name))
-            else if(type === "Boolean") actionManager.setVariable(value, interaction.options.getBoolean(name))
-            else if(type === "Channel") actionManager.setVariable(value, interaction.options.getChannel(name))
-            else if(type === "Integer") actionManager.setVariable(value, interaction.options.getInteger(name))
-            else if(type === "Mentionable") actionManager.setVariable(value, interaction.options.getMentionable(name))
-            else if(type === "Number") actionManager.setVariable(value, interaction.options.getNumber(name))
-            else if(type === "Role") actionManager.setVariable(value, interaction.options.getRole(name))
-            else if(type === "Text") actionManager.setVariable(value, interaction.options.getString(name))
-            else if(type === "User") actionManager.setVariable(value, interaction.options.getUser(name))
+            if(type === "Attachment") setVariable(value, interaction.options.getAttachment(name))
+            else if(type === "Boolean") setVariable(value, interaction.options.getBoolean(name))
+            else if(type === "Channel") setVariable(value, interaction.options.getChannel(name))
+            else if(type === "Integer") setVariable(value, interaction.options.getInteger(name))
+            else if(type === "Mentionable") setVariable(value, interaction.options.getMentionable(name))
+            else if(type === "Number") setVariable(value, interaction.options.getNumber(name))
+            else if(type === "Role") setVariable(value, interaction.options.getRole(name))
+            else if(type === "Text") setVariable(value, interaction.options.getString(name))
+            else if(type === "User") setVariable(value, interaction.options.getUser(name))
         })
-        actionManager.setVariable(data.get("interaction"), interaction);
-        actionManager.setVariable(data.get("member"), interaction.member);
-        actionManager.setVariable(data.get("channel"), interaction.channel);
-        actionManager.setVariable(data.get("server"), interaction.guild);
+        setVariable(data.get("interaction"), interaction);
+        setVariable(data.get("member"), interaction.member);
+        setVariable(data.get("channel"), interaction.channel);
+        setVariable(data.get("server"), interaction.guild);
         actionManager.runNext()
     }
 }

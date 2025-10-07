@@ -27,28 +27,24 @@ export default class FilterList {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const list = actionManager.getVariable(data.get("list"))
+    static async run({data, actionManager, setVariable, getVariable}) {
+        const list = getVariable(data.get("list"))
         const filtered = []
-        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Filter List: Run Actions To Filter`, data.get("Run Actions To Filter"), actionManager.variables, () => { iterate() }, (v) => {
+        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Filter List: Run Actions To Filter`, data.get("Run Actions To Filter"), () => { iterate() }, (v) => {
             filtered.push(v)
             actions.runningActionIndex = 0;
             iterate()
-        }, () => {
-            i = 0;
-            actions.setVariable(data.get("value"), list[i])
-            actions.setVariable(data.get("pos"), i + 1)
         })
         let i = 0;
         iterate()
         function iterate() {
             if(i >= list.length) {
-                actionManager.setVariable(data.get("newlist"), filtered)
+                setVariable(data.get("newlist"), filtered)
                 actionManager.runNext();
                 return
             }
-            actions.setVariable(data.get("value"), list[i])
-            actions.setVariable(data.get("pos"), i + 1)
+            setVariable(data.get("value"), list[i])
+            setVariable(data.get("pos"), i + 1)
             i++;
             actions.runNext()
         }

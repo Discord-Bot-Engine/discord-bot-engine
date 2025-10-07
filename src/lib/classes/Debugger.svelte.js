@@ -9,15 +9,36 @@ class DebuggerClass {
 	windows = new SvelteMap()
 	isAttached = $derived(this.windows.has(`${BotManager.selectedBot.path}-debug`))
 
-	async resetManager(path, trigger, manager) {
-		await invoke("reset_manager", {bot_path: path, trigger_id:trigger, manager_id:manager})
-	}
-
 	async debugAction(path, trigger, action) {
 		const bot = BotManager.bots.find(bot => bot.path === path);
-		bot.debugTrigger = bot.debugTriggers.find(t => t.id === trigger)
-		const actionManager = bot.debugTrigger.actionManagers.find(m => m.actions.find(act => act === action))?.id ?? ""
+		const actionManager = bot.triggers.find(t => t.id === trigger).actionManagers.find(m => m.actions.find(act => act === action))?.id ?? ""
 		await invoke("debug_action", {bot_path: path, trigger_id:trigger, action_id:action, manager_id:actionManager})
+	}
+
+	attachVariablesWindow(trigger) {
+		const path = BotManager.selectedBot.path
+		const variablesWindow = new Window(`variables-${BotManager.selectedBot.name.replace(/\s/g, '_')}-${trigger.id}`, {
+			width: 350,
+			height: 450,
+		});
+		variablesWindow.setTitle(`${trigger.name[0].toUpperCase()}${trigger.name.slice(1).toLowerCase()}'s variables`)
+		variablesWindow.once('tauri://created', async () => {
+			const webview = new Webview(variablesWindow, `variables-${BotManager.selectedBot.name.replace(/\s/g, '_')}-${trigger.id}`, {
+				url: `/variables?path=${BotManager.selectedBot.path}&trigger=${trigger.id}`,
+				x: 0,
+				y: 0,
+				width: 350,
+				height: 450,
+			});
+			webview.once("load" ,() => {
+				const debugVariables = {}
+				trigger.debugVariables.keys().forEach(key => {
+					debugVariables[key] = trigger.debugVariables.get(key);
+				})
+				webview.emit("data", JSON.stringify(debugVariables))
+			})
+		});
+		this.windows.set(`${path}-variables-${trigger.id}`, variablesWindow)
 	}
 
 	attachDebugger() {
@@ -29,33 +50,21 @@ class DebuggerClass {
 		});
 		debugWindow.setTitle(`Debugging ${BotManager.selectedBot.name}`)
 		debugWindow.once('tauri://created', async () => {
-			new Webview(debugWindow, `debug-${BotManager.selectedBot.name.replace(/\s/g, '_')}`, {
+			const webview = new Webview(debugWindow, `debug-${BotManager.selectedBot.name.replace(/\s/g, '_')}`, {
 				url: `/debugger?path=${BotManager.selectedBot.path}`,
 				x: 0,
 				y: 0,
 				width: 350,
 				height: 450,
 			});
+			webview.once("load" ,() => {
+				webview.emit("data", JSON.stringify(BotManager.selectedBot.triggers.map(t => t.toDebugJSON())))
+			})
 		});
 		debugWindow.onCloseRequested(async () => {
 			await this.removeDebugger(path, false)
 		})
-		const variablesWindow = new Window(`variables-${BotManager.selectedBot.name.replace(/\s/g, '_')}`, {
-			width: 350,
-			height: 450,
-		});
-		variablesWindow.setTitle(`${BotManager.selectedBot.name[0].toUpperCase()}${BotManager.selectedBot.name.slice(1)}'s variables`)
-		variablesWindow.once('tauri://created', async () => {
-			new Webview(variablesWindow, `variables-${BotManager.selectedBot.name.replace(/\s/g, '_')}`, {
-				url: `/variables?path=${BotManager.selectedBot.path}`,
-				x: 0,
-				y: 0,
-				width: 350,
-				height: 450,
-			});
-		});
 		this.windows.set(`${path}-debug`, debugWindow)
-		this.windows.set(`${path}-variables`, variablesWindow)
 		let actions = []
 		BotManager.selectedBot.triggers.forEach(trigger => {
 			getActions(trigger.actions, actions)
@@ -88,9 +97,13 @@ class DebuggerClass {
 		const debugWindow = `${path}-debug`
 		const variablesWindow = `${path}-variables`
 		if(close && this.windows.has(debugWindow)) this.windows.get(debugWindow).close()
-		if(this.windows.has(variablesWindow)) this.windows.get(variablesWindow).close()
 		if(this.windows.has(debugWindow)) this.windows.delete(debugWindow)
-		if(this.windows.has(variablesWindow)) this.windows.delete(variablesWindow)
+		this.windows.keys().forEach(key => {
+			if(key.startsWith(variablesWindow)) {
+				this.windows.get(key).close()
+				this.windows.delete(key)
+			}
+		})
 	}
 }
 

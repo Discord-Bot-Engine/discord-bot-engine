@@ -30,9 +30,9 @@ export default class PlayYouTubeSong {
         }
         if(!Bot.player.extractors.get(DisTubeExtractor.identifier)) Bot.player.extractors.register(DisTubeExtractor, {});
     }
-    static async run({data, actionManager}) {
+    static async run({data, actionManager, getVariable}) {
         const player = useMainPlayer()
-        const vc = actionManager.getVariable(data.get("vc"))
+        const vc = getVariable(data.get("vc"))
         const song = data.get("song")
         const clear = data.get("clear") === "True"
         if(clear) {

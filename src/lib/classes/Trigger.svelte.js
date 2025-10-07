@@ -10,6 +10,7 @@ class Trigger {
 	variables = new SvelteMap()
 	debugVariables = new SvelteMap()
 	actionManagers = $state([])
+	showInDebug = $state(false)
 
 	constructor(id, type, name) {
 		this.id = id;
@@ -36,7 +37,16 @@ class Trigger {
 		};
 	}
 
-	static fromJSON(json) {
+	toDebugJSON() {
+		const obj = this.toJSON()
+		const debugVariables = {}
+		this.debugVariables.keys().forEach(key => {
+			debugVariables[key] = this.debugVariables.get(key)
+		})
+		return {...obj, showInDebug: this.showInDebug, actionManagers: this.actionManagers, debugVariables: debugVariables};
+	}
+
+	static fromJSON(json, debug) {
 		const trigger = new Trigger(json.id, json.type, json.name);
 		Object.keys(json.data).forEach((key) => {
 			trigger.data.set(key, json.data[key]);
@@ -44,6 +54,13 @@ class Trigger {
 		Object.keys(json.variables ?? {}).forEach((key) => {
 			trigger.variables.set(key, json.variables[key]);
 		})
+		if(debug) {
+			Object.keys(json.debugVariables).forEach((key) => {
+				trigger.debugVariables.set(key, json.debugVariables[key]);
+			})
+			trigger.showInDebug = json.showInDebug;
+			trigger.actionManagers = json.actionManagers;
+		}
 		trigger.actions = json.actions.map(act => Action.fromJSON(act))
 		return trigger;
 	}

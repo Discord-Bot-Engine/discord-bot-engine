@@ -25,8 +25,8 @@ export default class LoopQueue {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const server = actionManager.getVariable(data.get("server"))
+    static async run({data, actionManager, getVariable}) {
+        const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const mode = data.get("mode")
         const modes = {

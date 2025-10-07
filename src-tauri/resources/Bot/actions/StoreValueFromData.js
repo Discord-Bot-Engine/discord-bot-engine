@@ -19,8 +19,8 @@ export default class StoreValueFromData {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        actionManager.setVariable(data.get("value"), Bot.getData(data.get("field")))
+    static async run({data, actionManager, setVariable}) {
+        setVariable(data.get("value"), Bot.getData(data.get("field")))
         actionManager.runNext()
     }
 }

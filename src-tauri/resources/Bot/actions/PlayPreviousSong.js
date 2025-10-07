@@ -14,8 +14,8 @@ export default class PlayPreviousSong {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const server = actionManager.getVariable(data.get("server"))
+    static async run({data, actionManager, getVariable}) {
+        const server = getVariable(data.get("server"))
         const history = useHistory(server.id)
         await history.previous()
         actionManager.runNext()

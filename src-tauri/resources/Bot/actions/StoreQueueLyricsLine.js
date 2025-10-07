@@ -18,8 +18,8 @@ export default class StoreQueueLyricsLine {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const server = actionManager.getVariable(data.get("server"))
+    static async run({data, actionManager, getVariable, setVariable}) {
+        const server = getVariable(data.get("server"))
         const variable = data.get("variable")
         const player = useMainPlayer()
         const queue = useQueue(server.id)
@@ -30,7 +30,7 @@ export default class StoreQueueLyricsLine {
         const first = lyrics?.[0]
         if(!first.syncedLyrics) return actionManager.runNext();
         const syncedLyrics = queue.syncedLyrics(first)
-        actionManager.setVariable(variable, syncedLyrics.at(queue.node.getTimestamp().current.value)?.line)
+        setVariable(variable, syncedLyrics.at(queue.node.getTimestamp().current.value)?.line)
         actionManager.runNext()
     }
 }

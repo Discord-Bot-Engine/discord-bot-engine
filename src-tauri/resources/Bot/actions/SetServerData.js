@@ -23,8 +23,9 @@ export default class SetServerData {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const field = `${data.get("server").id}${data.get("field")}`
+    static async run({data, actionManager, getVariable}) {
+        const server = getVariable(data.get("server"))
+        const field = `${server.id}${data.get("field")}`
         Bot.setData(field, data.get("value"))
         actionManager.runNext()
     }

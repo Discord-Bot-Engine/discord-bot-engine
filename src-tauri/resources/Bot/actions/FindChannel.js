@@ -30,7 +30,7 @@ export default class FindChannel {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
+    static async run({data, actionManager, getVariable, setVariable}) {
         const type = data.get("type")
         const types = {
             Text: ChannelType.GuildText,
@@ -38,14 +38,14 @@ export default class FindChannel {
             Forum: ChannelType.GuildForum
         }
         const by = data.get("by")
-        const server = actionManager.getVariable(data.get("server"))
+        const server = getVariable(data.get("server"))
         let channel
         if(by === "Id") {
             channel = await server.channels.fetch(data.get("value"))
         } else {
             channel = server.channels.cache.find(channel => channel.name === data.get("value") && channel.type === types[type])
         }
-        actionManager.setVariable(data.get("channel"), channel)
+        setVariable(data.get("channel"), channel)
         actionManager.runNext()
     }
 }

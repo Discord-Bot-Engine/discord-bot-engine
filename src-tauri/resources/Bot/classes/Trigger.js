@@ -8,14 +8,17 @@ export class Trigger {
     name = ''
     type = ''
     data = new Map()
+    variables = new Map()
     actionManager = null
     actionManagers = []
+
     constructor(id, name, type, actions) {
         this.id = id;
         this.name = name
         this.type = type
         this.actionManager = new ActionManager(this, this.name, actions)
     }
+
     load() {
         const triggerClass = Bot.triggerClasses.find(t => t.type === this.type)
         if(!triggerClass) return;
@@ -24,10 +27,13 @@ export class Trigger {
             id: this.id,
             data: this.actionManager.parseFields(this.data),
             rawData: this.data,
-            actionManager: this.actionManager
+            actionManager: this.actionManager,
+            setVariable: this.setVariable.bind(this),
+            getVariable: this.getVariable.bind(this),
         })
-        this.actionManager.actionList.forEach(action => action.load({actionManager: this.actionManager}))
+        this.actionManager.actionList.forEach(action => action.load({actionManager: this.actionManager, setVariable: this.setVariable.bind(this), getVariable: this.getVariable.bind(this)}))
     }
+
     addActionManager(manager) {
         if(this.actionManagers.find(m => m.id === manager.id)) return;
         this.actionManagers.push(manager)
@@ -39,6 +45,7 @@ export class Trigger {
             }
         })
     }
+
     async run(...args) {
         this.actionManager.reset()
         this.actionManagers = []
@@ -69,12 +76,23 @@ export class Trigger {
                 id: this.id,
                 data: this.actionManager.parseFields(this.data),
                 rawData: this.data,
-                actionManager: this.actionManager
+                actionManager: this.actionManager,
+                setVariable: this.setVariable.bind(this),
+                getVariable: this.getVariable.bind(this)
             }, ...args)
             if(Bot.debugger) Bot.sendVariablesData(this)
         } catch(error) {
             console.log(`Error at trigger: ${this.name}\nError: ${error.stack}`)
         }
+    }
+
+    setVariable(name, value) {
+        this.variables.set(name, value);
+        Bot.sendVariablesData(this);
+    }
+
+    getVariable(name) {
+        return this.variables.get(name);
     }
 
     toJSON() {

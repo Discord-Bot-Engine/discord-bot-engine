@@ -40,7 +40,7 @@ export default class StoreHTMLAsWebP {
     `;
     static load(context) {}
 
-    static async run({ data, actionManager }) {
+    static async run({ data, actionManager, setVariable }) {
         const width = Number(data.get("width"));
         const height = Number(data.get("height"));
         const duration = Number(data.get("duration"));
@@ -86,7 +86,7 @@ export default class StoreHTMLAsWebP {
             await recorder.stop()
             await browser.close()
             const buffer = await mp4BufferToWebP(Buffer.concat(bytes))
-            actionManager.setVariable(value, buffer);
+            setVariable(value, buffer);
             actionManager.runNext();
         }, duration * 1000)
         async function mp4BufferToWebP(mp4Buffer) {

@@ -20,7 +20,7 @@ export default class RunOnEachShard {
                 const ActionManager = (await import("../classes/ActionManager.js")).ActionManager
                 actions = actions.map(action => Action.fromJSON(action))
                 const t = Bot.triggers.find(t => t.id === trigger)
-                const manager = new ActionManager(t, `${name} -> Run On Each Shard: Actions`, actions, t.actionManager.variables)
+                const manager = new ActionManager(t, `${name} -> Run On Each Shard: Actions`, actions)
                 manager.runNext()
             },
             {

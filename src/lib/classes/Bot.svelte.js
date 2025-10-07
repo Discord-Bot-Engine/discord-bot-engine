@@ -25,8 +25,6 @@ class Bot {
 	actionVariableTypes = $derived(BotManager.selectedBot?.actionClasses?.map(t => t.variableTypes).flat() ?? [])
 	variableTypes = $derived([...new Set([...this.triggerVariableTypes, ...this.actionVariableTypes])].sort())
 	extensions = new SvelteMap();
-	debugTriggers = $state([])
-	debugTrigger = $state(null)
 	isLoading = $state(true)
 	modifiedTriggers = []
 	removedTriggers = []

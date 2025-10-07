@@ -27,16 +27,16 @@ export default class FindRole {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
+    static async run({data, actionManager, getVariable, setVariable}) {
         const by = data.get("by")
-        const server = actionManager.getVariable(data.get("server"))
+        const server = getVariable(data.get("server"))
         let role
         if(by === "Id") {
             role = await server.roles.fetch(data.get("value"))
         } else {
             role = server.roles.cache.find(role => role.name === data.get("value"))
         }
-        actionManager.setVariable(data.get("role"), role)
+        setVariable(data.get("role"), role)
         actionManager.runNext()
     }
 }

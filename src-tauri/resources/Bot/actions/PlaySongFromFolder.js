@@ -43,9 +43,9 @@ export default class PlaySongFromFolder {
         if(!Bot.player.extractors.get(AttachmentExtractor.identifier)) Bot.player.extractors.register(AttachmentExtractor, {});
 
     }
-    static async run({data, actionManager}) {
+    static async run({data, actionManager, getVariable}) {
         const player = useMainPlayer()
-        const vc = actionManager.getVariable(data.get("vc"))
+        const vc = getVariable(data.get("vc"))
         const folder = data.get("folder")
         const song = data.get("song")
         const clear = data.get("clear") === "True"

@@ -7,10 +7,31 @@
     import { getCurrentWebview } from '@tauri-apps/api/webview';
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
-    getCurrentWebview().setAutoResize(true);
+    import {SvelteMap} from "svelte/reactivity";
+    const webview = getCurrentWebview()
+    webview.setAutoResize(true);
+    let loaded = new SvelteMap()
+    webview.once("data", ({payload}) => {
+        const data = JSON.parse(payload)
+        console.log(data)
+        Object.keys(data).forEach(key => {
+          loaded.set(key, data[key])
+        })
+    })
+    webview.emit("load")
     const bot = $derived(BotManager.bots.find(bot => bot.path === page.url.searchParams.get("path")))
-    const trigger = $derived(bot?.debugTrigger)
-    const variables = $derived(bot?.triggers.find(t => t.name === trigger?.name && t.type === trigger?.type)?.variables);
+    const trigger = $derived(bot?.triggers.find(t => t.id === page.url.searchParams.get("trigger")))
+    const variables = $derived(trigger?.variables);
+    const debugVariables = $derived.by(() => {
+        let map = new Map();
+        loaded.keys().forEach(key => {
+            map.set(key, loaded.get(key))
+        })
+        trigger?.debugVariables.keys().forEach(key => {
+            map.set(key, trigger.debugVariables.get(key))
+        })
+        return map;
+    });
 </script>
 <ScrollArea class="h-full">
     <div class="w-full h-full flex flex-col gap-1">
@@ -19,19 +40,19 @@
                 <div class="flex w-full text-sm bg-card pl-5 pr-2 py-1 border-b-1">
                     <div class="grid grid-cols-2 w-full">
                         <label class="col-span-1 mt-auto mb-auto w-full font-semibold overflow-hidden text-ellipsis">{name}</label>
-                        {#if typeof trigger.debugVariables.get(name) !== "object" || trigger.debugVariables.get(name) == null}
-                            <label class="col-span-1 mt-auto mb-auto w-full overflow-hidden text-ellipsis">{trigger.debugVariables.get(name) ?? String(trigger.debugVariables.get(name))}</label>
+                        {#if typeof debugVariables.get(name) !== "object" || debugVariables.get(name) == null}
+                            <label class="col-span-1 mt-auto mb-auto w-full overflow-hidden text-ellipsis">{debugVariables.get(name) ?? String(debugVariables.get(name))}</label>
                         {/if}
                     </div>
-                    <Collapsible.Trigger class={buttonVariants({ variant: "ghost", class: `size-7 ml-auto ${typeof trigger.debugVariables.get(name) === "object" && trigger.debugVariables.get(name) != null ? "" : "hidden"}` })}
+                    <Collapsible.Trigger class={buttonVariants({ variant: "ghost", class: `size-7 ml-auto ${typeof debugVariables.get(name) === "object" && debugVariables.get(name) != null ? "" : "hidden"}` })}
                     >
                         <ChevronDownIcon />
                     </Collapsible.Trigger>
                 </div>
                 <Collapsible.Content>
-                    {#if typeof trigger.debugVariables.get(name) === "object" && trigger.debugVariables.get(name) != null}
-                        {#each Object.keys(trigger.debugVariables.get(name)) as key}
-                            {@render variable(key, trigger.debugVariables.get(name), "")}
+                    {#if typeof debugVariables.get(name) === "object" && debugVariables.get(name) != null}
+                        {#each Object.keys(debugVariables.get(name)) as key}
+                            {@render variable(key, debugVariables.get(name), "")}
                         {/each}
                     {/if}
                 </Collapsible.Content>

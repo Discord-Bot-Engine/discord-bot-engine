@@ -15,8 +15,8 @@ export default class Return {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const value = actionManager.getVariable(data.get("value"))
+    static async run({data, actionManager, getVariable}) {
+        const value = getVariable(data.get("value"))
         actionManager.onReturn?.(value)
     }
 }

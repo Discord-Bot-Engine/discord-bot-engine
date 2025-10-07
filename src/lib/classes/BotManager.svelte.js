@@ -38,18 +38,15 @@ class BotManagerClass {
 				const data = JSON.parse(payload[1].replace("$DEBUGGER$$$", ""))
 				if(data.type === "TRIGGER") {
 					const trigger = Trigger.fromJSON(data.data)
-					if (bot.debugTriggers.find(t => t.id === trigger.id)) return;
-					bot.debugTriggers.push(trigger);
-					bot.debugTrigger ??= trigger
+					bot.triggers.find(t => t.id === trigger.id).showInDebug = true
 				} else if(data.type === "ACTION_MANAGERS") {
 					const triggerId = data.data.id;
-					bot.debugTriggers.find(t => t.id === triggerId).actionManagers = data.data.actionManagers;
+					bot.triggers.find(t => t.id === triggerId).actionManagers = data.data.actionManagers;
 				}
 				return;
 			} else if(payload[1].startsWith("$VARIABLE$$$")) {
 				const { name, value, triggerId } = JSON.parse(payload[1].replace("$VARIABLE$$$", ""))
-				bot.debugTrigger = bot.debugTriggers.find(t => t.id === triggerId)
-				bot.debugTrigger.debugVariables.set(name, value)
+				bot.triggers.find(t => t.id === triggerId).debugVariables.set(name, value)
 				return;
 			}
 			bot.stdout += payload[1]
@@ -145,7 +142,7 @@ class BotManagerClass {
 		await invoke('run_bot', {bot_path: this.selectedBot.path})
 		this.selectedBot.isRunning = true;
 		this.selectedBot.stdout = ""
-		this.selectedBot.debugTriggers = []
+		this.selectedBot.triggers.forEach(t => t.showInDebug = false)
 	}
 
 	async stopBot() {

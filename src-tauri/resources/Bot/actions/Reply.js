@@ -27,16 +27,16 @@ export default class Reply {
     `
     static load(context) {
     }
-    static async run({data,actionManager}) {
+    static async run({data, actionManager, getVariable, setVariable}) {
         const by = data.get("by")
-        const server = actionManager.getVariable(data.get("server"))
+        const server = getVariable(data.get("server"))
         let member
         if(by === "Id") {
             member = await server.members.fetch(data.get("value"))
         } else {
             member = server.members.cache.find(member => member.displayName === data.get("value"))
         }
-        actionManager.setVariable(data.get("member"), member)
+        setVariable(data.get("member"), member)
         actionManager.runNext()
     }
 }

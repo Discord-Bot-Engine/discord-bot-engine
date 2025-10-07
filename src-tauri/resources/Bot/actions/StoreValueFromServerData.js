@@ -23,9 +23,10 @@ export default class StoreValueFromServerData {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const field = `${data.get("server").id}${data.get("field")}`
-        actionManager.setVariable(data.get("value"), Bot.getData(field))
+    static async run({data, actionManager, getVariable, setVariable}) {
+        const server = getVariable(data.get("server"))
+        const field = `${server.id}${data.get("field")}`
+        setVariable(data.get("value"), Bot.getData(field))
         actionManager.runNext()
     }
 }

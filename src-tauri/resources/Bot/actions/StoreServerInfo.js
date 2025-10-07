@@ -66,8 +66,8 @@ export default class StoreServerInfo {
     }
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        let server = actionManager.getVariable(data.get("server"))
+    static async run({data, actionManager, getVariable, setVariable}) {
+        let server = getVariable(data.get("server"))
         const imgOptions = {
             forceStatic: data.get("static") === "True",
             size: Number(data.get("size")),
@@ -143,7 +143,7 @@ export default class StoreServerInfo {
             if(value.fetch) await value.fetch().catch(() => {})
             value = [...value.cache.values()]
         }
-        actionManager.setVariable(data.get("value"), value)
+        setVariable(data.get("value"), value)
         actionManager.runNext()
     }
 }

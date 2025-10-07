@@ -30,8 +30,8 @@ class BotClass {
 
     sendVariablesData(trigger) {
         if(!this.debugger) return;
-        trigger.actionManager.variables.keys().forEach(name => {
-            const value = trigger.actionManager.variables.get(name);
+        trigger.variables.keys().forEach(name => {
+            const value = trigger.variables.get(name);
             const data = {
                 name,
                 value,
@@ -56,7 +56,6 @@ class BotClass {
         this.debugger = new Debugger(async (triggerId, managerId, actionId) => {
             const t = this.triggers.find(t => t.id === triggerId)
             const manager = t.actionManagers.find(m => m.id === managerId) ?? t.actionManager
-            if(!actionId) return manager.onReset();
             manager.runningActionIndex = manager.actionList.findIndex(act => act.id === actionId)
             manager.runNext(true)
             Bot.sendVariablesData(t);

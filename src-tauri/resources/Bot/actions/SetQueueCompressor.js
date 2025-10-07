@@ -38,8 +38,8 @@ export default class SetQueueCompressor {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const server = actionManager.getVariable(data.get("server"))
+    static async run({data, actionManager, getVariable}) {
+        const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const threshold = Number(data.get("threshold"))
         const ratio = Number(data.get("ratio"))

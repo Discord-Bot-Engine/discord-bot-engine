@@ -8,8 +8,6 @@
     import SearchSelect from "$lib/components/SearchSelect.svelte";
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     import ErrorIcon from "$lib/components/ErrorIcon.svelte";
-    import { Checkbox } from "$lib/components/ui/checkbox/index.js";
-    import {Debugger} from "$lib/classes/Debugger.svelte.js";
 	let {actions = $bindable(), title} = $props();
     let selectedAction = $state(null)
     let actionType = $state("None")
@@ -43,9 +41,6 @@
     }
 </script>
 {#snippet html(item, i)}
-    {#if Debugger.isAttached}
-        <Checkbox bind:checked={item.isBreakPoint} onCheckedChange={(v) => v ? Debugger.markAsBreakPoint(item.id) : Debugger.removeBreakPoint(item.id)} class="absolute left-5" title="Is Break Point?"/>
-    {/if}
     {#if !BotManager.selectedBot.actionClasses.find(a => a.type === item.type)}
        <ErrorIcon />
     {/if}

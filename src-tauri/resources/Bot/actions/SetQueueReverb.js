@@ -30,8 +30,8 @@ export default class SetQueueReverb {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
-        const server = actionManager.getVariable(data.get("server"))
+    static async run({data, actionManager, getVariable}) {
+        const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const roomSize = Number(data.get("roomSize"))
         const damping = Number(data.get("damping"))
