@@ -58,7 +58,7 @@ class DebuggerClass {
 				height: 450,
 			});
 			webview.once("load" ,() => {
-				webview.emit("data", JSON.stringify(BotManager.selectedBot.triggers.map(t => t.toDebugJSON())))
+				webview.emit("data", JSON.stringify(BotManager.selectedBot.triggers.map(t => t.toDebuggerJSON())))
 			})
 		});
 		debugWindow.onCloseRequested(async () => {

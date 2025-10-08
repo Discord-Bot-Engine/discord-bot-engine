@@ -5,6 +5,7 @@ export default class SlashCommand {
     static type = "Slash Command"
     static variableTypes = ["Command Interaction", "Member", "Channel", "Server", "Attachment", "Boolean", "Channel", "Mentionable", "Number", "Role", "Text", "User"]
     static event = Events.InteractionCreate
+    static showInDebugger = ({actionManager}, interaction) => interaction.commandName === actionManager.trigger.name
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Description"></dbe-label>

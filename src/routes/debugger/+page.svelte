@@ -18,7 +18,7 @@
     })
     webview.emit("load")
     let bot = $derived(BotManager.bots.find(bot => bot.path === page.url.searchParams.get("path")));
-    let triggers = $derived([...loaded, ...(bot?.triggers ?? [])].filter((t) => t.showInDebug))
+    let triggers = $derived([...loaded, ...(bot?.triggers ?? [])].filter((t) => t.showInDebugger))
 </script>
 <ScrollArea class="h-full">
 <div class="w-full h-full flex flex-col gap-1">

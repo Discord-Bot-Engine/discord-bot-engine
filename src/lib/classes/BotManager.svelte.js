@@ -38,7 +38,7 @@ class BotManagerClass {
 				const data = JSON.parse(payload[1].replace("$DEBUGGER$$$", ""))
 				if(data.type === "TRIGGER") {
 					const trigger = Trigger.fromJSON(data.data)
-					bot.triggers.find(t => t.id === trigger.id).showInDebug = true
+					bot.triggers.find(t => t.id === trigger.id).showInDebugger = true
 				} else if(data.type === "ACTION_MANAGERS") {
 					const triggerId = data.data.id;
 					bot.triggers.find(t => t.id === triggerId).actionManagers = data.data.actionManagers;

@@ -49,11 +49,20 @@ export class Trigger {
     async run(...args) {
         this.actionManager.reset()
         this.actionManagers = []
+        const triggerClass = Bot.triggerClasses.find(t => t.type === this.type)
         if(Bot.debugger){
             const data = {}
             this.data.keys().forEach(key => {
                 data[key] = this.data.get(key)
             })
+            if(triggerClass.showInDebugger({
+                id: this.id,
+                data: this.actionManager.parseFields(this.data),
+                rawData: this.data,
+                actionManager: this.actionManager,
+                setVariable: this.setVariable.bind(this),
+                getVariable: this.getVariable.bind(this)
+            }, ...args))
             Bot.sendDebugData({
                 type:"TRIGGER",
                 data: {
@@ -72,7 +81,7 @@ export class Trigger {
             })
         }
         try {
-            await Bot.triggerClasses.find(t => t.type === this.type).run({
+            await triggerClass.run({
                 id: this.id,
                 data: this.actionManager.parseFields(this.data),
                 rawData: this.data,
