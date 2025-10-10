@@ -27,7 +27,7 @@ export default class LoopThroughList {
         const list = getVariable(data.get("list"))
         let i = 0;
         const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Loop Through List: Run Actions`, data.get("Run Actions"), () => {
-            actions.runningActionIndex = 0;
+            actions.reset()
             iterate()
         }, actionManager.onReturn)
         iterate()

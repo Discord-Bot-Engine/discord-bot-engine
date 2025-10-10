@@ -35,7 +35,7 @@ class Bot {
 	}
 
 	async loadFiles() {
-		this.triggers = JSON.parse(await invoke("load_bot_triggers", {bot_path: this.path})).map(t => Trigger.fromJSON(t));
+		this.triggers = JSON.parse(await invoke("load_bot_triggers", {bot_path: this.path})).map(t => Trigger.fromJSON(t)).sort((a, b) => a.name.localeCompare(b.name));
 		const extensions = JSON.parse(await invoke("load_bot_extensions", {bot_path: this.path}));
 		Object.keys(extensions).forEach(t => this.extensions.set(t, Extension.fromJSON(extensions[t])));
 		const data = JSON.parse(await invoke("load_bot_settings", {bot_path: this.path}))

@@ -41,28 +41,28 @@ export class Trigger {
             type:"ACTION_MANAGERS",
             data: {
                 id: this.id,
-                actionManagers: this.actionManagers.map(m => ({id: m.id, canReset: m.canReset, actions: m.actionList.map(action => action.id)}))
+                actionManagers: this.actionManagers.map(m => ({id: m.id, canReset: m.canReset, actions: m.actionList?.map(action => action.id)}))
             }
         })
     }
 
     async run(...args) {
+        const triggerClass = Bot.triggerClasses.find(t => t.type === this.type)
+        if(!triggerClass.runIf({
+            id: this.id,
+            data: this.actionManager.parseFields(this.data),
+            rawData: this.data,
+            actionManager: this.actionManager,
+            setVariable: this.setVariable.bind(this),
+            getVariable: this.getVariable.bind(this)
+        }, ...args)) return;
         this.actionManager.reset()
         this.actionManagers = []
-        const triggerClass = Bot.triggerClasses.find(t => t.type === this.type)
         if(Bot.debugger){
             const data = {}
             this.data.keys().forEach(key => {
                 data[key] = this.data.get(key)
             })
-            if(triggerClass.showInDebugger({
-                id: this.id,
-                data: this.actionManager.parseFields(this.data),
-                rawData: this.data,
-                actionManager: this.actionManager,
-                setVariable: this.setVariable.bind(this),
-                getVariable: this.getVariable.bind(this)
-            }, ...args))
             Bot.sendDebugData({
                 type:"TRIGGER",
                 data: {

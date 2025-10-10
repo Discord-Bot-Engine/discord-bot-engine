@@ -21,7 +21,6 @@ export class ActionManager {
     }
 
     reset() {
-        this.variables = new Map();
         this.runningActionIndex = 0;
     }
 

@@ -63,7 +63,7 @@
             alert(`${triggerClass.type}\n${e.stack}`)
         }
     }, 10)
-}} {html} items={triggers ?? []} itemTitle={(item) => item.name} onadd={() => isCreatingTrigger = true} ondelete={() => {
+}} allowMoving={false} {html} items={triggers ?? []} itemTitle={(item) => item.name} onadd={() => isCreatingTrigger = true} ondelete={() => {
     BotManager.selectedBot.triggers = BotManager.selectedBot.triggers.filter(el => el !== App.selectedTrigger)
     BotManager.selectedBot.markAsRemoved(App.selectedTrigger.id)
 }} title="Triggers" bind:selected={App.selectedTrigger}></List>

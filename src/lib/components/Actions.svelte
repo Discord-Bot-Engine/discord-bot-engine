@@ -45,7 +45,9 @@
        <ErrorIcon />
     {/if}
 {/snippet}
-<List ondblclick={() => {
+<List ondnd={() => {
+        BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
+}} ondblclick={() => {
     const actionClass = BotManager.selectedBot.actionClasses.find(act => act.type === selectedAction.type);
     if(!actionClass) return alert("Action failed to load.");
     isEditingAction = true;

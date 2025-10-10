@@ -15,6 +15,7 @@
 		onadd = () => {},
 		ondblclick = () => {},
 		itemTitle = () => {},
+		ondnd = () => {},
 		html,
 		selected = $bindable()
 	} = $props();
@@ -24,6 +25,7 @@
 		detail.items.forEach(item => {
 			items.push(item)
 		})
+		ondnd()
 	}
 </script>
 
