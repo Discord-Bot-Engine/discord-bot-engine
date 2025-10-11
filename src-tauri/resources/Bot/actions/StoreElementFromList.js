@@ -25,7 +25,7 @@ export default class StoreElementFromList {
     }
     static async run({data, actionManager, getVariable, setVariable}) {
         const list = getVariable(data.get("list"))
-        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Store Element From List: Run Actions To Find Element`, data.get("Run Actions To Find Element"), () => {
+        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)}: Run Actions To Find Element`, data.get("Run Actions To Find Element"), () => {
             actions.reset()
             iterate()
         })

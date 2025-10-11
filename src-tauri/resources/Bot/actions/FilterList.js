@@ -30,7 +30,7 @@ export default class FilterList {
     static async run({data, actionManager, setVariable, getVariable}) {
         const list = getVariable(data.get("list"))
         const filtered = []
-        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> Filter List: Run Actions To Filter`, data.get("Run Actions To Filter"), () => { iterate() }, (v) => {
+        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)}: Run Actions To Filter`, data.get("Run Actions To Filter"), () => { iterate() }, (v) => {
             filtered.push(v)
             actions.reset()
             iterate()

@@ -63,36 +63,37 @@
     <div class="w-full h-full flex flex-col gap-1">
         {#each triggers.filter((t,i) => triggers.findIndex(x => t.id === x.id) === i) as trigger}
             <Collapsible.Root>
-                <div class="flex w-full text-sm bg-card pl-5 pr-2 py-1 border-b-1">
+                <div class="flex w-full text-sm bg-card pl-5 pr-2 py-2 border-b-1">
                     <label class="mt-auto mb-auto font-semibold">{trigger.name}</label>
                     {#if trigger.actions.length}
                         <div class="ml-auto">
                             <Button variant="secondary" class="size-6 mt-auto mb-auto" title="Variables" onclick={() => Debugger.attachVariablesWindow(trigger)}><VariableIcon></VariableIcon></Button>
-                            <Collapsible.Trigger class={buttonVariants({ variant: "ghost", class: "size-7" })}>
+                            <Collapsible.Trigger class={buttonVariants({ variant: "ghost", class: "mt-auto mb-auto size-7" })}>
                                 <ChevronDownIcon />
                             </Collapsible.Trigger>
                         </div>
                     {/if}
                 </div>
                 <Collapsible.Content>
-                    {#each trigger.actions as act}
-                        {@render action(trigger, act, "", true)}
+                    {#each trigger.actions as act, i}
+                        {@render action(trigger, act, `${i+1}. `, true)}
                     {/each}
                 </Collapsible.Content>
             </Collapsible.Root>
         {/each}
         {#snippet action(trigger, act, prefix, canRun)}
             <Collapsible.Root>
-                <div class="flex w-full text-xs bg-popover px-2 py-1 border-b-1">
+                <div class="flex w-full text-xs bg-popover px-2 py-2 border-b-1">
                     <Checkbox bind:checked={act.isBreakPoint} onCheckedChange={(v) => v ? Debugger.markAsBreakPoint(act.id) : Debugger.removeBreakPoint(act.id)} class="mr-3 mt-auto mb-auto" title="Is Break Point?"/>
                     <label class="mt-auto mb-auto">
-                        {prefix}{act.data.keys().toArray().length === 0 ? act.type : BotManager.selectedBot.actionClasses.find(a => a.type === act.type)?.title?.(act.data) ?? act.type}</label>
-                    <div class="ml-auto">
+                        {prefix}{act.data.keys().toArray().length === 0 ? act.type : BotManager.selectedBot.actionClasses.find(a => a.type === act.type)?.title?.(act.data) ?? act.type}
+                    </label>
+                    <div class="ml-auto mt-auto mb-auto">
                         {#if canRun}
-                            <Button class="mr-1 size-6 mt-auto mb-auto" onclick={() => Debugger.debugAction(page.url.searchParams.get("path"), trigger.id, act.id)}><PlayIcon></PlayIcon></Button>
+                            <Button class="mr-1 ml-3 size-6 mt-auto mb-auto" onclick={() => Debugger.debugAction(page.url.searchParams.get("path"), trigger.id, act.id)}><PlayIcon></PlayIcon></Button>
                         {/if}
                     </div>
-                    <Collapsible.Trigger class={buttonVariants({ variant: 'ghost', class: `size-5 ${hasNestedActions(act) ? '' : 'hidden'}` })}
+                    <Collapsible.Trigger class={buttonVariants({ variant: 'ghost', class: `mt-auto mb-auto size-6 ${hasNestedActions(act) ? '' : 'hidden'}` })}
                     >
                         <ChevronDownIcon />
                     </Collapsible.Trigger>
@@ -102,10 +103,10 @@
                         {@const value = act.data.get(key)}
                         {#if Array.isArray(value)}
                             {#if value.some(el => el.isAction)}
-                                {#each value.filter(el => el.isAction) as nestedAct}
+                                {#each value.filter(el => el.isAction) as nestedAct, i}
                                     {@const nestedAction = Action.fromJSON(nestedAct)}
                                     {@const nestedCanRun = trigger.actionManagers.find(m => m.actions.find(a => a === nestedAction.id))}
-                                    {@render action(trigger, nestedAction, `${key}: `, nestedCanRun)}
+                                    {@render action(trigger, nestedAction, `${key}: ${i+1}. `, nestedCanRun)}
                                 {/each}
                             {/if}
                             {#if value.some(el => el.isCustom)}
@@ -123,15 +124,15 @@
                 {@const customValue = customEl.data.get(customKey)}
                 {#if Array.isArray(customValue)}
                     {#if customValue.some(el => el.isAction)}
-                        {#each customValue.filter(el => el.isAction) as nestedAct}
+                        {#each customValue.filter(el => el.isAction) as nestedAct, i}
                             {@const nestedAction = Action.fromJSON(nestedAct)}
                             {@const nestedCanRun = trigger.actionManagers.find(m => m.actions.find(a => a === nestedAction.id))}
-                            {@render action(trigger, nestedAction, `${arrayName} ${elementIndex}: ${customKey}: `, nestedCanRun)}
+                            {@render action(trigger, nestedAction, `${arrayName} ${elementIndex + 1}: ${customKey}: ${i+1}. `, nestedCanRun)}
                         {/each}
                     {/if}
                     {#if customValue.some(el => el.isCustom)}
                         {#each customValue.filter(el => el.isCustom).map(el => CustomElement.fromJSON(el)) as nestedCustomEl, i}
-                            {@render renderCustomElement(trigger, nestedCustomEl, `${arrayName} ${elementIndex}: ${customKey}`, i)}
+                            {@render renderCustomElement(trigger, nestedCustomEl, `${arrayName} ${elementIndex + 1}: ${customKey}`, i)}
                         {/each}
                     {/if}
                 {/if}
