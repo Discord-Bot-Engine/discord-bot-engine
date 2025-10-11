@@ -30,7 +30,6 @@ export class Action{
                 rawData: this.data
             })
         } catch(error) {
-            if(Bot.debugger) return console.log(error.stack)
             console.log(`Error at: ${context.actionManager.name}\nAction number: ${context.actionManager.runningActionIndex}\nError: ${error.stack}`)
         }
 

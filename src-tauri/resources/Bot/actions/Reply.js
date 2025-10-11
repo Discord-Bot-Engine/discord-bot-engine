@@ -623,8 +623,8 @@ export default class Reply {
         const menucollector = r.resource.message.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
         btncollector.on('collect', (i) => {
             const btn = buttons.find(b => b.id === i.customId)
-            let text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)}: components ${btn.i + 1}: Run Actions On Click`
-            if(btn.pi != undefined) text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)}: components ${btn.i + 1}: components ${btn.pi + 1}: Run Actions On Click`
+            let text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${btn.i + 1}: Run Actions On Click`
+            if(btn.pi != undefined) text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${btn.i + 1}: components ${btn.pi + 1}: Run Actions On Click`
             const manager = new ActionManager(actionManager.trigger, text, btn.actions)
             const int = btn.data.get("binteraction")
             const msg = btn.data.get("bmessage")
