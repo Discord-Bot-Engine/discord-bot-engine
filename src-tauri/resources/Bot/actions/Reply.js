@@ -624,7 +624,7 @@ export default class Reply {
         btncollector.on('collect', (i) => {
             const btn = buttons.find(b => b.id === i.customId)
             let text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${btn.i + 1}: Run Actions On Click`
-            if(btn.pi != undefined) text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${btn.i + 1}: components ${btn.pi + 1}: Run Actions On Click`
+            if(btn.pi !== undefined) text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${btn.i + 1}: components ${btn.pi + 1}: Run Actions On Click`
             const manager = new ActionManager(actionManager.trigger, text, btn.actions)
             const int = btn.data.get("binteraction")
             const msg = btn.data.get("bmessage")
@@ -640,8 +640,8 @@ export default class Reply {
         });
         menucollector.on('collect', (i) => {
             const menu = selectmenus.find(s => s.id === i.customId)
-            let text = `${actionManager.name} -> Reply With Components: components ${menu.i}: Run Actions On Select`
-            if(menu.pi != undefined) text = `${actionManager.name} -> Reply With Components: components ${menu.i}: components ${menu.pi}: Run Actions On Select`
+            let text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${menu.i}: Run Actions On Select`
+            if(menu.pi !== undefined) text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${menu.i}: components ${menu.pi}: Run Actions On Select`
             const manager = new ActionManager(actionManager.trigger, text, menu.actions)
             const int = menu.data.get("sinteraction")
             const opts = menu.data.get("soptions")
