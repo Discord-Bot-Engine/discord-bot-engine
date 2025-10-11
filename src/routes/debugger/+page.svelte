@@ -25,11 +25,9 @@
         for (const key of act.data.keys().toArray()) {
             const value = act.data.get(key);
             if (Array.isArray(value)) {
-                // Check for direct nested actions
                 if (value.some(el => el.isAction)) {
                     return true;
                 }
-                // Check for custom components with nested actions (recursively)
                 if (value.some(el => el.isCustom)) {
                     for (const customEl of value.map(el => CustomElement.fromJSON(el))) {
                         if (hasNestedActionsInCustom(customEl)) {
@@ -46,11 +44,9 @@
         for (const customKey of customEl.data.keys().toArray()) {
             const customValue = customEl.data.get(customKey);
             if (Array.isArray(customValue)) {
-                // Check for actions in custom element
                 if (customValue.some(el => el.isAction)) {
                     return true;
                 }
-                // Check for nested custom elements recursively
                 if (customValue.some(el => el.isCustom)) {
                     for (const nestedCustom of customValue) {
                         if (hasNestedActionsInCustom(nestedCustom)) {
