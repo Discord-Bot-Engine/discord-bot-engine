@@ -1,6 +1,6 @@
 import {ActionManager} from "../classes/ActionManager.js";
 import {Bot} from "../classes/Bot.js";
-import {TextDisplayBuilder, SectionBuilder, MediaGalleryBuilder, FileBuilder, SeparatorBuilder, ButtonBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, ContainerBuilder, SeparatorSpacingSize, ButtonStyle, ComponentType, MessageFlags} from "discord.js"
+import {TextDisplayBuilder, SectionBuilder, MediaGalleryBuilder, FileBuilder, SeparatorBuilder, ButtonBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, ContainerBuilder, AttachmentBuilder, SeparatorSpacingSize, ButtonStyle, ComponentType, MessageFlags} from "discord.js"
 
 export default class Reply {
     static type = "Reply"
@@ -17,7 +17,22 @@ export default class Reply {
             <dbe-label name="Store message in variable"></dbe-label>
             <dbe-variable-list name="message" class="col-span-3" variableType="Message"></dbe-variable-list>
         </div>
+         <dbe-list name="files" title="Files" modalId="filesModal" itemTitle="(item, i) => (item.data.get('name') ?? 'File')+' #'+i"></dbe-list>
          <dbe-list name="components" title="Components" modalId="componentsModal" itemTitle="(item, i) => (item.data.get('type') ?? 'Component')+' #'+i"></dbe-list>
+        <template id="filesModal">
+            <div class="grid grid-cols-4 items-center gap-4">
+                <dbe-label name="Buffer"></dbe-label>
+                <dbe-variable-list name="buffer" class="col-span-3" variableType="Buffer"></dbe-variable-list>
+            </div>
+            <div class="grid grid-cols-4 items-center gap-4">
+                <dbe-label name="Name"></dbe-label>
+                <dbe-input name="name" class="col-span-3"></dbe-input>
+            </div>
+            <div class="grid grid-cols-4 items-center gap-4">
+                <dbe-label name="Description"></dbe-label>
+                <dbe-input name="description" class="col-span-3"></dbe-input>
+            </div>
+        </template>
         <template id="componentsModal">
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Type"></dbe-label>
@@ -613,8 +628,17 @@ export default class Reply {
                 list.push(builder)
             }
         })
+        const files = data.get("files")
+        const attachments = []
+        files.forEach(file => {
+            const buffer = getVariable(file.data.get("buffer"))
+            const name = file.data.get("name")
+            const description = file.data.get("description")
+            attachments.push(new AttachmentBuilder(buffer, { name, description }))
+        })
         const r = await (getVariable(data.get("origin")).reply({
             components: list,
+            files: attachments,
             flags: MessageFlags.IsComponentsV2,
             withResponse: true
         }))
