@@ -4,6 +4,7 @@
 	import Actions from "$lib/components/Actions.svelte";
 	import DbeActionList from "$lib/components/DbeActionList.svelte";
 	import DbeInput from "$lib/components/DbeInput.svelte";
+	import DbeColor from "$lib/components/DbeColor.svelte";
 	import DbeLabel from "$lib/components/DbeLabel.svelte";
 	import DbeSelect from "$lib/components/DbeSelect.svelte";
 	import DbeList from "$lib/components/DbeList.svelte";

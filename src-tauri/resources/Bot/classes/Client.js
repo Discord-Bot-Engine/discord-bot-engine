@@ -31,11 +31,6 @@ export default class Client {
         this.client.login(token)
     }
 }
-Reflect.defineProperty(EmbedBuilder.prototype, 'toDBEString', {
-    value() {
-        return { type: 'embed', data: this.data };
-    },
-});
 Reflect.defineProperty(GuildMember.prototype, 'toDBEString', {
     value() {
         return `dbe$mem-${this.id}_${this.guild.id}`;

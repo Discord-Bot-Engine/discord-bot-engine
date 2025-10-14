@@ -188,7 +188,13 @@ export default class Reply {
                     </div>
                     <dbe-action-list name="Run Actions On Select" title="Run Actions On Select"></dbe-action-list>
              </div>
-            <dbe-list name="components" id="comps" title="Components" modalId="nestedComponentsModal" itemTitle="(item, i) => (item.data.get('type') ?? 'Component')+' #'+i"></dbe-list>
+             <div id="comps" class="grid gap-4">
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <dbe-label name="Accent color"></dbe-label>
+                    <dbe-color name="ccolor" class="col-span-3"></dbe-color>
+                </div>
+                <dbe-list name="components" title="Components" modalId="nestedComponentsModal" itemTitle="(item, i) => (item.data.get('type') ?? 'Component')+' #'+i"></dbe-list>             
+            </div>
         </template>
         <template id="nestedComponentsModal">
            <div class="grid grid-cols-4 items-center gap-4">
@@ -507,10 +513,11 @@ export default class Reply {
                 const sdisabled = data.get("sdisabled") === "True"
                 const options = data.get("soptions")
                 selectmenus.push({id, i, data, actions: data.get("Run Actions On Select")})
-                builder.setCustomId(id).setPlaceholder(placeholder).setRequired(srequired).setMinValues(smin).setMaxValues(smax).setDisabled(disable)
+                builder.setCustomId(id).setPlaceholder(placeholder).setRequired(srequired).setMinValues(smin).setMaxValues(smax).setDisabled(sdisabled)
                 options.forEach(({data}) => {
                     const label = data.get("label")
                     const value = data.get("value")
+                    const emoji = data.get("emoji")
                     const isdefault = data.get("default") === "True"
                     const opt = new StringSelectMenuOptionBuilder().setLabel(label).setValue(value).setDefault(isdefault)
                     if(emoji) opt.setEmoji(emoji)
@@ -524,6 +531,8 @@ export default class Reply {
                 const builder = new ContainerBuilder()
                 const rows = []
                 let currentRow = 0
+                const color = hexToNumber(data.get("ccolor").replace("#", ""))
+                builder.setAccentColor(color)
                 components.forEach(({data}, pi) => {
                     const type = data.get("type")
                     if(type === "Text") {
@@ -609,11 +618,11 @@ export default class Reply {
                         const sdisabled = data.get("sdisabled") === "True"
                         const options = data.get("soptions")
                         selectmenus.push({id, i, pi, data, actions: data.get("Run Actions On Select")})
-                        builder.setCustomId(id).setPlaceholder(placeholder).setRequired(srequired).setMinValues(smin).setMaxValues(smax).setDisabled(disable)
+                        builder.setCustomId(id).setPlaceholder(placeholder).setDisabled(sdisabled).setRequired(srequired).setMinValues(smin).setMaxValues(smax)
                         options.forEach(({data}) => {
                             const label = data.get("label")
                             const value = data.get("value")
-                            const emoji = data.get("semoji")
+                            const emoji = data.get("emoji")
                             const isdefault = data.get("default") === "True"
                             const opt = new StringSelectMenuOptionBuilder().setLabel(label).setValue(value).setDefault(isdefault)
                             if(emoji) opt.setEmoji(emoji)
@@ -682,5 +691,11 @@ export default class Reply {
             manager.runNext()
         });
         actionManager.runNext()
+        function hexToNumber(hex) {
+            if (hex.startsWith('#')) {
+                hex = hex.slice(1);
+            }
+            return parseInt(hex, 16);
+        }
     }
 }
