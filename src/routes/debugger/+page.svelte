@@ -22,6 +22,7 @@
     let triggers = $derived([...loaded, ...(bot?.triggers ?? [])].filter((t) => t.showInDebugger))
 
     function hasNestedActions(act) {
+        if(!(act instanceof Action)) act = Action.fromJSON(act);
         for (const key of act.data.keys().toArray()) {
             const value = act.data.get(key);
             if (Array.isArray(value)) {
@@ -29,7 +30,7 @@
                     return true;
                 }
                 if (value.some(el => el.isCustom)) {
-                    for (const customEl of value.map(el => CustomElement.fromJSON(el))) {
+                    for (const customEl of value) {
                         if (hasNestedActionsInCustom(customEl)) {
                             return true;
                         }
@@ -41,6 +42,7 @@
     }
 
     function hasNestedActionsInCustom(customEl) {
+        if(!(customEl instanceof CustomElement)) customEl = CustomElement.fromJSON(customEl);
         for (const customKey of customEl.data.keys().toArray()) {
             const customValue = customEl.data.get(customKey);
             if (Array.isArray(customValue)) {

@@ -16,7 +16,7 @@ export class Trigger {
         this.id = id;
         this.name = name
         this.type = type
-        this.actionManager = new ActionManager(this, this.name, actions)
+        this.actionManager = new ActionManager(this, actions)
     }
 
     load() {

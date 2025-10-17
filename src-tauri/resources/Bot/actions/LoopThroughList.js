@@ -26,7 +26,7 @@ export default class LoopThroughList {
     static async run({data, actionManager, getVariable, setVariable}) {
         const list = getVariable(data.get("list"))
         let i = 0;
-        const actions = new ActionManager(actionManager.trigger, `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)}: Run Actions`, data.get("Run Actions"), () => {
+        const actions = new ActionManager(actionManager.trigger, data.get("Run Actions"), () => {
             actions.reset()
             iterate()
         }, actionManager.onReturn)

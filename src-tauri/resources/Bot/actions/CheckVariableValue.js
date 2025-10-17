@@ -30,8 +30,8 @@ export default class CheckVariableValue {
         const variable = getVariable(data.get("variable"))
         const condition = data.get("condition")
         const value = data.get("value")
-        const ifTrue = new ActionManager(actionManager.trigger, `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)}: Run Actions If True`, data.get("Run Actions If True"), () => { actionManager.runNext() }, actionManager.onReturn)
-        const ifFalse = new ActionManager(actionManager.trigger, `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)}: Run Actions If False`, data.get("Run Actions If False"), () => { actionManager.runNext() }, actionManager.onReturn)
+        const ifTrue = new ActionManager(actionManager.trigger, data.get("Run Actions If True"), () => { actionManager.runNext() }, actionManager.onReturn)
+        const ifFalse = new ActionManager(actionManager.trigger, data.get("Run Actions If False"), () => { actionManager.runNext() }, actionManager.onReturn)
         if(condition === "Equal to") {
             if(String(variable) === value) {
                 ifTrue.runNext()

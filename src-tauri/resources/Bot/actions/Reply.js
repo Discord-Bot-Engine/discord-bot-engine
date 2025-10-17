@@ -456,7 +456,7 @@ export default class Reply {
                     const url = data.get("burl")
                     const emoji = data.get("bemoji")
                     const disabled = data.get("bdisabled") === "True"
-                    buttons.push({id, i, data, actions: data.get("Run Actions On Click")})
+                    buttons.push({id, data, actions: data.get("Run Actions On Click")})
                     builder.setButtonAccessory(
                         button => {
                             button.setCustomId(id).setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
@@ -496,7 +496,7 @@ export default class Reply {
                 const url = data.get("burl")
                 const emoji = data.get("bemoji")
                 const disabled = data.get("bdisabled") === "True"
-                buttons.push({id, i, data, actions: data.get("Run Actions On Click")})
+                buttons.push({id, data, actions: data.get("Run Actions On Click")})
                 builder.setCustomId(id).setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
                 if(style === "Link") builder.setURL(url)
                 if(emoji) builder.setEmoji(emoji)
@@ -512,7 +512,7 @@ export default class Reply {
                 const smax = Number(data.get("smax"))
                 const sdisabled = data.get("sdisabled") === "True"
                 const options = data.get("soptions")
-                selectmenus.push({id, i, data, actions: data.get("Run Actions On Select")})
+                selectmenus.push({id, data, actions: data.get("Run Actions On Select")})
                 builder.setCustomId(id).setPlaceholder(placeholder).setRequired(srequired).setMinValues(smin).setMaxValues(smax).setDisabled(sdisabled)
                 options.forEach(({data}) => {
                     const label = data.get("label")
@@ -533,7 +533,7 @@ export default class Reply {
                 let currentRow = 0
                 const color = hexToNumber(data.get("ccolor").replace("#", ""))
                 builder.setAccentColor(color)
-                components.forEach(({data}, pi) => {
+                components.forEach(({data}) => {
                     const type = data.get("type")
                     if(type === "Text") {
                         builder.addTextDisplayComponents(text=>text.setContent(
@@ -560,7 +560,7 @@ export default class Reply {
                                 const url = data.get("burl")
                                 const emoji = data.get("bemoji")
                                 const disabled = data.get("bdisabled") === "True"
-                                buttons.push({id, i, pi, data, actions: data.get("Run Actions On Click")})
+                                buttons.push({id, data, actions: data.get("Run Actions On Click")})
                                 builder.setButtonAccessory(
                                     button => {
                                         button.setCustomId(id).setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
@@ -601,7 +601,7 @@ export default class Reply {
                         const url = data.get("burl")
                         const emoji = data.get("bemoji")
                         const disabled = data.get("bdisabled") === "True"
-                        buttons.push({id, i, pi, data, actions: data.get("Run Actions On Click")})
+                        buttons.push({id, data, actions: data.get("Run Actions On Click")})
                         builder.setCustomId(id).setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
                         if(style === "Link") builder.setURL(url)
                         if(emoji) builder.setEmoji(emoji)
@@ -617,7 +617,7 @@ export default class Reply {
                         const smax = Number(data.get("smax"))
                         const sdisabled = data.get("sdisabled") === "True"
                         const options = data.get("soptions")
-                        selectmenus.push({id, i, pi, data, actions: data.get("Run Actions On Select")})
+                        selectmenus.push({id, data, actions: data.get("Run Actions On Select")})
                         builder.setCustomId(id).setPlaceholder(placeholder).setDisabled(sdisabled).setRequired(srequired).setMinValues(smin).setMaxValues(smax)
                         options.forEach(({data}) => {
                             const label = data.get("label")
@@ -656,9 +656,7 @@ export default class Reply {
         const menucollector = r.resource.message.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
         btncollector.on('collect', (i) => {
             const btn = buttons.find(b => b.id === i.customId)
-            let text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${btn.i + 1}: Run Actions On Click`
-            if(btn.pi !== undefined) text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${btn.i + 1}: components ${btn.pi + 1}: Run Actions On Click`
-            const manager = new ActionManager(actionManager.trigger, text, btn.actions)
+            const manager = new ActionManager(actionManager.trigger, btn.actions)
             const int = btn.data.get("binteraction")
             const msg = btn.data.get("bmessage")
             const mem = btn.data.get("bmember")
@@ -673,9 +671,7 @@ export default class Reply {
         });
         menucollector.on('collect', (i) => {
             const menu = selectmenus.find(s => s.id === i.customId)
-            let text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${menu.i}: Run Actions On Select`
-            if(menu.pi !== undefined) text = `${actionManager.name} -> ${actionManager.runningActionIndex + 1}. ${this.title(data)} -> components ${menu.i}: components ${menu.pi}: Run Actions On Select`
-            const manager = new ActionManager(actionManager.trigger, text, menu.actions)
+            const manager = new ActionManager(actionManager.trigger, menu.actions)
             const int = menu.data.get("sinteraction")
             const opts = menu.data.get("soptions")
             const msg = menu.data.get("smessage")

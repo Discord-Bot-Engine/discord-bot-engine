@@ -3,17 +3,15 @@ import { v4 as uuidv4 } from 'uuid';
 
 export class ActionManager {
     id = uuidv4()
-    name = ""
     trigger = {}
     actionList = []
     runningActionIndex = 0
     onFinish = () => {}
     onReturn = () => {}
 
-    constructor(trigger, name, actionList, onFinish = () => {}, onReturn = () => {})
+    constructor(trigger, actionList, onFinish = () => {}, onReturn = () => {})
     {
         this.trigger = trigger;
-        this.name = name;
         this.actionList = actionList;
         this.onFinish = onFinish;
         this.onReturn = onReturn;
