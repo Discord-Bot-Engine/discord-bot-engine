@@ -5,7 +5,7 @@
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     import {PluginManager} from "$lib/classes/PluginManager.svelte.js";
     let { plugin, upToDate } = $props();
-    let isUpToDate = $state(upToDate(plugin.name))
+    let isUpToDate = $state(upToDate(plugin))
     let isDownloaded = $state(downloaded(plugin.name))
     function color() {
         if(isUpToDate) return "outline"
@@ -62,6 +62,8 @@
         <Button onclick={() => {
             download(plugin.name)
         }} variant={color()} disabled={isUpToDate} class="flex-auto">{title()}</Button>
-        <Button variant="destructive" onclick={() => remove(plugin.name)}><TrashIcon/></Button>
+        {#if isDownloaded}
+            <Button variant="destructive" onclick={() => remove(plugin.name)}><TrashIcon/></Button>
+        {/if}
     </Card.Footer>
 </Card.Root>

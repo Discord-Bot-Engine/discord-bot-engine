@@ -9,20 +9,20 @@
 			PluginManager.plugins
 					.filter(p => p.name.toLowerCase().includes(name.toLowerCase()))
 					.sort((a, b) => a.name.localeCompare(b.name))
-					.sort((a, b) => upToDate(a.name) - upToDate(b.name))
+					.sort((a, b) => upToDate(a) - upToDate(b))
 	)
-	function upToDate(name) {
+	function upToDate(plugin) {
 		if(plugin.type === "action") {
 			const actions = BotManager.selectedBot.actionClasses
-			const action = actions.find(act => act.file.slice(40) === name)
+			const action = actions.find(act => act.file.slice(40) === plugin.name)
 			return PluginManager.isActionUpToDate(action?.file);
 		} else if (plugin.type === "trigger") {
 			const triggers = BotManager.selectedBot.triggerClasses
-			const trigger = triggers.find(t => t.file.slice(40) === name)
+			const trigger = triggers.find(t => t.file.slice(40) === plugin.name)
 			return PluginManager.isTriggerUpToDate(trigger?.file);
 		} else if (plugin.type === "extension") {
 			const extensions = BotManager.selectedBot.extensionClasses
-			const extension = extensions.find(ext => ext.file.slice(40) === name)
+			const extension = extensions.find(ext => ext.file.slice(40) === plugin.name)
 			return PluginManager.isExtensionUpToDate(extension?.file);
 		}
 	}
