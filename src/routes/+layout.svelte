@@ -10,6 +10,15 @@
 		alert("Please select a bot!")
 		goto("/");
 	}
+	document.addEventListener('keydown', function (event) {
+		if (
+				event.key === 'F5' ||
+				(event.ctrlKey && event.key === 'r') ||
+				(event.metaKey && event.key === 'r')
+		) {
+			event.preventDefault();
+		}
+	});
 </script>
 
 {#if ["/debugger", "/variables"].includes(page.route.id)}
