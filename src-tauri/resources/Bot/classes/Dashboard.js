@@ -56,7 +56,7 @@ class DashboardClass {
 
     deleteInput(name) {
         this.inputs = this.inputs.filter(input => input.name !== name)
-        this.data.keys().forEach(server => server.remove(name));
+        this.data.keys().forEach(server => this.data.get(server).remove(name));
         this.saveFiles()
     }
 
