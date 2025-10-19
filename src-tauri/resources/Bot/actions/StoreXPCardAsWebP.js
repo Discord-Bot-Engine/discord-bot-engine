@@ -37,6 +37,10 @@ export default class StoreXPCardAsWebP {
     static load(context) {}
 
     static async run({ data, actionManager, getVariable, setVariable }) {
+        const member = getVariable(data.get("member"));
+        const xp = Bot.getData(`${member.id}${member.guild.id}${data.get("xp")}`);
+        const maxXp = Bot.getData(`${member.id}${member.guild.id}${data.get("maxXp")}`);
+        const level = Bot.getData(`${member.id}${member.guild.id}${data.get("level")}`);
         const html = `
     <style>
         :root{
@@ -243,12 +247,12 @@ export default class StoreXPCardAsWebP {
 
 <script>
     const user = {
-        avatar: "{avatar}",
-        displayName: "{member}",
-        xp: "{xp}",
-        maxXp: "{maxXp}"",
-        level: "{level}",
-        joined: "{joinDate}"
+        avatar: "${member.displayAvatarURL()}",
+        displayName: "${member.displayName.replaceAll("\"", "\\\"")}",
+        xp: ${xp},
+        maxXp: ${maxXp},
+        level: ${level},
+        joined: "${member.joinedAt}"
     };
 
     function setUpCard(u){
@@ -275,10 +279,6 @@ export default class StoreXPCardAsWebP {
         const width = 500;
         const height = 200;
         const duration = 3;
-        const member = getVariable(data.get("member"));
-        const xp = Bot.getData(`${member.id}${member.guild.id}${data.get("xp")}`);
-        const maxXp = Bot.getData(`${member.id}${member.guild.id}${data.get("maxXp")}`);
-        const level = Bot.getData(`${member.id}${member.guild.id}${data.get("level")}`);
         const value = data.get("value");
         const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
         const page = await browser.newPage();
@@ -304,7 +304,7 @@ export default class StoreXPCardAsWebP {
         }
       </style>
     </head>
-    <body>${html.replaceAll("{xp}", xp).replaceAll("{maxXp}", maxXp).replaceAll("{level}", level).replaceAll("{member}", member.displayName).replaceAll("{joinDate}", member.joinedAt).replaceAll("{avatar}", member.displayAvatarURL())}</body>
+    <body>${html}</body>
   </html>`, { waitUntil: "networkidle0" });
         const pipeStream = new PassThrough();
         const bytes = []
