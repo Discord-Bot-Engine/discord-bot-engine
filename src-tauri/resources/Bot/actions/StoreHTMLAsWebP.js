@@ -15,15 +15,15 @@ export default class StoreHTMLAsWebP {
     static html = `
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="HTML"></dbe-label>
-        <dbe-input name="html" multiline={true} class="col-span-3" onChange="(v) => document.getElementById('preview').innerHTML = v"></dbe-input>
+        <dbe-input name="html" multiline={true} class="col-span-3" onChange="(v) => document.getElementById('preview').contentWindow.document.body.innerHTML = v"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="Width"></dbe-label>
-        <dbe-input name="width" class="col-span-3" onChange="(v) => document.getElementById('preview').style.width = v + 'px'" value="100"></dbe-input>
+        <dbe-input name="width" class="col-span-3" onChange="(v) => document.getElementById('preview').width = v + 'px'" value="100"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="Height"></dbe-label>
-        <dbe-input name="height" class="col-span-3" onChange="(v) => document.getElementById('preview').style.height = v + 'px'" value="100"></dbe-input>
+        <dbe-input name="height" class="col-span-3" onChange="(v) => document.getElementById('preview').height = v + 'px'" value="100"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="Duration in seconds"></dbe-label>
@@ -35,10 +35,31 @@ export default class StoreHTMLAsWebP {
     </div>
     <div style="overflow:auto">
         <dbe-label>Preview</dbe-label>
-        <div id="preview" class="border overflow-hidden"></div>
+        <iframe id="preview" class="border overflow-hidden"></iframe>
     </div>
     `;
     static load(context) {}
+
+    static open(action, handlers) {
+        const iframe = document.getElementById("preview");
+        iframe.contentWindow.document.body.innerHTML = `  <html>
+    <head>
+      <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+          overflow:hidden;
+          margin:0;
+          height: 100vh;
+          width: 100vw;
+          color:white;
+        }
+      </style>
+    </head>
+    <body>${html}</body>
+  </html>`
+    }
 
     static async run({ data, actionManager, setVariable }) {
         const width = Number(data.get("width"));

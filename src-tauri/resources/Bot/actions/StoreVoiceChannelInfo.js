@@ -26,7 +26,7 @@ export default class StoreVoiceChannelInfo {
         </div>
     `;
 
-    static open(trigger, handlers) {
+    static open(action, handlers) {
         const varlist = document.getElementById("var");
 
         handlers.onChange = (value) => {

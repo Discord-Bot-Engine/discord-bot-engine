@@ -61,7 +61,7 @@ export default class StoreRoleInfo {
         </div>
     `
 
-    static open(trigger, handlers) {
+    static open(action, handlers) {
         const varlist = document.getElementById("var");
         const imgsettings = document.getElementById("imgsettings");
 
