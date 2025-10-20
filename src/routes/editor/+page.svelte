@@ -6,9 +6,11 @@
 	import DbeInput from "$lib/components/DbeInput.svelte";
 	import DbeColor from "$lib/components/DbeColor.svelte";
 	import DbeLabel from "$lib/components/DbeLabel.svelte";
+	import DbeButton from "$lib/components/DbeButton.svelte";
 	import DbeSelect from "$lib/components/DbeSelect.svelte";
 	import DbeList from "$lib/components/DbeList.svelte";
 	import DbeVariableList from "$lib/components/DbeVariableList.svelte";
+	import DbeTriggerList from "$lib/components/DbeTriggerList.svelte";
 	import {App} from "$lib/classes/App.svelte.js"
 	import TopBar from "$lib/components/TopBar.svelte";
 	import Run from "$lib/components/Run.svelte";

@@ -26,7 +26,7 @@ export default class StoreUserInfo {
             <dbe-select 
                 name="info" 
                 class="col-span-3" 
-                onChange="(v) => handlers.onChange(v)"
+                change="(v) => handlers.onChange(v)"
                 values="Username,Display Name,Discriminator,Id,Tag,Avatar URL,Banner URL,Accent Color,Is Bot,Is System,Created At,Default Avatar URL">
             </dbe-select>
         </div>

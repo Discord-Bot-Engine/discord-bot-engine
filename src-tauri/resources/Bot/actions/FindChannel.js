@@ -17,7 +17,7 @@ export default class FindChannel {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Type"></dbe-label>
-            <dbe-select name="type" values="Text,Voice,Forum" onChange="(v) => document.getElementById('var').setVariableType(v + ' Channel')" class="col-span-3"></dbe-select>
+            <dbe-select name="type" values="Text,Voice,Forum" change="(v) => document.getElementById('var').setVariableType(v + ' Channel')" class="col-span-3"></dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Value"></dbe-label>

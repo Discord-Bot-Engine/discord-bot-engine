@@ -22,7 +22,8 @@
         BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
         isCreatingAction = false;
     }
-    function editAction() {
+   async  function editAction() {
+       const actionClass = BotManager.selectedBot.actionClasses.find(act => act.type === selectedAction.type);
         Object.keys(handlersCopy).forEach(handler => {
             window.handlers[handler] = handlersCopy[handler];
         })
@@ -31,6 +32,11 @@
         App.saveUIData(ref, data)
         BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
         isEditingAction = false
+        try {
+            await actionClass?.close?.(selectedAction, window.handlers)
+        } catch (e) {
+            alert(`${selectedAction.type}\n${e.stack}`)
+        }
     }
     function itemTitle(item, i) {
         const actionClass = BotManager.selectedBot.actionClasses.find(a => a.type === item.type)

@@ -8,7 +8,7 @@
     import { cn } from "$lib/utils.js";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
 
-    let {values, type = "single", value = $bindable(), onValueChange=() => {}, ...other} = $props()
+    let {values, type = "single", value = $bindable(), onvaluechange=() => {}, ...other} = $props()
     let search = $state("")
     let open = $state(false);
     let triggerRef = $state(null);
@@ -61,7 +61,7 @@
                             <Command.Item
                                     disabled={v.disabled}
                                     value={v.value}
-                                    onSelect={() => {type === "single" ? value = v.value : value.push(v.value); closeAndFocusTrigger(); onValueChange(value)}}
+                                    onSelect={() => {type === "single" ? value = v.value : value.push(v.value); closeAndFocusTrigger(); onvaluechange(value)}}
                             >
                                 <CheckIcon
                                         class={cn("mr-2 size-4", (type === "single" ? value !== v.value : !value?.includes(v.value)) && "text-transparent")}

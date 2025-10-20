@@ -15,15 +15,15 @@ export default class StoreHTMLAsWebP {
     static html = `
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="HTML"></dbe-label>
-        <dbe-input name="html" multiline={true} class="col-span-3" onChange="(v) => document.getElementById('preview').contentWindow.document.body.innerHTML = v"></dbe-input>
+        <dbe-input name="html" multiline={true} class="col-span-3" change="(v) => document.getElementById('preview').contentWindow.document.body.innerHTML = v"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="Width"></dbe-label>
-        <dbe-input name="width" class="col-span-3" onChange="(v) => document.getElementById('preview').width = v + 'px'" value="100"></dbe-input>
+        <dbe-input name="width" class="col-span-3" change="(v) => document.getElementById('preview').width = v + 'px'" value="100"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="Height"></dbe-label>
-        <dbe-input name="height" class="col-span-3" onChange="(v) => document.getElementById('preview').height = v + 'px'" value="100"></dbe-input>
+        <dbe-input name="height" class="col-span-3" change="(v) => document.getElementById('preview').height = v + 'px'" value="100"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="Duration in seconds"></dbe-label>

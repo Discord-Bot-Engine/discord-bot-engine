@@ -16,7 +16,7 @@ export default class StoreCategoryChannelInfo {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
-            <dbe-select name="info" class="col-span-3" onChange="(v) => handlers.onChange(v)" 
+            <dbe-select name="info" class="col-span-3" change="(v) => handlers.onChange(v)" 
                 values="Name,Position,Is Deletable,Is Manageable,Is Viewable,Server,Children">
             </dbe-select>
         </div>

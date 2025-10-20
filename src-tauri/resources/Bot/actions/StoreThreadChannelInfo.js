@@ -16,7 +16,7 @@ export default class StoreThreadChannelInfo {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
-            <dbe-select name="info" class="col-span-3" onChange="(v) => handlers.onChange(v)" 
+            <dbe-select name="info" class="col-span-3" change="(v) => handlers.onChange(v)" 
                 values="Name,Topic,Is NSFW,Created At,Archived,Auto Archive Duration,Is Locked,Is Manageable,Is Viewable,Server,Parent,Members,Member Count">
             </dbe-select>
         </div>

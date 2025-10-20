@@ -36,7 +36,7 @@ export default class Reply {
         <template id="componentsModal">
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Type"></dbe-label>
-                <dbe-select name="type" onChange="(value, el) => handlers.onChange(value, el)" value="Text" values="Text,Section,Media Gallery,File,Separator,Container,Button,Select Menu" class="col-span-3"></dbe-select>
+                <dbe-select name="type" change="(value, el) => handlers.onChange(value, el)" value="Text" values="Text,Section,Media Gallery,File,Separator,Container,Button,Select Menu" class="col-span-3"></dbe-select>
             </div>
             <div id="text" class="grid gap-4">
                 <div class="grid grid-cols-4 items-center gap-4">
@@ -51,11 +51,11 @@ export default class Reply {
                 </div>
                  <div class="grid grid-cols-4 items-center gap-4">
                     <dbe-label name="Has thumbnail?"></dbe-label>
-                    <dbe-select name="sthumbnail" class="col-span-3" onChange="(value, el) => el.parentElement.parentElement.parentElement.querySelector('#thumbnail').style.display = (value === 'True' ? '' : 'none')" values="True,False" value="False"></dbe-select>
+                    <dbe-select name="sthumbnail" class="col-span-3" change="(value, el) => el.parentElement.parentElement.parentElement.querySelector('#thumbnail').style.display = (value === 'True' ? '' : 'none')" values="True,False" value="False"></dbe-select>
                 </div>
                  <div class="grid grid-cols-4 items-center gap-4">
                     <dbe-label name="Has button?"></dbe-label>
-                    <dbe-select name="sbutton" class="col-span-3" onChange="(value, el) => el.parentElement.parentElement.parentElement.querySelector('#button').style.display = (value === 'True' ? '' : 'none')" values="True,False" value="False"></dbe-select>
+                    <dbe-select name="sbutton" class="col-span-3" change="(value, el) => el.parentElement.parentElement.parentElement.querySelector('#button').style.display = (value === 'True' ? '' : 'none')" values="True,False" value="False"></dbe-select>
                 </div>
             </div>
             <div id="thumbnail" class="grid gap-4">
@@ -100,7 +100,7 @@ export default class Reply {
                     </div>
                      <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Style"></dbe-label>
-                        <dbe-select name="bstyle" class="col-span-3" onChange="(value, el) => el.parentElement.parentElement.querySelector('#url').style.display = (value === 'Link' ? '' : 'none')" values="Danger,Link,Premium,Primary,Secondary,Success" value="Primary"></dbe-select>
+                        <dbe-select name="bstyle" class="col-span-3" change="(value, el) => el.parentElement.parentElement.querySelector('#url').style.display = (value === 'Link' ? '' : 'none')" values="Danger,Link,Premium,Primary,Secondary,Success" value="Primary"></dbe-select>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4" id="url">
                         <dbe-label name="URL"></dbe-label>
@@ -199,7 +199,7 @@ export default class Reply {
         <template id="nestedComponentsModal">
            <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Type"></dbe-label>
-                <dbe-select name="type" onChange="(value, el) => handlers.onChange(value, el)" value="Text" values="Text,Section,Media Gallery,File,Separator,Button,Select Menu" class="col-span-3"></dbe-select>
+                <dbe-select name="type" change="(value, el) => handlers.onChange(value, el)" value="Text" values="Text,Section,Media Gallery,File,Separator,Button,Select Menu" class="col-span-3"></dbe-select>
             </div>
             <div id="text" class="grid gap-4">
                 <div class="grid grid-cols-4 items-center gap-4">
@@ -214,11 +214,11 @@ export default class Reply {
                 </div>
                  <div class="grid grid-cols-4 items-center gap-4">
                     <dbe-label name="Has thumbnail?"></dbe-label>
-                    <dbe-select name="sthumbnail" class="col-span-3" onChange="(value, el) => el.parentElement.parentElement.parentElement.querySelector('#thumbnail').style.display = (value === 'True' ? '' : 'none')" values="True,False" value="False"></dbe-select>
+                    <dbe-select name="sthumbnail" class="col-span-3" change="(value, el) => el.parentElement.parentElement.parentElement.querySelector('#thumbnail').style.display = (value === 'True' ? '' : 'none')" values="True,False" value="False"></dbe-select>
                 </div>
                  <div class="grid grid-cols-4 items-center gap-4">
                     <dbe-label name="Has button?"></dbe-label>
-                    <dbe-select name="sbutton" class="col-span-3" onChange="(value, el) => el.parentElement.parentElement.parentElement.querySelector('#button').style.display = (value === 'True' ? '' : 'none')" values="True,False" value="False"></dbe-select>
+                    <dbe-select name="sbutton" class="col-span-3" change="(value, el) => el.parentElement.parentElement.parentElement.querySelector('#button').style.display = (value === 'True' ? '' : 'none')" values="True,False" value="False"></dbe-select>
                 </div>
             </div>
             <div id="thumbnail" class="grid gap-4">
@@ -263,7 +263,7 @@ export default class Reply {
                     </div>
                      <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Style"></dbe-label>
-                        <dbe-select name="bstyle" class="col-span-3" onChange="(value, el) => el.parentElement.parentElement.querySelector('#url').style.display = (value === 'Link' ? '' : 'none')" values="Danger,Link,Premium,Primary,Secondary,Success" value="Primary"></dbe-select>
+                        <dbe-select name="bstyle" class="col-span-3" change="(value, el) => el.parentElement.parentElement.querySelector('#url').style.display = (value === 'Link' ? '' : 'none')" values="Danger,Link,Premium,Primary,Secondary,Success" value="Primary"></dbe-select>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4" id="url">
                         <dbe-label name="URL"></dbe-label>

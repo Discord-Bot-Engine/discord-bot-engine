@@ -1,4 +1,3 @@
-import { Bot } from "../classes/Bot.js"
 
 export default class StoreRoleInfo {
     static type = "Store Role Info"
@@ -30,7 +29,7 @@ export default class StoreRoleInfo {
             <dbe-select 
                 name="info" 
                 class="col-span-3" 
-                onChange="(v) => handlers.onChange(v)"
+                change="(v) => handlers.onChange(v)"
                 values="Color,Created At,Is Deleted,Is Editable,Is Hoisted,Icon URL,Id,Is Managed,Is Mentionable,Members,Name,Permissions,Position,Tags,Unicode Emoji">
             </dbe-select>
         </div>

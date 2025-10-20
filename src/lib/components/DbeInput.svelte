@@ -2,18 +2,18 @@
 <script>
     import {Input} from "$lib/components/ui/input/index.js";
     import {Textarea} from "$lib/components/ui/textarea/index.js";
-    let { onChange = "() => {}", multiline=false, value, ...others} = $props()
+    let { change = "() => {}", multiline=false, value, ...others} = $props()
     let state = $state(value)
-    onChange = eval(`(${onChange})`)
+    change = eval(`(${change})`)
     let interval = setInterval(() => {
         let value = $host().children[0].value
         if(value !== undefined)
-            onChange(value, $host())
+            change(value, $host())
         clearInterval(interval)
     },10)
 </script>
 {#if multiline}
-    <Textarea value={state} oninput={(ev) => onChange(ev.target.value, $host())} {...others} />
+    <Textarea value={state} oninput={(ev) => change(ev.target.value, $host())} {...others} />
 {:else}
-    <Input value={state} oninput={(ev) => onChange(ev.target.value, $host())} {...others} />
+    <Input value={state} oninput={(ev) => change(ev.target.value, $host())} {...others} />
 {/if}

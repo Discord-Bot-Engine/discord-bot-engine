@@ -1,8 +1,8 @@
 <svelte:options customElement={{tag: "dbe-label", shadow: "none"}} />
 <script>
     import {Label} from "$lib/components/ui/label/index.js";
-    const {name, children, ...other} = $props()
+    const {name, ...other} = $props()
 </script>
-<Label {...other} class="{other.class}" >
+<Label {...other} >
     {name}
 </Label>

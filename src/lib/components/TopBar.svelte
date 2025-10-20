@@ -59,7 +59,11 @@
                                 handlersCopy = window.handlers
                                 Object.freeze(handlersCopy)
                                 window.handlers = {}
-                                BotManager.selectedBot.extensionClasses.find(ext => ext.type === extension.type)?.open?.(extension, window.handlers)
+                                try {
+                                    BotManager.selectedBot.extensionClasses.find(ext => ext.type === extension.type)?.open?.(extension, window.handlers)
+                                } catch (e) {
+                                    alert(`${extension.type}\n${e.stack}`)
+                                }
                             }, 10)
                         }
                     }
@@ -76,6 +80,11 @@
         const data = BotManager.selectedBot.extensions.get(extension.type)?.data
         App.saveUIData(ref, data)
         isEditing = false
+        try {
+            BotManager.selectedBot.extensionClasses.find(ext => ext.type === extension.type)?.close?.(extension, window.handlers)
+        }catch (e) {
+            alert(`${extension.type}\n${e.stack}`)
+        }
     }
 </script>
 

@@ -16,12 +16,14 @@ class BotManagerClass {
 				bot.extensionClasses = plugins.data
 				bot.extensionClasses.forEach(p => {
 					if(p.open) p.open = eval(`(${p.open.replace("open", "function ")})`)
+					if(p.close) p.close = eval(`(${p.close.replace("close", "function ")})`)
 				})
 			}
 			if(plugins.type === "triggers") {
 				bot.triggerClasses = plugins.data
 				bot.triggerClasses.forEach(p => {
 					if(p.open) p.open = eval(`(${p.open.replace("open", "function ")})`)
+					if(p.close) p.close = eval(`(${p.close.replace("close", "function ")})`)
 				})
 			}
 			if(plugins.type === "actions") {
@@ -29,6 +31,7 @@ class BotManagerClass {
 				bot.actionClasses.forEach(p => {
 					p.title = eval(`(${p.title.replace("title", "function ")})`)
 					if(p.open) p.open = eval(`(${p.open.replace("open", "function ")})`)
+					if(p.close) p.close = eval(`(${p.close.replace("close", "function ")})`)
 				})
 			}
 		})
@@ -57,6 +60,9 @@ class BotManagerClass {
 	selectBot(bot) {
 		bot.loadFiles()
 		this.selectedBot = bot
+		window.getTrigger = (id) => {
+			return bot.triggers.find(t => t.id === id)
+		}
 	}
 
 	loadBots() {

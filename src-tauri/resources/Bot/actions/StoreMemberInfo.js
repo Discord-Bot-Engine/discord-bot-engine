@@ -31,7 +31,7 @@ export default class StoreMemberInfo {
             <dbe-select 
                 name="info" 
                 class="col-span-3" 
-                onChange="(v) => handlers.onChange(v)"
+                change="(v) => handlers.onChange(v)"
                 values="Avatar URL,Banner URL,Communication Disabled Until,Display Color,Display Hex Color,Display Name,Joined At,Nickname,User,User Id,User Tag,Is Bannable,Is Communication Disabled,Is Kickable,Is Manageable,Is Owner,Is Pending,Is Premium Since,Roles,Permissions,Voice State">
             </dbe-select>
         </div>

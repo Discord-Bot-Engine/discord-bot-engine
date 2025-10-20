@@ -31,7 +31,7 @@ export default class StoreServerInfo {
             <dbe-select 
                 name="info" 
                 class="col-span-3" 
-                onChange="(v) => handlers.onChange(v)"
+                change="(v) => handlers.onChange(v)"
                 values="Banner URL,Discovery Splash URL,Icon URL,Splash URL,Widget Image URL,Afk Channel,Afk Timeout,Approximate Member Count,Approximate Presence Count,Auto Moderation Rules,Is Available,Bans,Channels,Commands,Creation Date,Default Message Notifications,Description,Emojis,Explicit Content Filter,Id,Invites,Bot Join Date,Is Large,Preferred Locale,Maximum Bitrate,Maximum Members,Maximum Presences,Max Stage Video Channel Users,Max Video Channel Users,Member Count,Members,MFA Level,Name,Name Acronym,NSFW Level,Owner,Is Partnered,Boost Tier,Has Boost Progress Bar,Boosts Number,Presences,Public Updates Channel,Roles,Rules Channel,Safety Alerts Channel,Scheduled Events,Soundboard Sounds,Stage Instances,Stickers,System Channel,Vanity URL Code,Vanity URL Uses,Verification Level,Is Verified,Voice States,Widget Channel,Is Widget Enabled">
             </dbe-select>
         </div>

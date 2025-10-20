@@ -28,7 +28,7 @@ export default class StoreTextChannelInfo {
             <dbe-select 
                 name="info" 
                 class="col-span-3" 
-                onChange="(v) => handlers.onChange(v)"
+                change="(v) => handlers.onChange(v)"
                 values="Name,Topic,Is NSFW,Created At,Slowmode,Category,Parent,Is Thread,Server,Position,Is Deletable,Is Manageable,Is Viewable,Permissions,Recipients">
             </dbe-select>
         </div>

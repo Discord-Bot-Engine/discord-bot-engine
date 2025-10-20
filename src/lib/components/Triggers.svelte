@@ -25,9 +25,10 @@
         BotManager.selectedBot.markAsModified(id)
         isCreatingTrigger = false;
     }
-    function editTrigger() {
+    async function editTrigger() {
         if(!triggerEditName.trim()) return;
         if(BotManager.selectedBot.triggers.find(t => t.name === triggerEditName.trim() && t.type === App.selectedTrigger.type) && App.selectedTrigger.name !== triggerEditName) return alert("Trigger already exists!");
+        const triggerClass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type);
         App.selectedTrigger.name = triggerEditName
         BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
         Object.keys(handlersCopy).forEach(handler => {
@@ -37,6 +38,11 @@
         const data = App.selectedTrigger.data
         App.saveUIData(ref, data)
         isEditingTrigger = false
+        try {
+            await triggerClass?.close?.(App.selectedTrigger, window.handlers)
+        } catch (e) {
+            alert(`${selectedAction.type}\n${e.stack}`)
+        }
     }
 </script>
 {#snippet html(item, i)}

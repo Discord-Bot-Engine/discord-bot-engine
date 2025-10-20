@@ -1,9 +1,10 @@
 <svelte:options customElement={{tag: "dbe-select", shadow: "none"}} />
 <script>
     import SearchSelect from "$lib/components/SearchSelect.svelte";
-    let {onChange = "() => {}", value, values, ...other} = $props()
-    onChange = eval(`(${onChange})`)
+    let {change = "() => {}", labels="", value, values, ...other} = $props()
+    change = eval(`(${change})`)
     values = values ?? []
+    labels = labels.split(",").map(el => el.trim())
     let statevalues = $state(values)
     let statevalue = $state(value)
     function customSort(arr) {
@@ -22,7 +23,7 @@
     }
     $host().getValue = () => statevalue
     setTimeout(() => {
-        onChange(statevalue, $host())
+        change(statevalue, $host())
     }, 50)
 </script>
-<SearchSelect {...other} values={customSort(statevalues.split(",").filter(el => el.trim())).map(el=>({label:el, value:el}))} onValueChange={(v) => onChange(v, $host())} bind:value={statevalue}/>
+<SearchSelect {...other} values={customSort(statevalues.split(",").filter(el => el.trim())).map((el,i)=>({label: labels[i] ?? el, value:el}))} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>

@@ -41,6 +41,7 @@ import {__dirname} from "./Bot.js";
         variableTypes: trigger.content.default.variableTypes,
         html: trigger.content.default.html,
         open: trigger.content.default.open?.toString(),
+        close: trigger.content.default.close?.toString(),
         file: trigger.file
     }))
     actionClasses = actionClasses.filter(m => m.content).map(action => ({
@@ -49,12 +50,14 @@ import {__dirname} from "./Bot.js";
         variableTypes: action.content.default.variableTypes,
         html: action.content.default.html,
         open: action.content.default.open?.toString(),
+        close: action.content.default.close?.toString(),
         file: action.file
     }))
     extensionClasses = extensionClasses.filter(m => m.content).map(extension => ({
         type: extension.content.default.type,
         html: extension.content.default.html,
         open: extension.content.default.open?.toString(),
+        close: extension.content.default.close?.toString(),
         file: extension.file
     }))
 
