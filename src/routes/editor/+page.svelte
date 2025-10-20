@@ -17,8 +17,10 @@
 	import Variables from "$lib/components/Variables.svelte";
 	import VariablesContextMenu from "$lib/components/VariablesContextMenu.svelte";
 	import {onMount} from "svelte";
+	import Action from "$lib/classes/Action.svelte.js";
 	onMount(() => {
 		window.handlers ??= {}
+		window.actionFromJSON = (json) => Action.fromJSON(json);
 	})
 </script>
 <TopBar />
