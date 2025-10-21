@@ -78,8 +78,8 @@ class BotManagerClass {
 		return new Promise(async (resolve) => {
 			const unlisten = await listen('finished_copying', () => {
 				setTimeout(() => resolve(true), 5000)
+				unlisten()
 			})
-			unlisten()
 			invoke('copy_bot_files', {bot_path:path});
 		})
 	}
@@ -88,8 +88,8 @@ class BotManagerClass {
 		return new Promise(async (resolve) => {
 			const unlisten = await listen('finished_copying', () => {
 				setTimeout(() => resolve(true), 5000)
+				unlisten()
 			})
-			unlisten()
 			invoke('update_bot_files', {bot_path:this.selectedBot.path});
 		})
 	}
