@@ -33,7 +33,7 @@
         BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
         isEditingAction = false
         try {
-            await actionClass?.close?.(selectedAction, window.handlers)
+            await actionClass?.close?.(selectedAction)
         } catch (e) {
             alert(`${selectedAction.type}\n${e.stack}`)
         }

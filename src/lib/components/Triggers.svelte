@@ -39,7 +39,7 @@
         App.saveUIData(ref, data)
         isEditingTrigger = false
         try {
-            await triggerClass?.close?.(App.selectedTrigger, window.handlers)
+            await triggerClass?.close?.(App.selectedTrigger)
         } catch (e) {
             alert(`${selectedAction.type}\n${e.stack}`)
         }
