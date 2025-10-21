@@ -343,7 +343,7 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
         .resolve("resources/Bot", BaseDirectory::Resource)
         .unwrap();
     tauri::async_runtime::spawn(async move {
-        copy_dir_all(&resource_path, &bot_path).unwrap();
+        copy_dir_all(&resource_path, &bot_path, None).unwrap();
         _app.emit("finished_copying", &bot_path).unwrap();
     });
 }
