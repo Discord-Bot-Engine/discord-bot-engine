@@ -5,6 +5,14 @@
     let { change = "() => {}", multiline=false, value, ...others} = $props()
     let state = $state(value)
     change = eval(`(${change})`)
+    if(!Object.getOwnPropertyDescriptor($host(), "value")) Object.defineProperty($host(), "value", {
+        set(x) {
+            state = x;
+        },
+        get() {
+            return state
+        }
+    })
     let interval = setInterval(() => {
         let value = $host().children[0].value
         if(value !== undefined)
@@ -13,7 +21,7 @@
     },10)
 </script>
 {#if multiline}
-    <Textarea value={state} oninput={(ev) => change(ev.target.value, $host())} {...others} />
+    <Textarea value={state} oninput={(ev) => change(ev.target.value, $host())} {...others} style="overflow:hidden" />
 {:else}
     <Input value={state} oninput={(ev) => change(ev.target.value, $host())} {...others} />
 {/if}
