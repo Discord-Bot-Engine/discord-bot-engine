@@ -18,9 +18,24 @@
 	import VariablesContextMenu from "$lib/components/VariablesContextMenu.svelte";
 	import {onMount} from "svelte";
 	import Action from "$lib/classes/Action.svelte.js";
+	import CustomElement from "$lib/classes/CustomElement.svelte.js";
+	import Extension from "$lib/classes/Extension.svelte.js";
+	import Trigger from "$lib/classes/Trigger.svelte.js";
+	import Bot from "$lib/classes/Bot.svelte.js";
+	import {BotManager} from "$lib/classes/BotManager.svelte.js";
+	import {Debugger} from "$lib/classes/Debugger.svelte.js";
+	import {PluginManager} from "$lib/classes/PluginManager.svelte.js";
 	onMount(() => {
 		window.handlers ??= {}
-		window.actionFromJSON = (json) => Action.fromJSON(json);
+		window.Action = Action;
+		window.Trigger = Trigger;
+		window.App = App;
+		Window.Bot = Bot;
+		Window.BotManager = BotManager;
+		window.CustomElement = CustomElement;
+		window.Debugger = Debugger;
+		window.Extension = Extension;
+		window.PluginManager = PluginManager;
 	})
 </script>
 <TopBar />

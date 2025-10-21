@@ -1,5 +1,5 @@
-export default class GetActionsAsJSON {
-    static type = "Get Actions As JSON";
+export default class SetActionsAsJSON {
+    static type = "Set Actions As JSON";
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Trigger"></dbe-label>
@@ -11,9 +11,9 @@ export default class GetActionsAsJSON {
         </div>
     `
     static close(extension, handlers) {
-        const t = getTrigger(extension.data.get("trigger"))
+        const t = BotManager.selectedBot.triggers.find(t => t.id === extension.data.get("trigger"))
         if(!t) return;
-        t.actions = JSON.parse(extension.data.get("json")).map(j => actionFromJSON(j));
+        t.actions = JSON.parse(extension.data.get("json")).map(j => Action.fromJSON(j));
     }
     static load(context) {
     }

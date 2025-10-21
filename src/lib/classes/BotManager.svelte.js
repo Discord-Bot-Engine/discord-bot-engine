@@ -60,9 +60,6 @@ class BotManagerClass {
 	selectBot(bot) {
 		bot.loadFiles()
 		this.selectedBot = bot
-		window.getTrigger = (id) => {
-			return bot.triggers.find(t => t.id === id)
-		}
 	}
 
 	loadBots() {

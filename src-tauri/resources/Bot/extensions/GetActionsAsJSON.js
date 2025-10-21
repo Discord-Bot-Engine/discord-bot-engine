@@ -11,16 +11,15 @@ export default class GetActionsAsJSON {
     `
     static open(extension, handlers) {
         const id = document.getElementById("trigger").value
-        let json = JSON.stringify(getTrigger(id)?.actions ?? "[]")
+        let json = JSON.stringify(BotManager.selectedBot.triggers.find(t => t.id === id)?.actions ?? "[]")
         const copy = document.getElementById("copy")
         handlers.onChange = (id) => {
-            const t = getTrigger(id)
+            const t = BotManager.selectedBot.triggers.find(t => t.id === id)
             json = JSON.stringify(t?.actions)
             if(t) copy.style.display = ""
             else copy.style.display = "none"
         }
         copy.onclick = () => {
-            console.log(json)
             navigator.clipboard.writeText(json)
             alert("JSON Copied!")
         }
