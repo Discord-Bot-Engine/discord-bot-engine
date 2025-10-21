@@ -14,6 +14,10 @@ export default class Reply {
             <dbe-variable-list name="origin" class="col-span-3" variableType="Message,Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Is ephemeral? (only for interactions)"></dbe-label>
+            <dbe-select name="ephemeral" class="col-span-3" value="False" values="True,False"></dbe-select>
+        </div>
+        <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store message in variable"></dbe-label>
             <dbe-variable-list name="message" class="col-span-3" variableType="Message"></dbe-variable-list>
         </div>
@@ -425,6 +429,7 @@ export default class Reply {
     }
     static async run({data, actionManager, getVariable, setVariable}) {
         const components = data.get("components")
+        const ephemeral = data.get("ephemeral") === "True"
         const buttons = []
         const selectmenus = []
         const list = []
@@ -645,10 +650,12 @@ export default class Reply {
             const description = file.data.get("description")
             attachments.push(new AttachmentBuilder(buffer, { name, description }))
         })
+        const flags = [MessageFlags.IsComponentsV2]
+        if(ephemeral) flags.push(MessageFlags.Ephemeral)
         const r = await (getVariable(data.get("origin")).reply({
             components: list,
             files: attachments,
-            flags: MessageFlags.IsComponentsV2,
+            flags,
             withResponse: true
         }))
         setVariable(data.get("message"), r.resource.message);
