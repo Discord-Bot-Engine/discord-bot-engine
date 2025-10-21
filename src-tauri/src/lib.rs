@@ -342,23 +342,46 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
         .path()
         .resolve("resources/Bot", BaseDirectory::Resource)
         .unwrap();
-    let triggers = Path::new(&bot_path).join("Bot").join("data").join("triggers");
     tauri::async_runtime::spawn(async move {
         copy_dir_all(&resource_path, &bot_path).unwrap();
-        fs::create_dir_all(&triggers).unwrap();
         _app.emit("finished_copying", &bot_path).unwrap();
     });
 }
 
-fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> {
-    fs::create_dir_all(&dst)?;
-    for entry in fs::read_dir(src)? {
+#[tauri::command(rename_all = "snake_case")]
+fn update_bot_files(_app: tauri::AppHandle, bot_path: String) {
+    let resource_path = _app
+        .path()
+        .resolve("resources/Bot", BaseDirectory::Resource)
+        .unwrap();
+
+    tauri::async_runtime::spawn(async move {
+        copy_dir_all(&resource_path, &bot_path, Some(&resource_path.join("data"))).unwrap();
+        _app.emit("finished_copying", &bot_path).unwrap();
+    });
+}
+
+fn copy_dir_all(
+    src: impl AsRef<Path>,
+    dst: impl AsRef<Path>,
+    exclude_path: Option<&Path>,
+) -> std::io::Result<()> {
+    std::fs::create_dir_all(&dst)?;
+    for entry in std::fs::read_dir(src.as_ref())? {
         let entry = entry?;
         let ty = entry.file_type()?;
+        let entry_path = entry.path();
+
+        if let Some(exclude) = exclude_path {
+            if ty.is_dir() && entry_path == exclude {
+                continue;
+            }
+        }
+
         if ty.is_dir() {
-            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+            copy_dir_all(&entry_path, dst.as_ref().join(entry.file_name()), exclude_path)?;
         } else {
-            fs::copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
+            std::fs::copy(&entry_path, dst.as_ref().join(entry.file_name()))?;
         }
     }
     Ok(())
@@ -396,7 +419,8 @@ pub fn run() {
             save_bot_settings,
             load_bots,
             save_bots,
-            copy_bot_files
+            copy_bot_files,
+            update_bot_files
         ])
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())

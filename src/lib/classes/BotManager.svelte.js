@@ -76,10 +76,21 @@ class BotManagerClass {
 
 	copyBotFiles(path) {
 		return new Promise(async (resolve) => {
-			listen('finished_copying', () => {
+			const unlisten = await listen('finished_copying', () => {
 				setTimeout(() => resolve(true), 5000)
 			})
+			unlisten()
 			invoke('copy_bot_files', {bot_path:path});
+		})
+	}
+
+	updateBotFiles() {
+		return new Promise(async (resolve) => {
+			const unlisten = await listen('finished_copying', () => {
+				setTimeout(() => resolve(true), 5000)
+			})
+			unlisten()
+			invoke('update_bot_files', {bot_path:this.selectedBot.path});
 		})
 	}
 

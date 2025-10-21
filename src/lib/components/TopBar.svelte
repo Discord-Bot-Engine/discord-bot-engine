@@ -5,14 +5,24 @@
     import Extension from "$lib/classes/Extension.svelte.js";
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     import {Debugger} from "$lib/classes/Debugger.svelte.js";
+    import LoadingScreen from "$lib/components/LoadingScreen.svelte";
     let extension = $state({type:""})
     let isEditing = $state(false);
+    let isLoading = $state(false);
     let ref;
     let handlersCopy = {}
     let items = [
         {
             title:"Project",
             items: [
+                {
+                    title: "Update Project Files",
+                    onclick: async () => {
+                        isLoading = true
+                        await BotManager.updateBotFiles()
+                        isLoading = false
+                    }
+                },
                 {
                     title: "Save",
                     onclick: () => {
@@ -107,3 +117,4 @@
         {@html extension?.html ?? ""}
     </div>
 </Modal>
+<LoadingScreen {isLoading} />
