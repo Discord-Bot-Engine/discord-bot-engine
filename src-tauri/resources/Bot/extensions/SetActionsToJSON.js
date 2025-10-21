@@ -7,7 +7,7 @@ export default class SetActionsToJSON {
         </div>
          <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="JSON"></dbe-label>
-            <dbe-input name="json" class="col-span-3" multiline="true"></dbe-input>
+            <dbe-input id="json" name="json" class="col-span-3" multiline="true"></dbe-input>
         </div>
     `
     static open(extension, handlers) {
