@@ -3,7 +3,7 @@ import {Bot} from "../classes/Bot.js"
 
 export default class SlashCommand {
     static type = "Slash Command"
-    static variableTypes = ["Command Interaction", "Member", "Channel", "Server", "Attachment", "Boolean", "Channel", "Mentionable", "Number", "Role", "Text", "User"]
+    static variableTypes = ["Command Interaction", "Member", "Server", "Attachment", "Boolean", "Channel", "Mentionable", "Number", "Role", "Text", "User"]
     static event = Events.InteractionCreate
     static runIf = ({actionManager}, interaction) => interaction.commandName === actionManager.trigger.name
     static html = `
@@ -21,7 +21,7 @@ export default class SlashCommand {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store channel in variable"></dbe-label>
-            <dbe-variable-list name="channel" class="col-span-3" variableType="Text Channel"></dbe-variable-list>
+            <dbe-variable-list name="channel" class="col-span-3" variableType="Channel"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store server in variable"></dbe-label>

@@ -7,12 +7,12 @@ export default class StoreCategoryChannelInfo {
         return `Store "${data.get("info")}" from category "${data.get("channel")}"`;
     }
 
-    static variableTypes = ["Category Channel", "Server", "Text", "Boolean", "Number", "List"];
+    static variableTypes = ["Channel", "Server", "Text", "Boolean", "Number", "List"];
 
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Channel"></dbe-label>
-            <dbe-variable-list name="channel" class="col-span-3" variableType="Category Channel"></dbe-variable-list>
+            <dbe-variable-list name="channel" class="col-span-3" variableType="Channel"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
@@ -22,7 +22,7 @@ export default class StoreCategoryChannelInfo {
         </div>
         <div class="grid-cols-4 items-center gap-4">
             <dbe-label name="Store value in variable"></dbe-label>
-            <dbe-variable-list name="value" id="var" class="col-span-3" variableType="Category Channel,Server,Text,Boolean,Number,List"></dbe-variable-list>
+            <dbe-variable-list name="value" id="var" class="col-span-3" variableType="Server,Text,Boolean,Number,List"></dbe-variable-list>
         </div>
     `;
 

@@ -7,20 +7,12 @@ export default class StoreTextChannelInfo {
         return `Store "${data.get("info")}" from text channel "${data.get("channel")}"`;
     }
 
-    static variableTypes = [
-        "Text Channel",
-        "Server",
-        "Text",
-        "Boolean",
-        "Number",
-        "Date",
-        "List"
-    ];
+    static variableTypes = ["Channel", "Server", "Text", "Boolean", "Number", "Date", "List"];
 
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Channel"></dbe-label>
-            <dbe-variable-list name="channel" class="col-span-3" variableType="Text Channel"></dbe-variable-list>
+            <dbe-variable-list name="channel" class="col-span-3" variableType="Channel"></dbe-variable-list>
         </div>
 
         <div class="grid grid-cols-4 items-center gap-4">
@@ -39,7 +31,7 @@ export default class StoreTextChannelInfo {
                 name="value" 
                 id="var" 
                 class="col-span-3"
-                variableType="Text Channel,Server,Text,Boolean,Number,Date,List">
+                variableType="Server,Text,Boolean,Number,Date,List">
             </dbe-variable-list>
         </div>
     `;

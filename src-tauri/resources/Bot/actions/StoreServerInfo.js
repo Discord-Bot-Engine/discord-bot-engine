@@ -9,15 +9,13 @@ export default class StoreServerInfo {
 
     static variableTypes = [
         "Server",
-        "Voice Channel",
+        "Channel",
         "Member",
         "Number",
         "List",
         "Boolean",
         "Date",
-        "Text",
-        "Text Channel",
-        "Channel"
+        "Text"
     ];
 
     static html = `
@@ -57,7 +55,7 @@ export default class StoreServerInfo {
                 name="value" 
                 id="var" 
                 class="col-span-3" 
-                variableType="Voice Channel,Member,Number,List,Boolean,Date,Text,Text Channel,Channel">
+                variableType="Channel,Member,Number,List,Boolean,Date,Text">
             </dbe-variable-list>
         </div>
     `;
@@ -72,7 +70,7 @@ export default class StoreServerInfo {
 
             // Variable type logic
             if (value === "Afk Channel") {
-                varlist.setVariableType("Voice Channel");
+                varlist.setVariableType("Channel");
             } else if (["Afk Timeout", "Approximate Member Count", "Approximate Presence Count", "Maximum Bitrate", "Maximum Members", "Maximum Presences", "Max Stage Video Channel Users", "Max Video Channel Users", "Member Count", "Boosts Number", "Vanity URL Uses"].includes(value)) {
                 varlist.setVariableType("Number");
             } else if (["Auto Moderation Rules", "Bans", "Channels", "Commands", "Emojis", "Invites", "Members", "Presences", "Roles", "Scheduled Events", "Soundboard Sounds", "Stage Instances", "Stickers", "Voice States"].includes(value)) {
@@ -86,7 +84,7 @@ export default class StoreServerInfo {
             } else if (value === "Owner") {
                 varlist.setVariableType("Member");
             } else if (["Public Updates Channel","Rules Channel","Safety Alerts Channel","System Channel"].includes(value)) {
-                varlist.setVariableType("Text Channel");
+                varlist.setVariableType("Channel");
             } else if (value === "Widget Channel") {
                 varlist.setVariableType("Channel");
             }

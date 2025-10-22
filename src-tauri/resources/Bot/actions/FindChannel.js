@@ -5,7 +5,7 @@ export default class FindChannel {
     static title(data) {
         return `Find channel by ${data.get("by")} "${data.get("value")}" from "${data.get("server")}"`
     }
-    static variableTypes = ["Text Channel", "Voice Channel", "Forum Channel"]
+    static variableTypes = ["Channel"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Server"></dbe-label>
@@ -13,11 +13,11 @@ export default class FindChannel {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="By"></dbe-label>
-            <dbe-select name="by" values="Id,Name" class="col-span-3"></dbe-select>
+            <dbe-select name="by" values="Id,Name" change="(v) => document.getElementById('type').style.display = v === 'Id' ? 'none' : ''" class="col-span-3"></dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Type"></dbe-label>
-            <dbe-select name="type" values="Text,Voice,Forum" change="(v) => document.getElementById('var').setVariableType(v + ' Channel')" class="col-span-3"></dbe-select>
+            <dbe-select name="type" id="type" values="Text,Voice,Forum" class="col-span-3"></dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Value"></dbe-label>
@@ -25,7 +25,7 @@ export default class FindChannel {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store channel in variable"></dbe-label>
-            <dbe-variable-list name="channel" class="col-span-3" variableType="Text Channel" id="var"></dbe-variable-list>
+            <dbe-variable-list name="channel" class="col-span-3" variableType="Channel" id="var"></dbe-variable-list>
         </div>
     `
     static load(context) {
