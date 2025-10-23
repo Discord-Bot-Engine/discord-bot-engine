@@ -76,13 +76,13 @@ class BotClass {
         this.triggers = triggers.map(trigger => Trigger.fromJSON(trigger))
         Object.keys(botdata).forEach(async key => this.data.set(key, await this.parse(botdata[key])));
         Object.keys(extensions).forEach(extension => this.extensions.set(extension, Extension.fromJSON(extensions[extension])))
-        this.triggerClasses = await Promise.all(fs.readdirSync(triggerClassesPath).filter(file=>file.endsWith(".js")).map(file => import("file://"+path.join(triggerClassesPath, file))))
-        this.actionClasses = await Promise.all(fs.readdirSync(actionClassesPath).filter(file=>file.endsWith(".js")).map(file => import("file://"+path.join(actionClassesPath, file))))
-        this.extensionClasses = await Promise.all(fs.readdirSync(extensionClassesPath).filter(file=>file.endsWith(".js")).map(file => import("file://"+path.join(extensionClassesPath, file))))
-        this.triggerClasses = this.triggerClasses.map(m => m.default)
-        this.actionClasses = this.actionClasses.map(m => m.default)
-        this.extensionClasses = this.extensionClasses.map(m => m.default)
-        this.extensions.keys().forEach(extension => this.extensions.get(extension).load(extension))
+        this.triggerClasses = await Promise.all(fs.readdirSync(triggerClassesPath).filter(file=>file.endsWith(".js")).map(file => import("file://"+path.join(triggerClassesPath, file)).catch(console.log)))
+        this.actionClasses = await Promise.all(fs.readdirSync(actionClassesPath).filter(file=>file.endsWith(".js")).map(file => import("file://"+path.join(actionClassesPath, file)).catch(console.log)))
+        this.extensionClasses = await Promise.all(fs.readdirSync(extensionClassesPath).filter(file=>file.endsWith(".js")).map(file => import("file://"+path.join(extensionClassesPath, file)).catch(console.log)))
+        this.triggerClasses = this.triggerClasses.filter(m => m).map(m => m.default)
+        this.actionClasses = this.actionClasses.filter(m => m).map(m => m.default)
+        this.extensionClasses = this.extensionClasses.filter(m => m).map(m => m.default)
+        this.extensionClasses.forEach(extension => extension.load(this.extensions.get(extension.type)))
         this.triggers.forEach(trigger => trigger.load())
     }
 
