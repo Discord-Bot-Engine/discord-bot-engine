@@ -63,7 +63,8 @@ export default class PackageManager {
             } catch (e) {
                 console.log(`Installing ${name} module...`);
                 execSync(`npm install ${name}`, {
-                    stdio: [0, 1, 2],
+                    stdio: 'pipe',
+                    cwd: __dirname
                 });
                 console.log(`A restart might be required in order to finish installing this module!`);
             }
