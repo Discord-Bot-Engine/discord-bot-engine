@@ -25,6 +25,7 @@
 	import {BotManager} from "$lib/classes/BotManager.svelte.js";
 	import {Debugger} from "$lib/classes/Debugger.svelte.js";
 	import {PluginManager} from "$lib/classes/PluginManager.svelte.js";
+	import LoadingScreen from "$lib/components/LoadingScreen.svelte";
 	onMount(() => {
 		window.handlers ??= {}
 		window.Action = Action;
@@ -54,3 +55,4 @@
 	</div>
 </div>
 <VariablesContextMenu />
+<LoadingScreen isLoading={BotManager.selectedBot?.isLoading}/>
