@@ -4,7 +4,7 @@
     let {change = "() => {}", labels="", value, values, ...other} = $props()
     change = eval(`(${change})`)
     values = values ?? []
-    labels = labels.split(",").map(el => el.trim())
+    labels = labels.split(",").map(el => el.trim()).filter(el => el)
     let statevalues = $state(values)
     let statevalue = $state(value)
     function customSort(arr) {

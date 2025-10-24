@@ -8,8 +8,9 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import {Extension} from "./Extension.js";
 import extensions from "../data/extensions.json" with { type: "json" };
-import botdata from "../data/data.json" with { type: "json" };
 import {EmbedBuilder, Events} from "discord.js";
+import Keyv from "keyv";
+import {KeyvFile} from "keyv-file"
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
@@ -20,7 +21,16 @@ class BotClass {
     triggerClasses = []
     actionClasses = []
     extensionClasses = []
-    data = new Map()
+    data = new Keyv({
+        store: new KeyvFile({
+            filename: path.join(__dirname, "../data/data.json"),
+            expiredCheckDelay: 24 * 3600 * 1000,
+            writeDelay: 100,
+            encode: this.serializeDatabase,
+            decode: this.deserializeDatabase
+        })
+    })
+
     client = new Client()
 
     sendDebugData(data) {
@@ -74,14 +84,16 @@ class BotClass {
         const dataPath = path.resolve(__dirname, "../data")
         const triggers = fs.readdirSync(dataPath).filter(f => f.length === 41).map(f => JSON.parse(fs.readFileSync(path.resolve(dataPath, f))))
         this.triggers = triggers.map(trigger => Trigger.fromJSON(trigger))
-        Object.keys(botdata).forEach(async key => this.data.set(key, await this.parse(botdata[key])));
-        this.extensionClasses.forEach(extension => this.extensions.set(extension.type, Extension.fromJSON(extensions[extension.type])))
         this.triggerClasses = await Promise.all(fs.readdirSync(triggerClassesPath).filter(file=>file.endsWith(".js")).map(file => import("file://"+path.join(triggerClassesPath, file)).catch(console.log)))
         this.actionClasses = await Promise.all(fs.readdirSync(actionClassesPath).filter(file=>file.endsWith(".js")).map(file => import("file://"+path.join(actionClassesPath, file)).catch(console.log)))
         this.extensionClasses = await Promise.all(fs.readdirSync(extensionClassesPath).filter(file=>file.endsWith(".js")).map(file => import("file://"+path.join(extensionClassesPath, file)).catch(console.log)))
         this.triggerClasses = this.triggerClasses.filter(m => m).map(m => m.default)
         this.actionClasses = this.actionClasses.filter(m => m).map(m => m.default)
         this.extensionClasses = this.extensionClasses.filter(m => m).map(m => m.default)
+        this.extensionClasses.forEach(extension => {
+            const obj = extensions[extension.type] ?? {}
+            this.extensions.set(extension.type, Extension.fromJSON({type: extension.type, data: {}, ...obj}))
+        })
         this.extensions.keys().forEach(extension => this.extensions.get(extension).load())
         this.triggers.forEach(trigger => trigger.load())
     }
@@ -158,19 +170,27 @@ class BotClass {
         return value?.toDBEString?.() ?? value;
     };
 
-    setData(key, value) {
-        this.data.set(key, value)
-        this.writeDataToFile()
+    async setData(key, value) {
+        await this.data.set(key, value)
     }
 
-    getData(key) {
-        return this.data.get(key);
+    async getData(key) {
+        return await this.data.get(key);
     }
 
-    writeDataToFile() {
+    serializeDatabase(values) {
         const data = {}
-        this.data.keys().forEach(key => data[key] = this.serialize(this.data.get(key)))
-        fs.writeFileSync(path.resolve(__dirname, `../data/botdata.json`), JSON.stringify(data))
+        values.keys().forEach(key => data[key] = this.serialize(values.get(key)))
+        return JSON.stringify(data)
+    }
+
+    async deserializeDatabase(values) {
+        const data = JSON.parse(values);
+        const obj = {}
+        for (const key in data) {
+            obj[key] = await this.parse(data[key]);
+        }
+        return obj
     }
 }
 

@@ -3,14 +3,19 @@ import {CustomElement} from "./CustomElement.js";
 import {Action} from "./Action.js";
 
 export class Extension{
+    type = ''
     data = new Map()
 
-    load(type) {
-        Bot.extensionClasses.find(t => t.type === type)?.load({data:this.data})
+    constructor(type){
+        this.type = type
     }
 
-    static fromJSON(json = { data: {} }) {
-        const extension = new Extension()
+    load() {
+        Bot.extensionClasses.find(t => t.type === this.type)?.load({data:this.data})
+    }
+
+    static fromJSON(json) {
+        const extension = new Extension(json.type)
         Object.keys(json.data).forEach(key => {
             if(Array.isArray(json.data[key]) && json.data[key].every(item => item.isCustom))
                 json.data[key] = json.data[key].map(el => CustomElement.fromJSON(el))

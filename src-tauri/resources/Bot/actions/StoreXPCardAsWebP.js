@@ -38,9 +38,9 @@ export default class StoreXPCardAsWebP {
 
     static async run({ data, actionManager, getVariable, setVariable }) {
         const member = getVariable(data.get("member"));
-        const xp = Bot.getData(`${member.id}${member.guild.id}${data.get("xp")}`);
-        const maxXp = Bot.getData(`${member.id}${member.guild.id}${data.get("maxXp")}`);
-        const level = Bot.getData(`${member.id}${member.guild.id}${data.get("level")}`);
+        const xp = await Bot.getData(`${member.id}${member.guild.id}${data.get("xp")}`);
+        const maxXp = await Bot.getData(`${member.id}${member.guild.id}${data.get("maxXp")}`);
+        const level = await Bot.getData(`${member.id}${member.guild.id}${data.get("level")}`);
         const html = `
     <style>
         :root{
