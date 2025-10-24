@@ -40,7 +40,7 @@ export default class XPSystem {
             const member = msg.member.id;
             const guild = msg.guild.id;
             const xp = await Bot.getData(`${member}${guild}${xpf}`) ?? 0
-            const maxxp = await Bot.getData(`${member}${guild}${maxxpf}`) ?? (100 * maxxpmulti)
+            const maxxp = await Bot.getData(`${member}${guild}${maxxpf}`) ?? Math.round(100 * maxxpmulti)
             const level = await Bot.getData(`${member}${guild}${levelf}`) ?? 1
             const xpvalue = (Math.floor(Math.random() * (50 - 20 + 1)) + 20) * xpmulti;
             let currentxp = Number(xp) + xpvalue
@@ -49,7 +49,7 @@ export default class XPSystem {
             if(currentxp >= Number(maxxp)) {
                 currentxp = 0;
                 currentlevel = Number(level) + 1;
-                currentmaxxp = Number(maxxp) * maxxpmulti;
+                currentmaxxp = Math.round(Number(maxxp) * maxxpmulti);
                 Bot.client.emit("levelUp", member)
             }
             await Bot.setData(`${member}${guild}${levelf}`, currentlevel)

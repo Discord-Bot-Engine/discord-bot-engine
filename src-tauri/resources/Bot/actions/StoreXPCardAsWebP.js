@@ -39,8 +39,16 @@ export default class StoreXPCardAsWebP {
     static async run({ data, actionManager, getVariable, setVariable }) {
         const member = getVariable(data.get("member"));
         const xp = await Bot.getData(`${member.id}${member.guild.id}${data.get("xp")}`);
-        const maxXp = await Bot.getData(`${member.id}${member.guild.id}${data.get("maxXp")}`);
+        const maxXp = await Bot.getData(`${member.id}${member.guild.id}${data.get("maxxp")}`);
         const level = await Bot.getData(`${member.id}${member.guild.id}${data.get("level")}`);
+        const yyyy = member.joinedAt.getFullYear();
+        let mm = member.joinedAt.getMonth() + 1;
+        let dd = member.joinedAt.getDate();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+
+        const joinDate = dd + '/' + mm + '/' + yyyy;
         const html = `
     <style>
         :root{
@@ -50,7 +58,7 @@ export default class StoreXPCardAsWebP {
             --muted: rgba(255,255,255,0.55);
             --accent-start: #6ee7b7;
             --accent-end: #60a5fa;
-            --radius: 14px;
+            --radius: 18px;
             --shadow: 0 8px 30px rgba(2,6,23,0.6);
             --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
         }
@@ -65,7 +73,6 @@ export default class StoreXPCardAsWebP {
             padding: 18px;
             box-sizing: border-box;
             color: #fff;
-            box-shadow: var(--shadow);
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -226,8 +233,8 @@ export default class StoreXPCardAsWebP {
     <div class="content">
         <div class="top-row">
             <div style="display:flex;flex-direction:column;">
-                <div class="display-name" id="displayName">{avatar}</div>
-                <div style="color:var(--muted); font-size:13px; margin-top:6px;" id="subtitle">{member} • {joinDate}</div>
+                <div class="display-name" id="displayName">{name}</div>
+                <div style="color:var(--muted); font-size:13px;" id="subtitle">{joinDate}</div>
             </div>
             <div><div class="level-badge" id="levelBadge">Lv. {level}</div></div>
         </div>
@@ -252,32 +259,33 @@ export default class StoreXPCardAsWebP {
         xp: ${xp},
         maxXp: ${maxXp},
         level: ${level},
-        joined: "${member.joinedAt}"
+        joined: "${joinDate}"
     };
 
     function setUpCard(u){
         const avatarImg = document.getElementById("avatar-img");
         avatarImg.src = u.avatar || "https://static.vecteezy.com/system/resources/previews/006/892/625/non_2x/discord-logo-icon-editorial-free-vector.jpg";
 
-        document.getElementById("displayName").childNodes[0].nodeValue = u.displayName;
+        document.getElementById("displayName").textContent = u.displayName;
         document.getElementById("levelBadge").textContent = "Lv. " + (u.level ?? "1");
         document.getElementById("xpRight").textContent = \`\${u.xp} / \${u.maxXp}\`;
         document.getElementById("xpLeft").textContent = \`\${u.xp} XP\`;
-        document.getElementById("subtitle").textContent = u.joined || "";
+        document.getElementById("subtitle").textContent = "Joined on " + u.joined || "";
 
         const xpFill = document.getElementById("xpFill");
         const pct = Math.max(0, Math.min(100, Math.round((Number(u.xp) / Number(u.maxXp || 1)) * 100)));
         xpFill.style.width = "0%";
-        requestAnimationFrame(() => setTimeout(() => xpFill.style.width = pct + "%", 100));
+        setTimeout(() => {
+            requestAnimationFrame(() => setTimeout(() => xpFill.style.width = pct + "%", 100));
+        }, 2000)
 
         const remaining = Math.max(0, Number(u.maxXp || 0) - Number(u.xp || 0));
         document.getElementById("nextLevelText").textContent = \`\${remaining} XP to next level\`;
     }
-
     setUpCard(user);
 </script>`
         const width = 500;
-        const height = 200;
+        const height = 150;
         const duration = 3;
         const value = data.get("value");
         const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
