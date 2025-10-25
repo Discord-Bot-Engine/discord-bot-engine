@@ -1,1 +1,1 @@
-{"clientSecret": "", "token": "", "presenceIntent": true, "membersIntent": true, "messageContentIntent": true}
+{"token": "", "clientSecret": "", "presenceIntent": true, "membersIntent": true, "messageContentIntent": true}
