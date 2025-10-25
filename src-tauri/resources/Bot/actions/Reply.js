@@ -1,6 +1,22 @@
 import {ActionManager} from "../classes/ActionManager.js";
 import {Bot} from "../classes/Bot.js";
-import {TextDisplayBuilder, SectionBuilder, MediaGalleryBuilder, FileBuilder, SeparatorBuilder, ButtonBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, ContainerBuilder, AttachmentBuilder, SeparatorSpacingSize, ButtonStyle, ComponentType, MessageFlags} from "discord.js"
+import {
+    TextDisplayBuilder,
+    SectionBuilder,
+    MediaGalleryBuilder,
+    FileBuilder,
+    SeparatorBuilder,
+    ButtonBuilder,
+    StringSelectMenuBuilder,
+    StringSelectMenuOptionBuilder,
+    ActionRowBuilder,
+    ContainerBuilder,
+    AttachmentBuilder,
+    SeparatorSpacingSize,
+    ButtonStyle,
+    ComponentType,
+    MessageFlags,
+} from "discord.js"
 
 export default class Reply {
     static type = "Reply"
@@ -652,15 +668,17 @@ export default class Reply {
         })
         const flags = [MessageFlags.IsComponentsV2]
         if(ephemeral) flags.push(MessageFlags.Ephemeral)
-        const r = await (getVariable(data.get("origin")).reply({
+        const origin = getVariable(data.get("origin"))
+        let r = await origin.reply({
             components: list,
             files: attachments,
             flags,
             withResponse: true
-        }))
-        setVariable(data.get("message"), r.resource.message);
-        const btncollector = r.resource.message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
-        const menucollector = r.resource.message.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
+        })
+        if(r.resource) r = r.resource.message
+        setVariable(data.get("message"), r);
+        const btncollector = r.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
+        const menucollector = r.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
         btncollector.on('collect', (i) => {
             const btn = buttons.find(b => b.id === i.customId)
             const manager = new ActionManager(actionManager.trigger, btn.actions)
