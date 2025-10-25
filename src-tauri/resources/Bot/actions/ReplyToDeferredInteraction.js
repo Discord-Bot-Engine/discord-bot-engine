@@ -2,16 +2,16 @@ import {ActionManager} from "../classes/ActionManager.js";
 import {Bot} from "../classes/Bot.js";
 import {TextDisplayBuilder, SectionBuilder, MediaGalleryBuilder, FileBuilder, SeparatorBuilder, ButtonBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, ContainerBuilder, AttachmentBuilder, SeparatorSpacingSize, ButtonStyle, ComponentType, MessageFlags} from "discord.js"
 
-export default class Reply {
-    static type = "Reply"
+export default class ReplyToDeferredInteraction {
+    static type = "Reply To Deferred Interaction"
     static title(data) {
         return `Reply to "${data.get("origin")}" with ${data.get("components").length} components`
     }
-    static variableTypes = ["Message", "Button Interaction", "Select Menu Interaction"];
+    static variableTypes = ["Command Interaction", "Button Interaction", "Select Menu Interaction"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Message"></dbe-label>
-            <dbe-variable-list name="origin" class="col-span-3" variableType="Message"></dbe-variable-list>
+            <dbe-label name="Interaction"></dbe-label>
+            <dbe-variable-list name="origin" class="col-span-3" variableType="Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
         </div>
          <dbe-list name="files" title="Files" modalId="filesModal" itemTitle="(item, i) => (item.data.get('name') ?? 'File')+' #'+i"></dbe-list>
          <dbe-list name="components" title="Components" modalId="componentsModal" itemTitle="(item, i) => (item.data.get('type') ?? 'Component')+' #'+i"></dbe-list>
