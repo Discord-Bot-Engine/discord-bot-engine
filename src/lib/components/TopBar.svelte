@@ -24,6 +24,14 @@
                     }
                 },
                 {
+                    title: "Reload Project Files",
+                    onclick: async () => {
+                        isLoading = true
+                        await BotManager.selectedBot.loadFiles()
+                        isLoading = false
+                    }
+                },
+                {
                     title: "Save",
                     onclick: () => {
                         BotManager.saveBotData()
