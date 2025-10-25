@@ -110,6 +110,9 @@ class BotManagerClass {
 	async deleteBot(name, path) {
 		this.bots = this.bots.filter(bot => bot.name !== name && bot.path !== path)
 		await invoke("save_bots", {json:JSON.stringify(this.bots)})
+		if(name === this.selectedBot?.name && path === this.selectedBot.path) {
+			this.selectedBot = null;
+		}
 	}
 
 	saveBotSettings(botName, botPath, botToken, clientSecret, presenceIntent, membersIntent, messageContentIntent) {

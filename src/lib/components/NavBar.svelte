@@ -1,10 +1,8 @@
 <script>
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { CodeXmlIcon, HouseIcon, SettingsIcon, BlocksIcon } from '@lucide/svelte';
+	import { page } from '$app/state';
 
-	let selectedItem = $state(0);
-
-	// Menu items.
 	const items = [
 		{
 			title: 'Home',
@@ -37,10 +35,9 @@
 				<Sidebar.Menu>
 					{#each items as item, i (i)}
 						<Sidebar.MenuItem>
-							<Sidebar.MenuButton class={selectedItem === i ? "!bg-primary" : ""}>
+							<Sidebar.MenuButton class={page.url.pathname === item.url ? "!bg-primary" : ""}>
 								{#snippet child({ props })}
 									<a
-										onclick={() => selectedItem = i}
 										title={item.title}
 										href={item.url}
 										{...props}>

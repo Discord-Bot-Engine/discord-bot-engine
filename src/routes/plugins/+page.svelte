@@ -4,6 +4,11 @@
 	import {BotManager} from "$lib/classes/BotManager.svelte.js";
 	import Plugin from "$lib/components/Plugin.svelte";
 	import {Input} from "$lib/components/ui/input/index.js";
+	import {goto} from "$app/navigation";
+	if(!BotManager.selectedBot) {
+		alert("Please select a bot!")
+		goto("/");
+	}
 	let name = $state("")
 	let plugins = $derived(
 			PluginManager.plugins

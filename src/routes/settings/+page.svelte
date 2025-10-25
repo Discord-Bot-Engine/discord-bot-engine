@@ -7,6 +7,11 @@
 	import {open} from "@tauri-apps/plugin-dialog";
 	import {Checkbox} from "$lib/components/ui/checkbox/index.js";
 	import {BotManager} from "$lib/classes/BotManager.svelte.js";
+	import {goto} from "$app/navigation";
+	if(!BotManager.selectedBot) {
+		alert("Please select a bot!")
+		goto("/");
+	}
 	let botName = $state(BotManager.selectedBot?.name ?? "")
 	let botPath = $state(BotManager.selectedBot?.path ?? "")
 	let botToken = $state(BotManager.selectedBot?.token ?? "")

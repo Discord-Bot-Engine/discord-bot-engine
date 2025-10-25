@@ -31,7 +31,7 @@
 	}
 </script>
 <Dialog.Root bind:open={isCreating}>
-	<Dialog.Trigger class="float-right mt-3 mr-3 {buttonVariants()}"
+	<Dialog.Trigger class="absolute top-3 right-3 z-10 {buttonVariants()}"
 	><PlusIcon/></Dialog.Trigger
 	>
 	<Dialog.Content class="sm:max-w-[425px]" >
@@ -58,7 +58,7 @@
 	</Dialog.Content>
 </Dialog.Root>
 	<ScrollArea>
-		<div class="w-full h-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-3 gap-3">
+		<div class="w-full h-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-3 gap-3 mt-12">
 			{#each BotManager.bots as bot}
 				<Bot {bot}/>
 			{/each}

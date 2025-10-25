@@ -26,6 +26,11 @@
 	import {Debugger} from "$lib/classes/Debugger.svelte.js";
 	import {PluginManager} from "$lib/classes/PluginManager.svelte.js";
 	import LoadingScreen from "$lib/components/LoadingScreen.svelte";
+	import {goto} from "$app/navigation";
+	if(!BotManager.selectedBot) {
+		alert("Please select a bot!")
+		goto("/");
+	}
 	onMount(() => {
 		window.handlers ??= {}
 		window.Action = Action;
