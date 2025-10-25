@@ -26,7 +26,7 @@ export default class StoreValueFromMemberData {
     static async run({data, actionManager, getVariable, setVariable}) {
         const member = getVariable(data.get("member"))
         const field = `${member.id}${member.guild.id}${data.get("field")}`
-        setVariable(data.get("value"), Bot.getData(field))
+        setVariable(data.get("value"), await Bot.getData(field))
         actionManager.runNext()
     }
 }

@@ -20,7 +20,7 @@ export default class StoreValueFromData {
     static load(context) {
     }
     static async run({data, actionManager, setVariable}) {
-        setVariable(data.get("value"), Bot.getData(data.get("field")))
+        setVariable(data.get("value"), await Bot.getData(data.get("field")))
         actionManager.runNext()
     }
 }
