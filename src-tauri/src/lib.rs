@@ -317,12 +317,17 @@ fn save_bot_settings(_app: tauri::AppHandle, bot_path:String, bots_json:String, 
 }
 
 #[tauri::command]
-fn load_bots(_app: tauri::AppHandle) -> String {
-    let bots_path = _app
+fn load_bots(app: tauri::AppHandle) -> String {
+    let bots_path = app
         .path()
         .resolve("bots.json", BaseDirectory::AppLocalData)
         .unwrap();
-        fs::read_to_string(&bots_path).expect("Failed to read bots file")
+
+    if !bots_path.exists() {
+        return "[]".to_string();
+    }
+
+    fs::read_to_string(&bots_path).unwrap_or_else(|_| "[]".to_string())
 }
 
 #[tauri::command(rename_all = "snake_case")]
