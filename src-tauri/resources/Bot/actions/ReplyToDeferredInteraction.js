@@ -643,14 +643,13 @@ export default class ReplyToDeferredInteraction {
         })
         const origin = getVariable(data.get("origin"))
         const flags = [MessageFlags.IsComponentsV2]
-        await origin.editReply({
+        const r = await origin.editReply({
             components: list,
             files: attachments,
             flags,
-            withResponse: true
         })
-        const btncollector = origin.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
-        const menucollector = origin.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
+        const btncollector = r.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
+        const menucollector = r.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
         btncollector.on('collect', (i) => {
             const btn = buttons.find(b => b.id === i.customId)
             const manager = new ActionManager(actionManager.trigger, btn.actions)
