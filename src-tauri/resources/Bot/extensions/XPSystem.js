@@ -4,7 +4,7 @@ export default class XPSystem {
     static type = "XP System";
     static html = `
     <div class="grid grid-cols-4 items-center gap-4">
-        <dbe-label name="Enable?"></dbe-label>
+        <dbe-label name="Is enabled?"></dbe-label>
         <dbe-select name="enable" class="col-span-3" value="False" values="True,False"></dbe-select>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
