@@ -50,7 +50,7 @@ export default class XPSystem {
                 currentxp = 0;
                 currentlevel = Number(level) + 1;
                 currentmaxxp = Math.round(Number(maxxp) * maxxpmulti);
-                Bot.client.emit("levelUp", msg)
+                Bot.client.emit("levelUp", msg, currentlevel)
             }
             await Bot.setData(`${member}${guild}${levelf}`, currentlevel)
             await Bot.setData(`${member}${guild}${maxxpf}`, currentmaxxp)
