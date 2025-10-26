@@ -6,8 +6,8 @@
     let variables = $derived(App.selectedTrigger.variables)
     let ref
     $host().setVariableType = (newType) => {
-        types = newType.split(",").map(el => el.toLowerCase());
-        ref.setValues(App.selectedTrigger.variables.keys().toArray().sort().filter(v => types.includes(App.selectedTrigger.variables.get(v).toLowerCase()) || types.includes("any")).toString())
+        types = [newType].flat().map(el => el.toLowerCase());
+        ref.setValues(App.selectedTrigger.variables.keys().toArray().sort().filter(v => types.includes(App.selectedTrigger.variables.get(v).toLowerCase()) || types.includes("any")))
     }
 </script>
 <dbe-select bind:this={ref} {...other} values={variables.keys().toArray().sort().filter(v => types.includes(variables.get(v).toLowerCase()) || types.includes("any")).toString()}/>

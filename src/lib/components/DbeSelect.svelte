@@ -5,7 +5,8 @@
     change = eval(`(${change})`)
     values = values ?? []
     labels = labels.split(",").map(el => el.trim()).filter(el => el)
-    let statevalues = $state(values)
+    let statelabels = $state(labels)
+    let statevalues = $state(values.split(","))
     let statevalue = $state(value)
     function customSort(arr) {
         if (arr.every(item => !isNaN(item))) {
@@ -13,6 +14,9 @@
         } else {
             return arr.map(String).sort((a, b) => a.localeCompare(b));
         }
+    }
+    $host().setLabels = (newLabels) => {
+        statelabels = newLabels
     }
     $host().setValues = (newValues) => {
         statevalues = newValues
@@ -26,4 +30,4 @@
         change(statevalue, $host())
     }, 50)
 </script>
-<SearchSelect {...other} values={customSort(statevalues.split(",").filter(el => el.trim())).map((el,i)=>({label: labels[i] ?? el, value:el}))} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
+<SearchSelect {...other} values={customSort(statevalues.filter(el => el.trim())).map((el,i)=>({label: statelabels[i] ?? el, value:el}))} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
