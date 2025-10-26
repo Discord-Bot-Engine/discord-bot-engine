@@ -3,7 +3,7 @@ import {Bot} from "../classes/Bot.js"
 
 export default class LevelUp {
     static type = "Level Up"
-    static variableTypes = ["Number", "Message", "Member", "Channel", "Server"]
+    static variableTypes = ["Number", "Message", "User", "Member", "Channel", "Server"]
     static event = "levelUp"
     static runIf = () => true
     static html = `
@@ -14,6 +14,10 @@ export default class LevelUp {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store message in variable"></dbe-label>
             <dbe-variable-list name="message" class="col-span-3" variableType="Message"></dbe-variable-list>
+        </div>
+        <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Store user in variable"></dbe-label>
+            <dbe-variable-list name="user" class="col-span-3" variableType="User"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store member in variable"></dbe-label>
@@ -32,6 +36,7 @@ export default class LevelUp {
     static run({data, actionManager, setVariable}, message, level) {
         setVariable(data.get("level"), level);
         setVariable(data.get("message"), message);
+        setVariable(data.get("user"), message.author);
         setVariable(data.get("member"), message.member);
         setVariable(data.get("channel"), message.channel);
         setVariable(data.get("server"), message.guild);

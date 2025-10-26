@@ -1,15 +1,19 @@
 import {Events, REST, Routes, SlashCommandBuilder} from "discord.js";
 import {Bot} from "../classes/Bot.js"
 
-export default class MessageSent {
-    static type = "Message Sent"
-    static variableTypes = ["Message", "Member", "User", "Channel", "Server"]
-    static event = Events.MessageCreate
+export default class ReactionRemoved {
+    static type = "Reaction Removed"
+    static variableTypes = ["Message", "Boolean", "User", "Member", "Channel", "Reaction", "Server"]
+    static event = Events.MessageReactionRemove
     static runIf = () => true
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Store message in variable"></dbe-label>
-            <dbe-variable-list name="message" class="col-span-3" variableType="Message"></dbe-variable-list>
+            <dbe-label name="Store burst in variable"></dbe-label>
+            <dbe-variable-list name="burst" class="col-span-3" variableType="Boolean"></dbe-variable-list>
+        </div>
+        <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Store reaction in variable"></dbe-label>
+            <dbe-variable-list name="reaction" class="col-span-3" variableType="Reaction"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store user in variable"></dbe-label>
@@ -18,6 +22,10 @@ export default class MessageSent {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store member in variable"></dbe-label>
             <dbe-variable-list name="member" class="col-span-3" variableType="Member"></dbe-variable-list>
+        </div>
+        <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Store message in variable"></dbe-label>
+            <dbe-variable-list name="message" class="col-span-3" variableType="Message"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store channel in variable"></dbe-label>
@@ -29,10 +37,16 @@ export default class MessageSent {
         </div>
     `
     static load({data, actionManager, setVariable}) {}
-    static run({data, actionManager, setVariable}, message) {
+    static async run({data, actionManager, setVariable}, reaction, user, details) {
+        if(reaction.partial) await reaction.fetch();
+        const message = reaction.message;
+        const guild = message.guild;
+        const member = await guild?.members.fetch(user.id);
+        setVariable(data.get("burst"), details.burst);
+        setVariable(data.get("reaction"), reaction);
         setVariable(data.get("message"), message);
-        setVariable(data.get("user"), message.author);
-        setVariable(data.get("member"), message.member);
+        setVariable(data.get("user"), user);
+        setVariable(data.get("member"), member);
         setVariable(data.get("channel"), message.channel);
         setVariable(data.get("server"), message.guild);
         actionManager.runNext()

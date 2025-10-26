@@ -3,7 +3,7 @@ import {Bot} from "../classes/Bot.js"
 
 export default class SlashCommand {
     static type = "Slash Command"
-    static variableTypes = ["Command Interaction", "Member", "Server", "Attachment", "Boolean", "Channel", "Mentionable", "Number", "Role", "Text", "User"]
+    static variableTypes = ["Command Interaction", "User", "Member", "Server", "Attachment", "Boolean", "Channel", "Mentionable", "Number", "Role", "Text", "User"]
     static event = Events.InteractionCreate
     static runIf = ({actionManager}, interaction) => interaction.commandName === actionManager.trigger.name
     static html = `
@@ -14,6 +14,10 @@ export default class SlashCommand {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store interaction in variable"></dbe-label>
             <dbe-variable-list name="interaction" class="col-span-3" variableType="Command Interaction"></dbe-variable-list>
+        </div>
+        <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Store user in variable"></dbe-label>
+            <dbe-variable-list name="user" class="col-span-3" variableType="User"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store member in variable"></dbe-label>
@@ -101,6 +105,7 @@ export default class SlashCommand {
             else if(type === "User") setVariable(value, interaction.options.getUser(name))
         })
         setVariable(data.get("interaction"), interaction);
+        setVariable(data.get("user"), interaction.user);
         setVariable(data.get("member"), interaction.member);
         setVariable(data.get("channel"), interaction.channel);
         setVariable(data.get("server"), interaction.guild);
