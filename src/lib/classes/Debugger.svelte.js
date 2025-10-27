@@ -21,8 +21,8 @@ class DebuggerClass {
 			width: 350,
 			height: 450,
 		});
-		variablesWindow.setTitle(`${trigger.name[0].toUpperCase()}${trigger.name.slice(1).toLowerCase()}'s variables`)
 		variablesWindow.once('tauri://created', async () => {
+			variablesWindow.setTitle(`${trigger.name[0].toUpperCase()}${trigger.name.slice(1).toLowerCase()}'s variables`)
 			const webview = new Webview(variablesWindow, `variables-${BotManager.selectedBot.name.replace(/\s/g, '_')}-${trigger.id}`, {
 				url: `/variables?path=${BotManager.selectedBot.path}&trigger=${trigger.id}`,
 				x: 0,
@@ -48,8 +48,8 @@ class DebuggerClass {
 			width: 350,
 			height: 450,
 		});
-		debugWindow.setTitle(`Debugging ${BotManager.selectedBot.name}`)
 		debugWindow.once('tauri://created', async () => {
+			debugWindow.setTitle(`Debugging ${BotManager.selectedBot.name}`)
 			const webview = new Webview(debugWindow, `debug-${BotManager.selectedBot.name.replace(/\s/g, '_')}`, {
 				url: `/debugger?path=${BotManager.selectedBot.path}`,
 				x: 0,
