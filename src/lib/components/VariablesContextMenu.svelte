@@ -42,7 +42,7 @@
         return false;
     }
 </script>
-<Card.Root id="ctx" class="p-1 {open ? '' : 'hidden'} rounded-lg absolute min-w-52 text-sm z-[9999999] pointer-events-auto" style="position: absolute; top:{y}px; left:{x}px;">
+<Card.Root id="ctx" class="p-1 {open ? '' : 'hidden'} rounded-lg absolute min-w-40 text-sm z-[9999999] pointer-events-auto" style="position: absolute; top:{y}px; left:{x}px;">
     <Card.Content class="p-0">
         <ScrollArea>
             <div class="max-h-40">
@@ -50,7 +50,7 @@
         <div>
                 <Button
                 variant="ghost"
-                class="size-7 w-full hover:!bg-accent"
+                class="size-7 w-full hover:!bg-accent justify-start"
                 onclick={() => {
                     insertText(`\${variables[\`${v}\`]}`)
                     open = false
