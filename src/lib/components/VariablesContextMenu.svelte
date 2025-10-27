@@ -50,7 +50,7 @@
         <div>
                 <Button
                 variant="ghost"
-                class="size-7 w-full hover:!bg-accent justify-start"
+                class="size-7 w-full text-muted-foreground hover:!bg-accent justify-start"
                 onclick={() => {
                     insertText(`\${variables[\`${v}\`]}`)
                     open = false
