@@ -12,13 +12,13 @@ class BotManagerClass {
 			if(payload[1].trim() === "RERUN") return invoke("load_bot_plugins", {bot_path: payload[0]})
 			const plugins = JSON.parse(payload[1])
 			const bot = this.bots.find(b => b.path === payload[0])
-			bot.isLoading = false
 			if(plugins.type === "extensions") {
 				bot.extensionClasses = plugins.data
 				bot.extensionClasses.forEach(p => {
 					if(p.open) p.open = eval(`(${p.open.replace("open", "function ")})`)
 					if(p.close) p.close = eval(`(${p.close.replace("close", "function ")})`)
 				})
+				bot.isLoading = false
 			}
 			if(plugins.type === "triggers") {
 				bot.triggerClasses = plugins.data
