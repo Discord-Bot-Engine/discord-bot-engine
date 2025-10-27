@@ -54,7 +54,7 @@
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
                     <Label for="type" class="text-right">Type</Label>
-                    <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...variableTypes.map(el => ({label: el.split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1).toLowerCase()}`).join(" "), value: el.toLowerCase()}))]} bind:value={variableType} class="col-span-3 w-full {variableType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+                    <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...variableTypes.map(el => ({label: el.split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()}))]} bind:value={variableType} class="col-span-3 w-full {variableType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
                 </div>
             </div>
 </Modal>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
                     <Label for="type" class="text-right">Type</Label>
-                    <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...variableTypes.map(el => ({label: el.split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1).toLowerCase()}`).join(" "), value: el.toLowerCase()}))]} bind:value={variableEditType} class="col-span-3 w-full {variableEditType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+                    <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...variableTypes.map(el => ({label: el.split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()}))]} bind:value={variableEditType} class="col-span-3 w-full {variableEditType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
                 </div>
             </div>
 </Modal>
