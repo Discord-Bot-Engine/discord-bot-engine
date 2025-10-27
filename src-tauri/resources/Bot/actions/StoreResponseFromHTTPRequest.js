@@ -13,11 +13,11 @@ export default class StoreResponseFromHTTPRequest {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Request type"></dbe-label>
-            <dbe-select name="type" change="handlers.onReqChange" values="GET,POST" value="GET" class="col-span-3"></dbe-select>
+            <dbe-select name="type" change="(v) => handlers.onReqChange(v)" values="GET,POST" value="GET" class="col-span-3"></dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Response type"></dbe-label>
-            <dbe-select name="restype" change="handlers.onResChange" values="Text,JSON" value="JSON" class="col-span-3"></dbe-select>
+            <dbe-select name="restype" change="(v) => handlers.onResChange(v)" values="Text,JSON" value="JSON" class="col-span-3"></dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store response in variable"></dbe-label>
