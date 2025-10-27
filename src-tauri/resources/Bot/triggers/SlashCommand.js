@@ -60,7 +60,7 @@ export default class SlashCommand {
         Bot.registeredCommands = false
         const slashCommand = new SlashCommandBuilder()
             .setName(actionManager.trigger.name)
-            .setDescription(data.get("description").trim() || "No description provided.")
+            .setDescription(data.get("description")?.trim() || "No description provided.")
         data.get("options")?.forEach((option) => {
             const name = option.data.get("name")
             const description = option.data.get("description")
