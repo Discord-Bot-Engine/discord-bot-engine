@@ -23,7 +23,7 @@ export default class Reply {
     static title(data) {
         return `Reply to "${data.get("origin")}" with ${data.get("components").length} components`
     }
-    static variableTypes = ["Message", "Command Interaction", "Button Interaction", "Select Menu Interaction"];
+    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Command Interaction", "Button Interaction", "Select Menu Interaction"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Message or interaction"></dbe-label>
@@ -143,12 +143,16 @@ export default class Reply {
                         <dbe-variable-list name="bmember" class="col-span-3" variableType="Member"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
+                        <dbe-label name="Store user in variable"></dbe-label>
+                        <dbe-variable-list name="buser" class="col-span-3" variableType="User"></dbe-variable-list>
+                    </div>
+                    <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store message in variable"></dbe-label>
                         <dbe-variable-list name="bmessage" class="col-span-3" variableType="Message"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store channel in variable"></dbe-label>
-                        <dbe-variable-list name="bchannel" class="col-span-3" variableType="Text Channel"></dbe-variable-list>
+                        <dbe-variable-list name="bchannel" class="col-span-3" variableType="Channel"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store server in variable"></dbe-label>
@@ -195,12 +199,16 @@ export default class Reply {
                         <dbe-variable-list name="smember" class="col-span-3" variableType="Member"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
+                        <dbe-label name="Store user in variable"></dbe-label>
+                        <dbe-variable-list name="suser" class="col-span-3" variableType="User"></dbe-variable-list>
+                    </div>
+                    <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store message in variable"></dbe-label>
                         <dbe-variable-list name="smessage" class="col-span-3" variableType="Message"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store channel in variable"></dbe-label>
-                        <dbe-variable-list name="schannel" class="col-span-3" variableType="Text Channel"></dbe-variable-list>
+                        <dbe-variable-list name="schannel" class="col-span-3" variableType="Channel"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store server in variable"></dbe-label>
@@ -306,12 +314,16 @@ export default class Reply {
                         <dbe-variable-list name="bmember" class="col-span-3" variableType="Member"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
+                        <dbe-label name="Store user in variable"></dbe-label>
+                        <dbe-variable-list name="buser" class="col-span-3" variableType="User"></dbe-variable-list>
+                    </div>
+                    <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store message in variable"></dbe-label>
                         <dbe-variable-list name="bmessage" class="col-span-3" variableType="Message"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store channel in variable"></dbe-label>
-                        <dbe-variable-list name="bchannel" class="col-span-3" variableType="Text Channel"></dbe-variable-list>
+                        <dbe-variable-list name="bchannel" class="col-span-3" variableType="Channel"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store server in variable"></dbe-label>
@@ -358,12 +370,16 @@ export default class Reply {
                         <dbe-variable-list name="smember" class="col-span-3" variableType="Member"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
+                        <dbe-label name="Store user in variable"></dbe-label>
+                        <dbe-variable-list name="suser" class="col-span-3" variableType="User"></dbe-variable-list>
+                    </div>
+                    <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store message in variable"></dbe-label>
                         <dbe-variable-list name="smessage" class="col-span-3" variableType="Message"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store channel in variable"></dbe-label>
-                        <dbe-variable-list name="schannel" class="col-span-3" variableType="Text Channel"></dbe-variable-list>
+                        <dbe-variable-list name="schannel" class="col-span-3" variableType="Channel"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store server in variable"></dbe-label>
@@ -685,11 +701,13 @@ export default class Reply {
             const int = btn.data.get("binteraction")
             const msg = btn.data.get("bmessage")
             const mem = btn.data.get("bmember")
+            const user = btn.data.get("buser")
             const ch = btn.data.get("bchannel")
             const sv = btn.data.get("bserver")
             setVariable(int, i)
             setVariable(msg, i.message)
             setVariable(mem, i.member)
+            setVariable(user, i.user)
             setVariable(ch, i.channel)
             setVariable(sv, i.guild)
             manager.runNext()
@@ -701,12 +719,14 @@ export default class Reply {
             const opts = menu.data.get("soptions")
             const msg = menu.data.get("smessage")
             const mem = menu.data.get("smember")
+            const user = menu.data.get("suser")
             const ch = menu.data.get("schannel")
             const sv = menu.data.get("sserver")
             setVariable(int, i)
             setVariable(opts, i.options)
             setVariable(msg, i.message)
             setVariable(mem, i.member)
+            setVariable(user, i.user)
             setVariable(ch, i.channel)
             setVariable(sv, i.guild)
             manager.runNext()
