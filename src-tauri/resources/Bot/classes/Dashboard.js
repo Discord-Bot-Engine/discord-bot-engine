@@ -8,9 +8,8 @@ import * as fs from "node:fs";
 import path from "node:path"
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-
 class DashboardClass {
-    port = process.env.PORT || 3000;
+    port = process.env.PORT ?? settings.port ?? 3000;
     app = express();
     inputs = dashboard.inputs;
     data = new Map()
@@ -82,6 +81,7 @@ class DashboardClass {
             resave: false,
             saveUninitialized: false
         }));
+        this.app.use(express.json());
         this.app.use((req, res, next) => {
             req.bot = Bot;
             req.dashboard = this
@@ -89,7 +89,7 @@ class DashboardClass {
             next();
         });
         this.app.use((req, res, next) => {
-            if(req.path.startsWith('/guild/') || req.path.startsWith("/auth/") ||
+            if(req.path.startsWith('/guild/') || req.path.startsWith("/_app/") || req.path.startsWith("/auth/") ||
                 ['/', '/admin/add', '/admin/delete'].includes(req.path))
                 handler(req,res,next)
         });

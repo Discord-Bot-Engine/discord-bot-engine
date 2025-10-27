@@ -115,16 +115,18 @@ class BotManagerClass {
 		}
 	}
 
-	saveBotSettings(botName, botPath, botToken, clientSecret, presenceIntent, membersIntent, messageContentIntent) {
+	saveBotSettings(botName, botPath, botToken, clientSecret, dashboardPort, presenceIntent, membersIntent, messageContentIntent) {
 		botName = botName.trim()
 		botPath = botPath.trim()
 		botToken = botToken.trim()
 		clientSecret = clientSecret.trim()
+		dashboardPort = dashboardPort.trim()
 		this.selectedBot.name = botName;
 		this.selectedBot.path = botPath;
 		this.selectedBot.token = botToken;
 		this.selectedBot.clientId = atob(botToken.split(".")[0]);
 		this.selectedBot.clientSecret = clientSecret
+		this.selectedBot.port = dashboardPort
 		this.selectedBot.presenceIntent = presenceIntent
 		this.selectedBot.membersIntent = membersIntent
 		this.selectedBot.messageContentIntent = messageContentIntent
@@ -134,6 +136,7 @@ class BotManagerClass {
 			settings_json: JSON.stringify({
 				token: botToken,
 				clientSecret,
+				port: dashboardPort,
 				presenceIntent,
 				membersIntent,
 				messageContentIntent,

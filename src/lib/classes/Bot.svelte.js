@@ -10,6 +10,7 @@ class Bot {
 	name = '';
 	path = '';
 	token = '';
+	port = '';
 	clientSecret = '';
 	presenceIntent = false
 	membersIntent = false
@@ -41,6 +42,7 @@ class Bot {
 		const data = JSON.parse(await invoke("load_bot_settings", {bot_path: this.path}))
 		this.clientSecret = data.clientSecret;
 		this.token = data.token;
+		this.port = data.port;
 		this.clientId = atob(this.token.split(".")[0]);
 		this.presenceIntent = data.presenceIntent;
 		this.membersIntent = data.membersIntent;

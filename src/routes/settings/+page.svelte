@@ -15,6 +15,7 @@
 	let botName = $state(BotManager.selectedBot?.name ?? "")
 	let botPath = $state(BotManager.selectedBot?.path ?? "")
 	let botToken = $state(BotManager.selectedBot?.token ?? "")
+	let dashboardPort = $state(BotManager.selectedBot?.port ?? "3000")
 	let clientSecret = $state(BotManager.selectedBot?.clientSecret ?? "")
 	let presenceIntent = $state(BotManager.selectedBot?.presenceIntent ?? false)
 	let membersIntent = $state(BotManager.selectedBot?.membersIntent ?? false)
@@ -28,9 +29,9 @@
 		})
 	}
 	function save() {
-		if(!botName.trim() || !botPath.trim() || !botToken.trim() || !clientSecret.trim()) return
+		if(!botName.trim() || !botPath.trim() || !botToken.trim() || !clientSecret.trim() || !dashboardPort.trim()) return
 		if(BotManager.bots.find(b =>  b.name === botName.trim() || b.path === botPath.trim()) && botName.trim() !== BotManager.selectedBot.name && botPath.trim() !== BotManager.selectedBot.path) return alert("Bot already exists!")
-		BotManager.saveBotSettings(botName, botPath, botToken, clientSecret, presenceIntent, membersIntent, messageContentIntent)
+		BotManager.saveBotSettings(botName, botPath, botToken, clientSecret, dashboardPort, presenceIntent, membersIntent, messageContentIntent)
 	}
 	function copyInviteLink() {
 		const inviteLink = `https://discord.com/oauth2/authorize?client_id=${BotManager.selectedBot.clientId}&permissions=8&integration_type=0&scope=bot+applications.commands`
@@ -59,6 +60,10 @@
 	<div class="grid grid-cols-5 items-center gap-4">
 		<Label for="secret" class="text-right">Client Secret</Label>
 		<Input id="secret" type="password" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={clientSecret} />
+	</div>
+	<div class="grid grid-cols-5 items-center gap-4">
+		<Label for="port" class="text-right">Dashboard Port</Label>
+		<Input id="port" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={dashboardPort} />
 	</div>
 	{#if BotManager.selectedBot.clientId}
 		<Button variant="secondary" class="self-end w-fit" title="Copy Invite Link" onclick={copyInviteLink}><LinkIcon/></Button>

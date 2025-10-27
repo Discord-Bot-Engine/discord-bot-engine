@@ -13,6 +13,7 @@ export async function handle({ event, resolve }) {
 	if (
 		!event.locals.user &&
 		(event.url.pathname.startsWith('/guild/') ||
+			event.url.pathname.startsWith('/_app/') ||
 			['/', '/admin/add', '/admin/delete'].includes(event.url.pathname))
 	) {
 		let origin = event.url.origin;
