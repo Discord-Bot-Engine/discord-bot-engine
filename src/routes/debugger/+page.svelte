@@ -69,7 +69,7 @@
                     <label class="mt-auto mb-auto font-semibold">{trigger.name}</label>
                     {#if trigger.actions.length}
                         <div class="ml-auto">
-                            <Button variant="secondary" class="size-6 mt-auto mb-auto" title="Variables" onclick={() => Debugger.attachVariablesWindow(trigger)}><VariableIcon></VariableIcon></Button>
+                            <Button variant="secondary" class="size-6 mt-auto mb-auto" title="View Variables" onclick={() => Debugger.attachVariablesWindow(trigger)}><VariableIcon></VariableIcon></Button>
                             <Collapsible.Trigger class={buttonVariants({ variant: "ghost", class: "mt-auto mb-auto size-7" })}>
                                 <ChevronDownIcon />
                             </Collapsible.Trigger>
@@ -92,7 +92,7 @@
                     </label>
                     <div class="ml-auto mt-auto mb-auto">
                         {#if canRun}
-                            <Button class="mr-1 ml-3 size-6 mt-auto mb-auto" onclick={() => Debugger.debugAction(page.url.searchParams.get("path"), trigger.id, act.id)}><PlayIcon></PlayIcon></Button>
+                            <Button class="mr-1 ml-3 size-6 mt-auto mb-auto" onclick={() => Debugger.debugAction(page.url.searchParams.get("path"), trigger.id, act.id)} title="Run Action"><PlayIcon></PlayIcon></Button>
                         {/if}
                     </div>
                     <Collapsible.Trigger class={buttonVariants({ variant: 'ghost', class: `mt-auto mb-auto size-6 ${hasNestedActions(act) ? '' : 'hidden'}` })}
