@@ -19,7 +19,8 @@ export default class SendHTTPResponse {
     }
     static async run({data, actionManager, getVariable, setVariable}) {
         const res = getVariable(data.get("res"))
-        res.send(data.get("text"))
+        const text = data.get("text")
+        res.send(isNaN(text) ? text : Number(text))
         actionManager.runNext()
     }
 }

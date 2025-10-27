@@ -392,9 +392,17 @@ fn copy_dir_all(
     Ok(())
 }
 
+fn kill_all_bots(state: &BotManager) {
+    let mut bots = state.bots.lock().unwrap();
+    for (bot_path, mut child) in bots.drain() {
+        let data = String::from("$DBE$$$ STOP");
+        let _ = child.write(data.as_bytes()).map_err(|e| e.to_string());
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         .manage(BotManager {
             bots: Mutex::new(HashMap::new()),
         })
@@ -429,6 +437,33 @@ pub fn run() {
         ])
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
-        .run(tauri::generate_context!())
+        .build(tauri::generate_context!())
         .expect("error while running tauri application");
+    app.run(move |app_handle, event| {
+        #[cfg(all(desktop, not(test)))]
+        match &event {
+            tauri::RunEvent::ExitRequested { api, code, .. } => {
+                if code.is_none() {
+                    api.prevent_exit();
+                    let state = app_handle.state::<BotManager>();
+                    kill_all_bots(&state);
+                    std::process::exit(0);
+                }
+            }
+            tauri::RunEvent::WindowEvent {
+                event: tauri::WindowEvent::CloseRequested { api, .. },
+                label,
+                ..
+            } => {
+                println!("closing window...");
+                api.prevent_close();
+                app_handle
+                    .get_webview_window(label)
+                    .unwrap()
+                    .destroy()
+                    .unwrap();
+            }
+            _ => {}
+        }
+    });
 }
