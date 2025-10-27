@@ -1,14 +1,14 @@
 
-export default class RespondToHTTPRequest {
-    static type = "Respond To HTTP Request"
+export default class SendHTTPResponse {
+    static type = "Send HTTP Response"
     static title(data) {
-        return `Respond to "${data.get("req")}" HTTP Request`
+        return `Send ${data.get("text").split("\n").length} lines to "${data.get("res")}"`
     }
-    static variableTypes = ["HTTP Request"]
+    static variableTypes = ["HTTP Response"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Request"></dbe-label>
-            <dbe-variable-list name="req" class="col-span-3" variableType="HTTP Request"></dbe-variable-list>
+            <dbe-label name="Response"></dbe-label>
+            <dbe-variable-list name="res" class="col-span-3" variableType="HTTP Response"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Text"></dbe-label>
@@ -18,8 +18,8 @@ export default class RespondToHTTPRequest {
     static load(context) {
     }
     static async run({data, actionManager, getVariable, setVariable}) {
-        const req = getVariable(data.get("req"))
-        req.send(data.get("text"))
+        const res = getVariable(data.get("res"))
+        res.send(data.get("text"))
         actionManager.runNext()
     }
 }
