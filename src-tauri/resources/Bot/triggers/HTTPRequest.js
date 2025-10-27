@@ -13,7 +13,7 @@ export default class HTTPRequest {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store request in variable"></dbe-label>
-            <dbe-select name="req" class="col-span-3" variableType="HTTP Request"></dbe-select>
+            <dbe-variable-list name="req" class="col-span-3" variableType="HTTP Request"></dbe-variable-list>
         </div>
     `
     static load({data, actionManager, setVariable}) {}
