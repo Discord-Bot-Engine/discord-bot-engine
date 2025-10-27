@@ -22,7 +22,7 @@
         BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
         isCreatingAction = false;
     }
-   async  function editAction() {
+   async function editAction() {
        const actionClass = BotManager.selectedBot.actionClasses.find(act => act.type === selectedAction.type);
         Object.keys(handlersCopy).forEach(handler => {
             window.handlers[handler] = handlersCopy[handler];

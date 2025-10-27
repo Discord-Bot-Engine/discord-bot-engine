@@ -6,7 +6,7 @@
     let {open = $bindable(), title, children, onDone = () => {}, onOpenChange = () => {} } = $props()
 </script>
 <Dialog.Root bind:open onOpenChange={onOpenChange}>
-    <Dialog.Content class="sm:max-w-[65vw] " >
+    <Dialog.Content class="sm:max-w-[65vw]" >
         <Dialog.Header>
             <Dialog.Title>{title}</Dialog.Title>
         </Dialog.Header>
