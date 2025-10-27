@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 export default class StoreResponseFromHTTPRequest {
     static type = "Store Response From HTTP Request"
     static title(data) {
-        return `Store response from "${data.get("type")}" request to "${data.get("url")}"`
+        return `Store ${data.get("restype") === "JSON" ? "JSON" : "text"} from ${data.get("type")} request to "${data.get("url")}"`
     }
     static variableTypes = ["Text", "JSON"]
     static html = `
