@@ -87,6 +87,7 @@ class BotManagerClass {
 
 	updateBotFiles() {
 		return new Promise(async (resolve) => {
+			this.selectedBot.isLoading = true
 			const unlisten = await listen('finished_copying', async () => {
 				await this.selectedBot.loadFiles()
 				setTimeout(() => resolve(true), 5000)

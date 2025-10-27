@@ -8,7 +8,6 @@
     import LoadingScreen from "$lib/components/LoadingScreen.svelte";
     let extension = $state({type:""})
     let isEditing = $state(false);
-    let isLoading = $state(false);
     let ref;
     let handlersCopy = {}
     let items = [
@@ -18,17 +17,13 @@
                 {
                     title: "Update Project Files",
                     onclick: async () => {
-                        isLoading = true
                         await BotManager.updateBotFiles()
-                        isLoading = false
                     }
                 },
                 {
                     title: "Reload Project Files",
                     onclick: async () => {
-                        isLoading = true
                         await BotManager.selectedBot.loadFiles()
-                        isLoading = false
                     }
                 },
                 {
@@ -125,4 +120,3 @@
         {@html extension?.html ?? ""}
     </div>
 </Modal>
-<LoadingScreen {isLoading} />
