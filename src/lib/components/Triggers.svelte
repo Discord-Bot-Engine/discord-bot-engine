@@ -59,6 +59,7 @@
         if(!ref) return;
         clearInterval(interval);
         const data = App.selectedTrigger.data
+        ref.querySelectorAll("*").forEach(el => el.setAttribute("noVariables", ""))
         App.loadUIData(ref, data)
         handlersCopy = window.handlers
         Object.freeze(handlersCopy)

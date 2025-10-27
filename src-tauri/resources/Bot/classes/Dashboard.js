@@ -85,9 +85,14 @@ class DashboardClass {
         this.app.use((req, res, next) => {
             req.bot = Bot;
             req.dashboard = this
+            Bot.client.emit("httpRequest", req, res)
             next();
         });
-        this.app.use(handler);
+        this.app.use((req, res, next) => {
+            if(req.path.startsWith('/guild/') || req.path.startsWith("/auth/") ||
+                ['/', '/admin/add', '/admin/delete'].includes(req.path))
+                handler(req,res,next)
+        });
     }
 }
 

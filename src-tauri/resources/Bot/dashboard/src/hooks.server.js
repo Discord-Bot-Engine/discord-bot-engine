@@ -1,7 +1,7 @@
 export async function handle({ event, resolve }) {
 	const req = event.platform?.req;
 	const bot = req?.bot;
-	const dashboard = req?.dashboard
+	const dashboard = req?.dashboard;
 
 	if (req?.session?.user) {
 		event.locals.user = req.session.user;
@@ -10,12 +10,16 @@ export async function handle({ event, resolve }) {
 	}
 	event.locals.bot = bot;
 	event.locals.dashboard = dashboard;
-	if (!event.locals.user && !event.url.pathname.startsWith("/auth")) {
+	if (
+		!event.locals.user &&
+		(event.url.pathname.startsWith('/guild/') ||
+			['/', '/admin/add', '/admin/delete'].includes(event.url.pathname))
+	) {
 		let origin = event.url.origin;
 
-		if (origin.startsWith("https://localhost")) origin = origin.replace("https://", "http://");
+		if (origin.startsWith('https://localhost')) origin = origin.replace('https://', 'http://');
 
-		const loginUrl = new URL("/auth/login", origin);
+		const loginUrl = new URL('/auth/login', origin);
 		return Response.redirect(loginUrl.toString(), 302);
 	}
 

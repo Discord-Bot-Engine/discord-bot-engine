@@ -5,11 +5,11 @@ export default class SlashCommand {
     static type = "Slash Command"
     static variableTypes = ["Command Interaction", "User", "Member", "Server", "Attachment", "Boolean", "Channel", "Mentionable", "Number", "Role", "Text", "User"]
     static event = Events.InteractionCreate
-    static runIf = ({actionManager}, interaction) => interaction.commandName === actionManager.trigger.name
+    static runIf = ({actionManager}, interaction) => interaction.commandName === actionManager.trigger.name && interaction.isChatInputCommand()
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Description"></dbe-label>
-            <dbe-input name="description" noVariables class="col-span-3"></dbe-input>
+            <dbe-input name="description" class="col-span-3"></dbe-input>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store interaction in variable"></dbe-label>
@@ -88,8 +88,6 @@ export default class SlashCommand {
         })
     }
     static run({data, actionManager, setVariable}, interaction) {
-        if(!interaction.isChatInputCommand()) return;
-        if(interaction.commandName !== actionManager.trigger.name) return;
         data.get("options")?.forEach(({data}) => {
             const name = data.get("name")
             const type = data.get("type")
