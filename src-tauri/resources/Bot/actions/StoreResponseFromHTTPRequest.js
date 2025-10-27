@@ -23,9 +23,9 @@ export default class StoreResponseFromHTTPRequest {
             <dbe-label name="Store response in variable"></dbe-label>
             <dbe-variable-list id="var" name="variable" class="col-span-3" variableType="Text,JSON"></dbe-variable-list>
         </div>
-        <div class="grid grid-cols-4 items-center gap-4">
+        <div class="grid grid-cols-4 items-center gap-4" id="body">
             <dbe-label name="Body"></dbe-label>
-            <dbe-input name="body" id="body" multiline="true" class="col-span-3"></dbe-input>    
+            <dbe-input name="body" multiline="true" class="col-span-3"></dbe-input>    
         </div>
          <dbe-list name="headers" title="Headers" modalId="optionsModal" itemTitle="(item, i) => item.data.get('name') ?? ('Header #'+i)"></dbe-list>
         <template id="optionsModal">
