@@ -61,7 +61,7 @@ export default class SlashCommand {
         const slashCommand = new SlashCommandBuilder()
             .setName(actionManager.trigger.name)
             .setDescription(data.get("description") ?? "No description provided.")
-        data.get("options").forEach((option) => {
+        data.get("options")?.forEach((option) => {
             const name = option.data.get("name")
             const description = option.data.get("description")
             const type = option.data.get("type")
@@ -90,7 +90,7 @@ export default class SlashCommand {
     static run({data, actionManager, setVariable}, interaction) {
         if(!interaction.isChatInputCommand()) return;
         if(interaction.commandName !== actionManager.trigger.name) return;
-        data.get("options").forEach(({data}) => {
+        data.get("options")?.forEach(({data}) => {
             const name = data.get("name")
             const type = data.get("type")
             const value = data.get("value")
