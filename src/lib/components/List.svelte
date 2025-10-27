@@ -32,7 +32,7 @@
 <Card.Root class="w-full h-full min-h-40 p-1 relative">
 	<Card.Content class="p-1">
 		<div class="flex h-fit overflow-hiddenDashboard.js">
-			<label class="mr-auto opacity-50 text-sm">{title}</label>
+			<label class="mr-auto opacity-50 text-sm overflow-hidden text-ellipsis">{title}</label>
 				<Button variant="ghost" size="icon" class="size-6 {hideControls ? 'hidden' : ''}" onclick={onadd}><PlusIcon /></Button>
 				<Button variant="ghost" size="icon" class="size-6 {hideControls ? 'hidden' : ''}" onclick={() => {ondelete(); selected = null }}><MinusIcon /></Button>
 		</div>
@@ -52,7 +52,7 @@
 							<Button
 									noVariables
 									variant={selected === item ? undefined : "ghost"}
-									class="size-7 flex-1 hover:{selected === item ? '!bg-primary' : '!bg-accent'} overflow-hidden"
+									class="size-7 flex-1 hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
 									ondblclick={() => { selected = item; ondblclick(item) }}
 									onclick={() => selected = item}
 							>
@@ -71,7 +71,7 @@
 					<div>
 							<Button
 									variant={selected === item ? undefined : "ghost"}
-									class="size-7 w-full"
+									class="size-7 w-full hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
 									ondblclick={() => { selected = item; ondblclick(item) }}
 									onclick={() => selected = item}
 							>
