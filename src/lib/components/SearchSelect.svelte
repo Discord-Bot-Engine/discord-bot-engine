@@ -8,7 +8,7 @@
     import { cn } from "$lib/utils.js";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
 
-    let {values, type = "single", value = $bindable(), onvaluechange=() => {}, ...other} = $props()
+    let {values, type = "single", check="true", value = $bindable(), onvaluechange=() => {}, ...other} = $props()
     let search = $state("")
     let open = $state(false);
     let triggerRef = $state(null);
@@ -26,9 +26,9 @@
     $effect(() => {
             if(ref)  {
                 ref.oninput = (ev) => {
-                    if(search.match(/\${(.*?)}/g))
+                    if(search.match(/\${(.*?)}/g) || check === "false")
                         value = search
-                    else
+                    else if(check === "true")
                         value = type === "single" ? "" : []
                 }
             }
