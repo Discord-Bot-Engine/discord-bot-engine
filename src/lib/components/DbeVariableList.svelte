@@ -10,4 +10,4 @@
         ref.setValues(App.selectedTrigger.variables.keys().toArray().sort().filter(v => types.includes(App.selectedTrigger.variables.get(v).toLowerCase()) || types.includes("any")))
     }
 </script>
-<dbe-select check="false" bind:this={ref} {...other} values={variables.keys().toArray().sort().filter(v => types.includes(variables.get(v).toLowerCase()) || types.includes("any")).toString()}/>
+<dbe-select bind:this={ref} {...other} values={variables.keys().toArray().sort().filter(v => types.includes(variables.get(v).toLowerCase()) || types.includes("any")).toString()}/>
