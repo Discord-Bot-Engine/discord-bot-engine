@@ -1,13 +1,13 @@
 import { invoke } from '@tauri-apps/api/core';
 import {Webview} from "@tauri-apps/api/webview";
-import {Window} from "@tauri-apps/api/window";
+import {getAllWindows, Window} from "@tauri-apps/api/window";
 import {BotManager} from "$lib/classes/BotManager.svelte.js";
 import {SvelteMap} from "svelte/reactivity";
 import Action from "$lib/classes/Action.svelte.js"
 
 class DebuggerClass {
-	windows = new SvelteMap()
-	isAttached = $derived(this.windows.has(`${BotManager.selectedBot.path}-debug`))
+	windows = $state([])
+	isAttached = $derived(this.windows.find(w => w.label === `debug-${BotManager.selectedBot.name.replace(/\s/g, '_')}`))
 
 	async debugAction(path, trigger, action) {
 		const bot = BotManager.bots.find(bot => bot.path === path);
@@ -16,7 +16,6 @@ class DebuggerClass {
 	}
 
 	attachVariablesWindow(trigger) {
-		const path = BotManager.selectedBot.path
 		const variablesWindow = new Window(`variables-${BotManager.selectedBot.name.replace(/\s/g, '_')}-${trigger.id}`, {
 			width: 350,
 			height: 450,
@@ -38,7 +37,7 @@ class DebuggerClass {
 				webview.emit("data", JSON.stringify(debugVariables))
 			})
 		});
-		this.windows.set(`${path}-variables-${trigger.id}`, variablesWindow)
+		return variablesWindow
 	}
 
 	attachDebugger() {
@@ -50,6 +49,7 @@ class DebuggerClass {
 		});
 		debugWindow.once('tauri://created', async () => {
 			debugWindow.setTitle(`Debugging ${BotManager.selectedBot.name}`)
+			this.windows = await getAllWindows()
 			const webview = new Webview(debugWindow, `debug-${BotManager.selectedBot.name.replace(/\s/g, '_')}`, {
 				url: `/debugger?path=${BotManager.selectedBot.path}`,
 				x: 0,
@@ -61,10 +61,9 @@ class DebuggerClass {
 				webview.emit("data", JSON.stringify(BotManager.selectedBot.triggers.map(t => t.toDebuggerJSON())))
 			})
 		});
-		debugWindow.onCloseRequested(async () => {
-			await this.removeDebugger(path, false)
+		debugWindow.onCloseRequested(async (ev) => {
+			await this.removeDebugger(path)
 		})
-		this.windows.set(`${path}-debug`, debugWindow)
 		let actions = []
 		BotManager.selectedBot.triggers.forEach(trigger => {
 			getActions(trigger.actions, actions)
@@ -92,18 +91,17 @@ class DebuggerClass {
 		invoke("remove_break_point", {bot_path: BotManager.selectedBot.path, action_id:id})
 	}
 
-	async removeDebugger(path, close = true) {
+	async removeDebugger(path) {
+		this.windows = await getAllWindows()
+		const bot = BotManager.bots.find(b => b.path === path)
+		const debugWindow = `debug-${bot.name.replace(/\s/g, '_')}`
+		const w = this.windows.find(w => w.label === debugWindow)
 		await invoke("remove_debugger", {bot_path: path}).catch(() => {})
-		const debugWindow = `${path}-debug`
-		const variablesWindow = `${path}-variables`
-		if(close && this.windows.has(debugWindow)) this.windows.get(debugWindow).close()
-		if(this.windows.has(debugWindow)) this.windows.delete(debugWindow)
-		this.windows.keys().forEach(key => {
-			if(key.startsWith(variablesWindow)) {
-				this.windows.get(key).close()
-				this.windows.delete(key)
-			}
+		this.windows.forEach(w => {
+			if(w.label.startsWith(`variables-${bot.name.replace(/\s/g, '_')}`)) w.close()
 		})
+		w?.close()
+		this.windows = await getAllWindows()
 	}
 }
 
