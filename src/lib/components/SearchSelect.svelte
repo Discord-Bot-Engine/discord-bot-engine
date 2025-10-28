@@ -7,6 +7,7 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import { cn } from "$lib/utils.js";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
+    import {Separator} from "$lib/components/ui/separator/index.js";
 
     let {values, type = "single", value = $bindable(), onvaluechange=() => {}, ...other} = $props()
     let search = $state("")
@@ -57,7 +58,16 @@
             <Command.List class="!overflow-visible !max-h-[200px]">
                 <Command.Empty>No option found.</Command.Empty>
                 <Command.Group>
-                        {#each values as v}
+                    {#if other.extra}
+                    <Command.Item
+                            onSelect={() => {closeAndFocusTrigger(); other.extra.onclick()}}
+                            class="justify-center"
+                    >
+                        {other.extra.label}
+                    </Command.Item>
+                        <Separator/>
+                    {/if}
+                    {#each values as v}
                             <Command.Item
                                     disabled={v.disabled}
                                     value={v.value}

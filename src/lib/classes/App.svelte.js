@@ -13,7 +13,7 @@ class AppClass {
 				data.set(name, el.getItems())
 			} else if(el.tagName.toLowerCase() === "dbe-list") {
 				data.set(name, el.getItems())
-			} else if(el.tagName.toLowerCase() === "dbe-select") {
+			} else if(el.tagName.toLowerCase() === "dbe-select" || el.tagName.toLowerCase() === "dbe-variable-list") {
 				data.set(name, el.getValue())
 			} else if (el.tagName.toLowerCase() === 'select' && el.multiple) {
 				data.set(name, el.selectedOptions.map((o) => o.value));
@@ -46,7 +46,7 @@ class AppClass {
 					data.set(name, elements)
 				}
 				el.setItems(elements ?? [])
-			} else if (el.tagName.toLowerCase() === 'dbe-select') {
+			} else if (el.tagName.toLowerCase() === 'dbe-select' || el.tagName.toLowerCase() === "dbe-variable-list") {
 				el.setValue(data.get(name))
 			} else if (el.tagName.toLowerCase() === 'select' && el.multiple) {
 				el.options.forEach((o) => {
