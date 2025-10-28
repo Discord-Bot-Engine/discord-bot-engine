@@ -90,7 +90,7 @@ class DashboardClass {
         });
         this.app.use((req, res, next) => {
             if(req.path.startsWith('/guild/') || req.path.startsWith("/_app/") || req.path.startsWith("/auth/") ||
-                ['/', '/admin/add', '/admin/delete'].includes(req.path))
+                ['/', '/admin', '/admin/add', '/admin/delete'].includes(req.path))
                 handler(req,res,next)
         });
     }

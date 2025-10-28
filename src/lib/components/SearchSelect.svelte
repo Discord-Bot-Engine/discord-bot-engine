@@ -29,8 +29,6 @@
                 ref.oninput = (ev) => {
                     if(search.match(/\${(.*?)}/g))
                         value = search
-                    else
-                        value = type === "single" ? "" : []
                 }
             }
     })
