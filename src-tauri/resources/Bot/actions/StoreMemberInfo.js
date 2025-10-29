@@ -25,7 +25,6 @@ export default class StoreMemberInfo {
             <dbe-label name="Member"></dbe-label>
             <dbe-variable-list name="member" class="col-span-3" variableType="member"></dbe-variable-list>
         </div>
-
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
             <dbe-select 
@@ -35,7 +34,6 @@ export default class StoreMemberInfo {
                 values="Avatar URL,Banner URL,Communication Disabled Until,Display Color,Display Hex Color,Display Name,Joined At,Nickname,User,User Id,User Tag,Is Bannable,Is Communication Disabled,Is Kickable,Is Manageable,Is Owner,Is Pending,Is Premium Since,Roles,Permissions,Voice State">
             </dbe-select>
         </div>
-
         <div id="imgsettings" class="grid gap-4" style="display: none">
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Image Extension"></dbe-label>
@@ -50,7 +48,6 @@ export default class StoreMemberInfo {
                 <dbe-select name="static" class="col-span-3" value="False" values="True,False"></dbe-select>
             </div>
         </div>
-
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store value in variable"></dbe-label>
             <dbe-variable-list 

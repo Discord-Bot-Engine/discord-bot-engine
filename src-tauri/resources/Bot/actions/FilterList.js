@@ -11,7 +11,6 @@ export default class FilterList {
             <dbe-label name="List"></dbe-label>
             <dbe-variable-list name="list" class="col-span-3" variableType="List"></dbe-variable-list>
         </div>
-        <dbe-action-list name="Run Actions To Filter" title="Run Actions To Filter"></dbe-action-list>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store element in variable"></dbe-label>
             <dbe-variable-list name="value" class="col-span-3" variableType="Any"></dbe-variable-list>
@@ -24,6 +23,7 @@ export default class FilterList {
             <dbe-label name="Store list in variable"></dbe-label>
             <dbe-variable-list name="newlist" class="col-span-3" variableType="List"></dbe-variable-list>
         </div>
+        <dbe-action-list name="Run Actions To Filter" title="Run Actions To Filter"></dbe-action-list>
     `
     static load(context) {
     }

@@ -65,27 +65,65 @@ export default class StoreServerInfo {
         const imgsettings = document.getElementById("imgsettings");
 
         handlers.onChange = (value) => {
-            // Show/hide image options
             imgsettings.style.display = value?.endsWith("URL") ? "" : "none";
 
-            // Variable type logic
             if (value === "Afk Channel") {
                 varlist.setVariableType("Channel");
-            } else if (["Afk Timeout", "Approximate Member Count", "Approximate Presence Count", "Maximum Bitrate", "Maximum Members", "Maximum Presences", "Max Stage Video Channel Users", "Max Video Channel Users", "Member Count", "Boosts Number", "Vanity URL Uses"].includes(value)) {
+            } else if ([
+                "Afk Timeout",
+                "Approximate Member Count",
+                "Approximate Presence Count",
+                "Maximum Bitrate",
+                "Maximum Members",
+                "Maximum Presences",
+                "Max Stage Video Channel Users",
+                "Max Video Channel Users",
+                "Member Count",
+                "Boosts Number",
+                "Vanity URL Uses"
+            ].includes(value)) {
                 varlist.setVariableType("Number");
-            } else if (["Auto Moderation Rules", "Bans", "Channels", "Commands", "Emojis", "Invites", "Members", "Presences", "Roles", "Scheduled Events", "Soundboard Sounds", "Stage Instances", "Stickers", "Voice States"].includes(value)) {
+            } else if ([
+                "Auto Moderation Rules",
+                "Bans",
+                "Channels",
+                "Commands",
+                "Emojis",
+                "Invites",
+                "Members",
+                "Presences",
+                "Roles",
+                "Scheduled Events",
+                "Soundboard Sounds",
+                "Stage Instances",
+                "Stickers",
+                "Voice States"
+            ].includes(value)) {
                 varlist.setVariableType("List");
             } else if (["Bot Join Date", "Creation Date"].includes(value)) {
                 varlist.setVariableType("Date");
-            } else if (["Is Available", "Is Large", "Is Partnered", "Has Boost Progress Bar", "Is Verified", "Is Widget Enabled"].includes(value)) {
+            } else if ([
+                "Is Available",
+                "Is Large",
+                "Is Partnered",
+                "Has Boost Progress Bar",
+                "Is Verified",
+                "Is Widget Enabled"
+            ].includes(value)) {
                 varlist.setVariableType("Boolean");
-            } else if (["Banner URL","Discovery Splash URL","Icon URL","Splash URL","Widget Image URL","Description","Id","Name","Name Acronym","Vanity URL Code","Default Message Notifications","Explicit Content Filter","MFA Level","NSFW Level","Preferred Locale","Boost Tier","Verification Level"].includes(value)) {
+            } else if ([
+                "Banner URL","Discovery Splash URL","Icon URL","Splash URL","Widget Image URL",
+                "Description","Id","Name","Name Acronym","Vanity URL Code",
+                "Default Message Notifications","Explicit Content Filter","MFA Level",
+                "NSFW Level","Preferred Locale","Boost Tier","Verification Level"
+            ].includes(value)) {
                 varlist.setVariableType("Text");
             } else if (value === "Owner") {
                 varlist.setVariableType("Member");
-            } else if (["Public Updates Channel","Rules Channel","Safety Alerts Channel","System Channel"].includes(value)) {
-                varlist.setVariableType("Channel");
-            } else if (value === "Widget Channel") {
+            } else if ([
+                "Public Updates Channel","Rules Channel","Safety Alerts Channel",
+                "System Channel","Widget Channel"
+            ].includes(value)) {
                 varlist.setVariableType("Channel");
             }
         };
@@ -104,212 +142,101 @@ export default class StoreServerInfo {
             extension: data.get("extension"),
         };
 
-        // Some info requires a fresh fetch
         if (["Approximate Member Count", "Approximate Presence Count", "Maximum Presences"].includes(info)) {
             server = await Bot.client.guilds.fetch(server.id);
         }
 
         switch (info) {
-            case "Banner URL":
-                value = server.bannerURL(imgOptions);
-                break;
-            case "Discovery Splash URL":
-                value = server.discoverySplashURL(imgOptions);
-                break;
-            case "Icon URL":
-                value = server.iconURL(imgOptions);
-                break;
-            case "Splash URL":
-                value = server.splashURL(imgOptions);
-                break;
-            case "Widget Image URL":
-                value = server.widgetImageURL(imgOptions);
-                break;
-            case "Afk Channel":
-                value = server.afkChannel;
-                break;
-            case "Afk Timeout":
-                value = server.afkTimeout;
-                break;
-            case "Approximate Member Count":
-                value = server.approximateMemberCount;
-                break;
-            case "Approximate Presence Count":
-                value = server.approximatePresenceCount;
-                break;
-            case "Auto Moderation Rules":
-                value = [...server.autoModerationRules.cache.values()];
-                break;
-            case "Is Available":
-                value = server.available;
-                break;
-            case "Bans":
-                value = [...(await server.bans.fetch()).values()];
-                break;
-            case "Channels":
-                value = [...server.channels.cache.values()];
-                break;
-            case "Commands":
-                value = [...server.commands?.cache?.values() ?? []];
-                break;
-            case "Creation Date":
-                value = server.createdAt;
-                break;
+            case "Banner URL": value = server.bannerURL(imgOptions); break;
+            case "Discovery Splash URL": value = server.discoverySplashURL(imgOptions); break;
+            case "Icon URL": value = server.iconURL(imgOptions); break;
+            case "Splash URL": value = server.splashURL(imgOptions); break;
+            case "Widget Image URL": value = server.widgetImageURL(imgOptions); break;
+            case "Afk Channel": value = server.afkChannel; break;
+            case "Afk Timeout": value = server.afkTimeout; break;
+            case "Approximate Member Count": value = server.approximateMemberCount; break;
+            case "Approximate Presence Count": value = server.approximatePresenceCount; break;
+            case "Auto Moderation Rules": value = [...server.autoModerationRules.cache.values()]; break;
+            case "Is Available": value = server.available; break;
+            case "Bans": value = [...(await server.bans.fetch()).values()]; break;
+            case "Channels": value = [...server.channels.cache.values()]; break;
+            case "Commands": value = [...(server.commands?.cache?.values() ?? [])]; break;
+            case "Creation Date": value = server.createdAt; break;
             case "Default Message Notifications":
-                value = {
-                    0: "All Messages",
-                    1: "Only Mentions"
-                }[server.defaultMessageNotifications];
+                value = this.toTitleCase(
+                    { 0: "AllMessages", 1: "OnlyMentions" }[server.defaultMessageNotifications]
+                );
                 break;
-            case "Description":
-                value = server.description;
-                break;
-            case "Emojis":
-                value = [...server.emojis.cache.values()];
-                break;
+            case "Description": value = server.description; break;
+            case "Emojis": value = [...server.emojis.cache.values()]; break;
             case "Explicit Content Filter":
-                value = {
-                    0: "Disabled",
-                    1: "Members Without Roles",
-                    2: "All Members"
-                }[server.explicitContentFilter];
+                value = this.toTitleCase(
+                    { 0: "Disabled", 1: "MembersWithoutRoles", 2: "AllMembers" }[server.explicitContentFilter]
+                );
                 break;
-            case "Id":
-                value = server.id;
-                break;
-            case "Invites":
-                value = [...(await server.invites.fetch()).values()];
-                break;
-            case "Bot Join Date":
-                value = server.joinedAt;
-                break;
-            case "Is Large":
-                value = server.large;
-                break;
-            case "Preferred Locale":
-                value = server.preferredLocale;
-                break;
-            case "Maximum Bitrate":
-                value = server.maximumBitrate;
-                break;
-            case "Maximum Members":
-                value = server.maximumMembers;
-                break;
-            case "Maximum Presences":
-                value = server.maximumPresences;
-                break;
-            case "Max Stage Video Channel Users":
-                value = server.maxStageVideoChannelUsers;
-                break;
-            case "Max Video Channel Users":
-                value = server.maxVideoChannelUsers;
-                break;
-            case "Member Count":
-                value = server.memberCount;
-                break;
-            case "Members":
-                value = [...server.members.cache.values()];
-                break;
+            case "Id": value = server.id; break;
+            case "Invites": value = [...(await server.invites.fetch()).values()]; break;
+            case "Bot Join Date": value = server.joinedAt; break;
+            case "Is Large": value = server.large; break;
+            case "Preferred Locale": value = this.toTitleCase(server.preferredLocale.replace(/-/g, " ")); break;
+            case "Maximum Bitrate": value = server.maximumBitrate; break;
+            case "Maximum Members": value = server.maximumMembers; break;
+            case "Maximum Presences": value = server.maximumPresences; break;
+            case "Max Stage Video Channel Users": value = server.maxStageVideoChannelUsers; break;
+            case "Max Video Channel Users": value = server.maxVideoChannelUsers; break;
+            case "Member Count": value = server.memberCount; break;
+            case "Members": value = [...server.members.cache.values()]; break;
             case "MFA Level":
-                value = { 0: "None", 1: "Elevated" }[server.mfaLevel];
+                value = this.toTitleCase({ 0: "None", 1: "Elevated" }[server.mfaLevel]);
                 break;
-            case "Name":
-                value = server.name;
-                break;
-            case "Name Acronym":
-                value = server.nameAcronym;
-                break;
+            case "Name": value = server.name; break;
+            case "Name Acronym": value = server.nameAcronym; break;
             case "NSFW Level":
-                value = {
-                    0: "Default",
-                    1: "Explicit",
-                    2: "Safe",
-                    3: "Age Restricted"
-                }[server.nsfwLevel];
+                value = this.toTitleCase(
+                    { 0: "Default", 1: "Explicit", 2: "Safe", 3: "AgeRestricted" }[server.nsfwLevel]
+                );
                 break;
-            case "Owner":
-                value = await server.members.fetch(server.ownerId);
-                break;
-            case "Is Partnered":
-                value = server.partnered;
-                break;
+            case "Owner": value = await server.members.fetch(server.ownerId); break;
+            case "Is Partnered": value = server.partnered; break;
             case "Boost Tier":
-                value = {
-                    0: "None",
-                    1: "Tier 1",
-                    2: "Tier 2",
-                    3: "Tier 3"
-                }[server.premiumTier];
+                value = this.toTitleCase(
+                    { 0: "None", 1: "Tier1", 2: "Tier2", 3: "Tier3" }[server.premiumTier]
+                );
                 break;
-            case "Has Boost Progress Bar":
-                value = server.premiumProgressBarEnabled;
-                break;
-            case "Boosts Number":
-                value = server.premiumSubscriptionCount;
-                break;
-            case "Presences":
-                value = [...server.presences.cache.values()];
-                break;
-            case "Public Updates Channel":
-                value = server.publicUpdatesChannel;
-                break;
-            case "Roles":
-                value = [...server.roles.cache.values()];
-                break;
-            case "Rules Channel":
-                value = server.rulesChannel;
-                break;
-            case "Safety Alerts Channel":
-                value = server.safetyAlertsChannel;
-                break;
-            case "Scheduled Events":
-                value = [...server.scheduledEvents.cache.values()];
-                break;
-            case "Soundboard Sounds":
-                value = [...server.soundboardSounds.cache.values()];
-                break;
-            case "Stage Instances":
-                value = [...server.stageInstances.cache.values()];
-                break;
-            case "Stickers":
-                value = [...server.stickers.cache.values()];
-                break;
-            case "System Channel":
-                value = server.systemChannel;
-                break;
-            case "Vanity URL Code":
-                value = server.vanityURLCode;
-                break;
-            case "Vanity URL Uses":
-                value = (await server.fetchVanityData()).uses;
-                break;
+            case "Has Boost Progress Bar": value = server.premiumProgressBarEnabled; break;
+            case "Boosts Number": value = server.premiumSubscriptionCount; break;
+            case "Presences": value = [...server.presences.cache.values()]; break;
+            case "Public Updates Channel": value = server.publicUpdatesChannel; break;
+            case "Roles": value = [...server.roles.cache.values()]; break;
+            case "Rules Channel": value = server.rulesChannel; break;
+            case "Safety Alerts Channel": value = server.safetyAlertsChannel; break;
+            case "Scheduled Events": value = [...server.scheduledEvents.cache.values()]; break;
+            case "Soundboard Sounds": value = [...server.soundboardSounds.cache.values()]; break;
+            case "Stage Instances": value = [...server.stageInstances.cache.values()]; break;
+            case "Stickers": value = [...server.stickers.cache.values()]; break;
+            case "System Channel": value = server.systemChannel; break;
+            case "Vanity URL Code": value = server.vanityURLCode; break;
+            case "Vanity URL Uses": value = (await server.fetchVanityData()).uses; break;
             case "Verification Level":
-                value = {
-                    0: "None",
-                    1: "Low",
-                    2: "Medium",
-                    3: "High",
-                    4: "Very High"
-                }[server.verificationLevel];
+                value = this.toTitleCase(
+                    { 0: "None", 1: "Low", 2: "Medium", 3: "High", 4: "VeryHigh" }[server.verificationLevel]
+                );
                 break;
-            case "Is Verified":
-                value = server.verified;
-                break;
-            case "Voice States":
-                value = [...server.voiceStates.cache.values()];
-                break;
-            case "Widget Channel":
-                value = server.widgetChannel;
-                break;
-            case "Is Widget Enabled":
-                value = server.widgetEnabled;
-                break;
-            default:
-                value = null;
-                break;
+            case "Is Verified": value = server.verified; break;
+            case "Voice States": value = [...server.voiceStates.cache.values()]; break;
+            case "Widget Channel": value = server.widgetChannel; break;
+            case "Is Widget Enabled": value = server.widgetEnabled; break;
+            default: value = null; break;
         }
 
         setVariable(data.get("value"), value);
         actionManager.runNext();
+        function toTitleCase(str) {
+            return str
+                ?.toString()
+                ?.replace(/([a-z])([A-Z])/g, "$1 $2")
+                ?.replace(/\b\w/g, c => c.toUpperCase())
+                ?.trim();
+        }
     }
 }

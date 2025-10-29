@@ -11,7 +11,6 @@ export default class StoreElementFromList {
             <dbe-label name="List"></dbe-label>
             <dbe-variable-list name="list" class="col-span-3" variableType="List"></dbe-variable-list>
         </div>
-        <dbe-action-list name="Run Actions To Find Element" title="Run Actions To Find Element"></dbe-action-list>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store element in variable"></dbe-label>
             <dbe-variable-list name="value" class="col-span-3" variableType="Any"></dbe-variable-list>
@@ -20,6 +19,7 @@ export default class StoreElementFromList {
             <dbe-label name="Store element position in variable"></dbe-label>
             <dbe-variable-list name="pos" class="col-span-3" variableType="Number"></dbe-variable-list>
         </div>
+        <dbe-action-list name="Run Actions To Find Element" title="Run Actions To Find Element"></dbe-action-list>
     `
     static load(context) {
     }
