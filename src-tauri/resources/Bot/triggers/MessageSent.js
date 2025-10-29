@@ -5,7 +5,7 @@ export default class MessageSent {
     static type = "Message Sent"
     static variableTypes = ["Message", "Member", "User", "Channel", "Server"]
     static event = Events.MessageCreate
-    static runIf = () => true
+    static runIf = (msg) => msg.author.id !== Bot.client.user.id
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store message in variable"></dbe-label>
