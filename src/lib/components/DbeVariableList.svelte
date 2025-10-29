@@ -57,7 +57,7 @@
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <Label for="type" class="text-right">Type</Label>
-            <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...variableTypes.map(el => ({label: el.split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()}))]} bind:value={newVariableType} class="col-span-3 w-full {newVariableType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+            <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...variableTypes.filter(v => types.includes(v.toLowerCase()) || types.includes("any")).map(el => ({label: el.split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()}))]} bind:value={newVariableType} class="col-span-3 w-full {newVariableType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
         </div>
     </div>
 </Modal>
