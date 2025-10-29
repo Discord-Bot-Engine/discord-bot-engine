@@ -32,12 +32,12 @@ export default class FilterList {
         const filtered = []
         const actions = new ActionManager(actionManager.trigger, data.get("Run Actions To Filter"), () => { iterate() }, (v) => {
             filtered.push(v)
-            actions.reset()
             iterate()
         })
         let i = 0;
         iterate()
         function iterate() {
+            actions.reset()
             if(i >= list.length) {
                 setVariable(data.get("newlist"), filtered)
                 actionManager.runNext();

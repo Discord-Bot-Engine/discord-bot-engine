@@ -34,16 +34,17 @@ export default class DeleteMessages {
         list = [...list.values()]
         if(!number.trim()) number = list.length;
         if(isNaN(number)) number = list.length;
+        number = Number(number);
         const filtered = []
         const actions = new ActionManager(actionManager.trigger, data.get("Run Actions To Filter"), () => { iterate() }, (v) => {
             filtered.push(v)
-            actions.reset()
             iterate()
         })
         let i = 0;
         iterate()
         async function iterate() {
-            if(i > number) {
+            actions.reset()
+            if(i >= list.length || filtered.length == number) {
                 await channel.bulkDelete(filtered)
                 actionManager.runNext();
                 return
