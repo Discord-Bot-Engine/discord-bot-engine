@@ -171,6 +171,7 @@ class BotClass {
     };
 
     async setData(key, value) {
+        value = isNaN(value) ? value : Number(value);
         await this.data.set(key, value)
     }
 
