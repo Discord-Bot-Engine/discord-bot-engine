@@ -176,7 +176,8 @@ class BotClass {
     }
 
     async getData(key) {
-        return await this.data.get(key);
+        const value = await this.data.get(key)
+        return isNaN(value) ? value : Number(value);
     }
 
     serializeDatabase(values) {
