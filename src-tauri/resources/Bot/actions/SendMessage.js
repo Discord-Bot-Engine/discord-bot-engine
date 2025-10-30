@@ -21,7 +21,7 @@ import {
 export default class SendMessage {
     static type = "Send Message"
     static title(data) {
-        return `Send ${data.get("components").length} components in "${data.get("channel")}"`
+        return `Send ${data.get("components").length} components to "${data.get("ch")}"`
     }
     static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Button Interaction", "Select Menu Interaction"];
     static html = `
