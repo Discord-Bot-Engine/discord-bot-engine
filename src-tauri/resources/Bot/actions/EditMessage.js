@@ -18,23 +18,15 @@ import {
     MessageFlags,
 } from "discord.js"
 
-export default class Reply {
-    static type = "Reply"
+export default class EditMessage {
+    static type = "Edit Message"
     static title(data) {
-        return `Reply to "${data.get("origin")}" with ${data.get("components").length} components`
+        return `Edit "${data.get("message")}" to ${data.get("components").length} components`
     }
-    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Command Interaction", "Button Interaction", "Select Menu Interaction"];
+    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Button Interaction", "Select Menu Interaction"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Message or interaction"></dbe-label>
-            <dbe-variable-list name="origin" class="col-span-3" variableType="Message,Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
-        </div>
-        <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Is ephemeral? (only for interactions)"></dbe-label>
-            <dbe-select name="ephemeral" class="col-span-3" value="False" values="True,False"></dbe-select>
-        </div>
-        <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Store message in variable"></dbe-label>
+            <dbe-label name="Message"></dbe-label>
             <dbe-variable-list name="message" class="col-span-3" variableType="Message"></dbe-variable-list>
         </div>
          <dbe-list name="files" title="Files" modalId="filesModal" itemTitle="(item, i) => (item.data.get('name') ?? 'File')+' #'+i"></dbe-list>
@@ -461,7 +453,6 @@ export default class Reply {
     }
     static async run({data, actionManager, getVariable, setVariable}) {
         const components = data.get("components")
-        const ephemeral = data.get("ephemeral") === "True"
         const buttons = []
         const selectmenus = []
         const list = []
@@ -683,27 +674,14 @@ export default class Reply {
             attachments.push(new AttachmentBuilder(buffer, { name, description }))
         })
         const flags = [MessageFlags.IsComponentsV2]
-        if(ephemeral) flags.push(MessageFlags.Ephemeral)
-        const origin = getVariable(data.get("origin"))
-        let r
-        if(origin.replied)
-            r = await origin.followUp({
-                components: list,
-                files: attachments,
-                flags,
-                withResponse: true
-            })
-        else
-            r = await origin.reply({
-                components: list,
-                files: attachments,
-                flags,
-                withResponse: true
-            })
-        if(r.resource) r = r.resource.message
-        setVariable(data.get("message"), r);
-        const btncollector = r.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
-        const menucollector = r.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
+        const message = getVariable(data.get("message"))
+        await message.edit({
+            components: list,
+            files: attachments,
+            flags,
+        })
+        const btncollector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
+        const menucollector = message.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
         btncollector.on('collect', (i) => {
             const btn = buttons.find(b => b.id === i.customId)
             const manager = new ActionManager(actionManager.trigger, btn.actions)

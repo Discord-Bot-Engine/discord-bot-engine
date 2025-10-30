@@ -1,5 +1,3 @@
-import { Bot } from "../classes/Bot.js"
-
 export default class StoreUserInfo {
     static type = "Store User Info"
 
@@ -12,7 +10,8 @@ export default class StoreUserInfo {
         "Text",
         "Boolean",
         "Date",
-        "Number"
+        "Number",
+        "Channel"
     ]
 
     static html = `
@@ -27,7 +26,7 @@ export default class StoreUserInfo {
                 name="info" 
                 class="col-span-3" 
                 change="(v) => handlers.onChange(v)"
-                values="Username,Display Name,Discriminator,Id,Tag,Avatar URL,Banner URL,Accent Color,Is Bot,Is System,Created At,Default Avatar URL">
+                values="Username,Display Name,Discriminator,Id,Tag,Avatar URL,Banner URL,Accent Color,Is Bot,Is System,Created At,Default Avatar URL,DM Channel">
             </dbe-select>
         </div>
 
@@ -52,7 +51,7 @@ export default class StoreUserInfo {
                 name="value" 
                 id="var" 
                 class="col-span-3"
-                variableType="Text,Boolean,Date,Number">
+                variableType="Text,Boolean,Date,Number,Channel">
             </dbe-variable-list>
         </div>
     `
@@ -62,7 +61,6 @@ export default class StoreUserInfo {
         const imgsettings = document.getElementById("imgsettings")
 
         handlers.onChange = (value) => {
-            // Show image settings if selecting an image URL
             if (value?.endsWith("URL")) {
                 imgsettings.style.display = ""
             } else {
@@ -75,6 +73,8 @@ export default class StoreUserInfo {
                 varlist.setVariableType("Boolean")
             } else if (["Accent Color"].includes(value)) {
                 varlist.setVariableType("Number")
+            } else if (["DM Channel"].includes(value)) {
+                varlist.setVariableType("Channel")
             } else {
                 varlist.setVariableType("Text")
             }
@@ -84,17 +84,8 @@ export default class StoreUserInfo {
     static load(context) {}
 
     static async run({ data, actionManager, getVariable, setVariable }) {
-        let user = getVariable(data.get("user"))
+        const user = getVariable(data.get("user"))
         const info = data.get("info")
-
-        // Fetch full user if partial (for banner, accent color, etc.)
-        if (user.partial || !user.banner) {
-            try {
-                user = await user.fetch()
-            } catch {
-                // ignore fetch errors if not accessible
-            }
-        }
 
         const imgOptions = {
             forceStatic: data.get("static") === "True",
@@ -140,6 +131,9 @@ export default class StoreUserInfo {
                 break
             case "Default Avatar URL":
                 value = user.defaultAvatarURL
+                break
+            case "DM Channel":
+                value = await user.createDM()
                 break
             default:
                 value = null

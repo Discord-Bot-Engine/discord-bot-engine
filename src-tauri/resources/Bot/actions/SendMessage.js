@@ -18,20 +18,16 @@ import {
     MessageFlags,
 } from "discord.js"
 
-export default class Reply {
-    static type = "Reply"
+export default class SendMessage {
+    static type = "Send Message"
     static title(data) {
-        return `Reply to "${data.get("origin")}" with ${data.get("components").length} components`
+        return `Send ${data.get("components").length} components in "${data.get("channel")}"`
     }
-    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Command Interaction", "Button Interaction", "Select Menu Interaction"];
+    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Button Interaction", "Select Menu Interaction"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Message or interaction"></dbe-label>
-            <dbe-variable-list name="origin" class="col-span-3" variableType="Message,Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
-        </div>
-        <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Is ephemeral? (only for interactions)"></dbe-label>
-            <dbe-select name="ephemeral" class="col-span-3" value="False" values="True,False"></dbe-select>
+            <dbe-label name="Channel, member or user"></dbe-label>
+            <dbe-variable-list name="ch" class="col-span-3" variableType="Channel,Member,User"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store message in variable"></dbe-label>
@@ -461,7 +457,6 @@ export default class Reply {
     }
     static async run({data, actionManager, getVariable, setVariable}) {
         const components = data.get("components")
-        const ephemeral = data.get("ephemeral") === "True"
         const buttons = []
         const selectmenus = []
         const list = []
@@ -683,24 +678,12 @@ export default class Reply {
             attachments.push(new AttachmentBuilder(buffer, { name, description }))
         })
         const flags = [MessageFlags.IsComponentsV2]
-        if(ephemeral) flags.push(MessageFlags.Ephemeral)
-        const origin = getVariable(data.get("origin"))
-        let r
-        if(origin.replied)
-            r = await origin.followUp({
-                components: list,
-                files: attachments,
-                flags,
-                withResponse: true
-            })
-        else
-            r = await origin.reply({
-                components: list,
-                files: attachments,
-                flags,
-                withResponse: true
-            })
-        if(r.resource) r = r.resource.message
+        const ch = getVariable(data.get("ch"))
+        let r = await ch.send({
+            components: list,
+            files: attachments,
+            flags,
+        })
         setVariable(data.get("message"), r);
         const btncollector = r.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
         const menucollector = r.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
