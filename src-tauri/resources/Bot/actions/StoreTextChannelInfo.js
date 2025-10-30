@@ -21,7 +21,7 @@ export default class StoreTextChannelInfo {
                 name="info" 
                 class="col-span-3" 
                 change="(v) => handlers.onChange(v)"
-                values="Name,Topic,Is NSFW,Created At,Slowmode,Category,Parent,Is Thread,Server,Position,Is Deletable,Is Manageable,Is Viewable,Permissions,Recipients">
+                values="Name,Topic,Is NSFW,Created At,Slowmode,Category,Parent,Is Thread,Server,Position,Is Deletable,Is Manageable,Is Viewable,Permissions,Recipients,Messages">
             </dbe-select>
         </div>
 
@@ -46,7 +46,7 @@ export default class StoreTextChannelInfo {
                 varlist.setVariableType("Boolean");
             } else if (["Slowmode", "Position"].includes(value)) {
                 varlist.setVariableType("Number");
-            } else if (["Permissions", "Recipients"].includes(value)) {
+            } else if (["Permissions", "Recipients", "Messages"].includes(value)) {
                 varlist.setVariableType("List");
             } else if (["Server", "Category", "Parent"].includes(value)) {
                 varlist.setVariableType("Server");
@@ -106,6 +106,10 @@ export default class StoreTextChannelInfo {
                 break;
             case "Recipients":
                 value = channel.recipients ? [...channel.recipients.values()] : [];
+                break;
+            case "Messages":
+                const fetched = await channel.messages.fetch({ limit: 100 });
+                value = [...fetched.values()];
                 break;
             default:
                 value = null;

@@ -17,7 +17,7 @@ export default class StoreStageChannelInfo {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
             <dbe-select name="info" class="col-span-3" change="(v) => handlers.onChange(v)" 
-                values="Name,Bitrate,User Limit,Position,Category,Parent,Is Deletable,Is Manageable,Is Viewable,Server,Members">
+                values="Name,Bitrate,User Limit,Position,Category,Parent,Is Deletable,Is Manageable,Is Viewable,Server,Members,Messages">
             </dbe-select>
         </div>
         <div class="grid-cols-4 items-center gap-4">
@@ -30,7 +30,7 @@ export default class StoreStageChannelInfo {
         const varlist = document.getElementById("var");
 
         handlers.onChange = (value) => {
-            if (["Members"].includes(value)) varlist.setVariableType("List");
+            if (["Members", "Messages"].includes(value)) varlist.setVariableType("List");
             else if (["Is Deletable", "Is Manageable", "Is Viewable"].includes(value)) varlist.setVariableType("Boolean");
             else if (["Bitrate", "User Limit", "Position"].includes(value)) varlist.setVariableType("Number");
             else if (["Server", "Category", "Parent"].includes(value)) varlist.setVariableType("Server");
@@ -57,6 +57,10 @@ export default class StoreStageChannelInfo {
             case "Is Viewable": value = channel.viewable; break;
             case "Server": value = channel.guild; break;
             case "Members": value = [...channel.members.values()]; break;
+            case "Messages":
+                const fetched = await channel.messages.fetch({ limit: 100 });
+                value = [...fetched.values()];
+                break;
             default: value = null; break;
         }
 

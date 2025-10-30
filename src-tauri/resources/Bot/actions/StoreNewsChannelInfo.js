@@ -17,7 +17,7 @@ export default class StoreNewsChannelInfo {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
             <dbe-select name="info" class="col-span-3" change="(v) => handlers.onChange(v)" 
-                values="Name,Topic,Is NSFW,Created At,Slowmode,Category,Parent,Is Deletable,Is Manageable,Is Viewable,Server,Position,Permissions,Recipients">
+                values="Name,Topic,Is NSFW,Created At,Slowmode,Category,Parent,Is Deletable,Is Manageable,Is Viewable,Server,Position,Permissions,Recipients,Messages">
             </dbe-select>
         </div>
         <div class="grid-cols-4 items-center gap-4">
@@ -33,16 +33,15 @@ export default class StoreNewsChannelInfo {
             if (["Created At"].includes(value)) varlist.setVariableType("Date");
             else if (["Is NSFW", "Is Deletable", "Is Manageable", "Is Viewable"].includes(value)) varlist.setVariableType("Boolean");
             else if (["Slowmode", "Position"].includes(value)) varlist.setVariableType("Number");
-            else if (["Permissions", "Recipients"].includes(value)) varlist.setVariableType("List");
+            else if (["Permissions", "Recipients", "Messages"].includes(value)) varlist.setVariableType("List");
             else if (["Server", "Category", "Parent"].includes(value)) varlist.setVariableType("Server");
             else varlist.setVariableType("Text");
         };
     }
 
-    static load(context) {
-    }
+    static load(context) {}
 
-    static async run({data, actionManager, getVariable, setVariable}) {
+    static async run({ data, actionManager, getVariable, setVariable }) {
         const channel = getVariable(data.get("channel"));
         const info = data.get("info");
         let value;
@@ -87,6 +86,10 @@ export default class StoreNewsChannelInfo {
                 break;
             case "Recipients":
                 value = channel.recipients ? [...channel.recipients.values()] : [];
+                break;
+            case "Messages":
+                const fetched = await channel.messages.fetch({ limit: 100 });
+                value = [...fetched.values()];
                 break;
             default:
                 value = null;

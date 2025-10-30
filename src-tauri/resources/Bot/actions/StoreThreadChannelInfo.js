@@ -17,7 +17,7 @@ export default class StoreThreadChannelInfo {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
             <dbe-select name="info" class="col-span-3" change="(v) => handlers.onChange(v)" 
-                values="Name,Topic,Is NSFW,Created At,Archived,Auto Archive Duration,Is Locked,Is Manageable,Is Viewable,Server,Parent,Members,Member Count">
+                values="Name,Topic,Is NSFW,Created At,Archived,Auto Archive Duration,Is Locked,Is Manageable,Is Viewable,Server,Parent,Members,Member Count,Messages">
             </dbe-select>
         </div>
         <div class="grid-cols-4 items-center gap-4">
@@ -33,7 +33,7 @@ export default class StoreThreadChannelInfo {
             if (["Created At"].includes(value)) varlist.setVariableType("Date");
             else if (["Is NSFW","Archived","Is Locked","Is Manageable","Is Viewable"].includes(value)) varlist.setVariableType("Boolean");
             else if (["Auto Archive Duration","Member Count"].includes(value)) varlist.setVariableType("Number");
-            else if (["Members"].includes(value)) varlist.setVariableType("List");
+            else if (["Members","Messages"].includes(value)) varlist.setVariableType("List");
             else if (["Server","Parent"].includes(value)) varlist.setVariableType("Server");
             else varlist.setVariableType("Text");
         };
@@ -60,6 +60,10 @@ export default class StoreThreadChannelInfo {
             case "Parent": value = channel.parent; break;
             case "Members": value = channel.members ? [...channel.members.values()] : []; break;
             case "Member Count": value = channel.memberCount; break;
+            case "Messages":
+                const fetched = await channel.messages.fetch({ limit: 100 });
+                value = [...fetched.values()]; // store as list of message objects
+                break;
             default: value = null; break;
         }
 

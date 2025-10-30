@@ -7,7 +7,7 @@ export default class StoreVoiceChannelInfo {
         return `Store "${data.get("info")}" from voice channel "${data.get("channel")}"`;
     }
 
-    static variableTypes = ["Channel", "Server", "Text", "Boolean", "Number", "Date", "List"];
+    static variableTypes = ["Channel", "Server", "Text", "Boolean", "Number", "List"];
 
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -17,7 +17,7 @@ export default class StoreVoiceChannelInfo {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
             <dbe-select name="info" class="col-span-3" change="(v) => handlers.onChange(v)" 
-                values="Name,Bitrate,User Limit,Position,Category,Parent,Is Deletable,Is Manageable,Is Viewable,Server,RTC Region,Is Full,Members">
+                values="Name,Bitrate,User Limit,Position,Category,Parent,Is Deletable,Is Manageable,Is Viewable,Server,RTC Region,Is Full,Members,Messages">
             </dbe-select>
         </div>
         <div class="grid-cols-4 items-center gap-4">
@@ -30,7 +30,7 @@ export default class StoreVoiceChannelInfo {
         const varlist = document.getElementById("var");
 
         handlers.onChange = (value) => {
-            if (["Members"].includes(value)) varlist.setVariableType("List");
+            if (["Members", "Messages"].includes(value)) varlist.setVariableType("List");
             else if (["Is Deletable", "Is Manageable", "Is Viewable", "Is Full"].includes(value)) varlist.setVariableType("Boolean");
             else if (["Bitrate", "User Limit", "Position"].includes(value)) varlist.setVariableType("Number");
             else if (["Server", "Category", "Parent", "RTC Region"].includes(value)) varlist.setVariableType("Server");
@@ -59,6 +59,10 @@ export default class StoreVoiceChannelInfo {
             case "RTC Region": value = channel.rtcRegion; break;
             case "Is Full": value = channel.full; break;
             case "Members": value = [...channel.members.values()]; break;
+            case "Messages":
+                const fetched = await channel.messages.fetch({ limit: 100 });
+                value = [...fetched.values()];
+                break;
             default: value = null; break;
         }
 

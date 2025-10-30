@@ -30,7 +30,7 @@ export default class DeleteMessages {
     static async run({data, actionManager, setVariable, getVariable}) {
         const channel = getVariable(data.get('channel'))
         let number = data.get("number")
-        let list = await channel.messages.fetch();
+        let list = await channel.messages.fetch({limit: 100});
         list = [...list.values()]
         if(!number.trim()) number = list.length;
         if(isNaN(number)) number = list.length;
