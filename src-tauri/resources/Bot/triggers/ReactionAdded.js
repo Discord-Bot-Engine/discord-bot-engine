@@ -37,7 +37,7 @@ export default class ReactionAdded {
         </div>
     `
     static load({data, actionManager, setVariable}) {}
-    static async run({data, actionManager, setVariable}, reaction, user, details) {
+    static async run({id, data, actionManager, setVariable}, reaction, user, details) {
         if(reaction.partial) await reaction.fetch();
         const message = reaction.message;
         const guild = message.guild;
@@ -49,6 +49,6 @@ export default class ReactionAdded {
         setVariable(data.get("member"), member);
         setVariable(data.get("channel"), message.channel);
         setVariable(data.get("server"), message.guild);
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

@@ -42,7 +42,7 @@ export default class HTTPRequest {
         }
     }
     static load({data, actionManager, setVariable}) {}
-    static run({data, actionManager, setVariable}, req, res) {
+    static run({id, data, actionManager, setVariable}, req, res) {
         const params = data.get("params")
         const headers = data.get("headers")
         params?.forEach(param => {
@@ -53,6 +53,6 @@ export default class HTTPRequest {
         })
         setVariable(data.get("req"), req)
         setVariable(data.get("res"), res)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

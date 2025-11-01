@@ -87,7 +87,7 @@ export default class SlashCommand {
             );
         })
     }
-    static run({data, actionManager, setVariable}, interaction) {
+    static run({id, data, actionManager, setVariable}, interaction) {
         data.get("options")?.forEach(({data}) => {
             const name = data.get("name")
             const type = data.get("type")
@@ -107,6 +107,6 @@ export default class SlashCommand {
         setVariable(data.get("member"), interaction.member);
         setVariable(data.get("channel"), interaction.channel);
         setVariable(data.get("server"), interaction.guild);
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

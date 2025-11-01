@@ -21,10 +21,10 @@ export default class MemberLeft {
         </div>
     `
     static load({data, actionManager, setVariable}) {}
-    static run({data, actionManager, setVariable}, member) {
+    static run({id, data, actionManager, setVariable}, member) {
         setVariable(data.get("member"), member);
         setVariable(data.get("user"), member.user);
         setVariable(data.get("server"), member.guild);
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

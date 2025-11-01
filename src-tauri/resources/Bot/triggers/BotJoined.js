@@ -13,8 +13,8 @@ export default class BotJoined {
         </div>
     `
     static load({data, actionManager, setVariable}) {}
-    static run({data, actionManager, setVariable}, guild) {
+    static run({id, data, actionManager, setVariable}, guild) {
         setVariable(data.get("server"), guild);
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }
