@@ -94,7 +94,7 @@
         App.saveUIData(ref, data)
         isEditing = false
         try {
-            BotManager.selectedBot.extensionClasses.find(ext => ext.type === extension.type)?.close?.(extension)
+            BotManager.selectedBot.extensionClasses.find(ext => ext.type === extension.type)?.close?.(BotManager.selectedBot.extensions.get(extension.type))
         }catch (e) {
             alert(`${extension.type}\n${e.stack}`)
         }
