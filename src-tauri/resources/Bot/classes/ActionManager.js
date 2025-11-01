@@ -25,6 +25,7 @@ export class ActionManager {
     );
     edges.forEach(edge => {
       const action = this.actions.find((act) => act.id === edge.target);
+      if(!action) return;
       if (Bot.debugger?.breakPoints.includes(action.id)) return;
       action.run({
         actionManager: this,

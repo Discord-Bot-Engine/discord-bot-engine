@@ -29,7 +29,8 @@ export class Action{
                 rawData: this.data
             })
         } catch(error) {
-            console.log(`Error at trigger: ${context.actionManager.trigger.name} (${context.actionManager.trigger.type})\nAction: ${context.actionManager.actions.filter(act => act.type !== "group").findIndex(act => act.id === this.id)}. ${this.type}\nError: ${error.stack}`)
+            const action = this.type ? `${context.actionManager.actions.filter(act => act.type !== "group").findIndex(act => act.id === this.id)}. ${this.type}` : "root"
+            console.log(`Error at trigger: ${context.actionManager.trigger.name} (${context.actionManager.trigger.type})\nAction: ${action}\nError: ${error.stack}`)
         }
 
     }
@@ -47,7 +48,7 @@ export class Action{
     }
 
     static fromJSON(json) {
-        const action = new Action(json.id, json.type)
+        const action = new Action(json.id, json.actionType)
         Object.keys(json.data).forEach(key => {
             if(Array.isArray(json.data[key]))
                 json.data[key] = json.data[key].map(el => CustomElement.fromJSON(el))
