@@ -39,5 +39,5 @@
 
 <BaseEdge class="!stroke-primary" path={edgePath} {markerEnd} {style} />
 <EdgeLabel x={labelX} y={labelY} class="button-edge__label !bg-transparent">
-    <Button class="size-4 p-0" onclick={onEdgeClick}> × </Button>
+    <Button class="size-3 p-0" onclick={onEdgeClick}> × </Button>
 </EdgeLabel>

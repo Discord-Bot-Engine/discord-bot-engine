@@ -27,6 +27,7 @@
 	import LoadingScreen from "$lib/components/LoadingScreen.svelte";
 	import {goto} from "$app/navigation";
 	import {SvelteFlowProvider} from "@xyflow/svelte";
+	import {Button} from "$lib/components/ui/button/index.js";
 	if(!BotManager.selectedBot) {
 		alert("Please select a bot!")
 		goto("/");
@@ -45,19 +46,17 @@
 	})
 </script>
 <TopBar />
-<div class="grid grid-cols-5 grid-rows-7 w-full h-full gap-3 p-3">
-	<div class="row-span-4 col-span-1">
+<div class="flex flex-col w-full h-full gap-3 p-3">
+	<div class="flex gap-3 grow">
 		<Triggers />
-	</div>
-	<div class="row-span-4 col-span-3">
-		<SvelteFlowProvider>
-		<Actions title="Actions" actions={App.selectedTrigger?.actions} />
-		</SvelteFlowProvider>
-	</div>
-	<div class="row-span-4 col-span-1">
+		<div class="grow">
+			<SvelteFlowProvider>
+				<Actions title="Actions" actions={App.selectedTrigger?.actions} />
+			</SvelteFlowProvider>
+		</div>
 		<Variables />
 	</div>
-	<div class="col-span-full row-span-3 pb-7.5 h-full">
+	<div class="pb-7.5">
 		<Run/>
 	</div>
 </div>

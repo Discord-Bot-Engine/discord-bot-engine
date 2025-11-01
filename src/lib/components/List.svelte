@@ -10,6 +10,7 @@
 		title,
 		items,
 		hideControls,
+			extraControl,
 		allowMoving = true,
 		ondelete = () => {},
 		onadd = () => {},
@@ -18,7 +19,8 @@
 		itemTitle = () => {},
 		ondnd = () => {},
 		html,
-		selected = $bindable()
+		selected = $bindable(),
+		...props
 	} = $props();
 
 	function handleDnd({ detail }) {
@@ -30,7 +32,7 @@
 	}
 </script>
 
-<Card.Root class="w-full h-full min-h-40 p-1 relative">
+<Card.Root class="w-full h-full min-h-40 min-w-40 p-1 relative {props.class}">
 	<Card.Content class="p-1">
 		<div class="flex h-fit">
 			<label class="mr-auto opacity-50 text-sm overflow-hidden text-ellipsis">{title}</label>

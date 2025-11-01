@@ -9,7 +9,9 @@
     import SearchSelect from "$lib/components/SearchSelect.svelte";
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     import ErrorIcon from "$lib/components/ErrorIcon.svelte";
-	let triggers = $derived(BotManager.selectedBot?.triggers);
+    import {Button} from "$lib/components/ui/button/index.js";
+    import {ChevronLeftIcon, ChevronRightIcon} from "@lucide/svelte";
+    let triggers = $derived(BotManager.selectedBot?.triggers);
     let triggerName = $state()
     let triggerEditName = $state()
     let triggerType = $state("None")
@@ -50,7 +52,9 @@
         <ErrorIcon />
     {/if}
 {/snippet}
-<List ondblclick={() => {
+    <div class="flex bg-card rounded-xl">
+        {#if !App.hideTriggers}
+        <List class="rounded-r-none border-r-0" ondblclick={() => {
     triggerEditName = App.selectedTrigger.name;
     const triggerClass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type);
     if(!triggerClass) return alert("Trigger failed to load.");
@@ -77,7 +81,15 @@
 }} title="Triggers" onclick={() => {
     BotManager.selectedBot.markAsModified(App.selectedTrigger.id);
 }} bind:selected={App.selectedTrigger}></List>
-
+{/if}
+<Button variant="ghost" class="h-full rounded-xl rounded-l-none border-1 w-7 p-0" onclick={() => App.hideTriggers = !App.hideTriggers}>
+    {#if !App.hideTriggers}
+        <ChevronLeftIcon/>
+    {:else}
+        <ChevronRightIcon/>
+    {/if}
+</Button>
+</div>
 <Modal bind:open={isCreatingTrigger} title="Create Trigger" onDone={addTrigger}>
     <div class="grid gap-4 py-4">
         <div class="grid grid-cols-4 items-center gap-4">

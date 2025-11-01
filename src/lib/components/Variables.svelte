@@ -7,6 +7,8 @@
     import SearchSelect from "$lib/components/SearchSelect.svelte";
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     import ErrorIcon from "$lib/components/ErrorIcon.svelte";
+    import {ChevronLeftIcon, ChevronRightIcon} from "@lucide/svelte";
+    import {Button} from "$lib/components/ui/button/index.js";
     let selectedVariable = $state("")
     let variableName = $state()
     let variableEditName = $state()
@@ -38,14 +40,24 @@
         <ErrorIcon />
     {/if}
 {/snippet}
-<List ondblclick={() => {
+<div class="flex bg-card rounded-xl">
+    <Button variant="ghost" class="h-full rounded-xl rounded-r-none border-1 w-7 p-0" onclick={() => App.hideVariables = !App.hideVariables}>
+        {#if !App.hideVariables}
+            <ChevronLeftIcon/>
+        {:else}
+            <ChevronRightIcon/>
+        {/if}
+    </Button>
+    {#if !App.hideVariables}
+    <List class="rounded-l-none border-l-0" ondblclick={() => {
     variableEditName = selectedVariable;
     variableEditType = App.selectedTrigger?.variables.get(variableEditName);
     isEditingVariable = true;
 }} {html} items={App.selectedTrigger?.variables.keys().toArray().sort()} hideControls={!App.selectedTrigger} allowMoving={false} itemTitle={(item) => item} onadd={() => isCreatingVariable = true} ondelete={() => {
     App.selectedTrigger?.variables.delete(selectedVariable);
 }} title="Variables" bind:selected={selectedVariable}></List>
-
+        {/if}
+        </div>
 <Modal bind:open={isCreatingVariable} title="Create Variable" onDone={addVariable}>
             <div class="grid gap-4 py-4">
                 <div class="grid grid-cols-4 items-center gap-4">

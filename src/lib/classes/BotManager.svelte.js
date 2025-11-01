@@ -39,7 +39,8 @@ class BotManagerClass {
 			const bot = this.bots.find(b => b.path === payload[0])
 			if(payload[1].startsWith("$DEBUGGER$$$")) {
 				const data = JSON.parse(payload[1].replace("$DEBUGGER$$$", ""))
-				const trigger = Trigger.fromJSON(data.data)
+				console.log(data)
+				const trigger = Trigger.fromJSON(data)
 				bot.triggers.find(t => t.id === trigger.id).showInDebugger = true
 				return;
 			} else if(payload[1].startsWith("$VARIABLE$$$")) {

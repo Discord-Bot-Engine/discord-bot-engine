@@ -267,4 +267,6 @@
 
 .svelte-flow__node-group {
     z-index:-1!important;
+    background: var(--secondary)!important;
+    opacity: 0.3;
 }

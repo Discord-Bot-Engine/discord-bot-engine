@@ -6,6 +6,9 @@ class AppClass {
 	selectedTrigger = $state(null);
 	selectedAction = $derived(this.selectedTrigger?.actions.find(act => act.selected))
 	isEditingAction = $state(false);
+	hideTriggers = $state(false);
+	hideVariables = $state(false);
+	hideConsole = $state(false);
 	ref = null
 	handlersCopy = {}
 	openAction() {
