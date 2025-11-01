@@ -30,7 +30,7 @@
             <div class="flex flex-col gap-1 mt-1 h-fit w-full">
                 {#each action.outputs ?? BotManager.selectedBot.actionClasses.find(act => act.actionType === actionType)?.outputs ?? ["action"] as op}
                     <div class="flex !text-xs justify-end">
-                        {op}<Handle
+                        <label class="pl-2 pr-0">{op}</label><Handle
                             id={op}
                             type="source"
                             position={Position.Right}
