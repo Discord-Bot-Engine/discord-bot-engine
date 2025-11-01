@@ -52,7 +52,7 @@
         <ErrorIcon />
     {/if}
 {/snippet}
-    <div class="flex bg-card rounded-xl">
+    <div class="flex bg-card rounded-xl rounded-l-none">
         {#if !App.hideTriggers}
         <List class="rounded-r-none border-r-0" ondblclick={() => {
     triggerEditName = App.selectedTrigger.name;
@@ -82,7 +82,7 @@
     BotManager.selectedBot.markAsModified(App.selectedTrigger.id);
 }} bind:selected={App.selectedTrigger}></List>
 {/if}
-<Button variant="ghost" class="h-full rounded-xl rounded-l-none border-1 w-7 p-0" onclick={() => App.hideTriggers = !App.hideTriggers}>
+<Button variant="ghost" class="h-full rounded-xl rounded-l-none border-1 !p-0" onclick={() => App.hideTriggers = !App.hideTriggers}>
     {#if !App.hideTriggers}
         <ChevronLeftIcon/>
     {:else}
