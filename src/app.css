@@ -270,3 +270,7 @@
     background: var(--secondary)!important;
     opacity: 0.3;
 }
+
+.svelte-flow__container {
+    background: transparent!important;
+}

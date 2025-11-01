@@ -59,7 +59,7 @@
     }><MinusIcon /></Button>
         </div>
             {#if App.selectedTrigger}
-                <SvelteFlow colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
+                <SvelteFlow proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
                     <Background bgColor="oklch(0.27 0.03 259.08)"></Background>
                 </SvelteFlow>
             {/if}
