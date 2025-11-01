@@ -2,9 +2,6 @@ import {Dashboard} from "../classes/Dashboard.js";
 
 export default class StoreValueFromDashboard {
     static type = "Store Value From Dashboard"
-    static title(data) {
-        return `Store "${data.get("input")}" from server "${data.get("server")}"`
-    }
     static variableTypes = ["Server", "Text", "Role", "Channel", "Member", "Mentionable"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -22,7 +19,7 @@ export default class StoreValueFromDashboard {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable, setVariable}) {
+    static async run({id, data, actionManager, getVariable, setVariable}) {
         const server = getVariable(data.get("server"))
         const name = data.get("input")
         let value = Dashboard.getInputValue(server.id, name)
@@ -43,6 +40,6 @@ export default class StoreValueFromDashboard {
             }
         }
         setVariable(data.get("value"), value)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

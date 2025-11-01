@@ -1,10 +1,6 @@
 export default class StoreUserInfo {
     static type = "Store User Info"
 
-    static title(data) {
-        return `Store "${data.get("info")}" from user "${data.get("user")}"`;
-    }
-
     static variableTypes = [
         "User",
         "Text",
@@ -83,7 +79,7 @@ export default class StoreUserInfo {
 
     static load(context) {}
 
-    static async run({ data, actionManager, getVariable, setVariable }) {
+    static async run({ id, data, actionManager, getVariable, setVariable }) {
         const user = getVariable(data.get("user"))
         const info = data.get("info")
 
@@ -141,6 +137,6 @@ export default class StoreUserInfo {
         }
 
         setVariable(data.get("value"), value)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

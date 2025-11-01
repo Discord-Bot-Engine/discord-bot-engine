@@ -1,9 +1,6 @@
 
 export default class SendHTTPResponse {
     static type = "Send HTTP Response"
-    static title(data) {
-        return `Send ${data.get("text").split("\n").length} lines to "${data.get("res")}"`
-    }
     static variableTypes = ["HTTP Response"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -17,10 +14,10 @@ export default class SendHTTPResponse {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable, setVariable}) {
+    static async run({id, data, actionManager, getVariable, setVariable}) {
         const res = getVariable(data.get("res"))
         const text = data.get("text")
         res.send(isNaN(text) ? text : Number(text))
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

@@ -2,9 +2,6 @@ import {  useQueue } from "discord-player";
 
 export default class PauseResumeQueue {
     static type = "Pause/Resume Queue"
-    static title(data) {
-        return `${data.get("action")} "${data.get("server")}" queue`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -18,11 +15,11 @@ export default class PauseResumeQueue {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const pause = data.get("action") === "Pause"
         queue.node.setPaused(pause)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

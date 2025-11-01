@@ -12,8 +12,8 @@ export default class StoreList {
     `
     static load(context) {
     }
-    static async run({data, actionManager, setVariable}) {
+    static async run({id, data, actionManager, setVariable}) {
         setVariable(data.get("value"), [])
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

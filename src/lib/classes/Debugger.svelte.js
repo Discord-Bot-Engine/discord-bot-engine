@@ -10,9 +10,7 @@ class DebuggerClass {
 	isAttached = $derived(this.windows.find(w => w.label === `debug-${BotManager.selectedBot.name.replace(/\s/g, '_')}`))
 
 	async debugAction(path, trigger, action) {
-		const bot = BotManager.bots.find(bot => bot.path === path);
-		const actionManager = bot.triggers.find(t => t.id === trigger).actionManagers.find(m => m.actions.find(act => act === action))?.id ?? ""
-		await invoke("debug_action", {bot_path: path, trigger_id:trigger, action_id:action, manager_id:actionManager})
+		await invoke("debug_action", {bot_path: path, trigger_id:trigger, action_id:action})
 	}
 
 	attachVariablesWindow(trigger) {

@@ -2,9 +2,6 @@ import {Bot} from "../classes/Bot.js";
 import {ChannelType} from "discord.js"
 export default class FindChannel {
     static type = "Find Channel"
-    static title(data) {
-        return `Find channel by ${data.get("by")} "${data.get("value")}" from "${data.get("server")}"`
-    }
     static variableTypes = ["Channel"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -30,7 +27,7 @@ export default class FindChannel {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable, setVariable}) {
+    static async run({id, data, actionManager, getVariable, setVariable}) {
         const type = data.get("type")
         const types = {
             Text: ChannelType.GuildText,
@@ -46,6 +43,6 @@ export default class FindChannel {
             channel = server.channels.cache.find(channel => channel.name === data.get("value") && channel.type === types[type])
         }
         setVariable(data.get("channel"), channel)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

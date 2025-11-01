@@ -3,9 +3,6 @@ import {Bot} from "../classes/Bot.js";
 
 export default class SetData {
     static type = "Set Data"
-    static title(data) {
-        return `Set field "${data.get("field")}" to value "${data.get("value")}"`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -19,8 +16,8 @@ export default class SetData {
     `
     static load(context) {
     }
-    static async run({data, actionManager}) {
+    static async run({id, data, actionManager}) {
         Bot.setData(data.get("field"), data.get("value"))
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

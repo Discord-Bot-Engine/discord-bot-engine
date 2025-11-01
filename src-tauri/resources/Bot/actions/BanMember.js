@@ -2,9 +2,6 @@ import {ActionManager} from "../classes/ActionManager.js";
 
 export default class BanMember {
     static type = "Ban Member";
-    static title(data) {
-        return `Ban "${data.get("member")}"`
-    }
     static variableTypes = ["Member"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -22,7 +19,7 @@ export default class BanMember {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const member = getVariable(data.get('member'));
         let seconds = data.get('seconds');
         let reason = data.get('reason');
@@ -30,6 +27,6 @@ export default class BanMember {
         if(isNaN(seconds)) seconds = 0;
         if(!reason.trim()) reason = reason.trim()
         await member.ban({deleteMessageSeconds: seconds || undefined, reason: reason || undefined})
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

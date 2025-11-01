@@ -3,9 +3,6 @@ import {Bot} from "../classes/Bot.js";
 
 export default class StoreValueFromMemberData {
     static type = "Store Value From Member Data"
-    static title(data) {
-        return `Store "${data.get("field")}" from member "${data.get("member")}"`
-    }
     static variableTypes = ["Member"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -23,10 +20,10 @@ export default class StoreValueFromMemberData {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable, setVariable}) {
+    static async run({id, data, actionManager, getVariable, setVariable}) {
         const member = getVariable(data.get("member"))
         const field = `${member.id}${member.guild.id}${data.get("field")}`
         setVariable(data.get("value"), await Bot.getData(field))
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

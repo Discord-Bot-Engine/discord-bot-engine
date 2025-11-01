@@ -8,9 +8,6 @@ import tmp from "tmp"
 
 export default class StoreHTMLAsWebP {
     static type = "Store HTML As WebP";
-    static title(data) {
-        return `Store ${data.get("html").split("\n").length} HTML lines`;
-    }
     static variableTypes = ["Buffer"];
     static html = `
     <div class="grid grid-cols-4 items-center gap-4">
@@ -61,7 +58,7 @@ export default class StoreHTMLAsWebP {
   </html>`
     }
 
-    static async run({ data, actionManager, setVariable }) {
+    static async run({ id, data, actionManager, setVariable }) {
         const width = Number(data.get("width"));
         const height = Number(data.get("height"));
         const duration = Number(data.get("duration"));
@@ -108,7 +105,7 @@ export default class StoreHTMLAsWebP {
             await browser.close()
             const buffer = await mp4BufferToWebP(Buffer.concat(bytes))
             setVariable(value, buffer);
-            actionManager.runNext();
+            actionManager.runNext(id, "action");
         }, duration * 1000)
         async function mp4BufferToWebP(mp4Buffer) {
             return new Promise((resolve, reject) => {

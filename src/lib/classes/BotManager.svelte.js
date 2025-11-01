@@ -30,7 +30,6 @@ class BotManagerClass {
 			if(plugins.type === "actions") {
 				bot.actionClasses = plugins.data
 				bot.actionClasses.forEach(p => {
-					p.title = eval(`(${p.title.replace("title", "function ")})`)
 					if(p.open) p.open = eval(`(${p.open.replace("open", "function ")})`)
 					if(p.close) p.close = eval(`(${p.close.replace("close", "function ")})`)
 				})
@@ -40,13 +39,8 @@ class BotManagerClass {
 			const bot = this.bots.find(b => b.path === payload[0])
 			if(payload[1].startsWith("$DEBUGGER$$$")) {
 				const data = JSON.parse(payload[1].replace("$DEBUGGER$$$", ""))
-				if(data.type === "TRIGGER") {
-					const trigger = Trigger.fromJSON(data.data)
-					bot.triggers.find(t => t.id === trigger.id).showInDebugger = true
-				} else if(data.type === "ACTION_MANAGERS") {
-					const triggerId = data.data.id;
-					bot.triggers.find(t => t.id === triggerId).actionManagers = data.data.actionManagers;
-				}
+				const trigger = Trigger.fromJSON(data.data)
+				bot.triggers.find(t => t.id === trigger.id).showInDebugger = true
 				return;
 			} else if(payload[1].startsWith("$VARIABLE$$$")) {
 				const { name, value, triggerId } = JSON.parse(payload[1].replace("$VARIABLE$$$", ""))

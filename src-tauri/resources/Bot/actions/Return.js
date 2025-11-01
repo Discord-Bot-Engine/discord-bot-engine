@@ -3,9 +3,6 @@ import {Bot} from "../classes/Bot.js";
 
 export default class Return {
     static type = "Return"
-    static title(data) {
-        return `Return "${data.get("value")}"`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">

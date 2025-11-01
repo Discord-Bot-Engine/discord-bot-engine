@@ -2,9 +2,6 @@ import {  useQueue } from "discord-player";
 
 export default class SetQueueReverb {
     static type = "Set Queue Reverb"
-    static title(data) {
-        return `Set "${data.get("server")}" queue reverb to ${data.get("roomSize")},${data.get("damping")},${data.get("wetLevel")},${data.get("dryLevel")}`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -30,7 +27,7 @@ export default class SetQueueReverb {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const roomSize = Number(data.get("roomSize"))
@@ -43,6 +40,6 @@ export default class SetQueueReverb {
             wetLevel,
             dryLevel
         })
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

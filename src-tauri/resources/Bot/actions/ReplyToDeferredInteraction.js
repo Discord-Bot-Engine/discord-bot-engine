@@ -4,9 +4,6 @@ import {TextDisplayBuilder, SectionBuilder, MediaGalleryBuilder, FileBuilder, Se
 
 export default class ReplyToDeferredInteraction {
     static type = "Reply To Deferred Interaction"
-    static title(data) {
-        return `Reply to "${data.get("origin")}" with ${data.get("components").length} components`
-    }
     static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Command Interaction", "Button Interaction", "Select Menu Interaction"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -134,7 +131,6 @@ export default class ReplyToDeferredInteraction {
                         <dbe-label name="Store server in variable"></dbe-label>
                         <dbe-variable-list name="bserver" class="col-span-3" variableType="Server"></dbe-variable-list>
                     </div>
-                    <dbe-action-list name="Run Actions On Click" title="Run Actions On Click"></dbe-action-list>
              </div>
              <div id="selectmenu" class="grid gap-4">
                     <div class="grid grid-cols-4 items-center gap-4">
@@ -190,7 +186,6 @@ export default class ReplyToDeferredInteraction {
                         <dbe-label name="Store server in variable"></dbe-label>
                         <dbe-variable-list name="sserver" class="col-span-3" variableType="Server"></dbe-variable-list>
                     </div>
-                    <dbe-action-list name="Run Actions On Select" title="Run Actions On Select"></dbe-action-list>
              </div>
              <div id="comps" class="grid gap-4">
                 <div class="grid grid-cols-4 items-center gap-4">
@@ -305,7 +300,6 @@ export default class ReplyToDeferredInteraction {
                         <dbe-label name="Store server in variable"></dbe-label>
                         <dbe-variable-list name="bserver" class="col-span-3" variableType="Server"></dbe-variable-list>
                     </div>
-                    <dbe-action-list name="Run Actions On Click" title="Run Actions On Click"></dbe-action-list>
              </div>
              <div id="selectmenu" class="grid gap-4">
                     <div class="grid grid-cols-4 items-center gap-4">
@@ -361,7 +355,6 @@ export default class ReplyToDeferredInteraction {
                         <dbe-label name="Store server in variable"></dbe-label>
                         <dbe-variable-list name="sserver" class="col-span-3" variableType="Server"></dbe-variable-list>
                     </div>
-                    <dbe-action-list name="Run Actions On Select" title="Run Actions On Select"></dbe-action-list>
              </div>
         </template>
         <template id="galleryModal" class="grid gap-4">
@@ -433,9 +426,47 @@ export default class ReplyToDeferredInteraction {
             }, 10)
         }
     }
+    static close(context) {
+        const data = context.data
+        const selectmenus = [];
+        const buttons = [];
+        data.get("components").forEach(comp => {
+            const data = comp.data
+            const type = data.get("type")
+            if(type === "Section") {
+                const button = data.get("sbutton") === "True";
+                if(button) {
+                    const id = data.get("bid")
+                    if(data.get("bstyle") !== "Link") buttons.push(id)
+                }
+            } else if(type === "Select Menu") {
+                selectmenus.push(data.get("sid"))
+            } else if(type === "Button") {
+                if(data.get("bstyle") !== "Link") buttons.push(data.get("bid"))
+            } else if(type === "Container") {
+                const components = data.get("components")
+                components.forEach(comp => {
+                    const data = comp.data
+                    const type = data.get("type")
+                    if(type === "Section") {
+                        const button = data.get("sbutton") === "True";
+                        if(button) {
+                            const id = data.get("bid")
+                            if(data.get("bstyle") !== "Link") buttons.push(id)
+                        }
+                    } else if(type === "Select Menu") {
+                        selectmenus.push(data.get("sid"))
+                    } else if(type === "Button") {
+                        if(data.get("bstyle") !== "Link") buttons.push(data.get("bid"))
+                    }
+                })
+            }
+        })
+        context.outputs = ["action", ...buttons.map(el => `${el} (on click)`), ...selectmenus.map(el => `${el} (on select)`)]
+    }
     static load(context) {
     }
-    static async run({data, actionManager, getVariable, setVariable}) {
+    static async run({id, data, actionManager, getVariable, setVariable}) {
         const components = data.get("components")
         const buttons = []
         const selectmenus = []
@@ -668,7 +699,6 @@ export default class ReplyToDeferredInteraction {
         const menucollector = r.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
         btncollector.on('collect', (i) => {
             const btn = buttons.find(b => b.id === i.customId)
-            const manager = new ActionManager(actionManager.trigger, btn.actions)
             const int = btn.data.get("binteraction")
             const msg = btn.data.get("bmessage")
             const mem = btn.data.get("bmember")
@@ -681,11 +711,10 @@ export default class ReplyToDeferredInteraction {
             setVariable(user, i.user)
             setVariable(ch, i.channel)
             setVariable(sv, i.guild)
-            manager.runNext()
+            actionManager.runNext(id, `${i.customId} (on click)`)
         });
         menucollector.on('collect', (i) => {
             const menu = selectmenus.find(s => s.id === i.customId)
-            const manager = new ActionManager(actionManager.trigger, menu.actions)
             const int = menu.data.get("sinteraction")
             const opts = menu.data.get("soptions")
             const msg = menu.data.get("smessage")
@@ -700,9 +729,9 @@ export default class ReplyToDeferredInteraction {
             setVariable(user, i.user)
             setVariable(ch, i.channel)
             setVariable(sv, i.guild)
-            manager.runNext()
+            actionManager.runNext(id, `${i.customId} (on select)`)
         });
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
         function hexToNumber(hex) {
             if (hex.startsWith('#')) {
                 hex = hex.slice(1);

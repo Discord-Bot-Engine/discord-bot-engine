@@ -2,9 +2,6 @@ import fetch from "node-fetch";
 
 export default class StoreResponseFromHTTPRequest {
     static type = "Store Response From HTTP Request"
-    static title(data) {
-        return `Store ${data.get("restype") === "JSON" ? "JSON" : "text"} from ${data.get("type")} request to "${data.get("url")}"`
-    }
     static variableTypes = ["Text", "JSON"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -53,7 +50,7 @@ export default class StoreResponseFromHTTPRequest {
     }
     static load(context) {
     }
-    static async run({data, actionManager, setVariable}) {
+    static async run({id, data, actionManager, setVariable}) {
         const url = data.get("url")
         const type = data.get("type")
         const restype = data.get("restype").toLowerCase()
@@ -72,6 +69,6 @@ export default class StoreResponseFromHTTPRequest {
             body: type === "POST" ? body : undefined,
         })
         setVariable(variable, await res[restype]())
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

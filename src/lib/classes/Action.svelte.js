@@ -2,31 +2,23 @@ import { SvelteMap } from 'svelte/reactivity';
 
 class Action {
 	id = '';
-	type = '';
+	type = 'action';
+	actionType = '';
 	data = new SvelteMap();
-	isAction = true
 	isBreakPoint = $state(false)
-
-	constructor(id, type) {
+	position = { x: 0, y: 0 }
+	outputs = $state(null)
+	constructor(id, type, x, y) {
 		this.id = id;
-		this.type = type;
-	}
-
-	toJSON() {
-		const data = {}
-		this.data.keys().forEach(key => {
-			data[key] = this.data.get(key);
-		})
-		return {
-			id: this.id,
-			type: this.type,
-			data: data,
-			isAction: this.isAction,
-		};
+		this.actionType = type;
+		this.position.x = x;
+		this.position.y = y;
+		if(type === "group") this.type = "group"
 	}
 
 	static fromJSON(json) {
-		const action = new Action(json.id, json.type);
+		const action = new Action(json.id, json.actionType, json.position.x, json.position.y);
+		action.outputs = json.outputs;
 		Object.keys(json.data).forEach((key) => {
 			action.data.set(key, json.data[key]);
 		})

@@ -3,9 +3,6 @@ import {Bot} from "../classes/Bot.js";
 
 export default class StoreValueFromData {
     static type = "Store Value From Data"
-    static title(data) {
-        return `Store "${data.get("field")}" value`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -19,8 +16,8 @@ export default class StoreValueFromData {
     `
     static load(context) {
     }
-    static async run({data, actionManager, setVariable}) {
+    static async run({id, data, actionManager, setVariable}) {
         setVariable(data.get("value"), await Bot.getData(data.get("field")))
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

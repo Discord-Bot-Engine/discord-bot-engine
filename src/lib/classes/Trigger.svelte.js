@@ -1,5 +1,6 @@
 import { SvelteMap } from 'svelte/reactivity';
 import Action from "$lib/classes/Action.svelte.js";
+import {BotManager} from "$lib/classes/BotManager.svelte.js";
 
 class Trigger {
 	id = '';
@@ -7,15 +8,18 @@ class Trigger {
 	name = $state('');
 	data = new SvelteMap();
 	actions = $state([]);
+	edges = $state.raw([])
 	variables = new SvelteMap()
 	debugVariables = new SvelteMap()
-	actionManagers = $state([])
 	showInDebugger = $state(false)
 
 	constructor(id, type, name) {
 		this.id = id;
 		this.type = type;
 		this.name = name;
+		this.actions = [
+			new Action(id, null, 0, 0)
+		]
 	}
 
 	toJSON() {
@@ -27,12 +31,21 @@ class Trigger {
 		this.variables.keys().forEach(key => {
 			variables[key] = this.variables.get(key)
 		})
+		const actions = []
+		this.actions.forEach(action => {
+			const data = {}
+			action.data.keys().forEach(key => {
+				data[key] = action.data.get(key)
+			})
+			actions.push({...action, data})
+		})
 		return {
 			id: this.id,
 			type: this.type,
 			name: String(this.name),
 			data: data,
-			actions: this.actions.map(act => act.toJSON()),
+			actions,
+			edges: this.edges,
 			variables: variables
 		};
 	}
@@ -48,6 +61,7 @@ class Trigger {
 
 	static fromJSON(json, isDebugger) {
 		const trigger = new Trigger(json.id, json.type, json.name);
+		trigger.edges = json.edges;
 		Object.keys(json.data).forEach((key) => {
 			trigger.data.set(key, json.data[key]);
 		})

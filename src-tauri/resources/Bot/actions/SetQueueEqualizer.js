@@ -2,9 +2,6 @@ import { useQueue } from "discord-player";
 
 export default class SetQueueEqualizer {
     static type = "Set Queue Equalizer"
-    static title(data) {
-        return `Set "${data.get("server")}" queue equalizer to ${data.get("bands").length} bands`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -25,11 +22,11 @@ export default class SetQueueEqualizer {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const bands = data.get("bands").map(({data}) => ({band: Number(data.get("band")) - 1, gain: Number(data.get("gain"))}))
         queue.filters.equalizer.setEQ(bands)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

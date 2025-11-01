@@ -2,16 +2,6 @@ import {  useQueue } from "discord-player";
 
 export default class LoopQueue {
     static type = "Loop Queue"
-    static title(data) {
-        const mode = data.get("mode")
-        const modes = {
-            Disable: `Disable loop in "${data.get("server")}" queue`,
-            Song: `Loop current song in "${data.get("server")}" queue`,
-            Queue: `Loop all songs in "${data.get("server")}" queue`,
-            Autoplay: `Autoplay songs in "${data.get("server")}" queue`
-        }
-        return modes[mode]
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -25,7 +15,7 @@ export default class LoopQueue {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const mode = data.get("mode")
@@ -36,6 +26,6 @@ export default class LoopQueue {
             Autoplay: 3
         }
         queue.setRepeatMode(modes[mode])
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

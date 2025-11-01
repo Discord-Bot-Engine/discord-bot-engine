@@ -3,9 +3,6 @@ import {Bot} from "../classes/Bot.js";
 
 export default class FindMember {
     static type = "Find Member"
-    static title(data) {
-        return `Find member by ${data.get("by")} "${data.get("value")}" from "${data.get("server")}"`
-    }
     static variableTypes = ["Member"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -27,7 +24,7 @@ export default class FindMember {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable, setVariable}) {
+    static async run({id, data, actionManager, getVariable, setVariable}) {
         const by = data.get("by")
         const server = getVariable(data.get("server"))
         let member
@@ -37,6 +34,6 @@ export default class FindMember {
             member = server.members.cache.find(member => member.displayName === data.get("value"))
         }
         setVariable(data.get("member"), member)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

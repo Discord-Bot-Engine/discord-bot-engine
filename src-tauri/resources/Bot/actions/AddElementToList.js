@@ -1,8 +1,5 @@
 export default class AddElementToList {
     static type = "Add Element To List"
-    static title(data) {
-        return `Add "${data.get("value")}" to "${data.get("list")}"`
-    }
     static variableTypes = ["List"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -16,9 +13,9 @@ export default class AddElementToList {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const list = getVariable(data.get("list"))
         list.push(data.get("value"))
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

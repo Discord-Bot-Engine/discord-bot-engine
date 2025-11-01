@@ -2,9 +2,6 @@ import {useMainPlayer, useQueue} from "discord-player";
 
 export default class StoreQueueLyricsLine {
     static type = "Store Queue Lyrics Line"
-    static title(data) {
-        return `Store "${data.get("server")}" queue current lyrics line`
-    }
     static variableTypes = ["Text"]
     static html = `
           <div class="grid grid-cols-4 items-center gap-4">
@@ -18,7 +15,7 @@ export default class StoreQueueLyricsLine {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable, setVariable}) {
+    static async run({id, data, actionManager, getVariable, setVariable}) {
         const server = getVariable(data.get("server"))
         const variable = data.get("variable")
         const player = useMainPlayer()
@@ -31,6 +28,6 @@ export default class StoreQueueLyricsLine {
         if(!first.syncedLyrics) return actionManager.runNext();
         const syncedLyrics = queue.syncedLyrics(first)
         setVariable(variable, syncedLyrics.at(queue.node.getTimestamp().current.value)?.line)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

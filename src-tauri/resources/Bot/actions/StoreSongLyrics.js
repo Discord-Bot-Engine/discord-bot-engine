@@ -2,9 +2,6 @@ import {useMainPlayer} from "discord-player";
 
 export default class StoreSongLyrics {
     static type = "Store Song Lyrics"
-    static title(data) {
-        return `Store "${data.get("song")}" lyrics`
-    }
     static variableTypes = ["Text"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -18,7 +15,7 @@ export default class StoreSongLyrics {
     `
     static load(context) {
     }
-    static async run({data, actionManager, setVariable}) {
+    static async run({id, data, actionManager, setVariable}) {
         const song = data.get("song")
         const variable = data.get("variable")
         const player = useMainPlayer()
@@ -26,6 +23,6 @@ export default class StoreSongLyrics {
             q: song,
         });
         setVariable(variable, lyrics[0].plainLyrics)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

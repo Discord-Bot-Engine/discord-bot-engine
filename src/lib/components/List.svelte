@@ -14,6 +14,7 @@
 		ondelete = () => {},
 		onadd = () => {},
 		ondblclick = () => {},
+		onclick = () => {},
 		itemTitle = () => {},
 		ondnd = () => {},
 		html,
@@ -54,7 +55,7 @@
 									variant={selected === item ? undefined : "ghost"}
 									class="size-7 flex-1 hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
 									ondblclick={() => { selected = item; ondblclick(item) }}
-									onclick={() => selected = item}
+									onclick={() => { selected = item; onclick(item)}}
 							>
 								{#if html}
 									{@render html(item, i)}
@@ -73,7 +74,7 @@
 									variant={selected === item ? undefined : "ghost"}
 									class="size-7 w-full hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
 									ondblclick={() => { selected = item; ondblclick(item) }}
-									onclick={() => selected = item}
+									onclick={() => { selected = item; onclick(item) }}
 							>
 								{#if html}
 									{@render html(item, i)}

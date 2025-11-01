@@ -1,9 +1,6 @@
 
 export default class KickMember {
     static type = "Kick Member";
-    static title(data) {
-        return `Kick "${data.get("member")}"`
-    }
     static variableTypes = ["Member"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -17,11 +14,11 @@ export default class KickMember {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const member = getVariable(data.get('member'));
         let reason = data.get('reason');
         if(!reason.trim()) reason = reason.trim()
         await member.kick(reason || undefined)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

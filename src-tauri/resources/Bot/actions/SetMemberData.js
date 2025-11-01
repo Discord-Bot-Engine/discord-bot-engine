@@ -3,9 +3,6 @@ import {Bot} from "../classes/Bot.js";
 
 export default class SetMemberData {
     static type = "Set Member Data"
-    static title(data) {
-        return `Set member "${data.get("member")}" field "${data.get("field")}" to value "${data.get("value")}"`
-    }
     static variableTypes = ["Member"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -23,10 +20,10 @@ export default class SetMemberData {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const member = getVariable(data.get("member"))
         const field = `${member.id}${member.guild.id}${data.get("field")}`
         Bot.setData(field, data.get("value"))
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

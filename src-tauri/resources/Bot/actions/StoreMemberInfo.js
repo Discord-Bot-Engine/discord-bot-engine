@@ -3,10 +3,6 @@ import { Bot } from "../classes/Bot.js"
 export default class StoreMemberInfo {
     static type = "Store Member Info"
 
-    static title(data) {
-        return `Store "${data.get("info")}" from member "${data.get("member")}"`;
-    }
-
     static variableTypes = [
         "Member",
         "User",
@@ -64,7 +60,6 @@ export default class StoreMemberInfo {
         const imgsettings = document.getElementById("imgsettings")
 
         handlers.onChange = (value) => {
-            // Show image settings if selecting an image URL
             if (value?.endsWith("URL")) {
                 imgsettings.style.display = ""
             } else {
@@ -96,7 +91,7 @@ export default class StoreMemberInfo {
 
     static load(context) {}
 
-    static async run({ data, actionManager, getVariable, setVariable }) {
+    static async run({ id, data, actionManager, getVariable, setVariable }) {
         const member = getVariable(data.get("member"))
         const info = data.get("info")
 
@@ -178,6 +173,6 @@ export default class StoreMemberInfo {
         }
 
         setVariable(data.get("value"), value)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

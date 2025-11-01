@@ -2,9 +2,6 @@ import { useQueue } from "discord-player";
 
 export default class SetQueueFFMPEGFilters {
     static type = "Set Queue FFMPEG Filters"
-    static title(data) {
-        return `Set "${data.get("server")}" queue FFMPEG filters to ${data.get("filters").length} filters`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -18,10 +15,10 @@ export default class SetQueueFFMPEGFilters {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         await queue.filters.ffmpeg.setFilters(data.get("filters").map(el => el.toLowerCase().replaceAll(" ", "_")))
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

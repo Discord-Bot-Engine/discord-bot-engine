@@ -63,11 +63,14 @@ class BotClass {
     }
 
     attachDebugger() {
-        this.debugger = new Debugger(async (triggerId, managerId, actionId) => {
+        this.debugger = new Debugger(async (triggerId, actionId) => {
             const t = this.triggers.find(t => t.id === triggerId)
-            const manager = t.actionManagers.find(m => m.id === managerId) ?? t.actionManager
-            manager.runningActionIndex = manager.actionList.findIndex(act => act.id === actionId)
-            manager.runNext(true)
+            const action = t.actionManager.actions.find(act => act.id === actionId)
+            action.run({
+                actionManager: t.actionManager,
+                setVariable: t.setVariable.bind(t),
+                getVariable: t.getVariable.bind(t),
+            })
             Bot.sendVariablesData(t);
         });
     }

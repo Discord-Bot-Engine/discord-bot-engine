@@ -41,7 +41,7 @@
         try {
             await triggerClass?.close?.(App.selectedTrigger)
         } catch (e) {
-            alert(`${selectedAction.type}\n${e.stack}`)
+            alert(`${App.selectedTrigger.type}\n${e.stack}`)
         }
     }
 </script>
@@ -73,7 +73,10 @@
 }} allowMoving={false} {html} items={triggers ?? []} itemTitle={(item) => item.name} onadd={() => isCreatingTrigger = true} ondelete={() => {
     BotManager.selectedBot.triggers = BotManager.selectedBot.triggers.filter(el => el !== App.selectedTrigger)
     BotManager.selectedBot.markAsRemoved(App.selectedTrigger.id)
-}} title="Triggers" bind:selected={App.selectedTrigger}></List>
+    App.selectedTrigger = null
+}} title="Triggers" onclick={() => {
+    BotManager.selectedBot.markAsModified(App.selectedTrigger.id);
+}} bind:selected={App.selectedTrigger}></List>
 
 <Modal bind:open={isCreatingTrigger} title="Create Trigger" onDone={addTrigger}>
     <div class="grid gap-4 py-4">

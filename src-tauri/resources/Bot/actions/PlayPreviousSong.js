@@ -2,9 +2,6 @@ import { useHistory } from "discord-player";
 
 export default class PlayPreviousSong {
     static type = "Play Previous Song"
-    static title(data) {
-        return `Play previous song in "${data.get("server")}" queue`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -14,10 +11,10 @@ export default class PlayPreviousSong {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const history = useHistory(server.id)
         await history.previous()
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

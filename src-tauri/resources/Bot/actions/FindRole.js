@@ -3,9 +3,6 @@ import {Bot} from "../classes/Bot.js";
 
 export default class FindRole {
     static type = "Find Role"
-    static title(data) {
-        return `Find role by ${data.get("by")} "${data.get("value")}" from "${data.get("server")}"`
-    }
     static variableTypes = ["Role"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -27,7 +24,7 @@ export default class FindRole {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable, setVariable}) {
+    static async run({id, data, actionManager, getVariable, setVariable}) {
         const by = data.get("by")
         const server = getVariable(data.get("server"))
         let role
@@ -37,6 +34,6 @@ export default class FindRole {
             role = server.roles.cache.find(role => role.name === data.get("value"))
         }
         setVariable(data.get("role"), role)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

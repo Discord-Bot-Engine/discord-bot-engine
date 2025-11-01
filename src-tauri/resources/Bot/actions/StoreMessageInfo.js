@@ -4,10 +4,6 @@ import { MessageType } from "discord.js"
 export default class StoreMessageInfo {
     static type = "Store Message Info"
 
-    static title(data) {
-        return `Store "${data.get("info")}" from message "${data.get("message")}"`;
-    }
-
     static variableTypes = [
         "Message",
         "Channel",
@@ -74,7 +70,7 @@ export default class StoreMessageInfo {
 
     static load(context) {}
 
-    static async run({ data, actionManager, getVariable, setVariable }) {
+    static async run({ id, data, actionManager, getVariable, setVariable }) {
         const message = getVariable(data.get("message"))
         const info = data.get("info")
 
@@ -143,6 +139,6 @@ export default class StoreMessageInfo {
         }
 
         setVariable(data.get("value"), value)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

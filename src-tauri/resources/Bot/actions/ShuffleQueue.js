@@ -2,9 +2,6 @@ import {  useQueue } from "discord-player";
 
 export default class ShuffleQueue {
     static type = "Shuffle Queue"
-    static title(data) {
-        return `Shuffle "${data.get("server")}" queue`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -14,10 +11,10 @@ export default class ShuffleQueue {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         queue.tracks.shuffle()
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

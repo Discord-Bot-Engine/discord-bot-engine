@@ -2,9 +2,6 @@ import {  useQueue } from "discord-player";
 
 export default class SetQueueCompressor {
     static type = "Set Queue Compressor"
-    static title(data) {
-        return `Set "${data.get("server")}" queue compressor to ${data.get("threshold")},${data.get("ratio")},${data.get("attack")},${data.get("release")},${data.get("makeupGain")},${data.get("kneeWidth")}`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -38,7 +35,7 @@ export default class SetQueueCompressor {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const threshold = Number(data.get("threshold"))
@@ -55,6 +52,6 @@ export default class SetQueueCompressor {
             makeupGain,
             kneeWidth
         })
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

@@ -1,17 +1,39 @@
 import CustomElement from "$lib/classes/CustomElement.svelte.js";
 import Action from "$lib/classes/Action.svelte.js";
+import {BotManager} from "$lib/classes/BotManager.svelte.js";
 
 class AppClass {
 	selectedTrigger = $state(null);
+	selectedAction = $derived(this.selectedTrigger?.actions.find(act => act.selected))
+	isEditingAction = $state(false);
+	ref = null
+	handlersCopy = {}
+	openAction() {
+		const actionClass = BotManager.selectedBot.actionClasses.find(act => act.type === this.selectedAction.actionType);
+		if(!actionClass) return alert("Action failed to load.");
+		this.isEditingAction = true;
+		let interval = setInterval(async () => {
+			if(!this.ref) return;
+			clearInterval(interval);
+			const data = this.selectedAction.data
+			this.loadUIData(this.ref, data)
+			this.handlersCopy = window.handlers
+			Object.freeze(this.handlersCopy)
+			window.handlers = {}
+			try {
+				await actionClass?.open?.(this.selectedAction, window.handlers)
+			} catch (e) {
+				alert(`${this.selectedAction.actionType}\n${e.stack}`)
+			}
+		}, 10)
+	}
 	saveUIData(ref, data) {
 		data.clear()
 		const marked = ref.querySelectorAll("*[name]")
 		marked.forEach(el => {
 			if(el.hasAttribute("ignoreParsing")) return;
 			let name = el.getAttribute("name");
-			if(el.tagName.toLowerCase() === "dbe-action-list") {
-				data.set(name, el.getItems())
-			} else if(el.tagName.toLowerCase() === "dbe-list") {
+			if(el.tagName.toLowerCase() === "dbe-list") {
 				data.set(name, el.getItems())
 			} else if(el.tagName.toLowerCase() === "dbe-select" || el.tagName.toLowerCase() === "dbe-variable-list") {
 				data.set(name, el.getValue())
@@ -32,14 +54,7 @@ class AppClass {
 		marked.forEach(el => {
 			if(el.hasAttribute("ignoreParsing")) return;
 			let name = el.getAttribute("name");
-			if(el.tagName.toLowerCase() === "dbe-action-list") {
-				let actions = data.get(name)
-				if(actions?.length && !(actions[0] instanceof Action)) {
-					actions = actions.map(act => Action.fromJSON(act))
-					data.set(name, actions)
-				}
-				el.setItems(actions ?? [])
-			} else if(el.tagName.toLowerCase() === "dbe-list") {
+			if(el.tagName.toLowerCase() === "dbe-list") {
 				let elements = data.get(name)
 				if(elements?.length && !(elements[0] instanceof CustomElement)) {
 					elements = elements.map(act => CustomElement.fromJSON(act))

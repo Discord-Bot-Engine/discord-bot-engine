@@ -4,9 +4,6 @@ import { DisTubeExtractor } from "discord-player-distube";
 
 export default class PlayYouTubeSong {
     static type = "Play YouTube Song"
-    static title(data) {
-        return `Play "${data.get("song")}" youtube song in "${data.get("vc")}"`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -30,7 +27,7 @@ export default class PlayYouTubeSong {
         }
         if(!Bot.player.extractors.get(DisTubeExtractor.identifier)) Bot.player.extractors.register(DisTubeExtractor, {});
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const player = useMainPlayer()
         const vc = getVariable(data.get("vc"))
         const song = data.get("song")
@@ -44,6 +41,6 @@ export default class PlayYouTubeSong {
                 disableSeeker: false
             }
         })
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

@@ -264,3 +264,7 @@
     --shadow-xl: var(--shadow-xl);
     --shadow-2xl: var(--shadow-2xl);
 }
+
+.svelte-flow__node-group {
+    z-index:-1!important;
+}

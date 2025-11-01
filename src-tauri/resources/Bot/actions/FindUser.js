@@ -3,9 +3,6 @@ import {Bot} from "../classes/Bot.js";
 
 export default class FindUser {
     static type = "Find User"
-    static title(data) {
-        return `Find user by ${data.get("by")} "${data.get("value")}"`
-    }
     static variableTypes = ["User"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -23,7 +20,7 @@ export default class FindUser {
     `
     static load(context) {
     }
-    static async run({data, actionManager, setVariable}) {
+    static async run({id, data, actionManager, setVariable}) {
         const by = data.get("by")
         let user
         if(by === "Id") {
@@ -32,6 +29,6 @@ export default class FindUser {
             user = Bot.client.users.cache.find(user => user.username === data.get("value"))
         }
         setVariable(data.get("user"), user)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

@@ -2,9 +2,6 @@ import {  useQueue } from "discord-player";
 
 export default class MoveSongInQueue {
     static type = "Move Song In Queue"
-    static title(data) {
-        return `Move "${data.get("server")}" queue song number ${data.get("song")} to ${data.get("pos")}`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -22,7 +19,7 @@ export default class MoveSongInQueue {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const song = Number(data.get("song")) - 1
@@ -30,6 +27,6 @@ export default class MoveSongInQueue {
         const track = queue.tracks[song]
         queue.removeTrack(song)
         queue.insertTrack(track, pos)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

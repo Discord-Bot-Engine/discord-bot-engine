@@ -2,9 +2,6 @@ import { MessageFlags } from "discord.js"
 
 export default class DeferInteraction {
     static type = "Defer Interaction"
-    static title(data) {
-        return `Defer "${data.get("origin")}"`
-    }
     static variableTypes = ["Command Interaction", "Button Interaction", "Select Menu Interaction"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -17,11 +14,11 @@ export default class DeferInteraction {
         </div>
     `
     static load(context) {}
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const ephemeral = data.get("ephemeral") === "True"
         const flags = []
         if(ephemeral) flags.push(MessageFlags.Ephemeral)
         await getVariable(data.get("origin")).deferReply({flags})
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

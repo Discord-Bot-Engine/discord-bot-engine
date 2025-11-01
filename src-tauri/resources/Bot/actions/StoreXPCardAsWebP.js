@@ -8,9 +8,6 @@ import tmp from "tmp"
 import {Bot} from "../classes/Bot.js";
 export default class StoreXPCardAsWebP {
     static type = "Store XP Card As WebP";
-    static title(data) {
-        return `Store "${data.get("member")}" XP Card`;
-    }
     static variableTypes = ["Buffer", "Member"];
     static html = `
     <div class="grid grid-cols-4 items-center gap-4">
@@ -36,7 +33,7 @@ export default class StoreXPCardAsWebP {
     `;
     static load(context) {}
 
-    static async run({ data, actionManager, getVariable, setVariable }) {
+    static async run({ id, data, actionManager, getVariable, setVariable }) {
         const member = getVariable(data.get("member"));
         const xp = await Bot.getData(`${member.id}${member.guild.id}${data.get("xp")}`) ?? 0;
         const maxXp = await Bot.getData(`${member.id}${member.guild.id}${data.get("maxxp")}`) ?? 100;
@@ -329,7 +326,7 @@ export default class StoreXPCardAsWebP {
             await browser.close()
             const buffer = await mp4BufferToWebP(Buffer.concat(bytes))
             setVariable(value, buffer);
-            actionManager.runNext();
+            actionManager.runNext(id, "action");
         }, duration * 1000)
         async function mp4BufferToWebP(mp4Buffer) {
             return new Promise((resolve, reject) => {

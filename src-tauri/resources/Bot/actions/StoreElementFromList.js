@@ -2,10 +2,8 @@ import {ActionManager} from "../classes/ActionManager.js";
 
 export default class StoreElementFromList {
     static type = "Store Element From List"
-    static title(data) {
-        return `Store element from "${data.get("list")}" in "${data.get("value")}"`
-    }
     static variableTypes = ["List", "Number"]
+    static outputs = ["action", "filter"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="List"></dbe-label>
@@ -19,24 +17,43 @@ export default class StoreElementFromList {
             <dbe-label name="Store element position in variable"></dbe-label>
             <dbe-variable-list name="pos" class="col-span-3" variableType="Number"></dbe-variable-list>
         </div>
-        <dbe-action-list name="Run Actions To Find Element" title="Run Actions To Find Element"></dbe-action-list>
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable, setVariable}) {
+    static async run({id, data, actionManager, getVariable, setVariable}) {
         const list = getVariable(data.get("list"))
-        const actions = new ActionManager(actionManager.trigger, data.get("Run Actions To Find Element"), () => {
+        const onContinue = actionManager.onContinue
+        const onBreak = actionManager.onBreak
+        const onReturn = actionManager.onReturn
+        actionManager.onContinue = () => {
             iterate()
-        })
+        }
+        actionManager.onBreak = () => {
+            actionManager.onContinue = onContinue
+            actionManager.onBreak = onBreak
+            actionManager.onReturn = onReturn
+            actionManager.runNext(id, "action")
+        }
+        actionManager.onReturn = (v) => {
+            actionManager.onContinue = onContinue
+            actionManager.onBreak = onBreak
+            actionManager.onReturn = onReturn
+            setVariable(data.get("value"), v)
+            actionManager.runNext(id, "action")
+        }
         let i = 0;
         iterate()
         function iterate() {
-            actions.reset()
-            if(i >= list.length) return actionManager.runNext()
+            if(i >= list.length) {
+                actionManager.onContinue = onContinue
+                actionManager.onBreak = onBreak
+                actionManager.onReturn = onReturn
+                actionManager.runNext(id, "action")
+            }
             setVariable(data.get("value"), list[i])
             setVariable(data.get("pos"), i + 1)
             i++;
-            actions.runNext()
+            actionManager.runNext(id, "filter")
         }
     }
 }

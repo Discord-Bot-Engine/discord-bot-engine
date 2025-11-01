@@ -3,7 +3,6 @@ import {SvelteMap} from "svelte/reactivity";
 class CustomElement {
     id = ''
     data = new SvelteMap()
-    isCustom = true
 
     constructor(id) {
         this.id = id;
@@ -14,7 +13,7 @@ class CustomElement {
         this.data.keys().forEach(key => {
             data[key] = this.data.get(key)
         })
-        return {isCustom: this.isCustom, id: this.id, data}
+        return {id: this.id, data}
     }
 
     static fromJSON(json) {

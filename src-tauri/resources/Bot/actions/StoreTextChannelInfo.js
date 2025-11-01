@@ -3,10 +3,6 @@ import { Bot } from "../classes/Bot.js"
 export default class StoreTextChannelInfo {
     static type = "Store Text Channel Info"
 
-    static title(data) {
-        return `Store "${data.get("info")}" from text channel "${data.get("channel")}"`;
-    }
-
     static variableTypes = ["Channel", "Server", "Text", "Boolean", "Number", "Date", "List"];
 
     static html = `
@@ -58,7 +54,7 @@ export default class StoreTextChannelInfo {
 
     static load(context) {}
 
-    static async run({ data, actionManager, getVariable, setVariable }) {
+    static async run({ id, data, actionManager, getVariable, setVariable }) {
         const channel = getVariable(data.get("channel"));
         const info = data.get("info");
         let value;
@@ -117,6 +113,6 @@ export default class StoreTextChannelInfo {
         }
 
         setVariable(data.get("value"), value);
-        actionManager.runNext();
+        actionManager.runNext(id, "action");
     }
 }

@@ -3,10 +3,8 @@ import {GuildMember, Role, User} from "discord.js";
 
 export default class CheckMentionableType {
     static type = "Check Mentionable Type"
-    static title(data) {
-        return `Check if "${data.get("mentionable")}" is ${data.get("type")}`
-    }
     static variableTypes = ["User", "Role", "Member"]
+    static outputs = ["true", "false"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Mentionable"></dbe-label>
@@ -16,36 +14,32 @@ export default class CheckMentionableType {
             <dbe-label name="Type"></dbe-label>
             <dbe-select name="type" class="col-span-3" values="User,Role,Member"></dbe-select>
         </div>
-        <dbe-action-list name="Run Actions If True" title="Run Actions If True"></dbe-action-list>
-        <dbe-action-list name="Run Actions If False" title="Run Actions If False"></dbe-action-list>
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const mentionable = getVariable(data.get("mentionable"))
         const type = data.get("type")
-        const ifTrue = new ActionManager(actionManager.trigger, data.get("Run Actions If True"), () => { actionManager.runNext() }, actionManager.onReturn)
-        const ifFalse = new ActionManager(actionManager.trigger, data.get("Run Actions If False"),() => { actionManager.runNext() }, actionManager.onReturn)
         if(type === "User") {
             if(mentionable instanceof User) {
-                ifTrue.runNext()
+                actionManager.runNext(id, "true")
             }
             else {
-                ifFalse.runNext()
+                actionManager.runNext(id, "false")
             }
         } else if(type === "Role") {
             if(mentionable instanceof Role) {
-                ifTrue.runNext()
+                actionManager.runNext(id, "true")
             }
             else {
-                ifFalse.runNext()
+                actionManager.runNext(id, "false")
             }
         } else if(type === "Member") {
             if(mentionable instanceof GuildMember) {
-                ifTrue.runNext()
+                actionManager.runNext(id, "true")
             }
             else {
-                ifFalse.runNext()
+                actionManager.runNext(id, "false")
             }
         }
     }

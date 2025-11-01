@@ -2,9 +2,6 @@ import {  useQueue } from "discord-player";
 
 export default class SetQueueVolume {
     static type = "Set Queue Volume"
-    static title(data) {
-        return `Set "${data.get("server")}" queue volume to ${data.get("volume")}`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -18,11 +15,11 @@ export default class SetQueueVolume {
     `
     static load(context) {
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
         const volume = Number(data.get("volume"))
         queue.node.setVolume(volume)
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

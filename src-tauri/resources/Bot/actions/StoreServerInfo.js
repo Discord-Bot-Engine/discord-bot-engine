@@ -3,10 +3,6 @@ import { Bot } from "../classes/Bot.js"
 export default class StoreServerInfo {
     static type = "Store Server Info"
 
-    static title(data) {
-        return `Store "${data.get("info")}" from server "${data.get("server")}"`;
-    }
-
     static variableTypes = [
         "Server",
         "Channel",
@@ -131,7 +127,7 @@ export default class StoreServerInfo {
 
     static load(context) {}
 
-    static async run({ data, actionManager, getVariable, setVariable }) {
+    static async run({ id, data, actionManager, getVariable, setVariable }) {
         let server = getVariable(data.get("server"));
         const info = data.get("info");
         let value;
@@ -163,14 +159,14 @@ export default class StoreServerInfo {
             case "Commands": value = [...(server.commands?.cache?.values() ?? [])]; break;
             case "Creation Date": value = server.createdAt; break;
             case "Default Message Notifications":
-                value = this.toTitleCase(
+                value = toTitleCase(
                     { 0: "AllMessages", 1: "OnlyMentions" }[server.defaultMessageNotifications]
                 );
                 break;
             case "Description": value = server.description; break;
             case "Emojis": value = [...server.emojis.cache.values()]; break;
             case "Explicit Content Filter":
-                value = this.toTitleCase(
+                value = toTitleCase(
                     { 0: "Disabled", 1: "MembersWithoutRoles", 2: "AllMembers" }[server.explicitContentFilter]
                 );
                 break;
@@ -178,7 +174,7 @@ export default class StoreServerInfo {
             case "Invites": value = [...(await server.invites.fetch()).values()]; break;
             case "Bot Join Date": value = server.joinedAt; break;
             case "Is Large": value = server.large; break;
-            case "Preferred Locale": value = this.toTitleCase(server.preferredLocale.replace(/-/g, " ")); break;
+            case "Preferred Locale": value = toTitleCase(server.preferredLocale.replace(/-/g, " ")); break;
             case "Maximum Bitrate": value = server.maximumBitrate; break;
             case "Maximum Members": value = server.maximumMembers; break;
             case "Maximum Presences": value = server.maximumPresences; break;
@@ -187,19 +183,19 @@ export default class StoreServerInfo {
             case "Member Count": value = server.memberCount; break;
             case "Members": value = [...server.members.cache.values()]; break;
             case "MFA Level":
-                value = this.toTitleCase({ 0: "None", 1: "Elevated" }[server.mfaLevel]);
+                value = toTitleCase({ 0: "None", 1: "Elevated" }[server.mfaLevel]);
                 break;
             case "Name": value = server.name; break;
             case "Name Acronym": value = server.nameAcronym; break;
             case "NSFW Level":
-                value = this.toTitleCase(
+                value = toTitleCase(
                     { 0: "Default", 1: "Explicit", 2: "Safe", 3: "AgeRestricted" }[server.nsfwLevel]
                 );
                 break;
             case "Owner": value = await server.members.fetch(server.ownerId); break;
             case "Is Partnered": value = server.partnered; break;
             case "Boost Tier":
-                value = this.toTitleCase(
+                value = toTitleCase(
                     { 0: "None", 1: "Tier1", 2: "Tier2", 3: "Tier3" }[server.premiumTier]
                 );
                 break;
@@ -218,7 +214,7 @@ export default class StoreServerInfo {
             case "Vanity URL Code": value = server.vanityURLCode; break;
             case "Vanity URL Uses": value = (await server.fetchVanityData()).uses; break;
             case "Verification Level":
-                value = this.toTitleCase(
+                value = toTitleCase(
                     { 0: "None", 1: "Low", 2: "Medium", 3: "High", 4: "VeryHigh" }[server.verificationLevel]
                 );
                 break;
@@ -230,7 +226,7 @@ export default class StoreServerInfo {
         }
 
         setVariable(data.get("value"), value);
-        actionManager.runNext();
+        actionManager.runNext(id, "action");
         function toTitleCase(str) {
             return str
                 ?.toString()

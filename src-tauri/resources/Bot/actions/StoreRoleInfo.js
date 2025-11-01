@@ -2,10 +2,6 @@
 export default class StoreRoleInfo {
     static type = "Store Role Info"
 
-    static title(data) {
-        return `Store "${data.get("info")}" from role "${data.get("role")}"`;
-    }
-
     static variableTypes = [
         "Role",
         "Number",
@@ -89,7 +85,7 @@ export default class StoreRoleInfo {
 
     static load(context) {}
 
-    static async run({ data, actionManager, getVariable, setVariable }) {
+    static async run({ id, data, actionManager, getVariable, setVariable }) {
         const role = getVariable(data.get("role"));
         const info = data.get("info");
 
@@ -153,6 +149,6 @@ export default class StoreRoleInfo {
         }
 
         setVariable(data.get("value"), value);
-        actionManager.runNext();
+        actionManager.runNext(id, "action");
     }
 }

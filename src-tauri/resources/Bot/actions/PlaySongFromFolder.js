@@ -4,9 +4,6 @@ import { AttachmentExtractor } from "@discord-player/extractor";
 
 export default class PlaySongFromFolder {
     static type = "Play Song From Folder"
-    static title(data) {
-        return `Play "${data.get("song")}" song file in "${data.get("vc")}"`
-    }
     static variableTypes = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -43,7 +40,7 @@ export default class PlaySongFromFolder {
         if(!Bot.player.extractors.get(AttachmentExtractor.identifier)) Bot.player.extractors.register(AttachmentExtractor, {});
 
     }
-    static async run({data, actionManager, getVariable}) {
+    static async run({id, data, actionManager, getVariable}) {
         const player = useMainPlayer()
         const vc = getVariable(data.get("vc"))
         const folder = data.get("folder")
@@ -62,6 +59,6 @@ export default class PlaySongFromFolder {
                 disableSeeker: false
             }
         })
-        actionManager.runNext()
+        actionManager.runNext(id, "action")
     }
 }

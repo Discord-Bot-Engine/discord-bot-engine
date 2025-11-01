@@ -2,7 +2,6 @@
 	import List from '$lib/components/List.svelte';
 	import Triggers from '$lib/components/Triggers.svelte';
 	import Actions from "$lib/components/Actions.svelte";
-	import DbeActionList from "$lib/components/DbeActionList.svelte";
 	import DbeInput from "$lib/components/DbeInput.svelte";
 	import DbeColor from "$lib/components/DbeColor.svelte";
 	import DbeLabel from "$lib/components/DbeLabel.svelte";
@@ -27,6 +26,7 @@
 	import {PluginManager} from "$lib/classes/PluginManager.svelte.js";
 	import LoadingScreen from "$lib/components/LoadingScreen.svelte";
 	import {goto} from "$app/navigation";
+	import {SvelteFlowProvider} from "@xyflow/svelte";
 	if(!BotManager.selectedBot) {
 		alert("Please select a bot!")
 		goto("/");
@@ -50,7 +50,9 @@
 		<Triggers />
 	</div>
 	<div class="row-span-4 col-span-3">
+		<SvelteFlowProvider>
 		<Actions title="Actions" actions={App.selectedTrigger?.actions} />
+		</SvelteFlowProvider>
 	</div>
 	<div class="row-span-4 col-span-1">
 		<Variables />
