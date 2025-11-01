@@ -20,16 +20,18 @@ export class ActionManager {
   }
 
   runNext(id, output) {
-    const edge = this.edges.find(
+    const edges = this.edges.filter(
       (edge) => edge.source === id && edge.sourceHandle === output
     );
-    const action = this.actions.find((act) => act.id === edge.target);
-    if (Bot.debugger?.breakPoints.includes(action.id)) return;
-    action.run({
-      actionManager: this,
-      setVariable: this.trigger.setVariable.bind(this.trigger),
-      getVariable: this.trigger.getVariable.bind(this.trigger),
-    });
+    edges.forEach(edge => {
+      const action = this.actions.find((act) => act.id === edge.target);
+      if (Bot.debugger?.breakPoints.includes(action.id)) return;
+      action.run({
+        actionManager: this,
+        setVariable: this.trigger.setVariable.bind(this.trigger),
+        getVariable: this.trigger.getVariable.bind(this.trigger),
+      });
+    })
   }
 
   parseFields(data) {
