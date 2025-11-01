@@ -7,7 +7,7 @@ class Action {
 	data = new SvelteMap();
 	isBreakPoint = $state(false)
 	position = { x: 0, y: 0 }
-	outputs = $state(null)
+	outputs = null
 	constructor(id, type, x, y) {
 		this.id = id;
 		this.actionType = type;
