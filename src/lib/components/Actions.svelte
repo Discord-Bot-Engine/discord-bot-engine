@@ -73,7 +73,7 @@
            </div>
         </div>
 </Modal>
-<Modal bind:open={App.isEditingAction} title="{App.selectedTrigger?.actions?.filter(act => act.type !== 'group').findIndex(act => act.id === App.selectedAction.id)}. {App.selectedAction?.actionType}" onDone={() => editAction()}>
+<Modal bind:open={App.isEditingAction} title="{App.selectedTrigger?.actions?.filter(act => act.type !== 'group').findIndex(act => act.id === App.selectedAction?.id)}. {App.selectedAction?.actionType}" onDone={() => editAction()}>
         <div class="grid gap-4 py-4" bind:this={App.ref}>
             {@html BotManager.selectedBot.actionClasses.find(t => t.type === App.selectedAction.actionType)?.html ?? ""}
         </div>

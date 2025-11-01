@@ -4,6 +4,7 @@ import {Bot} from "../classes/Bot.js";
 export default class Return {
     static type = "Return"
     static variableTypes = []
+    static outputs = []
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Value"></dbe-label>

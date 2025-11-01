@@ -6,7 +6,7 @@
 </script>
 
 {#if selected}
-    <NodeResizer class="!border-primary !bg-primary" minWidth={100} minHeight={30} />
+    <NodeResizer class="!border-primary !bg-primary" width="" minWidth={120} minHeight={100} />
 {/if}
     <div class="text-lg w-full h-full">
 <input class="w-full !outline-none text-muted-foreground nodrag" value={data.get("text") ?? ""}
