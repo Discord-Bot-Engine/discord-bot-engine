@@ -77,15 +77,15 @@
 		<Card.Content class="flex flex-col gap-3">
 			<div class="flex items-center gap-3">
 				<Checkbox id="presence" bind:checked={presenceIntent} />
-				<Label for="presence" class="-mb-0.5">Presence</Label>
+				<Label for="presence" class="mt-auto mb-auto">Presence</Label>
 			</div>
 			<div class="flex items-center gap-3">
 				<Checkbox id="members" bind:checked={membersIntent} />
-				<Label for="members" class="-mb-0.5">Server Members</Label>
+				<Label for="members" class="mt-auto mb-auto">Server Members</Label>
 			</div>
 			<div class="flex items-center gap-3">
 				<Checkbox id="messageContent" bind:checked={messageContentIntent} />
-				<Label for="messageContent" class="-mb-0.5">Message Content</Label>
+				<Label for="messageContent" class="mt-auto mb-auto">Message Content</Label>
 			</div>
 		</Card.Content>
 	</Card.Root>
