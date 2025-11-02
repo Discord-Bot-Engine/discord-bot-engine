@@ -3,7 +3,7 @@ import {ActionManager} from "../classes/ActionManager.js";
 export default class DeleteMessages {
     static type = "Delete Messages";
     static variableTypes = ["Channel", "Message", "Number"]
-    static output = ["action", "filter"]
+    static outputs = ["action", "filter"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Channel"></dbe-label>
