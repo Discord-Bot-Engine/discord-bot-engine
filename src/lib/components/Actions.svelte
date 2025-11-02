@@ -49,7 +49,6 @@
         }
    }
    function bindings(ev) {
-       ev.preventDefault();
        if(ev.key === "c" && ev.ctrlKey) copy()
        else if(ev.key === "v" && ev.ctrlKey) paste()
        else if(ev.key === "d" && ev.ctrlKey) {
@@ -60,7 +59,8 @@
            localStorage.setItem("copiedActions", actions)
            localStorage.setItem("copiedEdges", edges)
        }
-       else if(ev.key === "a" && ev.ctrlKey) {
+       else if(ev.key === "a" && ev.ctrlKey && document.activeElement?.value === undefined) {
+           ev.preventDefault();
            nodes.update(nodes => nodes.map(n => ({...n, selected: true})))
        } else if(ev.key === "z" && ev.ctrlKey) {
            if(!App.undos.length) return;
