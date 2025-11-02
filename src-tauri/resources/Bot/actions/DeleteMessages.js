@@ -2,7 +2,7 @@ import {ActionManager} from "../classes/ActionManager.js";
 
 export default class DeleteMessages {
     static type = "Delete Messages";
-    static variableTypes = ["Channel"]
+    static variableTypes = ["Channel", "Message", "Number"]
     static output = ["action", "filter"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -15,7 +15,7 @@ export default class DeleteMessages {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store message in variable"></dbe-label>
-            <dbe-variable-list name="value" class="col-span-3" variableType="Any"></dbe-variable-list>
+            <dbe-variable-list name="value" class="col-span-3" variableType="Message"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store message position in variable"></dbe-label>
