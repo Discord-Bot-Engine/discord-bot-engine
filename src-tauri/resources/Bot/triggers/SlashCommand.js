@@ -43,7 +43,7 @@ export default class SlashCommand {
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Type"></dbe-label>
-                <dbe-select name="type" onChange="(value) => document.getElementById('var').setVariableType(value.replace('Integer', 'Number'))" values="Attachment,Boolean,Channel,Integer,Mentionable,Number,Role,Text,User" value="Text" class="col-span-3"></dbe-select>
+                <dbe-select name="type" change="(value) => document.getElementById('var').setVariableType(value.replace('Integer', 'Number'))" values="Attachment,Boolean,Channel,Integer,Mentionable,Number,Role,Text,User" value="Text" class="col-span-3"></dbe-select>
             </div>
              <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Is Required?"></dbe-label>
