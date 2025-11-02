@@ -55,15 +55,15 @@ export default class SlashCommand {
             </div>
         </template>
     `
-    static load({data, actionManager, setVariable}) {
+    static load({data, actionManager}) {
         Bot.commands ??= []
         Bot.registeredCommands = false
         const slashCommand = new SlashCommandBuilder()
-            .setName(actionManager.trigger.name)
+            .setName(actionManager.trigger.name.toLowerCase().replace(/\s/g, "-"))
             .setDescription(data.get("description")?.trim() || "No description provided.")
         data.get("options")?.forEach((option) => {
-            const name = option.data.get("name")
-            const description = option.data.get("description")
+            const name = option.data.get("name").replace(/\s/g, "-")
+            const description = option.data.get("description")?.trim() || "No description provided."
             const type = option.data.get("type")
             const required = option.data.get("required")
             if(type === "Attachment") slashCommand.addAttachmentOption(option => option.setName(name).setDescription(description).setRequired(required === "True"))
