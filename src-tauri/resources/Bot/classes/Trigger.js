@@ -124,7 +124,7 @@ export class Trigger {
     );
     Object.keys(json.data).forEach((key) => {
       if (
-        Array.isArray(json.data[key]))
+        Array.isArray(json.data[key])
       )
         json.data[key] = json.data[key].map((el) => CustomElement.fromJSON(el));
       trigger.data.set(key, json.data[key]);
