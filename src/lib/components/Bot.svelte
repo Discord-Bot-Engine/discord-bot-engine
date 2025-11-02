@@ -7,7 +7,7 @@
 </script>
 <Card.Root class="w-full h-fit">
     <Card.Header>
-        <Card.Title class="text-xl">
+        <Card.Title>
             {bot.name}
         </Card.Title>
         <Card.Description>

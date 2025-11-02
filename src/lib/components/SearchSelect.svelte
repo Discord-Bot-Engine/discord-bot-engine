@@ -45,7 +45,7 @@
                     aria-expanded={open}
             >
                 <label class="text-ellipsis white-space-nowrap overflow-hidden">{selectedValue?.length ? selectedValue : "Select an option"}</label>
-                <ChevronDownIcon class="ml-auto size-4 shrink-0 opacity-50" />
+                <ChevronDownIcon class="ml-auto mt-auto mb-auto size-4 shrink-0 opacity-50" />
             </Button>
         {/snippet}
     </Popover.Trigger>
