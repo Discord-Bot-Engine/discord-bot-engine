@@ -34,7 +34,7 @@
 	<Dialog.Trigger class="absolute top-3 right-3 z-10 {buttonVariants()}"
 	><PlusIcon/></Dialog.Trigger
 	>
-	<Dialog.Content class="sm:max-w-[425px]" >
+	<Dialog.Content class="sm:max-w-[425px] px-4.5" >
 		<Dialog.Header>
 			<Dialog.Title>Create Bot</Dialog.Title>
 		</Dialog.Header>
@@ -52,8 +52,8 @@
 			</div>
 		</div>
 		<Dialog.Footer>
-			<Dialog.Close class={buttonVariants({variant:"secondary"})}>Cancel</Dialog.Close>
-			<Button onclick={createBot}>Create</Button>
+			<Dialog.Close class="{buttonVariants({variant:'secondary'})} !p-3 !h-fit">Cancel</Dialog.Close>
+			<Button class="!p-3 !h-fit" onclick={createBot}>Create</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

@@ -6,7 +6,7 @@
     let {open = $bindable(), title, children, onDone = () => {}, onOpenChange = () => {} } = $props()
 </script>
 <Dialog.Root bind:open onOpenChange={onOpenChange}>
-    <Dialog.Content class="sm:max-w-[65vw]" >
+    <Dialog.Content class="sm:max-w-[65vw] px-4.5" >
         <Dialog.Header>
             <Dialog.Title>{title}</Dialog.Title>
         </Dialog.Header>
@@ -14,8 +14,8 @@
             {@render children()}
         </ScrollArea>
         <Dialog.Footer>
-            <Dialog.Close class={buttonVariants({variant:"secondary"})}>Cancel</Dialog.Close>
-            <Button onclick={onDone}>Done</Button>
+            <Dialog.Close class="{buttonVariants({variant:'secondary'})} !p-3 !h-fit">Cancel</Dialog.Close>
+            <Button class="!p-3 !h-fit" onclick={onDone}>Done</Button>
         </Dialog.Footer>
     </Dialog.Content>
 </Dialog.Root>
