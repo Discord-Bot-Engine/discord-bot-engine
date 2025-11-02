@@ -6,6 +6,7 @@
         EdgeLabel,
     } from '@xyflow/svelte';
     import {Button} from "$lib/components/ui/button/index.js";
+    import {App} from "$lib/classes/App.svelte.js"
 
     let {
         id,
@@ -33,6 +34,7 @@
     const { deleteElements } = useSvelteFlow();
 
     const onEdgeClick = () => {
+        App.updateUndo()
         deleteElements({ edges: [{ id }] });
     }
 </script>

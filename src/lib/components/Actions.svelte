@@ -2,7 +2,7 @@
     import { v4 as uuidv4 } from "uuid";
     import List from '$lib/components/List.svelte';
     import * as Card from '$lib/components/ui/card/index.js';
-    import { useSvelteFlow } from '@xyflow/svelte';
+    import { useSvelteFlow, useNodes } from '@xyflow/svelte';
     import { App } from '$lib/classes/App.svelte.js';
     import {Label} from "$lib/components/ui/label/index.js";
     import Action from "$lib/classes/Action.svelte.js";
@@ -22,7 +22,9 @@
     let isCreatingAction = $state(false);
     let open = $state(false)
     const { getViewport } = useSvelteFlow();
+    const nodes = useNodes();
     function addAction() {
+        App.updateUndo()
         if(actionType.toLowerCase() === "none") return;
         const id = uuidv4()
         const viewport = getViewport()
@@ -31,6 +33,7 @@
         isCreatingAction = false;
     }
    async function editAction() {
+       App.updateUndo()
        const actionClass = BotManager.selectedBot.actionClasses.find(act => act.type === App.selectedAction.actionType);
         Object.keys(App.handlersCopy).forEach(handler => {
             window.handlers[handler] = App.handlersCopy[handler];
@@ -45,21 +48,109 @@
             alert(`${App.selectedAction.type}\n${e.stack}`)
         }
    }
+   function bindings(ev) {
+       ev.preventDefault();
+       if(ev.key === "c" && ev.ctrlKey) copy()
+       else if(ev.key === "v" && ev.ctrlKey) paste()
+       else if(ev.key === "d" && ev.ctrlKey) {
+           const actions = localStorage.getItem("copiedActions");
+           const edges = localStorage.getItem("copiedEdges");
+           copy()
+           paste()
+           localStorage.setItem("copiedActions", actions)
+           localStorage.setItem("copiedEdges", edges)
+       }
+       else if(ev.key === "a" && ev.ctrlKey) {
+           nodes.update(nodes => nodes.map(n => ({...n, selected: true})))
+       } else if(ev.key === "z" && ev.ctrlKey) {
+           if(!App.undos.length) return;
+           const state = JSON.parse(App.undos.pop())
+           const newActions = []
+           App.selectedTrigger.actions.forEach(action => {
+               const data = {}
+               action.data.keys().forEach(key => {
+                   data[key] = action.data.get(key)
+               })
+               newActions.push({...action, data})
+           })
+           App.redos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
+           App.selectedTrigger.actions = state.actions.map(act => Action.fromJSON(act))
+           App.selectedTrigger.edges = state.edges
+       } else if(ev.key === "y" && ev.ctrlKey) {
+           if(!App.redos.length) return;
+           const state = JSON.parse(App.redos.pop())
+           const newActions = []
+           App.selectedTrigger.actions.forEach(action => {
+               const data = {}
+               action.data.keys().forEach(key => {
+                   data[key] = action.data.get(key)
+               })
+               newActions.push({...action, data})
+           })
+           App.undos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
+           App.selectedTrigger.actions = state.actions.map(act => Action.fromJSON(act))
+           App.selectedTrigger.edges = state.edges
+       }
+   }
+   function copy() {
+       const actions = App.selectedTrigger?.actions.filter(act => act.selected && act.actionType)
+       const newActions = []
+       actions.forEach(action => {
+           const data = {}
+           action.data.keys().forEach(key => {
+               data[key] = action.data.get(key)
+           })
+           newActions.push({...action, data})
+       })
+       const edges = App.selectedTrigger?.edges.filter(edge => actions.find(act => act.id === edge.source || act.id === edge.target))
+       localStorage.setItem("copiedActions", JSON.stringify(newActions));
+       localStorage.setItem("copiedEdges", JSON.stringify(edges));
+   }
+   function paste() {
+       App.updateUndo()
+       let actions = localStorage.getItem("copiedActions");
+       let edges = localStorage.getItem("copiedEdges");
+       if(!actions || !edges) return;
+       actions = JSON.parse(actions);
+       edges = JSON.parse(edges)
+       const newActions = []
+       const newEdges = []
+       actions.forEach(act => {
+           const newAct = Action.fromJSON(act)
+           newAct.id = uuidv4()
+           edges.forEach(edge => {
+               if(edge.source === act.id) {
+                   edge.source = newAct.id
+               }
+               if(edge.target === act.id) {
+                   edge.target = newAct.id
+               }
+               edge.id = edge.id.replace(act.id, newAct.id)
+               newEdges.push(edge)
+           })
+           newActions.push(newAct)
+       })
+       App.selectedTrigger.actions = [...App.selectedTrigger.actions, ...newActions]
+       App.selectedTrigger.edges = [...App.selectedTrigger.edges, ...newEdges]
+   }
+   function deleteActions() {
+       App.updateUndo()
+       const list = App.selectedTrigger.actions.filter(act => act.selected)
+       App.selectedTrigger.actions = App.selectedTrigger.actions.filter(act => !act.actionType || !list.find(n => n.id === act.id))
+       App.selectedTrigger.edges = App.selectedTrigger.edges.filter(edge => App.selectedTrigger.actions.find(n => n.id === edge.source) && App.selectedTrigger.actions.find(n => n.id === edge.target))
+   }
 </script>
+<svelte:window onkeydown={bindings}></svelte:window>
 <Card.Root class="w-full h-full min-h-40 p-1 px-0 pb-0 relative">
     <Card.Content class="p-1 px-0 pb-0 h-full overflow-hidden">
         <div class="flex h-fit px-2">
             <label class="mr-auto opacity-50 text-sm overflow-hidden text-ellipsis">Actions</label>
             <Button variant="ghost" size="icon" class="size-6 {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => isCreatingAction = true}><PlusIcon /></Button>
-            <Button variant="ghost" size="icon" class="size-6 {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => {
-                const list = App.selectedTrigger.actions.filter(act => act.selected)
-                App.selectedTrigger.actions = App.selectedTrigger.actions.filter(act => !act.actionType || !list.find(n => n.id === act.id))
-                App.selectedTrigger.edges = App.selectedTrigger.edges.filter(edge => App.selectedTrigger.actions.find(n => n.id === edge.source) && App.selectedTrigger.actions.find(n => n.id === edge.target))
-            }
-    }><MinusIcon /></Button>
+            <Button variant="ghost" size="icon" class="size-6 {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => deleteActions()}
+    ><MinusIcon /></Button>
         </div>
             {#if App.selectedTrigger}
-                <SvelteFlow proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
+                <SvelteFlow onnodedragstart={() => App.updateUndo()} onconnectstart={() => App.updateUndo()} proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
                     <Background bgColor="oklch(0.27 0.03 259.08)"></Background>
                 </SvelteFlow>
             {/if}

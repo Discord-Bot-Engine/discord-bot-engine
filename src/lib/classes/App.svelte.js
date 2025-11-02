@@ -9,6 +9,21 @@ class AppClass {
 	hideTriggers = $state(false);
 	hideVariables = $state(false);
 	hideConsole = $state(false);
+	undos = []
+	redos = []
+	updateUndo() {
+		const newActions = []
+		App.selectedTrigger.actions.forEach(action => {
+			const data = {}
+			action.data.keys().forEach(key => {
+				data[key] = action.data.get(key)
+			})
+			newActions.push({...action, data})
+		})
+		this.undos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
+		this.undos = this.undos.filter((s,i) => this.undos.indexOf(s) === i);
+		this.redos = []
+	}
 	ref = null
 	handlersCopy = {}
 	openAction() {
