@@ -124,15 +124,9 @@ export class Trigger {
     );
     Object.keys(json.data).forEach((key) => {
       if (
-        Array.isArray(json.data[key]) &&
-        json.data[key].every((item) => item.isCustom)
+        Array.isArray(json.data[key]))
       )
         json.data[key] = json.data[key].map((el) => CustomElement.fromJSON(el));
-      if (
-        Array.isArray(json.data[key]) &&
-        json.data[key].every((item) => item.isAction)
-      )
-        json.data[key] = json.data[key].map((el) => Action.fromJSON(el));
       trigger.data.set(key, json.data[key]);
     });
     return trigger;
