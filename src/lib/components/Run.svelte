@@ -17,11 +17,11 @@
     </Button>
     {#if !App.hideConsole}
 <Card.Root class="!rounded-t-none border-t-0 w-full h-full min-h-50 p-1 relative">
-    <Card.Content class="p-1 overflow-hidden h-full">
+    <Card.Content class="p-1 px-1 overflow-hidden h-full">
         <div class="flex justify-end h-fit">
-            <label class="mr-auto opacity-50 text-md">Console</label>
-            <Button variant={BotManager.selectedBot?.isRunning ? undefined : 'secondary'} size="icon" class="size-8 rounded-lg rounded-r-none" onclick={() => BotManager.runBot()}><PlayIcon size={16} /></Button>
-            <Button variant={BotManager.selectedBot?.isRunning ? 'secondary' : undefined} size="icon" class="size-8 rounded-lg rounded-l-none" onclick={() => BotManager.stopBot()}><SquareIcon size={16} /></Button>
+            <label class="mr-auto text-md">Console</label>
+            <Button variant={BotManager.selectedBot?.isRunning ? undefined : 'secondary'} size="icon" class="size-8 -mt-1 rounded-lg rounded-r-none" onclick={() => BotManager.runBot()}><PlayIcon size={16} /></Button>
+            <Button variant={BotManager.selectedBot?.isRunning ? 'secondary' : undefined} size="icon" class="size-8 -mt-1 rounded-lg rounded-l-none" onclick={() => BotManager.stopBot()}><SquareIcon size={16} /></Button>
         </div>
         <ScrollArea class="font-[JetBrains_Mono_Variable] text-sm h-[calc(100%-1.8rem)]">
             <pre class="whitespace-pre-wrap">{BotManager.selectedBot?.stdout}</pre>

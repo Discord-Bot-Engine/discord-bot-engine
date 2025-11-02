@@ -33,12 +33,13 @@
 </script>
 
 <Card.Root class="w-full h-full min-h-40 min-w-40 p-1 relative {props.class}">
-	<Card.Content class="p-1">
-		<div class="flex h-fit">
-			<label class="mr-auto opacity-50 text-sm overflow-hidden text-ellipsis">{title}</label>
-				<Button variant="ghost" size="icon" class="size-6 {hideControls ? 'hidden' : ''}" onclick={onadd}><PlusIcon /></Button>
-				<Button variant="ghost" size="icon" class="size-6 {hideControls ? 'hidden' : ''}" onclick={() => {ondelete(); selected = null }}><MinusIcon /></Button>
+	<Card.Content class="p-1 !px-0.5">
+		<div class="flex h-fit -mr-1.5 mb-1 px-0.5">
+			<label class="mr-auto text-md overflow-hidden text-ellipsis">{title}</label>
+				<Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {hideControls ? 'hidden' : ''}" onclick={onadd}><PlusIcon /></Button>
+				<Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {hideControls ? 'hidden' : ''}" onclick={() => {ondelete(); selected = null }}><MinusIcon /></Button>
 		</div>
+		<Separator />
 		<ScrollArea>
 			{#if allowMoving}
 			<div
@@ -55,7 +56,7 @@
 							<Button
 									noVariables
 									variant={selected === item ? undefined : "ghost"}
-									class="size-7 flex-1 hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
+									class="!p-1 !h-fit flex-1 hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
 									ondblclick={() => { selected = item; ondblclick(item) }}
 									onclick={() => { selected = item; onclick(item)}}
 							>
@@ -74,7 +75,7 @@
 					<div>
 							<Button
 									variant={selected === item ? undefined : "ghost"}
-									class="size-7 w-full hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
+									class="!p-1 !h-fit w-full hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
 									ondblclick={() => { selected = item; ondblclick(item) }}
 									onclick={() => { selected = item; onclick(item) }}
 							>

@@ -143,11 +143,11 @@
 </script>
 <svelte:window onkeydown={bindings}></svelte:window>
 <Card.Root class="w-full h-full min-h-40 p-1 px-0 pb-0 relative">
-    <Card.Content class="p-1 px-0 pb-0 h-full overflow-hidden">
-        <div class="flex h-fit px-2">
-            <label class="mr-auto opacity-50 text-sm overflow-hidden text-ellipsis">Actions</label>
-            <Button variant="ghost" size="icon" class="size-6 {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => isCreatingAction = true}><PlusIcon /></Button>
-            <Button variant="ghost" size="icon" class="size-6 {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => deleteActions()}
+    <Card.Content class="p-1 px-0.5 pb-0 h-full overflow-hidden">
+        <div class="flex h-fit -mr-1.5 mb-1 px-1.5">
+            <label class="mr-auto text-md overflow-hidden text-ellipsis">Actions</label>
+            <Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => isCreatingAction = true}><PlusIcon /></Button>
+            <Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => deleteActions()}
     ><MinusIcon /></Button>
         </div>
             {#if App.selectedTrigger}

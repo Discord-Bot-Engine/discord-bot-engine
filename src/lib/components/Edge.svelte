@@ -37,9 +37,13 @@
         App.updateUndo()
         deleteElements({ edges: [{ id }] });
     }
+    let isHovering = $state(false)
+    let isHoveringBtn = $state(false)
 </script>
 
-<BaseEdge class="!stroke-primary" path={edgePath} {markerEnd} {style} />
-<EdgeLabel x={labelX} y={labelY} class="button-edge__label !bg-transparent">
+<BaseEdge class="!stroke-primary" onmouseenter={() => isHovering = true} onmouseleave={() => isHovering = false} path={edgePath} {markerEnd} {style} />
+{#if isHovering || isHoveringBtn}
+<EdgeLabel x={labelX} y={labelY} onmouseenter={() => isHoveringBtn = true} onmouseleave={() => isHoveringBtn = false} class="button-edge__label !bg-transparent">
     <Button class="size-3 p-0" onclick={onEdgeClick}> × </Button>
 </EdgeLabel>
+    {/if}

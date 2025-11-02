@@ -267,10 +267,14 @@
 
 .svelte-flow__node-group {
     z-index: -1!important;
-    background: var(--secondary)!important;
-    opacity: 0.3;
+    background: oklch(0.63 0.20 8.73 / 0.1)!important;
+    border: 0px!important;
 }
 
 .svelte-flow__container {
     background: transparent!important;
+}
+
+* {
+    font-family: monospace!important;
 }
