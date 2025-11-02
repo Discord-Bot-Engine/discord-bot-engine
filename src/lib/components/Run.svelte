@@ -7,7 +7,7 @@
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     import {App} from "$lib/classes/App.svelte.js";
 </script>
-<div class="flex flex-col bg-card rounded-xl rounded-b-none">
+<div class="flex flex-col bg-card rounded-xl">
     <Button variant="ghost" class="w-full rounded-xl rounded-b-none border-1 h-fit !p-0" onclick={() => App.hideConsole = !App.hideConsole}>
         {#if !App.hideConsole}
             <ChevronDownIcon/>

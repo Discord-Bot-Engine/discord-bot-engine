@@ -40,7 +40,7 @@
         <ErrorIcon />
     {/if}
 {/snippet}
-<div class="flex bg-card rounded-xl rounded-r-none">
+<div class="flex bg-card rounded-xl">
     <Button variant="ghost" class="h-full rounded-xl rounded-r-none border-1 !p-0" onclick={() => App.hideVariables = !App.hideVariables}>
         {#if !App.hideVariables}
             <ChevronRightIcon/>
