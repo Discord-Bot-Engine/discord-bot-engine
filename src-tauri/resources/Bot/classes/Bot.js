@@ -158,13 +158,17 @@ class BotClass {
     };
 
     async setData(key, value) {
-        value = !isNaN(value) && value == Number(value) ? Number(value) : value;
+        value = !isNaN(value) && Number(value) <= Number.MAX_SAFE_INTEGER && Number(value) >= Number.MIN_SAFE_INTEGER
+            ? Number(value)
+            : value;
         await this.data.set(key, value)
     }
 
     async getData(key) {
         const value = await this.data.get(key)
-        return !isNaN(value) && value == Number(value) ? Number(value) : value;
+        return !isNaN(value) && Number(value) <= Number.MAX_SAFE_INTEGER && Number(value) >= Number.MIN_SAFE_INTEGER
+            ? Number(value)
+            : value;
     }
 }
 
