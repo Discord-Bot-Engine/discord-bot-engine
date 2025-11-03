@@ -4,10 +4,12 @@
     import {NodeResizer} from "@xyflow/svelte";
     let { id, data, selected } = $props();
     const group = $derived(App.selectedTrigger.actions.find(act => act.id === id));
-    if(group) {
-        group.width = data.get("width")
-        group.height = data.get("height")
-    }
+    $effect(() => {
+        if(group) {
+            group.width = data.get("width")
+            group.height = data.get("height")
+        }
+    })
 </script>
 
 {#if selected}

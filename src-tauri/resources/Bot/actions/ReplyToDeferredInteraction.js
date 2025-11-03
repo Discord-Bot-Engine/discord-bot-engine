@@ -83,7 +83,7 @@ export default class ReplyToDeferredInteraction {
                     </div>
             </div>
              <div id="button" class="grid gap-4">
-                    <div class="grid grid-cols-4 items-center gap-4">
+                    <div class="grid grid-cols-4 items-center gap-4" id="cid">
                         <dbe-label name="Custom ID"></dbe-label>
                         <dbe-input name="bid" class="col-span-3"></dbe-input>
                     </div>
@@ -93,7 +93,7 @@ export default class ReplyToDeferredInteraction {
                     </div>
                      <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Style"></dbe-label>
-                        <dbe-select name="bstyle" class="col-span-3" change="(value, el) => el.parentElement.parentElement.querySelector('#url').style.display = (value === 'Link' ? '' : 'none')" values="Danger,Link,Premium,Primary,Secondary,Success" value="Primary"></dbe-select>
+                        <dbe-select name="bstyle" class="col-span-3" change="(value, el) => handlers.onStyleChange(value, el)" values="Danger,Link,Premium,Primary,Secondary,Success" value="Primary"></dbe-select>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4" id="url">
                         <dbe-label name="URL"></dbe-label>
@@ -252,7 +252,7 @@ export default class ReplyToDeferredInteraction {
                     </div>
             </div>
              <div id="button" class="grid gap-4">
-                    <div class="grid grid-cols-4 items-center gap-4">
+                    <div class="grid grid-cols-4 items-center gap-4" id="cid">
                         <dbe-label name="Custom ID"></dbe-label>
                         <dbe-input name="bid" class="col-span-3"></dbe-input>
                     </div>
@@ -262,7 +262,7 @@ export default class ReplyToDeferredInteraction {
                     </div>
                      <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Style"></dbe-label>
-                        <dbe-select name="bstyle" class="col-span-3" change="(value, el) => el.parentElement.parentElement.querySelector('#url').style.display = (value === 'Link' ? '' : 'none')" values="Danger,Link,Premium,Primary,Secondary,Success" value="Primary"></dbe-select>
+                        <dbe-select name="bstyle" class="col-span-3" change="(value, el) => handlers.onStyleChange(value, el)" values="Danger,Link,Premium,Primary,Secondary,Success" value="Primary"></dbe-select>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4" id="url">
                         <dbe-label name="URL"></dbe-label>
@@ -392,8 +392,7 @@ export default class ReplyToDeferredInteraction {
                 <dbe-label name="Is default?"></dbe-label>
                 <dbe-select name="default" class="col-span-3" values="True,False" value="False"></dbe-select>
             </div>
-        </template>
-    `
+        </template>    `
     static open(trigger, handlers) {
         handlers.onChange = (v, el) => {
             setTimeout(() => {
@@ -423,7 +422,11 @@ export default class ReplyToDeferredInteraction {
                     parent.querySelector('#selectmenu').style.display = ""
                 else if(v === "Container")
                     parent.querySelector('#comps').style.display = ""
-            }, 10)
+            },10)
+        }
+        handlers.onStyleChange = (value, el) => {
+            el.parentElement.parentElement.querySelector('#url').style.display = (value === 'Link' ? '' : 'none');
+            el.parentElement.parentElement.querySelector('#cid').style.display = (value !== 'Link' ? '' : 'none');
         }
     }
     static close(context) {
@@ -502,8 +505,9 @@ export default class ReplyToDeferredInteraction {
                     buttons.push({id, data, actions: data.get("Run Actions On Click")})
                     builder.setButtonAccessory(
                         button => {
-                            button.setCustomId(id).setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
+                            button.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
                             if(style === "Link") button.setURL(url)
+                            else button.setCustomId(id)
                             if(emoji) button.setEmoji(emoji)
                             return button
                         }
@@ -540,9 +544,11 @@ export default class ReplyToDeferredInteraction {
                 const emoji = data.get("bemoji")
                 const disabled = data.get("bdisabled") === "True"
                 buttons.push({id, data, actions: data.get("Run Actions On Click")})
-                builder.setCustomId(id).setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
+                builder.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
                 if(style === "Link") builder.setURL(url)
+                else builder.setCustomId(id)
                 if(emoji) builder.setEmoji(emoji)
+                if(!(list[currentRow] instanceof ActionRowBuilder) && list[currentRow]) currentRow++;
                 if(list[currentRow] instanceof ActionRowBuilder && (list[currentRow].data.components.size >= 5 || list[currentRow].data.components.every(c => c.type === ComponentType.Button))) currentRow = i;
                 if(!list[currentRow]) list[currentRow] = new ActionRowBuilder()
                 list[currentRow].addComponents(builder)
@@ -606,8 +612,9 @@ export default class ReplyToDeferredInteraction {
                                 buttons.push({id, data, actions: data.get("Run Actions On Click")})
                                 builder.setButtonAccessory(
                                     button => {
-                                        button.setCustomId(id).setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
+                                        button.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
                                         if(style === "Link") button.setURL(url)
+                                        else button.setCustomId(id)
                                         if(emoji) button.setEmoji(emoji)
                                         return button
                                     }
@@ -645,8 +652,9 @@ export default class ReplyToDeferredInteraction {
                         const emoji = data.get("bemoji")
                         const disabled = data.get("bdisabled") === "True"
                         buttons.push({id, data, actions: data.get("Run Actions On Click")})
-                        builder.setCustomId(id).setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
+                        builder.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
                         if(style === "Link") builder.setURL(url)
+                        else builder.setCustomId(id)
                         if(emoji) builder.setEmoji(emoji)
                         if(rows[currentRow] && (rows[currentRow].data.components.size >= 5 || rows[currentRow].data.components.every(c => c.type === ComponentType.Button))) currentRow++;
                         if(!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
