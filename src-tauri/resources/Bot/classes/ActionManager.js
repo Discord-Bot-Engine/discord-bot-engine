@@ -44,7 +44,7 @@ export class ActionManager {
     data.keys().forEach((item) => {
       let result = data.get(item);
       if (typeof result !== "string") {
-        if (Array.isArray(result) && result.every((e) => e.isCustom)) {
+        if (Array.isArray(result)) {
           const elements = [];
           result.forEach((item) => {
             const obj = { ...item, data: this.parseFields(item.data) };

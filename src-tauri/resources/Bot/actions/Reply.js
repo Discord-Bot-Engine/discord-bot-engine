@@ -577,7 +577,6 @@ export default class Reply {
                 if(!(list[currentRow] instanceof ActionRowBuilder) && list[currentRow]) currentRow++;
                 if(list[currentRow] instanceof ActionRowBuilder && (list[currentRow].data.components.size >= 5 || list[currentRow].data.components.every(c => c.type === ComponentType.Button))) currentRow = i;
                 if(!list[currentRow]) list[currentRow] = new ActionRowBuilder()
-                console.log(list[currentRow])
                 list[currentRow].addComponents(builder)
             } else if(type === "Select Menu") {
                 const builder = new StringSelectMenuBuilder()
