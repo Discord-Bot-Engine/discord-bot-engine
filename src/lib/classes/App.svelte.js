@@ -12,6 +12,7 @@ class AppClass {
 	undos = []
 	redos = []
 	updateUndo() {
+		BotManager.selectedBot.markAsModified(this.selectedTrigger.id);
 		const newActions = []
 		App.selectedTrigger.actions.forEach(action => {
 			const data = {}

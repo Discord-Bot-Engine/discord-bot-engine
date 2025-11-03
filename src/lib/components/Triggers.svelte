@@ -78,9 +78,7 @@
     BotManager.selectedBot.triggers = BotManager.selectedBot.triggers.filter(el => el !== App.selectedTrigger)
     BotManager.selectedBot.markAsRemoved(App.selectedTrigger.id)
     App.selectedTrigger = null
-}} title="Triggers" onclick={() => {
-    BotManager.selectedBot.markAsModified(App.selectedTrigger.id);
-}} bind:selected={App.selectedTrigger}></List>
+}} title="Triggers" bind:selected={App.selectedTrigger}></List>
 {/if}
 <Button variant="ghost" class="h-full rounded-xl rounded-l-none border-1 !p-0" onclick={() => App.hideTriggers = !App.hideTriggers}>
     {#if !App.hideTriggers}

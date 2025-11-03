@@ -49,7 +49,7 @@
         }
    }
    function bindings(ev) {
-       if(document.activeElement?.value !== undefined || getSelection().toString()) return;
+       if(document.activeElement?.value !== undefined || getSelection().toString() || !App.selectedTrigger) return;
        ev.preventDefault();
        if(ev.key === "c" && ev.ctrlKey) copy()
        else if(ev.key === "v" && ev.ctrlKey) paste()
