@@ -26,8 +26,8 @@ class BotClass {
             filename: path.join(__dirname, "../data/data.json"),
             expiredCheckDelay: 24 * 3600 * 1000,
             writeDelay: 100,
-            encode: this.serializeDatabase,
-            decode: this.deserializeDatabase
+            encode: JSON.stringify,
+            decode: JSON.parse
         })
     })
 
@@ -157,45 +157,14 @@ class BotClass {
         } catch {}
     };
 
-    serialize(value) {
-        if (Array.isArray(value)) {
-            const arr = [];
-            for (const el of value)
-                arr.push(this.serialize(el));
-            return arr;
-        } else if (typeof value === 'object' && value && !value.toDBEString) {
-            const obj = {};
-            for (const key in value)
-                obj[key] = this.serialize(value[key]);
-            return obj;
-        }
-
-        return value?.toDBEString?.() ?? value;
-    };
-
     async setData(key, value) {
-        value = isNaN(value) ? value : Number(value);
+        value = !isNaN(value) && value == Number(value) ? Number(value) : value;
         await this.data.set(key, value)
     }
 
     async getData(key) {
         const value = await this.data.get(key)
-        return isNaN(value) ? value : Number(value);
-    }
-
-    serializeDatabase(values) {
-        const data = {}
-        values.keys().forEach(key => data[key] = this.serialize(values.get(key)))
-        return JSON.stringify(data)
-    }
-
-    async deserializeDatabase(values) {
-        const data = JSON.parse(values);
-        const obj = {}
-        for (const key in data) {
-            obj[key] = await this.parse(data[key]);
-        }
-        return obj
+        return !isNaN(value) && value == Number(value) ? Number(value) : value;
     }
 }
 

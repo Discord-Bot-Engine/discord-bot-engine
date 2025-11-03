@@ -31,38 +31,3 @@ export default class Client {
         this.client.login(token)
     }
 }
-Reflect.defineProperty(GuildMember.prototype, 'toDBEString', {
-    value() {
-        return `dbe$mem-${this.id}_${this.guild.id}`;
-    },
-});
-Reflect.defineProperty(User.prototype, 'toDBEString', {
-    value() {
-        return `dbe$usr-${this.id}`;
-    },
-});
-Reflect.defineProperty(Guild.prototype, 'toDBEString', {
-    value() {
-        return `dbe$s-${this.id}`;
-    },
-});
-Reflect.defineProperty(Message.prototype, 'toDBEString', {
-    value() {
-        return `dbe$msg-${this.id}_${this.channel.id}`;
-    },
-});
-Reflect.defineProperty(BaseChannel.prototype, 'toDBEString', {
-    value() {
-        return `dbe$ch-${this.id}`;
-    },
-});
-Reflect.defineProperty(Role.prototype, 'toDBEString', {
-    value() {
-        return `dbe$r-${this.id}_${this.guild.id}`;
-    },
-});
-Reflect.defineProperty(GuildEmoji.prototype, 'toDBEString', {
-    value() {
-        return `dbe$e-${this.id}_${this.guild.id}`;
-    },
-});

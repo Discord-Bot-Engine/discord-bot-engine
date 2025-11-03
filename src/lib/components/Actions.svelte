@@ -91,6 +91,8 @@
            App.undos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
            App.selectedTrigger.actions = state.actions.map(act => Action.fromJSON(act))
            App.selectedTrigger.edges = state.edges
+       }  else if(ev.key === "s" && ev.ctrlKey) {
+           BotManager.saveBotData()
        }
    }
    function copy() {

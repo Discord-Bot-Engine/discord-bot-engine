@@ -29,13 +29,15 @@ export default class DeleteMessages {
         let number = data.get("number")
         let list = await channel.messages.fetch({limit: 100});
         list = [...list.values()]
-        if(!number.trim()) number = list.length;
-        if(isNaN(number)) number = list.length;
+        if (!number.trim()) number = list.length;
+        if (isNaN(number)) number = list.length;
         number = Number(number);
+
         const filtered = []
         const onReturn = actionManager.onReturn;
         const onContinue = actionManager.onContinue;
         const onBreak = actionManager.onBreak;
+
         actionManager.onReturn = (v) => {
             filtered.push(v)
             iterate()
@@ -45,26 +47,57 @@ export default class DeleteMessages {
         }
         actionManager.onBreak = async () => {
             await channel.bulkDelete(filtered)
-            actionManager.onReturn = onReturn
-            actionManager.onBreak = onBreak
-            actionManager.onContinue = onContinue
+            restoreHandlers()
             actionManager.runNext(id, "action");
         }
+
         let i = 0;
+        let lastMessage = list.at(-1);
+        let fetchCount = 0;
+
         iterate()
+
         async function iterate() {
-            if(i >= list.length || filtered.length == number) {
+            if (filtered.length >= number) {
                 await channel.bulkDelete(filtered)
-                actionManager.onReturn = onReturn
-                actionManager.onBreak = onBreak
-                actionManager.onContinue = onContinue
+                restoreHandlers()
                 actionManager.runNext(id, "action");
-                return
+                return;
             }
+
+            if (i >= list.length) {
+                if (!lastMessage || fetchCount >= 5) {
+                    await channel.bulkDelete(filtered)
+                    restoreHandlers()
+                    actionManager.runNext(id, "action");
+                    return;
+                }
+
+                fetchCount++;
+                const more = await channel.messages.fetch({ limit: 100, before: lastMessage.id });
+                if (more.size === 0) {
+                    await channel.bulkDelete(filtered)
+                    restoreHandlers()
+                    actionManager.runNext(id, "action");
+                    return;
+                }
+
+                const moreList = [...more.values()];
+                list = [...list, ...moreList];
+                lastMessage = moreList.at(-1);
+            }
+
             setVariable(data.get("value"), list[i])
             setVariable(data.get("pos"), i + 1)
             i++;
             actionManager.runNext(id, "filter")
         }
+
+        function restoreHandlers() {
+            actionManager.onReturn = onReturn
+            actionManager.onBreak = onBreak
+            actionManager.onContinue = onContinue
+        }
     }
+
 }
