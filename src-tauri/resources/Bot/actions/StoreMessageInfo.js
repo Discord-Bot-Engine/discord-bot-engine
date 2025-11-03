@@ -82,6 +82,8 @@ export default class StoreMessageInfo {
                 break
             case "Content":
                 value = message.content
+                if(value.trim()) value += `\n`
+                value += `${extractTextFromComponents(message.components)}`
                 break
             case "Author":
                 value = message.author
@@ -140,5 +142,20 @@ export default class StoreMessageInfo {
 
         setVariable(data.get("value"), value)
         actionManager.runNext(id, "action")
+        function extractTextFromComponents(components) {
+            const texts = [];
+
+            if (!components || !Array.isArray(components)) return texts;
+
+            components.forEach(comp => {
+                if (comp.type === 10) {
+                    texts.push(comp.data.content);
+                }
+                else if (comp.components) {
+                    texts.push(...extractTextFromComponents(comp.components));
+                }
+            });
+            return texts.join("\n");
+        }
     }
 }
