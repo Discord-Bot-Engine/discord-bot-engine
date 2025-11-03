@@ -83,7 +83,7 @@ export default class StoreMessageInfo {
             case "Content":
                 value = message.content
                 if(value.trim()) value += `\n`
-                value += `${extractTextFromComponents(message.components)}`
+                value += `${extractTextFromComponents(message.components).join("\n")}`
                 break
             case "Author":
                 value = message.author
@@ -155,7 +155,7 @@ export default class StoreMessageInfo {
                     texts.push(...extractTextFromComponents(comp.components));
                 }
             });
-            return texts.join("\n");
+            return texts;
         }
     }
 }
