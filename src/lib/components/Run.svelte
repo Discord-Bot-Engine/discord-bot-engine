@@ -1,5 +1,4 @@
 <script>
-    import '@fontsource-variable/jetbrains-mono';
     import * as Card from '$lib/components/ui/card/index.js';
     import {SquareIcon, PlayIcon, ChevronUpIcon, ChevronDownIcon} from "@lucide/svelte";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
