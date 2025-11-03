@@ -502,7 +502,7 @@ export default class ReplyToDeferredInteraction {
                     const url = data.get("burl")
                     const emoji = data.get("bemoji")
                     const disabled = data.get("bdisabled") === "True"
-                    buttons.push({id, data, actions: data.get("Run Actions On Click")})
+                    buttons.push({id, data})
                     builder.setButtonAccessory(
                         button => {
                             button.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
@@ -543,7 +543,7 @@ export default class ReplyToDeferredInteraction {
                 const url = data.get("burl")
                 const emoji = data.get("bemoji")
                 const disabled = data.get("bdisabled") === "True"
-                buttons.push({id, data, actions: data.get("Run Actions On Click")})
+                buttons.push({id, data})
                 builder.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
                 if(style === "Link") builder.setURL(url)
                 else builder.setCustomId(id)
@@ -561,7 +561,7 @@ export default class ReplyToDeferredInteraction {
                 const smax = Number(data.get("smax"))
                 const sdisabled = data.get("sdisabled") === "True"
                 const options = data.get("soptions")
-                selectmenus.push({id, data, actions: data.get("Run Actions On Select")})
+                selectmenus.push({id, data})
                 builder.setCustomId(id).setPlaceholder(placeholder).setRequired(srequired).setMinValues(smin).setMaxValues(smax).setDisabled(sdisabled)
                 options.forEach(({data}) => {
                     const label = data.get("label")
@@ -609,7 +609,7 @@ export default class ReplyToDeferredInteraction {
                                 const url = data.get("burl")
                                 const emoji = data.get("bemoji")
                                 const disabled = data.get("bdisabled") === "True"
-                                buttons.push({id, data, actions: data.get("Run Actions On Click")})
+                                buttons.push({id, data})
                                 builder.setButtonAccessory(
                                     button => {
                                         button.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
@@ -651,7 +651,7 @@ export default class ReplyToDeferredInteraction {
                         const url = data.get("burl")
                         const emoji = data.get("bemoji")
                         const disabled = data.get("bdisabled") === "True"
-                        buttons.push({id, data, actions: data.get("Run Actions On Click")})
+                        buttons.push({id, data})
                         builder.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
                         if(style === "Link") builder.setURL(url)
                         else builder.setCustomId(id)
@@ -668,7 +668,7 @@ export default class ReplyToDeferredInteraction {
                         const smax = Number(data.get("smax"))
                         const sdisabled = data.get("sdisabled") === "True"
                         const options = data.get("soptions")
-                        selectmenus.push({id, data, actions: data.get("Run Actions On Select")})
+                        selectmenus.push({id, data})
                         builder.setCustomId(id).setPlaceholder(placeholder).setDisabled(sdisabled).setRequired(srequired).setMinValues(smin).setMaxValues(smax)
                         options.forEach(({data}) => {
                             const label = data.get("label")
