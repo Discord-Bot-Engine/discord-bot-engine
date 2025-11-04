@@ -273,7 +273,7 @@ fn remove_theme(_app: tauri::AppHandle, theme:String, sha:String) {
         .path()
         .resolve("themes", BaseDirectory::AppLocalData)
         .unwrap();
-    let path = Path::new(&themes).join(sha+&theme);
+    let path = Path::new(&themes_dir).join(sha+&theme);
     tauri::async_runtime::spawn(async move {
         fs::remove_file(&path).unwrap();
     });
