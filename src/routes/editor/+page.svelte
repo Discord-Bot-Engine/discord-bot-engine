@@ -44,6 +44,9 @@
 		window.Extension = Extension;
 		window.PluginManager = PluginManager;
 	})
+	$effect(() => {
+		App.updateActivity()
+	})
 </script>
 <TopBar />
 <div class="flex flex-col w-full h-full gap-3 p-3">

@@ -64,8 +64,8 @@
        else if(ev.key === "a" && ev.ctrlKey) {
            nodes.update(nodes => nodes.map(n => ({...n, selected: true})))
        } else if(ev.key === "z" && ev.ctrlKey) {
-           if(!App.undos.length) return;
-           const state = JSON.parse(App.undos.pop())
+           if(!BotManager.selectedBot.undos.length) return;
+           const state = JSON.parse(BotManager.selectedBot.undos.pop())
            const newActions = []
            App.selectedTrigger.actions.forEach(action => {
                const data = {}
@@ -74,12 +74,12 @@
                })
                newActions.push({...action, data})
            })
-           App.redos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
+           BotManager.selectedBot.redos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
            App.selectedTrigger.actions = state.actions.map(act => Action.fromJSON(act))
            App.selectedTrigger.edges = state.edges
        } else if(ev.key === "y" && ev.ctrlKey) {
-           if(!App.redos.length) return;
-           const state = JSON.parse(App.redos.pop())
+           if(!BotManager.selectedBot.redos.length) return;
+           const state = JSON.parse(BotManager.selectedBot.redos.pop())
            const newActions = []
            App.selectedTrigger.actions.forEach(action => {
                const data = {}
@@ -88,7 +88,7 @@
                })
                newActions.push({...action, data})
            })
-           App.undos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
+           BotManager.selectedBot.undos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
            App.selectedTrigger.actions = state.actions.map(act => Action.fromJSON(act))
            App.selectedTrigger.edges = state.edges
        }  else if(ev.key === "s" && ev.ctrlKey) {

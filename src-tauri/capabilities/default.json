@@ -31,6 +31,9 @@
     "fs:allow-read-text-file",
     "fs:allow-resource-read-recursive",
     "opener:default",
-    "dialog:default"
+    "dialog:default",
+    "drpc:allow-is-running",
+    "drpc:allow-clear-activity",
+    "drpc:default"
   ]
 }

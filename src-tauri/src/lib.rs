@@ -1,5 +1,6 @@
 use std::path::{Path};
 use std::{fs, io};
+use tauri_plugin_drpc;
 use tauri::path::BaseDirectory;
 use tauri::{Emitter, Manager};
 use tauri_plugin_shell::process::{CommandChild, CommandEvent};
@@ -436,6 +437,7 @@ pub fn run() {
         ])
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_drpc::init())
         .build(tauri::generate_context!())
         .expect("error while running tauri application");
     app.run(move |app_handle, event| {

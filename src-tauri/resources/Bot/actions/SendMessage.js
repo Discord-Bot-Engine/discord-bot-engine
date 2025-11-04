@@ -414,7 +414,7 @@ export default class SendMessage {
             </div>
         </template>
     `
-    static open(trigger, handlers) {
+    static open(context, handlers) {
         handlers.onChange = (v, el) => {
             setTimeout(() => {
                 const parent = el.parentElement.parentElement

@@ -3,6 +3,7 @@ import { listen } from '@tauri-apps/api/event';
 import Bot from "$lib/classes/Bot.svelte.js";
 import Trigger from "$lib/classes/Trigger.svelte.js";
 import {Debugger} from "$lib/classes/Debugger.svelte.js";
+import {App} from "$lib/classes/App.svelte.js"
 
 class BotManagerClass {
 	selectedBot = $state(null);
@@ -55,6 +56,7 @@ class BotManagerClass {
 	selectBot(bot) {
 		bot.loadFiles()
 		this.selectedBot = bot
+		App.updateActivity(true)
 	}
 
 	loadBots() {
@@ -108,6 +110,7 @@ class BotManagerClass {
 		if(name === this.selectedBot?.name && path === this.selectedBot.path) {
 			this.selectedBot = null;
 		}
+		App.updateActivity()
 	}
 
 	saveBotSettings(botName, botPath, botToken, clientSecret, dashboardPort, presenceIntent, membersIntent, messageContentIntent) {
@@ -125,6 +128,7 @@ class BotManagerClass {
 		this.selectedBot.presenceIntent = presenceIntent
 		this.selectedBot.membersIntent = membersIntent
 		this.selectedBot.messageContentIntent = messageContentIntent
+		App.updateActivity()
 		invoke("save_bot_settings", {
 			bot_path: botPath,
 			bots_json: JSON.stringify(this.bots),

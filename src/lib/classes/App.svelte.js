@@ -1,5 +1,5 @@
-import CustomElement from "$lib/classes/CustomElement.svelte.js";
-import Action from "$lib/classes/Action.svelte.js";
+import { start, clearActivity, setActivity } from "tauri-plugin-drpc";
+import { Activity, Timestamps, Button } from "tauri-plugin-drpc/activity";
 import {BotManager} from "$lib/classes/BotManager.svelte.js";
 
 class AppClass {
@@ -9,8 +9,28 @@ class AppClass {
 	hideTriggers = $state(false);
 	hideVariables = $state(false);
 	hideConsole = $state(false);
-	undos = []
-	redos = []
+	constructor() {
+		start("1435285281652867095")
+	}
+	updateActivity(updateTimestamp) {
+		const state = new Activity()
+		if(BotManager.selectedBot) {
+			state.setDetails(`Discord Bot Engine - ${BotManager.selectedBot.name}`)
+			if(App.selectedTrigger) {
+				state.setState(`${App.selectedTrigger.name} - ${App.selectedTrigger.actions.length} actions`)
+			}
+		}
+		state.setButton(
+			[
+				new Button("Buy", "https://discordbotengine.itch.io/discord-bot-engine"),
+				new Button("Join Discord", "https://discord.gg/m3NBtzCc")
+			]
+		)
+		if(updateTimestamp) {
+			state.setTimestamps(new Timestamps(Date.now()))
+		}
+		setActivity(state)
+	}
 	updateUndo() {
 		BotManager.selectedBot.markAsModified(this.selectedTrigger.id);
 		const newActions = []
@@ -21,9 +41,9 @@ class AppClass {
 			})
 			newActions.push({...action, data})
 		})
-		this.undos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
-		this.undos = this.undos.filter((s,i) => this.undos.indexOf(s) === i);
-		this.redos = []
+		BotManager.selectedBot.undos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
+		BotManager.selectedBot.undos = BotManager.selectedBot.undos.filter((s,i) => BotManager.selectedBot.undos.indexOf(s) === i);
+		BotManager.selectedBot.redos = []
 	}
 	ref = null
 	handlersCopy = {}

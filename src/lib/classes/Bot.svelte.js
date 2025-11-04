@@ -29,7 +29,8 @@ class Bot {
 	isLoading = $state(true)
 	modifiedTriggers = []
 	removedTriggers = []
-
+	undos = []
+	redos = []
 	constructor(name, path) {
 		this.name = name;
 		this.path = path;

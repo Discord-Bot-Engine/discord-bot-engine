@@ -393,7 +393,7 @@ export default class ReplyToDeferredInteraction {
                 <dbe-select name="default" class="col-span-3" values="True,False" value="False"></dbe-select>
             </div>
         </template>    `
-    static open(trigger, handlers) {
+    static open(context, handlers) {
         handlers.onChange = (v, el) => {
             setTimeout(() => {
                 const parent = el.parentElement.parentElement
