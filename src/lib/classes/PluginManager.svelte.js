@@ -43,9 +43,9 @@ class PluginManagerClass {
 		invoke("load_bot_plugins", {bot_path: path});
 	}
 
-	async removeTheme(name, path) {
+	async removeTheme(name) {
 		const theme = this.themes.find(x => x.name === name)
-		await invoke("remove_theme", {bot_path: path, theme: name, sha: theme.sha})
+		await invoke("remove_theme", {theme: name, sha: theme.sha})
 		App.loadThemes()
 	}
 
@@ -70,10 +70,10 @@ class PluginManagerClass {
 		invoke("load_bot_plugins", {bot_path: path});
 	}
 
-	async downloadTheme(name, path) {
+	async downloadTheme(name) {
 		const theme = this.themes.find(x => x.name === name)
 		const data = await fetch(theme.url).then(res => res.text())
-		await invoke("download_theme", {bot_path: path, theme: name, sha: theme.sha, data})
+		await invoke("download_theme", {theme: name, sha: theme.sha, data})
 		App.loadThemes()
 	}
 

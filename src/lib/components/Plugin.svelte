@@ -36,7 +36,7 @@
         } else if (plugin.type === "extension") {
             PluginManager.downloadExtension(name, BotManager.selectedBot.path);
         } else if (plugin.type === "theme") {
-            PluginManager.downloadTheme(name, BotManager.selectedBot.path);
+            PluginManager.downloadTheme(name);
         }
         isDownloaded = true
         isUpToDate = true
@@ -49,7 +49,7 @@
         } else if (plugin.type === "extension") {
             PluginManager.removeExtension(name, BotManager.selectedBot.path);
         } else if (plugin.type === "theme") {
-            PluginManager.removeTheme(name, BotManager.selectedBot.path);
+            PluginManager.removeTheme(name);
         }
         isDownloaded = false
         isUpToDate = false

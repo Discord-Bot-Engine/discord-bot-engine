@@ -232,6 +232,18 @@ fn download_extension(_app: tauri::AppHandle, bot_path:String, extension:String,
 }
 
 #[tauri::command(rename_all = "snake_case")]
+fn download_theme(_app: tauri::AppHandle, theme:String, sha:String, data:String) {
+    let themes_dir = _app
+        .path()
+        .resolve("themes", BaseDirectory::AppLocalData)
+        .unwrap();
+    let path = Path::new(&themes_dir).join(sha+&theme);
+    tauri::async_runtime::spawn(async move {
+        fs::write(&path, data).unwrap();
+    });
+}
+
+#[tauri::command(rename_all = "snake_case")]
 fn remove_action(_app: tauri::AppHandle, bot_path:String, action:String, sha:String) {
     let path = Path::new(&bot_path).join("actions").join(sha+&action);
     tauri::async_runtime::spawn(async move {
@@ -250,6 +262,18 @@ fn remove_trigger(_app: tauri::AppHandle, bot_path:String, trigger:String, sha:S
 #[tauri::command(rename_all = "snake_case")]
 fn remove_extension(_app: tauri::AppHandle, bot_path:String, extension:String, sha:String) {
     let path = Path::new(&bot_path).join("extensions").join(sha+&extension);
+    tauri::async_runtime::spawn(async move {
+        fs::remove_file(&path).unwrap();
+    });
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn remove_theme(_app: tauri::AppHandle, theme:String, sha:String) {
+    let themes_dir = _app
+        .path()
+        .resolve("themes", BaseDirectory::AppLocalData)
+        .unwrap();
+    let path = Path::new(&themes).join(sha+&theme);
     tauri::async_runtime::spawn(async move {
         fs::remove_file(&path).unwrap();
     });
@@ -451,9 +475,11 @@ pub fn run() {
             download_action,
             download_trigger,
             download_extension,
+            download_theme,
             remove_action,
             remove_trigger,
             remove_extension,
+            remove_theme,
             save_bot_triggers,
             load_bot_triggers,
             save_bot_extensions,
