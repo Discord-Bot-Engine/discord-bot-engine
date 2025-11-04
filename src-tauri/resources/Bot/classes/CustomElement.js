@@ -22,7 +22,7 @@ export class CustomElement{
     static fromJSON(json) {
         const element = new CustomElement(json.id)
         Object.keys(json.data).forEach(key => {
-            if(Array.isArray(json.data[key]))
+            if(Array.isArray(json.data[key]) && json.data[key].every(el => typeof el === 'object' && !Array.isArray(el) && el !== null))
                 json.data[key] = json.data[key].map(el => CustomElement.fromJSON(el))
             element.data.set(key, json.data[key]);
         })

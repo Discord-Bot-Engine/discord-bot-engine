@@ -50,7 +50,7 @@ export class Action{
     static fromJSON(json) {
         const action = new Action(json.id, json.actionType)
         Object.keys(json.data).forEach(key => {
-            if(Array.isArray(json.data[key]))
+            if(Array.isArray(json.data[key]) && json.data[key].every(el => typeof el === 'object' && !Array.isArray(el) && el !== null))
                 json.data[key] = json.data[key].map(el => CustomElement.fromJSON(el))
             action.data.set(key, json.data[key]);
         })

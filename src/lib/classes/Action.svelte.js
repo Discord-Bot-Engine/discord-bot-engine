@@ -1,4 +1,5 @@
 import { SvelteMap } from 'svelte/reactivity';
+import CustomElement from "$lib/classes/CustomElement.svelte.js";
 
 class Action {
 	id = '';
@@ -20,6 +21,8 @@ class Action {
 		const action = new Action(json.id, json.actionType, json.position?.x, json.position?.y);
 		action.outputs = json.outputs;
 		Object.keys(json.data).forEach((key) => {
+			if(Array.isArray(json.data[key]) && json.data[key].every(el => typeof el === 'object' && !Array.isArray(el) && el !== null))
+				json.data[key] = json.data[key].map(el => CustomElement.fromJSON(el))
 			action.data.set(key, json.data[key]);
 		})
 		return action;

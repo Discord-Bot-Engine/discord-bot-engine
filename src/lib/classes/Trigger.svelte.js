@@ -1,6 +1,7 @@
 import { SvelteMap } from 'svelte/reactivity';
 import Action from "$lib/classes/Action.svelte.js";
 import {BotManager} from "$lib/classes/BotManager.svelte.js";
+import CustomElement from "$lib/classes/CustomElement.svelte.js";
 
 class Trigger {
 	id = '';
@@ -63,6 +64,8 @@ class Trigger {
 		const trigger = new Trigger(json.id, json.type, json.name);
 		trigger.edges = json.edges;
 		Object.keys(json.data).forEach((key) => {
+			if(Array.isArray(json.data[key]) && json.data[key].every(el => typeof el === 'object' && !Array.isArray(el) && el !== null))
+				json.data[key] = json.data[key].map(el => CustomElement.fromJSON(el))
 			trigger.data.set(key, json.data[key]);
 		})
 		Object.keys(json.variables ?? {}).forEach((key) => {

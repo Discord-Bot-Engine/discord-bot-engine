@@ -75,10 +75,6 @@ class AppClass {
 			let name = el.getAttribute("name");
 			if(el.tagName.toLowerCase() === "dbe-list") {
 				let elements = data.get(name)
-				if(elements?.length && !(elements[0] instanceof CustomElement)) {
-					elements = elements.map(act => CustomElement.fromJSON(act))
-					data.set(name, elements)
-				}
 				el.setItems(elements ?? [])
 			} else if (el.tagName.toLowerCase() === 'dbe-select' || el.tagName.toLowerCase() === "dbe-variable-list") {
 				el.setValue(data.get(name))
