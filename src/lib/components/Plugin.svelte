@@ -24,6 +24,8 @@
             return PluginManager.isTriggerDownloaded(name);
         } else if (plugin.type === "extension") {
             return PluginManager.isExtensionDownloaded(name);
+        } else if (plugin.type === "theme") {
+            return PluginManager.isThemeDownloaded(name);
         }
     }
     function download(name) {
@@ -33,6 +35,8 @@
             PluginManager.downloadTrigger(name, BotManager.selectedBot.path);
         } else if (plugin.type === "extension") {
             PluginManager.downloadExtension(name, BotManager.selectedBot.path);
+        } else if (plugin.type === "theme") {
+            PluginManager.downloadTheme(name, BotManager.selectedBot.path);
         }
         isDownloaded = true
         isUpToDate = true
@@ -44,6 +48,8 @@
             PluginManager.removeTrigger(name, BotManager.selectedBot.path);
         } else if (plugin.type === "extension") {
             PluginManager.removeExtension(name, BotManager.selectedBot.path);
+        } else if (plugin.type === "theme") {
+            PluginManager.removeTheme(name, BotManager.selectedBot.path);
         }
         isDownloaded = false
         isUpToDate = false

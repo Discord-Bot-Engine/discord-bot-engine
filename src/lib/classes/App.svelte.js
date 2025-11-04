@@ -14,9 +14,14 @@ class AppClass {
 	theme = $state(null)
 	constructor() {
 		start("1435285281652867095")
-		invoke("load_themes").then(res => this.themes = res)
+		this.loadThemes()
+	}
+
+	async loadThemes() {
+		this.themes = await invoke("load_themes")
 		this.theme = localStorage.getItem("theme") ?? null
 	}
+
 	updateActivity(updateTimestamp) {
 		const state = new Activity()
 		if(BotManager.selectedBot) {

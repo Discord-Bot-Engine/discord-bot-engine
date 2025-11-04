@@ -6,6 +6,7 @@
 	import {Button} from "$lib/components/ui/button/index.js";
 	import {App} from "$lib/classes/App.svelte.js"
 	import {cn} from "$lib/utils.js";
+	import {PluginManager} from "$lib/classes/PluginManager.svelte.js";
 
 	const items = [
 		{
@@ -74,7 +75,8 @@
 									{#each App.themes as theme}
 										<DropdownMenu.Item class="!text-xs" onclick={() => setTheme(theme)}><CheckIcon
 												class={cn(`mr-2 size-4 ${App.theme === theme ? "" : "opacity-0"}`)}
-										/>{theme.split("\\").join("/").split("/").at(-1)}</DropdownMenu.Item>
+										/>{@const name = theme.split("\\").join("/").split("/").at(-1)}
+											{PluginManager.isThemeDownloaded(name.slice(40)) ? name.slice(40) : name}</DropdownMenu.Item>
 									{/each}
 								</DropdownMenu.Group>
 							</DropdownMenu.Content>
