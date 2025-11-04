@@ -3,7 +3,9 @@
 	import NavBar from '$lib/components/NavBar.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { page } from '$app/state';
+	import { convertFileSrc } from '@tauri-apps/api/core';
 	let { children } = $props();
+	import {App} from "$lib/classes/App.svelte.js"
 	document.addEventListener('keydown', function (event) {
 		if (
 				event.key === 'F5' ||
@@ -29,4 +31,7 @@
 			{@render children?.()}
 		</main>
 	</Sidebar.Provider>
+{/if}
+{#if App.theme}
+	<link rel="stylesheet" href="{convertFileSrc(App.theme)}">
 {/if}

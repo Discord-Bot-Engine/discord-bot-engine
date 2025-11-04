@@ -1,6 +1,7 @@
 import { start, clearActivity, setActivity } from "tauri-plugin-drpc";
 import { Activity, Timestamps, Button } from "tauri-plugin-drpc/activity";
 import {BotManager} from "$lib/classes/BotManager.svelte.js";
+import {invoke} from "@tauri-apps/api/core";
 
 class AppClass {
 	selectedTrigger = $state(null);
@@ -9,8 +10,12 @@ class AppClass {
 	hideTriggers = $state(false);
 	hideVariables = $state(false);
 	hideConsole = $state(false);
+	themes = $state([])
+	theme = $state(null)
 	constructor() {
 		start("1435285281652867095")
+		invoke("load_themes").then(res => this.themes = res)
+		this.theme = localStorage.getItem("theme") ?? null
 	}
 	updateActivity(updateTimestamp) {
 		const state = new Activity()

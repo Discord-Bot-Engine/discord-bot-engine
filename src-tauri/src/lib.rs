@@ -1,4 +1,4 @@
-use std::path::{Path};
+use std::path::{Path, PathBuf};
 use std::{fs, io};
 use tauri_plugin_drpc;
 use tauri::path::BaseDirectory;
@@ -13,6 +13,35 @@ struct BotManager {
     bots: Mutex<HashMap<String, CommandChild>>,
 }
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+#[tauri::command]
+fn load_themes(app: tauri::AppHandle) -> Vec<String> {
+    let themes_dir = app
+        .path()
+        .resolve("themes", BaseDirectory::AppLocalData)
+        .unwrap();
+
+    if !themes_dir.exists() {
+        return vec![];
+    }
+
+    let mut theme_files = Vec::new();
+    if let Ok(entries) = fs::read_dir(&themes_dir) {
+        for entry in entries.flatten() {
+            let path: PathBuf = entry.path();
+            if path.is_file() {
+                if let Some(ext) = path.extension() {
+                    if ext == "css" {
+                        if let Some(path_str) = path.to_str() {
+                            theme_files.push(path_str.to_string());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    theme_files
+}
+
 #[tauri::command(rename_all = "snake_case")]
 fn debug_action(
     _app: tauri::AppHandle,
@@ -409,6 +438,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            load_themes,
             debug_action,
             mark_break_point,
             remove_break_point,
