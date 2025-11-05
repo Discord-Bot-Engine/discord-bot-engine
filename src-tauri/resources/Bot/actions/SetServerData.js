@@ -15,7 +15,7 @@ export default class SetServerData {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Value"></dbe-label>
-            <dbe-input name="value" class="col-span-3"></dbe-input>
+            <dbe-variable-list name="value" class="col-span-3" variableType="Any"></dbe-variable-list>
         </div>
     `
     static load(context) {
