@@ -20,6 +20,30 @@
     webview.emit("load")
     let bot = $derived(BotManager.bots.find(bot => bot.path === page.url.searchParams.get("path")));
     let triggers = $derived([...loaded, ...(bot?.triggers ?? [])].filter((t) => t.showInDebugger))
+    function sortActions(trigger) {
+        const { edges, actions } = trigger
+        const start = actions[0]
+        const queue = [start]
+        const result = [start]
+        const visited = new Set([start.id])
+
+        while (queue.length) {
+            const act = queue.shift()
+            const connections = edges.filter(e => e.source === act.id)
+
+            connections.forEach(connection => {
+                const node = actions.find(a => a.id === connection.target)
+                if (node && !visited.has(node.id)) {
+                    visited.add(node.id)
+                    queue.push(node)
+                    result.push(node)
+                }
+            })
+        }
+
+        return result
+    }
+
 </script>
 <ScrollArea class="h-full">
     <div class="w-full h-full flex flex-col gap-1">
@@ -37,8 +61,8 @@
                     {/if}
                 </div>
                 <Collapsible.Content>
-                    {#each trigger.actions.filter(act => act.actionType && act.type !== "group") as act, i}
-                        {@render action(trigger, act, i + 1)}
+                    {#each sortActions(trigger).filter(act => act.actionType && act.type !== "group") as act, i}
+                        {@render action(trigger, act, trigger.actions.filter(act => act.actionType && act.type !== "group").findIndex(a => a.id === act.id) + 1)}
                     {/each}
                 </Collapsible.Content>
             </Collapsible.Root>

@@ -232,12 +232,19 @@ fn download_extension(_app: tauri::AppHandle, bot_path:String, extension:String,
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn download_theme(_app: tauri::AppHandle, theme:String, sha:String, data:String) {
+fn download_theme(_app: tauri::AppHandle, theme: String, sha: String, data: String) {
     let themes_dir = _app
         .path()
         .resolve("themes", BaseDirectory::AppLocalData)
         .unwrap();
+
+    if let Err(e) = fs::create_dir_all(&themes_dir) {
+        eprintln!("Failed to create themes directory: {}", e);
+        return;
+    }
+
     let path = Path::new(&themes_dir).join(sha+&theme);
+
     tauri::async_runtime::spawn(async move {
         fs::write(&path, data).unwrap();
     });
