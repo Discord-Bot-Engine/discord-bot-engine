@@ -16,8 +16,8 @@ export default class SetData {
     `
     static load(context) {
     }
-    static async run({id, data, actionManager}) {
-        Bot.setData(data.get("field"), data.get("value"))
+    static async run({id, data, actionManager, getVariable}) {
+        Bot.setData(data.get("field"), getVariable( data.get("value")))
         actionManager.runNext(id, "action")
     }
 }
