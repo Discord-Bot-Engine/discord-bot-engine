@@ -1,8 +1,5 @@
 export default class StoreList {
     static type = "Store List"
-    static title(data) {
-        return `Store list in "${data.get("value")}"`
-    }
     static variableTypes = ["List"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
