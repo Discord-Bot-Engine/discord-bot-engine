@@ -15,7 +15,7 @@ export default class AddElementToList {
     }
     static async run({id, data, actionManager, getVariable}) {
         const list = getVariable(data.get("list"))
-        list.push(data.get("value"))
+        list.push(getVariable(data.get("value")))
         actionManager.runNext(id, "action")
     }
 }

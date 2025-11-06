@@ -2,7 +2,7 @@
 <script>
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     let {triggerType, ...other} = $props()
-    let types = triggerType.split(",").map(el => el.toLowerCase())
+    let types = $state(triggerType.split(",").map(el => el.toLowerCase()))
     let triggers = $derived(BotManager.selectedBot.triggers)
     let ref
     $host().setTriggerType = (newType) => {
