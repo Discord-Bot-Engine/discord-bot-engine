@@ -190,7 +190,7 @@ export default class ReplyToDeferredInteraction {
              <div id="comps" class="grid gap-4">
                 <div class="grid grid-cols-4 items-center gap-4">
                     <dbe-label name="Accent color"></dbe-label>
-                    <dbe-color name="ccolor" class="col-span-3"></dbe-color>
+                    <dbe-color name="ccolor" class="col-span-3" value="#000000"></dbe-color>
                 </div>
                 <dbe-list name="components" title="Components" modalId="nestedComponentsModal" itemTitle="(item, i) => (item.data.get('type') ?? 'Component')+' #'+i"></dbe-list>             
             </div>
