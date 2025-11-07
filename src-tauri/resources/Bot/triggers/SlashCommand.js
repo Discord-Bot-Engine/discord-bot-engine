@@ -5,7 +5,7 @@ export default class SlashCommand {
     static type = "Slash Command"
     static variableTypes = ["Command Interaction", "User", "Member", "Server", "Attachment", "Boolean", "Channel", "Mentionable", "Number", "Role", "Text", "User"]
     static event = Events.InteractionCreate
-    static runIf = ({actionManager}, interaction) => interaction.commandName === actionManager.trigger.name && interaction.isChatInputCommand()
+    static runIf = ({actionManager}, interaction) => interaction.commandName === actionManager.trigger.name.toLowerCase().replace(/\s/g, "-") && interaction.isChatInputCommand()
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Description"></dbe-label>
