@@ -11,12 +11,19 @@ export default class StoreCalculation {
             <dbe-variable-list name="value" class="col-span-3" variableType="Number"></dbe-variable-list>
         </div>
     `
-    static load(context) {
-    }
+    static load(context) {}
     static async run({id, data, actionManager, setVariable}) {
         setVariable(data.get("value"), calculateText(data.get("calc")));
-        actionManager.runNext(id, "action")
+        actionManager.runNext(id, "action");
+
         function calculateText(input) {
+            const constants = {
+                pi: Math.PI,
+                e: Math.E,
+                epsilon: Number.EPSILON,
+                tau: 2 * Math.PI
+            };
+
             const functions = {
                 sin: Math.sin,
                 cos: Math.cos,
@@ -65,6 +72,8 @@ export default class StoreCalculation {
             tokens.forEach(token => {
                 if (!isNaN(token)) {
                     outputQueue.push(parseFloat(token));
+                } else if (token in constants) {
+                    outputQueue.push(constants[token]);
                 } else if (token in functions) {
                     operatorStack.push(token);
                 } else if ('+-*/^'.includes(token)) {
