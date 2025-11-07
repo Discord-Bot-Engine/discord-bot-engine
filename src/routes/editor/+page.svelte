@@ -29,7 +29,7 @@
 	import {SvelteFlowProvider} from "@xyflow/svelte";
 	import {Button} from "$lib/components/ui/button/index.js";
 	if(!BotManager.selectedBot) {
-		alert("Please select a bot!")
+		alert("Please select a project!")
 		goto("/");
 	}
 	onMount(() => {

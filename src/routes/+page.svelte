@@ -15,7 +15,7 @@
 	let botPath = $state("")
 	async function createBot() {
 		if(!botName.trim() || !botPath.trim()) return;
-		if(BotManager.bots.find(b => b.name === botName.trim() || b.path === botPath.trim())) return alert("Bot already exists!");
+		if(BotManager.bots.find(b => b.name === botName.trim() || b.path === botPath.trim())) return alert("Project already exists!");
 		isCreating = false
 		isLoading = true;
 		await BotManager.createBot(botName, botPath)
@@ -31,12 +31,12 @@
 	}
 </script>
 <Dialog.Root bind:open={isCreating}>
-	<Dialog.Trigger class="absolute top-3 right-3 z-10 {buttonVariants()}"
+	<Dialog.Trigger title="Create Project" class="absolute top-3 right-3 z-10 {buttonVariants()}"
 	><PlusIcon/></Dialog.Trigger
 	>
 	<Dialog.Content class="sm:max-w-[425px] px-4.5" >
 		<Dialog.Header>
-			<Dialog.Title>Create Bot</Dialog.Title>
+			<Dialog.Title>Create Project</Dialog.Title>
 		</Dialog.Header>
 		<div class="grid gap-4 py-4">
 			<div class="grid grid-cols-4 items-center gap-4">

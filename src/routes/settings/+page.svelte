@@ -9,7 +9,7 @@
 	import {BotManager} from "$lib/classes/BotManager.svelte.js";
 	import {goto} from "$app/navigation";
 	if(!BotManager.selectedBot) {
-		alert("Please select a bot!")
+		alert("Please select a project!")
 		goto("/");
 	}
 	let botName = $state(BotManager.selectedBot?.name ?? "")

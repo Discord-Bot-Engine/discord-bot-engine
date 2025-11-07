@@ -6,7 +6,7 @@
 	import {Input} from "$lib/components/ui/input/index.js";
 	import {goto} from "$app/navigation";
 	if(!BotManager.selectedBot) {
-		alert("Please select a bot!")
+		alert("Please select a project!")
 		goto("/");
 	}
 	let name = $state("")

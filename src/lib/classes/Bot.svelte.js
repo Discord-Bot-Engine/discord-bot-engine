@@ -50,7 +50,7 @@ class Bot {
 		this.membersIntent = data.membersIntent;
 		this.messageContentIntent = data.messageContentIntent;
 		this.isRunning = await invoke("is_bot_running", {bot_path: this.path});
-		invoke("load_bot_plugins", {bot_path: this.path});
+		await invoke("load_bot_plugins", {bot_path: this.path});
 	}
 
 	markAsModified(triggerId) {
