@@ -45,7 +45,7 @@
 				<Sidebar.Menu>
 					{#each items as item, i (i)}
 						<Sidebar.MenuItem>
-							<Sidebar.MenuButton class={page.url.pathname === item.url ? "!bg-primary" : ""}>
+							<Sidebar.MenuButton class={page.url.pathname === item.url ? "!bg-primary !text-primary-foreground" : ""}>
 								{#snippet child({ props })}
 									<a
 										title={item.title}

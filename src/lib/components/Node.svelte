@@ -9,7 +9,7 @@
 </script>
 
 <div class="bg-muted rounded-lg text-xs pb-1 min-w-20">
-        <label class="p-3 py-1 rounded-t-lg block w-full text-center {selected ? 'bg-primary' : 'bg-secondary'}" ondblclick={() => {
+        <label class="p-3 py-1 rounded-t-lg block w-full text-center {selected ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}" ondblclick={() => {
             if(actionType) App.openAction()
         }}>{actionType ? `${App.selectedTrigger.actions.filter(act => act.type === "action").findIndex(act => act.id === id)}. ${actionType}` : "root"}
             {#if !BotManager.selectedBot.actionClasses.find(a => a.type === actionType) && actionType}
