@@ -10,6 +10,10 @@ export default class ReplyToDeferredInteraction {
             <dbe-label name="Interaction"></dbe-label>
             <dbe-variable-list name="origin" class="col-span-3" variableType="Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
         </div>
+          <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Store message in variable"></dbe-label>
+            <dbe-variable-list name="message" class="col-span-3" variableType="Message"></dbe-variable-list>
+        </div>
          <dbe-list name="files" title="Files" modalId="filesModal" itemTitle="(item, i) => (item.data.get('name') ?? 'File')+' #'+i"></dbe-list>
          <dbe-list name="components" title="Components" modalId="componentsModal" itemTitle="(item, i) => (item.data.get('type') ?? 'Component')+' #'+i"></dbe-list>
         <template id="filesModal">
@@ -702,6 +706,7 @@ export default class ReplyToDeferredInteraction {
             files: attachments,
             flags,
         })
+        setVariable(data.get("message"), r)
         const btncollector = r.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
         const menucollector = r.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
         btncollector.on('collect', (i) => {
