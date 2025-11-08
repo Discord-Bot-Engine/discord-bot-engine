@@ -73,6 +73,7 @@
         } catch (e) {
             alert(`${triggerClass.type}\n${e.stack}`)
         }
+        App.initUI(ref)
     }, 10)
 }} allowMoving={false} {html} items={triggers ?? []} itemTitle={(item) => item.name} onadd={() => isCreatingTrigger = true} ondelete={() => {
     BotManager.selectedBot.triggers = BotManager.selectedBot.triggers.filter(el => el !== App.selectedTrigger)

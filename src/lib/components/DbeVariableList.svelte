@@ -31,7 +31,6 @@
         }
     }
     $host().setVariableType = (newType) => {
-        console.log(newType)
         types = [newType].flat().map(el => el.toLowerCase());
     }
     $host().setValue = (value) => {

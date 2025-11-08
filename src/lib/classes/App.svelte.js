@@ -74,6 +74,7 @@ class AppClass {
 			} catch (e) {
 				alert(`${this.selectedAction.actionType}\n${e.stack}`)
 			}
+			this.initUI(this.ref)
 		}, 10)
 	}
 	saveUIData(ref, data) {
@@ -127,7 +128,7 @@ class AppClass {
 	initUI(ref) {
 		const marked = ref.querySelectorAll("*[name]")
 		marked.forEach(el => {
-			el?.init()
+			el.init?.()
 		})
 	}
 }

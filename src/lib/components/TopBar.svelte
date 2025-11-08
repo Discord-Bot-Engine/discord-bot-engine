@@ -77,6 +77,7 @@
                                 } catch (e) {
                                     alert(`${extension.type}\n${e.stack}`)
                                 }
+                                App.initUI(ref)
                             }, 10)
                         }
                     }
