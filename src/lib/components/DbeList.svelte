@@ -33,6 +33,7 @@
         clearInterval(interval);
         const data = selected.data
         App.loadUIData(ref, data)
+        App.initUI(ref)
     }, 10)
 }} {items} itemTitle={(item, i) => itemTitle(item, i + 1)} onadd={() => items.push(new CustomElement(uuidv4()))} ondelete={() => {
     items.splice(items.indexOf(selected), 1);

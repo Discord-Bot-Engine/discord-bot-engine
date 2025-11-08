@@ -45,6 +45,9 @@
     }
 
 </script>
+{#if triggers.length === 0}
+    <h1 class="p-3">No triggers running.</h1>
+{/if}
 <ScrollArea class="h-full">
     <div class="w-full h-full flex flex-col gap-1">
         {#each triggers.filter((t,i) => triggers.findIndex(x => t.id === x.id) === i) as trigger}

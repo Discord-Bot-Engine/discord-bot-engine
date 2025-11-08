@@ -49,11 +49,11 @@
         }
    }
    function bindings(ev) {
-       if(document.activeElement?.value !== undefined || getSelection().toString() || !App.selectedTrigger) return;
+       if(document.activeElement?.value !== undefined || getSelection().toString()) return;
        ev.preventDefault();
-       if(ev.key === "c" && ev.ctrlKey) copy()
-       else if(ev.key === "v" && ev.ctrlKey) paste()
-       else if(ev.key === "d" && ev.ctrlKey) {
+       if(ev.key === "c" && ev.ctrlKey && App.selectedTrigger) copy()
+       else if(ev.key === "v" && ev.ctrlKey && App.selectedTrigger) paste()
+       else if(ev.key === "d" && ev.ctrlKey && App.selectedTrigger) {
            const actions = localStorage.getItem("copiedActions");
            const edges = localStorage.getItem("copiedEdges");
            copy()
@@ -61,9 +61,9 @@
            localStorage.setItem("copiedActions", actions)
            localStorage.setItem("copiedEdges", edges)
        }
-       else if(ev.key === "a" && ev.ctrlKey) {
+       else if(ev.key === "a" && ev.ctrlKey && App.selectedTrigger) {
            nodes.update(nodes => nodes.map(n => ({...n, selected: true})))
-       } else if(ev.key === "z" && ev.ctrlKey) {
+       } else if(ev.key === "z" && ev.ctrlKey && App.selectedTrigger) {
            if(!BotManager.selectedBot.undos.length) return;
            const state = JSON.parse(BotManager.selectedBot.undos.pop())
            const newActions = []
@@ -77,7 +77,7 @@
            BotManager.selectedBot.redos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
            App.selectedTrigger.actions = state.actions.map(act => Action.fromJSON(act))
            App.selectedTrigger.edges = state.edges
-       } else if(ev.key === "y" && ev.ctrlKey) {
+       } else if(ev.key === "y" && ev.ctrlKey && App.selectedTrigger) {
            if(!BotManager.selectedBot.redos.length) return;
            const state = JSON.parse(BotManager.selectedBot.redos.pop())
            const newActions = []
@@ -93,6 +93,8 @@
            App.selectedTrigger.edges = state.edges
        }  else if(ev.key === "s" && ev.ctrlKey) {
            BotManager.saveBotData()
+       } else if(ev.key === "=" && ev.ctrlKey && App.selectedTrigger) {
+           isCreatingAction = true;
        }
    }
    function copy() {
