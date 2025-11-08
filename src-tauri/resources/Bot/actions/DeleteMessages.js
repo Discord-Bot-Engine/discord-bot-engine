@@ -53,7 +53,6 @@ export default class DeleteMessages {
 
         let i = 0;
         let lastMessage = list.at(-1);
-        let fetchCount = 0;
 
         iterate()
 
@@ -66,14 +65,13 @@ export default class DeleteMessages {
             }
 
             if (i >= list.length) {
-                if (!lastMessage || fetchCount >= 5) {
+                if (!lastMessage) {
                     await channel.bulkDelete(filtered)
                     restoreHandlers()
                     actionManager.runNext(id, "action");
                     return;
                 }
 
-                fetchCount++;
                 const more = await channel.messages.fetch({ limit: 100, before: lastMessage.id });
                 if (more.size === 0) {
                     await channel.bulkDelete(filtered)
