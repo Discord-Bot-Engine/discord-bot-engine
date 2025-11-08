@@ -4,18 +4,13 @@
 
     let { change = "() => {}", value, ...others} = $props()
     let state = $state(value)
-    change = eval(`(${change})`)
-    let interval = setInterval(() => {
-        let value = $host().children[0].children[0].value
-        if(value !== undefined) {
-            state = value
-            change(value, $host())
-        }
-        clearInterval(interval)
-    },10)
+    $host().init = () => {
+        change = eval(`(${change})`)
+        change(statevalue, $host())
+    }
     let ref;
 </script>
 <div class="relative">
-    <Input value={state} style="background-color: {state}" oninput={(ev) => {state = ev.target.value; change(ev.target.value, $host())}} ondblclick={() => ref.click()} {...others} />
-    <input type="color" value={state} bind:this={ref} oninput={(ev) => {state = ev.target.value; change(ev.target.value, $host())}} class="opacity-0 z-[-1] absolute top-0 left-0" />
+    <Input bind:value={state} style="background-color: {state}" oninput={(ev) => {state = ev.target.value; change(ev.target.value, $host())}} ondblclick={() => ref.click()} {...others} />
+    <input type="color" bind:value={state} bind:this={ref} oninput={(ev) => {state = ev.target.value; change(ev.target.value, $host())}} class="opacity-0 z-[-1] absolute top-0 left-0" />
 </div>

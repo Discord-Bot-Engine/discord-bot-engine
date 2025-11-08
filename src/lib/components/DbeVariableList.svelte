@@ -10,7 +10,6 @@
     let types = $state(variableType.split(",").map(el => el.toLowerCase()))
     let variables = $derived(App.selectedTrigger.variables)
     let statevalues = $derived(variables.keys().toArray().sort().filter(v => types.includes(variables.get(v).toLowerCase()) || types.includes("any")))
-    change = eval(`(${change})`)
     let statevalue = $state(undefined)
     let newVariableName = $state()
     let newVariableType = $state("None")
@@ -40,9 +39,10 @@
         statevalue = value
     }
     $host().getValue = () => statevalue
-    setTimeout(() => {
+    $host().init = () => {
+        change = eval(`(${change})`)
         change(statevalue, $host())
-    }, 50)
+    }
 </script>
 <SearchSelect extra={
 {

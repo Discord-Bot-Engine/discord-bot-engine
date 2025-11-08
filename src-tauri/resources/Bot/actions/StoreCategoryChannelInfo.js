@@ -16,7 +16,7 @@ export default class StoreCategoryChannelInfo {
                 values="Name,Position,Is Deletable,Is Manageable,Is Viewable,Server,Children">
             </dbe-select>
         </div>
-        <div class="grid-cols-4 items-center gap-4">
+        <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store value in variable"></dbe-label>
             <dbe-variable-list name="value" id="var" class="col-span-3" variableType="Server,Text,Boolean,Number,List"></dbe-variable-list>
         </div>

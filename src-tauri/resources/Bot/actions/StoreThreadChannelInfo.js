@@ -16,7 +16,7 @@ export default class StoreThreadChannelInfo {
                 values="Name,Topic,Is NSFW,Created At,Archived,Auto Archive Duration,Is Locked,Is Manageable,Is Viewable,Server,Parent,Members,Member Count,Messages">
             </dbe-select>
         </div>
-        <div class="grid-cols-4 items-center gap-4">
+        <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store value in variable"></dbe-label>
             <dbe-variable-list name="value" id="var" class="col-span-3" variableType="Server,Text,Boolean,Number,Date,List"></dbe-variable-list>
         </div>

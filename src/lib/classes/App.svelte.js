@@ -123,6 +123,13 @@ class AppClass {
 			}
 		})
 	}
+
+	initUI(ref) {
+		const marked = ref.querySelectorAll("*[name]")
+		marked.forEach(el => {
+			el?.init()
+		})
+	}
 }
 
 export const App = new AppClass();

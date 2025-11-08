@@ -10,7 +10,6 @@ export default class StoreTextChannelInfo {
             <dbe-label name="Channel"></dbe-label>
             <dbe-variable-list name="channel" class="col-span-3" variableType="Channel"></dbe-variable-list>
         </div>
-
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
             <dbe-select 
@@ -20,8 +19,7 @@ export default class StoreTextChannelInfo {
                 values="Name,Topic,Is NSFW,Created At,Slowmode,Category,Parent,Is Thread,Server,Position,Is Deletable,Is Manageable,Is Viewable,Permissions,Recipients,Messages">
             </dbe-select>
         </div>
-
-        <div class="grid-cols-4 items-center gap-4">
+        <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store value in variable"></dbe-label>
             <dbe-variable-list 
                 name="value" 

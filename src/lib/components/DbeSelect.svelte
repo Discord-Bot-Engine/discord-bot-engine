@@ -3,7 +3,6 @@
     import SearchSelect from "$lib/components/SearchSelect.svelte";
     import {onMount} from "svelte";
     let {change = "() => {}", labels="", value, values, ...other} = $props()
-    change = eval(`(${change})`)
     values = values ?? []
     labels = labels.split(",").map(el => el.trim()).filter(el => el)
     let statelabels = $state(labels)
@@ -28,8 +27,9 @@
         change(value, $host())
     }
     $host().getValue = () => statevalue
-    onMount(() => {
+    $host().init = () => {
+        change = eval(`(${change})`)
         change(statevalue, $host())
-    })
+    }
 </script>
 <SearchSelect {...other} values={customSort(statevalues.filter(el => el.trim())).map((el,i)=>({label: statelabels[i] ?? el, value:el}))} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
