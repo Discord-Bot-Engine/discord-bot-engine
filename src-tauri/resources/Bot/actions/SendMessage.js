@@ -416,34 +416,33 @@ export default class SendMessage {
     `
     static open(context, handlers) {
         handlers.onChange = (v, el) => {
-            setTimeout(() => {
-                const parent = el.parentElement.parentElement
-                parent.querySelector('#text').style.display = "none"
-                parent.querySelector('#section').style.display = "none"
-                parent.querySelector('#thumbnail').style.display = "none"
-                parent.querySelector('#mediagallery').style.display = "none"
-                parent.querySelector('#file').style.display = "none"
-                parent.querySelector('#separator').style.display = "none"
-                parent.querySelector('#button').style.display = "none"
-                parent.querySelector('#selectmenu').style.display = "none"
-                if(parent.querySelector('#comps')) parent.querySelector('#comps').style.display = "none"
-                if(v === "Text")
-                    parent.querySelector('#text').style.display = ""
-                else if(v === "Section")
-                    parent.querySelector('#section').style.display = ""
-                else if(v === "Media Gallery")
-                    parent.querySelector('#mediagallery').style.display = ""
-                else if(v === "File")
-                    parent.querySelector('#file').style.display = ""
-                else if(v === "Separator")
-                    parent.querySelector('#separator').style.display = ""
-                else if(v === "Button")
-                    parent.querySelector('#button').style.display = ""
-                else if(v === "Select Menu")
-                    parent.querySelector('#selectmenu').style.display = ""
-                else if(v === "Container")
-                    parent.querySelector('#comps').style.display = ""
-            },10)
+            const parent = el.parentElement.parentElement
+            parent.querySelector('#text').style.display = "none"
+            parent.querySelector('#section').style.display = "none"
+            parent.querySelector('#thumbnail').style.display = "none"
+            parent.querySelector('#mediagallery').style.display = "none"
+            parent.querySelector('#file').style.display = "none"
+            parent.querySelector('#separator').style.display = "none"
+            parent.querySelector('#button').style.display = "none"
+            parent.querySelector('#selectmenu').style.display = "none"
+            if(parent.querySelector('#comps'))
+                parent.querySelector('#comps').style.display = "none"
+            if(v === "Text")
+                parent.querySelector('#text').style.display = ""
+            else if(v === "Section")
+                parent.querySelector('#section').style.display = ""
+            else if(v === "Media Gallery")
+                parent.querySelector('#mediagallery').style.display = ""
+            else if(v === "File")
+                parent.querySelector('#file').style.display = ""
+            else if(v === "Separator")
+                parent.querySelector('#separator').style.display = ""
+            else if(v === "Button")
+                parent.querySelector('#button').style.display = ""
+            else if(v === "Select Menu")
+                parent.querySelector('#selectmenu').style.display = ""
+            else if(v === "Container")
+                parent.querySelector('#comps').style.display = ""
         }
         handlers.onStyleChange = (value, el) => {
             el.parentElement.parentElement.querySelector('#url').style.display = (value === 'Link' ? '' : 'none');
