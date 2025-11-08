@@ -101,7 +101,6 @@ class BotManagerClass {
 		this.bots.push(bot)
 		if(this.bots.length === 1) this.selectBot(bot)
 		await invoke("save_bots", {json:JSON.stringify(this.bots)})
-		alert("Project created successfully!")
 	}
 
 	async deleteBot(name, path) {
