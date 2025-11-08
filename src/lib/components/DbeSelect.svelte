@@ -5,6 +5,7 @@
     let {change = "() => {}", labels="", value, values, ...other} = $props()
     values = values ?? []
     labels = labels.split(",").map(el => el.trim()).filter(el => el)
+    let init = false
     let statelabels = $state(labels)
     let statevalues = $state(values.split(","))
     let statevalue = $state(value)
@@ -24,10 +25,11 @@
     $host().setValue = (value) => {
         if(value === undefined) return;
         statevalue = value
-        change(value, $host())
+        if(init) change(value, $host())
     }
     $host().getValue = () => statevalue
     $host().init = () => {
+        init = true
         change = eval(`(${change})`)
         change(statevalue, $host())
     }

@@ -5,18 +5,20 @@
     import {onMount} from "svelte";
     let { change = "() => {}", multiline=false, value, ...others} = $props()
     let state = $state(value)
+    let init = false;
     if(!Object.getOwnPropertyDescriptor($host(), "value")) Object.defineProperty($host(), "value", {
         set(x) {
             state = x;
-            change(x, $host())
+            if(init) change(x, $host())
         },
         get() {
             return state
         }
     })
     $host().init = () => {
+        init = true;
         change = eval(`(${change})`)
-        change(statevalue, $host())
+        change(state, $host())
     }
 </script>
 {#if multiline}
