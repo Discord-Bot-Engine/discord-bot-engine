@@ -5,6 +5,7 @@
 	import Plugin from "$lib/components/Plugin.svelte";
 	import {Input} from "$lib/components/ui/input/index.js";
 	import {goto} from "$app/navigation";
+	import {App} from "$lib/classes/App.svelte.js"
 	if(!BotManager.selectedBot) {
 		alert("Please select a project!")
 		goto("/");
@@ -29,6 +30,10 @@
 			const extensions = BotManager.selectedBot.extensionClasses
 			const extension = extensions.find(ext => ext.file.slice(40) === plugin.name)
 			return PluginManager.isExtensionUpToDate(extension?.file);
+		} else if (plugin.type === "theme") {
+			const themes = App.themes
+			const theme = themes.find(theme => theme.split("\\").join("/").split("/").at(-1).slice(40) === plugin.name).split("\\").join("/").split("/").at(-1)
+			return PluginManager.isThemeUpToDate(theme);
 		}
 	}
 </script>

@@ -119,7 +119,7 @@ class PluginManagerClass {
 	}
 
 	isThemeDownloaded(name) {
-		return App.themes.find(x => x.slice(40) === name)
+		return App.themes.find(x => x.split("\\").join("/").split("/").at(-1).slice(40) === name)
 	}
 
 	convertJSONResponseToPlugin(json, type) {
