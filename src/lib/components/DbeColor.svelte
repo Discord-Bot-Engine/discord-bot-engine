@@ -6,7 +6,7 @@
     let state = $state(value)
     $host().init = () => {
         change = eval(`(${change})`)
-        change(statevalue, $host())
+        change(state, $host())
     }
     let ref;
 </script>
