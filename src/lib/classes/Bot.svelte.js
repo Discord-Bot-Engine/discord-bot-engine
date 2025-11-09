@@ -51,6 +51,7 @@ class Bot {
 		this.messageContentIntent = data.messageContentIntent;
 		this.isRunning = await invoke("is_bot_running", {bot_path: this.path});
 		await invoke("load_bot_plugins", {bot_path: this.path});
+		App.selectedTrigger = this.triggers.find(t => t.id === App.selectedTrigger?.id)
 	}
 
 	markAsModified(triggerId) {
