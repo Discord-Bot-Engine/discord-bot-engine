@@ -23,12 +23,13 @@
     let open = $state(false)
     const { getViewport } = useSvelteFlow();
     const nodes = useNodes();
+    let pos = {x: 0, y: 0}
     function addAction() {
         App.updateUndo()
         if(actionType.toLowerCase() === "none") return;
         const id = uuidv4()
         const viewport = getViewport()
-        const act = new Action(id, actionType, -viewport.x, -viewport.y)
+        const act = new Action(id, actionType, -viewport.x + pos.x, -viewport.y + pos.y)
         App.selectedTrigger.actions = [...App.selectedTrigger.actions, act]
         isCreatingAction = false;
     }
@@ -93,8 +94,6 @@
            App.selectedTrigger.edges = state.edges
        }  else if(ev.key === "s" && ev.ctrlKey) {
            BotManager.saveBotData()
-       } else if(ev.key === "=" && ev.ctrlKey && App.selectedTrigger) {
-           isCreatingAction = true;
        }
    }
    function copy() {
@@ -144,18 +143,23 @@
        App.selectedTrigger.actions = App.selectedTrigger.actions.filter(act => !act.actionType || !list.find(n => n.id === act.id))
        App.selectedTrigger.edges = App.selectedTrigger.edges.filter(edge => App.selectedTrigger.actions.find(n => n.id === edge.source) && App.selectedTrigger.actions.find(n => n.id === edge.target))
    }
+   let ref
 </script>
 <svelte:window onkeydown={bindings}></svelte:window>
 <Card.Root class="w-full h-full min-h-40 p-1 px-0 pb-0 relative">
     <Card.Content class="p-1 px-0.5 pb-0 h-full overflow-hidden">
         <div class="flex h-fit -mr-1.5 mb-1 px-1.5">
             <label class="mr-auto text-md overflow-hidden text-ellipsis">Actions</label>
-            <Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => isCreatingAction = true}><PlusIcon /></Button>
+            <Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => {isCreatingAction = true; pos = {x: 0, y: 0}}}><PlusIcon /></Button>
             <Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => deleteActions()}
     ><MinusIcon /></Button>
         </div>
             {#if App.selectedTrigger}
-                <SvelteFlow onnodedragstart={() => App.updateUndo()} onconnectstart={() => App.updateUndo()} proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
+                <SvelteFlow bind:this={ref} ondblclick={(ev) => {
+                    if(!ev.ctrlKey) return;
+                    isCreatingAction = true;
+                    pos = {x: ev.pageX - 300, y: ev.pageY - 100}
+                }} onnodedragstart={() => App.updateUndo()} onconnectstart={() => App.updateUndo()} proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
                     <Background bgColor="transparent"></Background>
                 </SvelteFlow>
             {/if}
