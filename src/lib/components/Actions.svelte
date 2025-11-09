@@ -156,7 +156,7 @@
         </div>
             {#if App.selectedTrigger}
                 <SvelteFlow onnodedragstart={() => App.updateUndo()} onconnectstart={() => App.updateUndo()} proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
-                    <Background bgColor="oklch(0.27 0.03 259.08)"></Background>
+                    <Background bgColor="transparent"></Background>
                 </SvelteFlow>
             {/if}
     </Card.Content>
