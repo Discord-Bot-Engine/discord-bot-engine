@@ -162,7 +162,7 @@
     </Card.Content>
 </Card.Root>
 <Modal bind:open={isCreatingAction} title="Add Action" onDone={() => addAction()}>
-        <div class="grid gap-4 py-4">
+        <div class="grid gap-4 py-4 px-1">
            <div class="grid grid-cols-4 items-center gap-4">
                <Label for="type" class="text-right">Type</Label>
                <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, {label:"Group", value:"group"}, ...(BotManager.selectedBot?.actionClasses ?? []).map(el => el.type).sort().map(el => ({label: el, value: el}))]} bind:value={actionType} class="col-span-3 w-full {actionType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
@@ -170,7 +170,7 @@
         </div>
 </Modal>
 <Modal bind:open={App.isEditingAction} title="{App.selectedTrigger?.actions?.filter(act => act.type !== 'group').findIndex(act => act.id === App.selectedAction?.id)}. {App.selectedAction?.actionType}" onDone={() => editAction()}>
-        <div class="grid gap-4 py-4" bind:this={App.ref}>
+        <div class="grid gap-4 py-4 px-1" bind:this={App.ref}>
             {@html BotManager.selectedBot.actionClasses.find(t => t.type === App.selectedAction.actionType)?.html ?? ""}
         </div>
 </Modal>

@@ -39,7 +39,7 @@
     items.splice(items.indexOf(selected), 1);
 }} bind:selected></List>
 <Modal bind:open title={itemTitle(selected, items.indexOf(selected) + 1)} onDone={editItem}>
-    <div class="grid gap-4 py-4" bind:this={ref}>
+    <div class="grid gap-4 py-4 px-1" bind:this={ref}>
         {@html html}
     </div>
 </Modal>

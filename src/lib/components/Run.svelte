@@ -6,7 +6,7 @@
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     import {App} from "$lib/classes/App.svelte.js";
 </script>
-<div class="flex flex-col bg-card rounded-xl">
+<div class="flex flex-col bg-card rounded-xl shadow-sm">
     <Button variant="ghost" class="w-full rounded-xl rounded-b-none border-1 h-fit !p-0" onclick={() => App.hideConsole = !App.hideConsole}>
         {#if !App.hideConsole}
             <ChevronDownIcon/>
@@ -15,7 +15,7 @@
         {/if}
     </Button>
     {#if !App.hideConsole}
-<Card.Root class="!rounded-t-none border-t-0 w-full h-full min-h-50 p-1 relative">
+<Card.Root class="!rounded-t-none border-t-0 w-full h-full min-h-50 p-1 relative shadow-none">
     <Card.Content class="p-1 px-1 overflow-hidden h-full">
         <div class="flex justify-end h-fit">
             <label class="mr-auto text-md">Console</label>

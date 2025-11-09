@@ -106,20 +106,20 @@ class PluginManagerClass {
 	}
 
 	isActionDownloaded(name) {
-		return BotManager.selectedBot.actionClasses.find(x => x.file.slice(40) === name)
+		return BotManager.selectedBot.actionClasses.find(x => x.file.slice(40) === name && x.file.slice(40))
 	}
 
 	isTriggerDownloaded(name) {
-		return BotManager.selectedBot.triggerClasses.find(x => x.file.slice(40) === name)
+		return BotManager.selectedBot.triggerClasses.find(x => x.file.slice(40) === name && x.file.slice(40))
 
 	}
 
 	isExtensionDownloaded(name) {
-		return BotManager.selectedBot.extensionClasses.find(x => x.file.slice(40) === name)
+		return BotManager.selectedBot.extensionClasses.find(x => x.file.slice(40) === name && x.file.slice(40))
 	}
 
 	isThemeDownloaded(name) {
-		return App.themes.find(x => x.split("\\").join("/").split("/").at(-1).slice(40) === name)
+		return App.themes.find(x => x.split("\\").join("/").split("/").at(-1).slice(40) === name && x.split("\\").join("/").split("/").at(-1).slice(40))
 	}
 
 	convertJSONResponseToPlugin(json, type) {

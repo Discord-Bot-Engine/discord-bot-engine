@@ -40,7 +40,7 @@
         <ErrorIcon />
     {/if}
 {/snippet}
-<div class="flex bg-card rounded-xl">
+<div class="flex bg-card rounded-xl shadow-sm">
     <Button variant="ghost" class="h-full rounded-xl rounded-r-none border-1 !p-0" onclick={() => App.hideVariables = !App.hideVariables}>
         {#if !App.hideVariables}
             <ChevronRightIcon/>
@@ -49,7 +49,7 @@
         {/if}
     </Button>
     {#if !App.hideVariables}
-    <List class="rounded-l-none border-l-0" ondblclick={() => {
+    <List class="rounded-l-none border-l-0 shadow-none" ondblclick={() => {
     variableEditName = selectedVariable;
     variableEditType = App.selectedTrigger?.variables.get(variableEditName);
     isEditingVariable = true;
@@ -59,7 +59,7 @@
         {/if}
         </div>
 <Modal bind:open={isCreatingVariable} title="Create Variable" onDone={addVariable}>
-            <div class="grid gap-4 py-4">
+            <div class="grid gap-4 py-4 px-1">
                 <div class="grid grid-cols-4 items-center gap-4">
                     <Label for="name" class="text-right">Name</Label>
                     <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={variableName} noVariables />
@@ -71,7 +71,7 @@
             </div>
 </Modal>
 <Modal bind:open={isEditingVariable} title="Edit Variable" onDone={editVariable}>
-            <div class="grid gap-4 py-4">
+            <div class="grid gap-4 py-4 px-1">
                 <div class="grid grid-cols-4 items-center gap-4">
                     <Label for="name" class="text-right">Name</Label>
                     <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={variableEditName} noVariables />

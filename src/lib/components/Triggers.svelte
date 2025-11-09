@@ -52,9 +52,9 @@
         <ErrorIcon />
     {/if}
 {/snippet}
-    <div class="flex bg-card rounded-xl">
+    <div class="flex bg-card rounded-xl shadow-sm">
         {#if !App.hideTriggers}
-        <List class="rounded-r-none border-r-0" ondblclick={() => {
+        <List class="rounded-r-none border-r-0 shadow-none" ondblclick={() => {
     triggerEditName = App.selectedTrigger.name;
     const triggerClass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type);
     if(!triggerClass) return alert("Trigger failed to load.");
@@ -90,7 +90,7 @@
 </Button>
 </div>
 <Modal bind:open={isCreatingTrigger} title="Create Trigger" onDone={addTrigger}>
-    <div class="grid gap-4 py-4">
+    <div class="grid gap-4 py-4 px-1">
         <div class="grid grid-cols-4 items-center gap-4">
             <Label for="name" class="text-right">Name</Label>
             <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={triggerName} noVariables />
@@ -103,7 +103,7 @@
 </Modal>
 <Modal bind:open={isEditingTrigger} title="{App.selectedTrigger?.name} - {App.selectedTrigger?.type}" onDone={editTrigger}>
 
-        <div class="grid gap-4 py-4" bind:this={ref}>
+        <div class="grid gap-4 py-4 px-1" bind:this={ref}>
                 <div class="grid grid-cols-4 items-center gap-4">
                     <Label for="name" class="text-right">Name</Label>
                     <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={triggerEditName} noVariables />
