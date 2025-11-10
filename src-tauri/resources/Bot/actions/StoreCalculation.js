@@ -56,14 +56,22 @@ export default class StoreCalculation {
                 log: Math.log,
                 ln: Math.log,
                 log10: Math.log10 || ((x) => Math.log(x) / Math.LN10),
-                pow: Math.pow
+                pow: Math.pow,
+
+                fact: (n) => {
+                    if (n < 0) throw new Error('Factorial of negative number');
+                    if (n % 1 !== 0) throw new Error('Factorial only defined for integers');
+                    let res = 1;
+                    for (let i = 2; i <= n; i++) res *= i;
+                    return res;
+                }
             };
 
-            const tokenPattern = /\d+(\.\d+)?|[+\-*/^(),]|[a-zA-Z_]\w*/g;
+            const tokenPattern = /\d+(\.\d+)?|[+\-*/^(),!]|[a-zA-Z_]\w*/g;
             const tokens = input.match(tokenPattern);
             if (!tokens) return NaN;
 
-            const precedence = { '+': 1, '-': 1, '*': 2, '/': 2, '^': 3 };
+            const precedence = { '+': 1, '-': 1, '*': 2, '/': 2, '^': 3, '!': 4 };
             const rightAssociative = new Set(['^']);
 
             const outputQueue = [];
@@ -76,10 +84,10 @@ export default class StoreCalculation {
                     outputQueue.push(constants[token]);
                 } else if (token in functions) {
                     operatorStack.push(token);
-                } else if ('+-*/^'.includes(token)) {
+                } else if ('+-*/^!'.includes(token)) {
                     while (
                         operatorStack.length &&
-                        ('+-*/^'.includes(operatorStack[operatorStack.length - 1]) || operatorStack[operatorStack.length - 1] in functions) &&
+                        ('+-*/^!'.includes(operatorStack[operatorStack.length - 1]) || operatorStack[operatorStack.length - 1] in functions) &&
                         ((rightAssociative.has(token)
                             ? precedence[token] < precedence[operatorStack[operatorStack.length - 1]]
                             : precedence[token] <= precedence[operatorStack[operatorStack.length - 1]]))
@@ -94,7 +102,7 @@ export default class StoreCalculation {
                         outputQueue.push(operatorStack.pop());
                     }
                     if (operatorStack.length === 0) throw new Error('Mismatched parentheses');
-                    operatorStack.pop(); // remove '('
+                    operatorStack.pop();
                     if (operatorStack.length && operatorStack[operatorStack.length - 1] in functions) {
                         outputQueue.push(operatorStack.pop());
                     }
@@ -126,6 +134,9 @@ export default class StoreCalculation {
                         const arg = stack.pop();
                         stack.push(functions[token](arg));
                     }
+                } else if (token === '!') {
+                    const val = stack.pop();
+                    stack.push(functions.fact(val));
                 } else {
                     const b = stack.pop();
                     const a = stack.pop();
@@ -142,5 +153,6 @@ export default class StoreCalculation {
             if (stack.length !== 1) throw new Error('Invalid expression');
             return stack[0];
         }
+
     }
 }
