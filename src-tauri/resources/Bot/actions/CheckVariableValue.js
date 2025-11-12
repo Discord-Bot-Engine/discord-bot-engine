@@ -25,7 +25,7 @@ export default class CheckVariableValue {
         const condition = data.get("condition")
         const value = data.get("value")
         if(condition === "Equal to") {
-            if(variable == value) {
+            if(String(variable) === value) {
                 actionManager.runNext(id, "true")
             }
             else {
