@@ -15,7 +15,7 @@ export default class CheckVariableValue {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Value"></dbe-label>
-            <dbe-variable-list name="value" id="val" class="col-span-3" variableType="Any"></dbe-variable-list>
+            <dbe-input name="value" id="val" class="col-span-3"></dbe-input>
         </div>
     `
     static load(context) {
@@ -23,7 +23,7 @@ export default class CheckVariableValue {
     static async run({id, data, actionManager, getVariable}) {
         const variable = getVariable(data.get("variable"))
         const condition = data.get("condition")
-        const value = getVariable(data.get("value"))
+        const value = data.get("value")
         if(condition === "Equal to") {
             if(variable == value) {
                 actionManager.runNext(id, "true")
