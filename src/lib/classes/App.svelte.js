@@ -33,7 +33,7 @@ class AppClass {
 		state.setButton(
 			[
 				new Button("Buy", "https://discordbotengine.itch.io/discord-bot-engine"),
-				new Button("Join Discord", "https://discord.gg/fr7ZGQ8P")
+				new Button("Join Discord", "https://discord.gg/wNCFpR6JJX")
 			]
 		)
 		if(updateTimestamp) {
