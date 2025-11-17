@@ -31,7 +31,7 @@ export default class SlashCommand {
             <dbe-label name="Store server in variable"></dbe-label>
             <dbe-variable-list name="server" class="col-span-3" variableType="Server"></dbe-variable-list>
         </div>
-        <dbe-list name="options" title="Options" modalId="optionsModal" itemTitle="(item, i) => item.data.get('name') ?? ('Option #'+i)"></dbe-list>
+        <dbe-list name="options" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('name') ?? await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
         <template id="optionsModal">
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Name"></dbe-label>

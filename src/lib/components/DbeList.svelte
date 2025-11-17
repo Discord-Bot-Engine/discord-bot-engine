@@ -6,11 +6,15 @@
     import {App} from "$lib/classes/App.svelte.js";
     import CustomElement from "$lib/classes/CustomElement.svelte.js";
     let {modalId, itemTitle = "() => {}", ...props} = $props()
-    itemTitle = eval(`(${itemTitle})`)
     let open = $state(false)
     let items = $state([])
+    let init = $state(false)
     $host().getItems = () => items
     $host().setItems = (values) => items = values
+    $host().init = () => {
+        init = true
+        itemTitle = eval(`(${itemTitle})`)
+    }
     let selected = $state(new CustomElement())
     let ref;
     document.getElementById(modalId).querySelectorAll("*").forEach((el) => {
@@ -35,11 +39,15 @@
         App.loadUIData(ref, data)
         App.initUI(ref)
     }, 10)
-}} {items} itemTitle={(item, i) => itemTitle(item, i + 1)} onadd={() => items.push(new CustomElement(uuidv4()))} ondelete={() => {
+}} {items} itemTitle={(item, i) => init ? itemTitle(item, i + 1) : ""} onadd={() => items.push(new CustomElement(uuidv4()))} ondelete={() => {
     items.splice(items.indexOf(selected), 1);
 }} bind:selected></List>
-<Modal bind:open title={itemTitle(selected, items.indexOf(selected) + 1)} onDone={editItem}>
+{#if init}
+{#await itemTitle(selected, items.indexOf(selected) + 1) then title}
+<Modal bind:open title={title} onDone={editItem}>
     <div class="grid gap-4 py-4 px-1" bind:this={ref}>
         {@html html}
     </div>
 </Modal>
+{/await}
+    {/if}

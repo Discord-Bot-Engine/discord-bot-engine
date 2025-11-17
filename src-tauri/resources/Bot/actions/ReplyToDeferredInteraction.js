@@ -14,8 +14,8 @@ export default class ReplyToDeferredInteraction {
             <dbe-label name="Store message in variable"></dbe-label>
             <dbe-variable-list name="message" class="col-span-3" variableType="Message"></dbe-variable-list>
         </div>
-         <dbe-list name="files" title="Files" modalId="filesModal" itemTitle="(item, i) => (item.data.get('name') ?? 'File')+' #'+i"></dbe-list>
-         <dbe-list name="components" title="Components" modalId="componentsModal" itemTitle="(item, i) => (item.data.get('type') ?? 'Component')+' #'+i"></dbe-list>
+      <dbe-list name="files" title="Files" modalId="filesModal" itemTitle="async (item, i) => item.data.get('name') ?? await App.translate('File', App.selectedLanguage)+' #'+i"></dbe-list>
+         <dbe-list name="components" title="Components" modalId="componentsModal" itemTitle="async (item, i) => App.translate(item.data.get('type') ?? 'Component', await App.selectedLanguage)+' #'+i"></dbe-list>
         <template id="filesModal">
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Buffer"></dbe-label>
@@ -69,7 +69,7 @@ export default class ReplyToDeferredInteraction {
                         <dbe-select name="tspoiler" class="col-span-3" value="False" values="True,False"></dbe-select>
                     </div>
             </div>
-            <dbe-list name="mediagallery" id="mediagallery" title="Images" modalId="galleryModal" itemTitle="(item, i) => (item.data.get('url') ?? 'Image')+' #'+i"></dbe-list>
+            <dbe-list name="mediagallery" id="mediagallery" title="Images" modalId="galleryModal" itemTitle="async (item, i) => item.data.get('url') ? item.data.get('url') : await App.translate('Image #' + i, App.selectedLanguage)"></dbe-list>
             <div id="file" class="grid gap-4">
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="File URL"></dbe-label>
@@ -145,7 +145,7 @@ export default class ReplyToDeferredInteraction {
                         <dbe-label name="Placeholder"></dbe-label>
                         <dbe-input name="splaceholder" class="col-span-3"></dbe-input>
                     </div>
-                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="(item, i) => (item.data.get('label') ?? 'Option')+' #'+i"></dbe-list>
+                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Is required?"></dbe-label>
                         <dbe-select name="srequired" class="col-span-3" values="True,False" value="False"></dbe-select>
@@ -196,7 +196,7 @@ export default class ReplyToDeferredInteraction {
                     <dbe-label name="Accent color"></dbe-label>
                     <dbe-color name="ccolor" class="col-span-3" value="#000000"></dbe-color>
                 </div>
-                <dbe-list name="components" title="Components" modalId="nestedComponentsModal" itemTitle="(item, i) => (item.data.get('type') ?? 'Component')+' #'+i"></dbe-list>             
+                <dbe-list name="components" title="Components" modalId="nestedComponentsModal" itemTitle="async (item, i) => (item.data.get('type') ?? await App.translate('Component', App.selectedLanguage))+' #'+i"></dbe-list>             
             </div>
         </template>
         <template id="nestedComponentsModal">
@@ -238,7 +238,7 @@ export default class ReplyToDeferredInteraction {
                         <dbe-select name="tspoiler" class="col-span-3" value="False" values="True,False"></dbe-select>
                     </div>
             </div>
-            <dbe-list name="mediagallery" id="mediagallery" title="Images" modalId="galleryModal" itemTitle="(item, i) => (item.data.get('url') ?? 'Image')+' #'+i"></dbe-list>
+            <dbe-list name="mediagallery" id="mediagallery" title="Images" modalId="galleryModal" itemTitle="async (item, i) => item.data.get('url') ? : await App.translate('Image #' + i, App.selectedLanguage)"></dbe-list>
             <div id="file" class="grid gap-4">
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="File URL"></dbe-label>
@@ -314,7 +314,7 @@ export default class ReplyToDeferredInteraction {
                         <dbe-label name="Placeholder"></dbe-label>
                         <dbe-input name="splaceholder" class="col-span-3"></dbe-input>
                     </div>
-                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="(item, i) => (item.data.get('label') ?? 'Option')+' #'+i"></dbe-list>
+                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i)"></dbe-list>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Is required?"></dbe-label>
                         <dbe-select name="srequired" class="col-span-3" values="True,False" value="False"></dbe-select>
@@ -396,7 +396,7 @@ export default class ReplyToDeferredInteraction {
                 <dbe-label name="Is default?"></dbe-label>
                 <dbe-select name="default" class="col-span-3" values="True,False" value="False"></dbe-select>
             </div>
-        </template>    `
+        </template>`
     static open(context, handlers) {
         handlers.onChange = (v, el) => {
             const parent = el.parentElement.parentElement
@@ -468,7 +468,7 @@ export default class ReplyToDeferredInteraction {
                 })
             }
         })
-        context.outputs = ["action", ...buttons.map(el => `${el} (on click)`), ...selectmenus.map(el => `${el} (on select)`)]
+        context.outputs = ["action", ...btns.map(b => ({translation:b})), ...selects.map(s => ({translation:s}))]
     }
     static load(context) {
     }

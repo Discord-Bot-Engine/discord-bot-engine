@@ -3,6 +3,7 @@
     import {Button} from "$lib/components/ui/button/index.js";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
     import {App} from "$lib/classes/App.svelte.js"
+    import Translation from "$lib/components/Translation.svelte";
     let open = $state(false)
     let x = $state(0)
     let y = $state(0)
@@ -56,7 +57,9 @@
                     open = false
                 }}
         >
-            Insert "{v}" variable
+            {#await App.translate(`Insert "%s" variable`, App.selectedLanguage) then text}
+                {text.replace("%s", v)}
+            {/await}
         </Button>
 
         </div>

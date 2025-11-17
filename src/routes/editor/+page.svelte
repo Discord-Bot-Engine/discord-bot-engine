@@ -29,8 +29,10 @@
 	import {SvelteFlowProvider} from "@xyflow/svelte";
 	import {Button} from "$lib/components/ui/button/index.js";
 	if(!BotManager.selectedBot) {
-		alert("Please select a project!")
-		goto("/");
+		App.translate("Please select a project!", App.selectedLanguage).then(text => {
+			alert(text)
+			goto("/");
+		})
 	}
 	onMount(() => {
 		window.handlers ??= {}

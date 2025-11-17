@@ -6,6 +6,7 @@
     import {Label} from "$lib/components/ui/label/index.js";
     import {Input} from "$lib/components/ui/input/index.js";
     import Modal from "$lib/components/Modal.svelte";
+    import Translation from "$lib/components/Translation.svelte";
     let {variableType, change = "() => {}", labels="", ...other} = $props()
     let types = $state(variableType.split(",").map(el => el.toLowerCase()))
     let variables = $derived(App.selectedTrigger.variables)
@@ -52,12 +53,16 @@
 <Modal bind:open={isCreatingVariable} title="Create Variable" onDone={addVariable}>
     <div class="grid gap-4 py-4">
         <div class="grid grid-cols-4 items-center gap-4">
-            <Label for="name" class="text-right">Name</Label>
+            <Label for="name" class="text-right"><Translation text="Name"/></Label>
             <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={newVariableName} noVariables />
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
-            <Label for="type" class="text-right">Type</Label>
-            <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...variableTypes.filter(v => types.includes(v.toLowerCase()) || types.includes("any")).map(el => ({label: el.split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()}))]} bind:value={newVariableType} class="col-span-3 w-full {newVariableType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+            <Label for="type" class="text-right"><Translation text="Type"/></Label>
+            {#await variableTypes.filter(v => types.includes(v.toLowerCase()) || types.includes("any")).map( async el => ({label: (await App.translate(el, App.selectedLanguage)).split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()})) then types}
+                {#await App.translate("None", App.selectedLanguage) then none}
+                <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...types]} bind:value={newVariableType} class="col-span-3 w-full {newVariableType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+                {/await}
+            {/await}
         </div>
     </div>
 </Modal>

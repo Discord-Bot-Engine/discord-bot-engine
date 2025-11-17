@@ -12,9 +12,30 @@ class AppClass {
 	hideConsole = $state(false);
 	themes = $state([])
 	theme = $state(null)
+	selectedLanguage = $state("ro")
+	translations = {}
+
 	constructor() {
 		start("1435285281652867095")
 		this.loadThemes()
+	}
+
+	async translate(text, lang) {
+		this.translations[text] ??= { en: text }
+		this.translations[text][lang] ??= await translate(text, lang)
+		return this.translations[text][lang]
+		async function translate(text, lang) {
+			const client = "gtx";
+			const sl = "en";
+			const tl = lang;
+			const hl = "en-US";
+			const dt1 = "t";
+			const dt2 = "bd";
+			const dj = "1";
+			const source = "input";
+			const data = await fetch(`https://translate.googleapis.com/translate_a/single?client=${client}&sl=${sl}&tl=${tl}&hl=${hl}&dt=${dt1}&dt=${dt2}&dj=${dj}&source=${source}&q=${encodeURIComponent(text)}`).then(res => res.json())
+			return data.sentences[0].trans
+		}
 	}
 
 	async loadThemes() {

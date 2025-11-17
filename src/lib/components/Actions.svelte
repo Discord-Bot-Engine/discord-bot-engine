@@ -18,6 +18,7 @@
     import Node from "$lib/components/Node.svelte";
     import Edge from "$lib/components/Edge.svelte";
     import Group from "$lib/components/Group.svelte";
+    import Translation from "$lib/components/Translation.svelte";
     let actionType = $state("None")
     let isCreatingAction = $state(false);
     let open = $state(false)
@@ -150,7 +151,7 @@
 <Card.Root class="w-full h-full min-h-40 p-1 px-0 pb-0 relative">
     <Card.Content class="p-1 px-0.5 pb-0 h-full overflow-hidden">
         <div class="flex h-fit -mr-1.5 mb-1 px-1.5">
-            <label class="mr-auto text-md overflow-hidden text-ellipsis">Actions</label>
+            <label class="mr-auto text-md overflow-hidden text-ellipsis"><Translation text="Actions"/></label>
             <Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => {isCreatingAction = true; pos = {x: 0, y: 0}}}><PlusIcon /></Button>
             <Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => deleteActions()}
     ><MinusIcon /></Button>
@@ -169,8 +170,14 @@
 <Modal bind:open={isCreatingAction} title="Add Action" onDone={() => addAction()}>
         <div class="grid gap-4 py-4 px-1">
            <div class="grid grid-cols-4 items-center gap-4">
-               <Label for="type" class="text-right">Type</Label>
-               <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, {label:"Group", value:"group"}, ...(BotManager.selectedBot?.actionClasses ?? []).map(el => el.type).sort().map(el => ({label: el, value: el}))]} bind:value={actionType} class="col-span-3 w-full {actionType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+               <Label for="type" class="text-right"><Translation text="Type"/></Label>
+               {#await Promise.all((BotManager.selectedBot?.actionClasses ?? []).map(el => el.type).sort().map(async el => ({label: await App.translate(el, App.selectedLanguage), value: el}))) then actions}
+                   {#await App.translate("Group", App.selectedLanguage) then group}
+                       {#await App.translate("None", App.selectedLanguage) then none}
+                <SearchSelect name="type" values={[{label:none, value: "None", disabled:true}, {label: group, value:"group"}, ...actions]} bind:value={actionType} class="col-span-3 w-full {actionType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+                       {/await}
+                   {/await}
+               {/await}
            </div>
         </div>
 </Modal>

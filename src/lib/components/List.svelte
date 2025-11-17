@@ -5,6 +5,7 @@
 	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 	import { PlusIcon, EllipsisVerticalIcon, MinusIcon } from '@lucide/svelte';
 	import { dndzone } from "svelte-dnd-action";
+	import Translation from "$lib/components/Translation.svelte";
 
 	let {
 		title,
@@ -35,7 +36,9 @@
 <Card.Root class="w-full h-full min-h-40 min-w-40 p-1 relative {props.class}">
 	<Card.Content class="p-1 !px-0.5">
 		<div class="flex h-fit -mr-1.5 mb-1 px-0.5">
-			<label class="mr-auto text-md overflow-hidden text-ellipsis">{title}</label>
+			<label class="mr-auto text-md overflow-hidden text-ellipsis">
+				<Translation text={title} />
+			</label>
 				<Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {hideControls ? 'hidden' : ''}" onclick={onadd}><PlusIcon /></Button>
 				<Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {hideControls ? 'hidden' : ''}" onclick={() => {ondelete(); selected = null }}><MinusIcon /></Button>
 		</div>
@@ -63,7 +66,9 @@
 								{#if html}
 									{@render html(item, i)}
 								{/if}
-								{itemTitle(item, i)}
+								{#await itemTitle(item, i) then title}
+									{title}
+								{/await}
 							</Button>
 						</div>
 						<Separator />
@@ -81,8 +86,10 @@
 							>
 								{#if html}
 									{@render html(item, i)}
-								{/if}
-								{itemTitle(item, i)}
+									{/if}
+									{#await itemTitle(item, i) then title}
+										{title}
+									{/await}
 							</Button>
 						</div>
 						<Separator />

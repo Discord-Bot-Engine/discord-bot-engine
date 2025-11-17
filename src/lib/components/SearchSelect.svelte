@@ -8,6 +8,8 @@
     import { cn } from "$lib/utils.js";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
     import {Separator} from "$lib/components/ui/separator/index.js";
+    import Translation from "$lib/components/Translation.svelte";
+    import {App} from "$lib/classes/App.svelte.js";
 
     let {values, type = "single", value = $bindable(), onvaluechange=() => {}, ...other} = $props()
     let search = $state("")
@@ -44,17 +46,25 @@
                     role="combobox"
                     aria-expanded={open}
             >
-                <label class="text-ellipsis white-space-nowrap overflow-hidden">{selectedValue?.length ? selectedValue : "Select an option"}</label>
+                <label class="text-ellipsis white-space-nowrap overflow-hidden">
+                    <Translation text={selectedValue?.length ? selectedValue : "Select an option"}/>
+                </label>
                 <ChevronDownIcon class="ml-auto mt-auto mb-auto size-4 shrink-0 opacity-50" />
             </Button>
         {/snippet}
     </Popover.Trigger>
     <Popover.Content class="w-full p-0">
         <Command.Root>
-            <Command.Input bind:ref={ref} bind:value={search} placeholder="Search option" />
+            {#await App.translate("Search option", App.selectedLanguage)}
+                <Command.Input bind:ref={ref} bind:value={search} placeholder="Search option" />
+            {:then value}
+                <Command.Input bind:ref={ref} bind:value={search} placeholder={value} />
+            {:catch error}
+                <Command.Input bind:ref={ref} bind:value={search} placeholder="Search option" />
+            {/await}
             <ScrollArea class="max-h-[30vh]">
             <Command.List class="!overflow-visible !max-h-[200px]">
-                <Command.Empty>No option found.</Command.Empty>
+                <Command.Empty><Translation text="No option found."/></Command.Empty>
                 <Command.Group>
                     {#if other.extra}
                     <Command.Item

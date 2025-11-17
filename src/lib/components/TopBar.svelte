@@ -6,6 +6,7 @@
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     import {Debugger} from "$lib/classes/Debugger.svelte.js";
     import LoadingScreen from "$lib/components/LoadingScreen.svelte";
+    import Translation from "$lib/components/Translation.svelte";
     let extension = $state({type:""})
     let isEditing = $state(false);
     let ref;
@@ -105,19 +106,33 @@
 <Menubar.Root class="bg-sidebar border-none rounded-none text-muted-foreground h-fit">
     {#each items as item}
     <Menubar.Menu>
-        <Menubar.Trigger class="hover:bg-accent hover:text-foreground text-sm py-0">{item.title}</Menubar.Trigger>
+        <Menubar.Trigger class="hover:bg-accent hover:text-foreground text-sm py-0"><Translation text={item.title}/></Menubar.Trigger>
         <Menubar.Content>
             {#each item.items ?? [] as item}
                 <Menubar.Item class="text-muted-foreground hover:bg-accent hover:text-foreground text-xs" disabled={item.disable} onclick={item.onclick}>
-                    {item.title}
+                    <Translation text={item.title}/>
                 </Menubar.Item>
             {/each}
         </Menubar.Content>
     </Menubar.Menu>
     {/each}
 </Menubar.Root>
-<Modal bind:open={isEditing} title={extension.type} onDone={editExtension}>
-    <div class="grid gap-4 py-4" bind:this={ref}>
-        {@html extension?.html ?? ""}
-    </div>
-</Modal>
+{#await App.translate(extension.type, App.selectedLanguage)}
+    <Modal bind:open={isEditing} title={extension.type} onDone={editExtension}>
+        <div class="grid gap-4 py-4" bind:this={ref}>
+            {@html extension?.html ?? ""}
+        </div>
+    </Modal>
+{:then type}
+    <Modal bind:open={isEditing} title={type} onDone={editExtension}>
+        <div class="grid gap-4 py-4" bind:this={ref}>
+            {@html extension?.html ?? ""}
+        </div>
+    </Modal>
+{:catch error}
+    <Modal bind:open={isEditing} title={extension.type} onDone={editExtension}>
+        <div class="grid gap-4 py-4" bind:this={ref}>
+            {@html extension?.html ?? ""}
+        </div>
+    </Modal>
+{/await}

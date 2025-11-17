@@ -7,8 +7,10 @@
 	import {goto} from "$app/navigation";
 	import {App} from "$lib/classes/App.svelte.js"
 	if(!BotManager.selectedBot) {
-		alert("Please select a project!")
-		goto("/");
+		App.translate("Please select a project!", App.selectedLanguage).then(text => {
+			alert(text)
+			goto("/");
+		})
 	}
 	let name = $state("")
 	let plugins = $derived(
@@ -38,7 +40,9 @@
 	}
 </script>
 <div class="w-full p-3 pb-0">
-	<Input bind:value={name} placeholder="Search plugin..."/>
+	{#await App.translate("Search plugin...", App.selectedLanguage) then text}
+		<Input bind:value={name} placeholder={text}/>
+	{/await}
 </div>
 <ScrollArea>
 	{#if !BotManager.selectedBot.isLoading}

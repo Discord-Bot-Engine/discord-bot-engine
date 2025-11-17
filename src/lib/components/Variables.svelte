@@ -9,6 +9,7 @@
     import ErrorIcon from "$lib/components/ErrorIcon.svelte";
     import {ChevronLeftIcon, ChevronRightIcon} from "@lucide/svelte";
     import {Button} from "$lib/components/ui/button/index.js";
+    import Translation from "$lib/components/Translation.svelte";
     let selectedVariable = $state("")
     let variableName = $state()
     let variableEditName = $state()
@@ -61,24 +62,32 @@
 <Modal bind:open={isCreatingVariable} title="Create Variable" onDone={addVariable}>
             <div class="grid gap-4 py-4 px-1">
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="name" class="text-right">Name</Label>
+                    <Label for="name" class="text-right"><Translation text="Name"/></Label>
                     <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={variableName} noVariables />
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="type" class="text-right">Type</Label>
-                    <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...variableTypes.map(el => ({label: el.split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()}))]} bind:value={variableType} class="col-span-3 w-full {variableType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+                    <Label for="type" class="text-right"><Translation text="Type"/></Label>
+                    {#await Promise.all(variableTypes.map( async el => ({label: (await App.translate(el, App.selectedLanguage)).split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()}))) then types}
+                        {#await App.translate("None", App.selectedLanguage) then none}
+                    <SearchSelect name="type" values={[{label:none, value: "None", disabled:true}, ...types]} bind:value={variableType} class="col-span-3 w-full {variableType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+                        {/await}
+                    {/await}
                 </div>
             </div>
 </Modal>
 <Modal bind:open={isEditingVariable} title="Edit Variable" onDone={editVariable}>
             <div class="grid gap-4 py-4 px-1">
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="name" class="text-right">Name</Label>
+                    <Label for="name" class="text-right"><Translation text="Name"/></Label>
                     <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={variableEditName} noVariables />
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="type" class="text-right">Type</Label>
-                    <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...variableTypes.map(el => ({label: el.split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()}))]} bind:value={variableEditType} class="col-span-3 w-full {variableEditType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+                    <Label for="type" class="text-right"><Translation text="Type"/></Label>
+                    {#await Promise.all(variableTypes.map( async el => ({label: (await App.translate(el, App.selectedLanguage)).split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()}))) then types}
+                        {#await App.translate("None", App.selectedLanguage) then none}
+                            <SearchSelect name="type" values={[{label:none, value: "None", disabled:true}, ...types]} bind:value={variableEditType} class="col-span-3 w-full {variableEditType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+                        {/await}
+                    {/await}
                 </div>
             </div>
 </Modal>

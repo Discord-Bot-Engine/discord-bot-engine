@@ -4,6 +4,8 @@
     import {TrashIcon} from "@lucide/svelte";
     import {BotManager} from "$lib/classes/BotManager.svelte.js";
     import {PluginManager} from "$lib/classes/PluginManager.svelte.js";
+    import {App} from "$lib/classes/App.svelte.js";
+    import Translation from "$lib/components/Translation.svelte";
     let { plugin, upToDate } = $props();
     let isUpToDate = $state(upToDate(plugin))
     let isDownloaded = $state(downloaded(plugin.name))
@@ -61,15 +63,21 @@
             {plugin.name}
         </Card.Title>
         <Card.Description>
-            {plugin.type[0].toUpperCase()}{plugin.type.slice(1).toLowerCase()}
+            <Translation text="{plugin.type[0].toUpperCase()}{plugin.type.slice(1).toLowerCase()}" />
         </Card.Description>
     </Card.Header>
     <Card.Footer class="flex-row gap-2">
         <Button onclick={() => {
             download(plugin.name)
-        }} variant={color()} disabled={isUpToDate} class="flex-auto">{title()}</Button>
+        }} variant={color()} disabled={isUpToDate} class="flex-auto"><Translation text={title()}/></Button>
         {#if isDownloaded}
-            <Button variant="destructive" onclick={() => remove(plugin.name)}><TrashIcon/></Button>
+            {#await App.translate("Delete Plugin")}
+                <Button variant="destructive" onclick={() => remove(plugin.name)} title="Delete Plugin"><TrashIcon/></Button>
+            {:then text}
+                <Button variant="destructive" onclick={() => remove(plugin.name)} title={text}><TrashIcon/></Button>
+            {:catch error}
+                <Button variant="destructive" onclick={() => remove(plugin.name)} title="Delete Plugin"><TrashIcon/></Button>
+            {/await}
         {/if}
     </Card.Footer>
 </Card.Root>

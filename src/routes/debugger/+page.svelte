@@ -11,6 +11,8 @@
     import {Debugger} from "$lib/classes/Debugger.svelte.js";
     import {Checkbox} from "$lib/components/ui/checkbox/index.js";
     import Trigger from "$lib/classes/Trigger.svelte.js";
+    import {App} from "$lib/classes/App.svelte.js";
+    import Translation from "$lib/components/Translation.svelte";
     const webview = getCurrentWebview()
     webview.setAutoResize(true);
     let loaded = $state([])
@@ -46,7 +48,7 @@
 
 </script>
 {#if triggers.length === 0}
-    <h1 class="p-3">No triggers running.</h1>
+    <h1 class="p-3"><Translation text="No triggers running."/></h1>
 {/if}
 <ScrollArea class="h-full">
     <div class="w-full h-full flex flex-col gap-1">
@@ -56,8 +58,10 @@
                     <label class="mt-auto mb-auto font-semibold">{trigger.name}</label>
                     {#if trigger.actions.length}
                         <div class="ml-auto">
-                            <Button variant="secondary" class="size-6 mt-auto mb-auto" title="View Variables" onclick={() => Debugger.attachVariablesWindow(trigger)}><VariableIcon></VariableIcon></Button>
-                            <Collapsible.Trigger class={buttonVariants({ variant: "ghost", class: "mt-auto mb-auto size-7" })}>
+                            {#await App.translate("View Variables", App.selectedLanguage) then text}
+                            <Button variant="secondary" class="size-6 mt-auto mb-auto" title={text} onclick={() => Debugger.attachVariablesWindow(trigger)}><VariableIcon></VariableIcon></Button>
+                            {/await}
+                                <Collapsible.Trigger class={buttonVariants({ variant: "ghost", class: "mt-auto mb-auto size-7" })}>
                                 <ChevronDownIcon />
                             </Collapsible.Trigger>
                         </div>
@@ -72,12 +76,16 @@
         {/each}
         {#snippet action(trigger, act, index)}
                 <div class="flex w-full text-xs bg-popover px-2 py-2 border-b-1">
-                    <Checkbox bind:checked={act.isBreakPoint} onCheckedChange={(v) => v ? Debugger.markAsBreakPoint(act.id) : Debugger.removeBreakPoint(act.id)} class="mr-3 mt-auto mb-auto" title="Is Break Point?"/>
-                    <label class="mt-auto mb-auto">
-                        {index}. {act.actionType}
+                    {#await App.translate("Is Break Point?", App.selectedLanguage) then text}
+                    <Checkbox bind:checked={act.isBreakPoint} onCheckedChange={(v) => v ? Debugger.markAsBreakPoint(act.id) : Debugger.removeBreakPoint(act.id)} class="mr-3 mt-auto mb-auto" title={text}/>
+                        {/await}
+                        <label class="mt-auto mb-auto">
+                        {index}. <Translation text={act.actionType}/>
                     </label>
                     <div class="ml-auto mt-auto mb-auto">
-                        <Button class="mr-1 ml-3 size-6 mt-auto mb-auto" onclick={() => Debugger.debugAction(page.url.searchParams.get("path"), trigger.id, act.id)} title="Run Action"><PlayIcon></PlayIcon></Button>
+                        {#await App.translate("Run Action", App.selectedLanguage) then text}
+                        <Button class="mr-1 ml-3 size-6 mt-auto mb-auto" onclick={() => Debugger.debugAction(page.url.searchParams.get("path"), trigger.id, act.id)} title={text}><PlayIcon></PlayIcon></Button>
+                            {/await}
                     </div>
                 </div>
         {/snippet}

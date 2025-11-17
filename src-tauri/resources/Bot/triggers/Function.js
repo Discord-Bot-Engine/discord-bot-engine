@@ -7,7 +7,7 @@ export default class SlashCommand {
     static event = "function"
     static runIf = ({actionManager}, id) => id === actionManager.trigger.id
     static html = `
-        <dbe-list name="params" title="Parameters" modalId="paramsModal" itemTitle="(item, i) => 'Parameter #'+i"></dbe-list>
+        <dbe-list name="params" title="Parameters" modalId="paramsModal" itemTitle="async (item, i) => await App.translate('Parameter #'+i, App.selectedLanguage)"></dbe-list>
         <template id="paramsModal">
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Store value in variable"></dbe-label>

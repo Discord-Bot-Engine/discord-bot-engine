@@ -11,6 +11,7 @@
     import ErrorIcon from "$lib/components/ErrorIcon.svelte";
     import {Button} from "$lib/components/ui/button/index.js";
     import {ChevronLeftIcon, ChevronRightIcon} from "@lucide/svelte";
+    import Translation from "$lib/components/Translation.svelte";
     let triggers = $derived(BotManager.selectedBot?.triggers);
     let triggerName = $state()
     let triggerEditName = $state()
@@ -92,12 +93,16 @@
 <Modal bind:open={isCreatingTrigger} title="Create Trigger" onDone={addTrigger}>
     <div class="grid gap-4 py-4 px-1">
         <div class="grid grid-cols-4 items-center gap-4">
-            <Label for="name" class="text-right">Name</Label>
+            <Label for="name" class="text-right"><Translation text="Name"/></Label>
             <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={triggerName} noVariables />
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
-            <Label for="type" class="text-right">Type</Label>
-            <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...(BotManager.selectedBot?.triggerClasses ?? []).map(el => el.type).sort().map(el => ({label: el, value: el}))]} bind:value={triggerType} class="col-span-3 w-full {triggerType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+            <Label for="type" class="text-right"><Translation text="Type"/></Label>
+            {#await Promise.all((BotManager.selectedBot?.triggerClasses ?? []).map(el => el.type).sort().map(async el => ({label: await App.translate(el, App.selectedLanguage), value: el}))) then types}
+                {#await App.translate("None", App.selectedLanguage) then none}
+                    <SearchSelect name="type" values={[{label:none, value: "None", disabled:true}, ...types]} bind:value={triggerType} class="col-span-3 w-full {triggerType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
+                {/await}
+            {/await}
         </div>
     </div>
 </Modal>

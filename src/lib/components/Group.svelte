@@ -19,9 +19,11 @@
     }} class="!border-primary !bg-primary" minWidth={120} minHeight={100} />
 {/if}
     <div class="text-3xl w-full h-full">
-<input class="w-full !outline-none text-primary nodrag" placeholder="Group" value={data.get("text") ?? ""}
+        {#await App.translate("Group", App.selectedLanguage) then text}
+<input class="w-full !outline-none text-primary nodrag" placeholder={text} value={data.get("text") ?? ""}
        oninput={(evt) => {
            data.set("text", evt.target.value)
       }}
 />
+            {/await}
 </div>

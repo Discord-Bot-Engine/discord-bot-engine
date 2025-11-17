@@ -47,12 +47,28 @@
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton class={page.url.pathname === item.url ? "!bg-primary !text-primary-foreground" : ""}>
 								{#snippet child({ props })}
+									{#await App.translate(item.title, App.selectedLanguage)}
 									<a
 										title={item.title}
 										href={item.url}
 										{...props}>
 										<item.icon />
 									</a>
+										{:then title}
+										<a
+												{title}
+												href={item.url}
+												{...props}>
+											<item.icon />
+										</a>
+										{:catch error}
+										<a
+												title={item.title}
+												href={item.url}
+												{...props}>
+											<item.icon />
+										</a>
+									{/await}
 								{/snippet}
 							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
@@ -61,10 +77,22 @@
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger><Sidebar.MenuButton>
 								{#snippet child({ props })}
+									{#await App.translate("Theme", App.selectedLanguage)}
 									<Button title="Theme" class="w-8 h-8" variant="ghost"
 											>
 										<PaletteIcon/>
 									</Button>
+									{:then title}
+										<Button {title} class="w-8 h-8" variant="ghost"
+										>
+											<PaletteIcon/>
+										</Button>
+										{:catch error}
+										<Button title="Theme" class="w-8 h-8" variant="ghost"
+										>
+											<PaletteIcon/>
+										</Button>
+									{/await}
 								{/snippet}
 							</Sidebar.MenuButton></DropdownMenu.Trigger>
 							<DropdownMenu.Content side="right">

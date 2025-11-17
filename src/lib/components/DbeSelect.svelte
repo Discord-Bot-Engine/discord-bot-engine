@@ -1,5 +1,6 @@
 <svelte:options customElement={{tag: "dbe-select", shadow: "none"}} />
 <script>
+    import {App} from "$lib/classes/App.svelte.js"
     import SearchSelect from "$lib/components/SearchSelect.svelte";
     import {onMount} from "svelte";
     let {change = "() => {}", labels="", value, values, ...other} = $props()
@@ -34,4 +35,6 @@
         change(statevalue, $host())
     }
 </script>
-<SearchSelect {...other} values={customSort(statevalues.filter(el => el.trim())).map((el,i)=>({label: statelabels[i] ?? el, value:el}))} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
+{#await Promise.all(customSort(statevalues.filter(el => el.trim())).map(async (el,i)=>({label: await App.translate(statelabels[i] ?? el, App.selectedLanguage), value:el}))) then values}
+    <SearchSelect {...other} values={values} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
+{/await}
