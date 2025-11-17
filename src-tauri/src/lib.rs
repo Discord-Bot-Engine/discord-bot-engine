@@ -127,16 +127,15 @@ async fn run_bot(
     state: tauri::State<'_, BotManager>,
     bot_path: String,
 ) -> Result<(), String> {
-    let npm = _app
+    let node = _app
         .path()
-        .resolve("resources/nodejs/npm.cmd", BaseDirectory::Resource)
+        .resolve("resources/nodejs", BaseDirectory::Resource)
         .unwrap();
     let mut run_command = _app
         .shell()
-        .sidecar("node")
-        .map_err(|e| e.to_string())?
+        .command(node.join("node.exe"))
         .current_dir(&bot_path)
-        .args(vec![&bot_path, &npm.to_str().unwrap().to_string()]);
+        .args(vec![&bot_path, &node.join("npm.cmd").to_str().unwrap().to_string()]);
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
@@ -192,16 +191,15 @@ async fn load_bot_plugins(
     _app: tauri::AppHandle,
     bot_path: String,
 ) -> Result<(), String> {
-    let npm = _app
+    let node = _app
         .path()
-        .resolve("resources/nodejs/npm.cmd", BaseDirectory::Resource)
+        .resolve("resources/nodejs", BaseDirectory::Resource)
         .unwrap();
-    let run_command = _app
+    let mut run_command = _app
         .shell()
-        .sidecar("node")
-        .map_err(|e| e.to_string())?
+        .command(node.join("node.exe"))
         .current_dir(&bot_path)
-        .args([format!("{bot_path}/classes/PluginManager.js"), npm.to_str().unwrap().to_string()]);
+        .args([format!("{bot_path}/classes/PluginManager.js"), node.join("npm.cmd").to_str().unwrap().to_string()]);
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 

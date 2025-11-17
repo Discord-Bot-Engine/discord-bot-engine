@@ -31,9 +31,6 @@
     "resources": [
       "resources/**/*"
     ],
-    "externalBin": [
-      "resources/nodejs/node"
-    ],
     "icon": [
       "icons/dbe.ico"
     ]
