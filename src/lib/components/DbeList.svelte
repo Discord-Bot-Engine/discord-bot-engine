@@ -39,7 +39,7 @@
         App.loadUIData(ref, data)
         App.initUI(ref)
     }, 10)
-}} {items} itemTitle={(item, i) => init ? itemTitle(item, i + 1) : ""} onadd={() => items.push(new CustomElement(uuidv4()))} ondelete={() => {
+}} {items} itemTitle={async (item, i) => init ? await itemTitle(item, i + 1) : ""} onadd={() => items.push(new CustomElement(uuidv4()))} ondelete={() => {
     items.splice(items.indexOf(selected), 1);
 }} bind:selected></List>
 {#if init}

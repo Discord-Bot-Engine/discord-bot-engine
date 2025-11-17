@@ -14,7 +14,7 @@
             if(actionType) App.openAction()
         }}>
             {#if actionType}
-                {App.selectedTrigger.actions.filter(act => act.type === "action").findIndex(act => act.id === id)}. {actionType}
+                {App.selectedTrigger.actions.filter(act => act.type === "action").findIndex(act => act.id === id)}. <Translation text={actionType}/>
             {:else}
                 <Translation text={"root"}/>
             {/if}

@@ -44,9 +44,10 @@
         change(statevalue, $host())
     }
 </script>
+{#await App.translate("Add Variable", App.selectedLanguage) then text}
 <SearchSelect extra={
 {
-    label: "Add Variable",
+    label: text,
     onclick: () => isCreatingVariable = true
 }
 } {...other} values={customSort(statevalues.filter(el => el.trim())).map((el,i)=>({label: el, value:el}))} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
@@ -66,3 +67,4 @@
         </div>
     </div>
 </Modal>
+{/await}

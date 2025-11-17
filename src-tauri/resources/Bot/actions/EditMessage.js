@@ -26,8 +26,8 @@ export default class EditMessage {
             <dbe-label name="Message"></dbe-label>
             <dbe-variable-list name="message" class="col-span-3" variableType="Message"></dbe-variable-list>
         </div>
-         <dbe-list name="files" title="Files" modalId="filesModal" itemTitle="async (item, i) => item.data.get('name') ?? App.translate('File', App.selectedLanguage)+' #'+i"></dbe-list>
-         <dbe-list name="components" title="Components" modalId="componentsModal" itemTitle="async (item, i) => App.translate(item.data.get('type') ?? 'Component', App.selectedLanguage)+' #'+i"></dbe-list>
+         <dbe-list name="files" title="Files" modalId="filesModal" itemTitle="async (item, i) => item.data.get('name') ?? await App.translate('File', App.selectedLanguage)+' #'+i"></dbe-list>
+         <dbe-list name="components" title="Components" modalId="componentsModal" itemTitle="async (item, i) => await App.translate(item.data.get('type') ?? 'Component', App.selectedLanguage)+' #'+i"></dbe-list>
         <template id="filesModal">
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Buffer"></dbe-label>
