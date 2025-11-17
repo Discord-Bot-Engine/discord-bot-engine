@@ -11,13 +11,13 @@ export default class SetData {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Value"></dbe-label>
-            <dbe-variable-list name="value" class="col-span-3" variableType="Any"></dbe-variable-list>
+            <dbe-input name="value" class="col-span-3"></dbe-input>
         </div>
     `
     static load(context) {
     }
     static async run({id, data, actionManager, getVariable}) {
-        Bot.setData(data.get("field"), getVariable( data.get("value")))
+        Bot.setData(data.get("field"), data.get("value"))
         actionManager.runNext(id, "action")
     }
 }
