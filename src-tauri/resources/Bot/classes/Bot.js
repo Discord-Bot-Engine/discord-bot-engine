@@ -15,6 +15,7 @@ const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
 class BotClass {
+    npm = null
     debugger = null
     triggers = []
     extensions = new Map()
@@ -59,7 +60,6 @@ class BotClass {
     start() {
         this.client.start()
         this.client = this.client.client
-        this.loadFiles()
     }
 
     attachDebugger() {

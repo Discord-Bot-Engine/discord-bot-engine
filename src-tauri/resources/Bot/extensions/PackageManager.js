@@ -2,7 +2,7 @@ import {execSync} from 'child_process';
 import { parse } from "acorn";
 import path from "node:path";
 import fs from "node:fs";
-import {__dirname} from "../classes/Bot.js";
+import {__dirname, Bot} from "../classes/Bot.js";
 
 export default class PackageManager {
     static type = "Package Manager"
@@ -55,14 +55,15 @@ export default class PackageManager {
         imports.forEach(imp => install(imp))
         context?.data.get("packages")?.forEach(async module => {
             const name = module.data.get("name")
-            install(name)
+            await install(name)
         });
         async function install(name) {
+            const npm = Bot.npm ? `"${Bot.npm}"` : "npm";
             try {
                 await import(name);
             } catch (e) {
                 console.log(`Installing ${name} module...`);
-                execSync(`npm install ${name}`, {
+                execSync(`${npm} install ${name}`, {
                     stdio: 'pipe',
                     cwd: __dirname
                 });

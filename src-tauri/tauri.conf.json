@@ -32,7 +32,7 @@
       "resources/**/*"
     ],
     "externalBin": [
-      "binaries/nodejs/node"
+      "resources/nodejs/node"
     ],
     "icon": [
       "icons/dbe.ico"

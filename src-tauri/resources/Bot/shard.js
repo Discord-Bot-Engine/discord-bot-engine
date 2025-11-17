@@ -7,15 +7,17 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (err) => {
     console.log(err.stack);
 });
-
 Bot.start()
-if(Bot.client.cluster.id === 0)
-    Dashboard.start()
-
 Bot.client.cluster.on('message', message => {
     if(message.offline) return exit()
     if(message.attachDebugger) Bot.attachDebugger()
     if(message.removeDebugger) Bot.removeDebugger()
+    if(message.npm) {
+        Bot.npm = message.npm
+        Bot.loadFiles()
+        if(Bot.client.cluster.id === 0)
+            Dashboard.start()
+    }
 });
 
 async function exit() {

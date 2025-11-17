@@ -32,7 +32,10 @@ const manager = new ClusterManager(`${__dirname}/shard.js`, {
 });
 
 manager.on('clusterCreate', cluster => {
-    clusters.push(cluster)
+    cluster.on("spawn", () => {
+        clusters.push(cluster)
+        cluster.send({npm: process.argv[2].replace("\\\\?\\", "")})
+    })
 })
 manager.spawn({ timeout: -1 });
 

@@ -1,5 +1,5 @@
 use std::path::{Path, PathBuf};
-use std::{fs, io};
+use std::{env, fs, io};
 use tauri_plugin_drpc;
 use tauri::path::BaseDirectory;
 use tauri::{Emitter, Manager};
@@ -127,11 +127,16 @@ async fn run_bot(
     state: tauri::State<'_, BotManager>,
     bot_path: String,
 ) -> Result<(), String> {
+    let npm = _app
+        .path()
+        .resolve("resources/nodejs/npm.cmd", BaseDirectory::Resource)
+        .unwrap();
     let mut run_command = _app
         .shell()
         .sidecar("node")
-        .map_err(|e| e.to_string())?;
-    run_command = run_command.args(vec![bot_path.clone()]);
+        .map_err(|e| e.to_string())?
+        .current_dir(&bot_path)
+        .args(vec![&bot_path, &npm.to_str().unwrap().to_string()]);
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
@@ -143,11 +148,11 @@ async fn run_bot(
             match event {
                 CommandEvent::Stdout(line_bytes) => {
                     let line = String::from_utf8_lossy(&line_bytes).to_string();
-                    let _ = _app.emit("stdout", [bot_path.clone(), line]);
+                    let _ = _app.emit("stdout", [&bot_path, &line]);
                 }
                 CommandEvent::Stderr(line_bytes) => {
                     let line = String::from_utf8_lossy(&line_bytes).to_string();
-                    let _ = _app.emit("stdout", [bot_path.clone(), line]);
+                    let _ = _app.emit("stdout", [&bot_path, &line]);
                 }
                 _ => {}
             }
@@ -187,11 +192,16 @@ async fn load_bot_plugins(
     _app: tauri::AppHandle,
     bot_path: String,
 ) -> Result<(), String> {
+    let npm = _app
+        .path()
+        .resolve("resources/nodejs/npm.cmd", BaseDirectory::Resource)
+        .unwrap();
     let run_command = _app
         .shell()
         .sidecar("node")
         .map_err(|e| e.to_string())?
-        .args([format!("{bot_path}/classes/PluginManager.js")]);
+        .current_dir(&bot_path)
+        .args([format!("{bot_path}/classes/PluginManager.js"), npm.to_str().unwrap().to_string()]);
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
@@ -199,7 +209,7 @@ async fn load_bot_plugins(
         while let Some(event) = _rx.recv().await {
             if let CommandEvent::Stdout(line_bytes) = event {
                 let line = String::from_utf8_lossy(&line_bytes).to_string();
-                _app.emit("plugins", [bot_path.clone(), line]).unwrap();
+                _app.emit("plugins", [&bot_path, &line]).unwrap();
             }
         }
     });
