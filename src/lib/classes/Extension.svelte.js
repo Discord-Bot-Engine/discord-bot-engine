@@ -1,4 +1,5 @@
 import {SvelteMap} from "svelte/reactivity";
+import CustomElement from "$lib/classes/CustomElement.svelte.js";
 
 class Extension {
     data = new SvelteMap()
@@ -14,6 +15,8 @@ class Extension {
     static fromJSON(json) {
         const extension = new Extension();
         Object.keys(json.data).forEach((key) => {
+            if(Array.isArray(json.data[key]) && json.data[key].every(el => typeof el === 'object' && !Array.isArray(el) && el !== null))
+                json.data[key] = json.data[key].map(el => CustomElement.fromJSON(el))
             extension.data.set(key, json.data[key]);
         })
         return extension;

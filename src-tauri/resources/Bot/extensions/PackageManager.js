@@ -7,7 +7,7 @@ import {__dirname, Bot} from "../classes/Bot.js";
 export default class PackageManager {
     static type = "Package Manager"
     static html = `
-            <dbe-list name="packages" title="Packages" modalId="packagesModal" itemTitle="(item, i) => item.data.get('name') ?? ('Package #'+i)"></dbe-list>
+            <dbe-list name="packages" title="Packages" modalId="packagesModal" itemTitle="async (item, i) => item.data.get('name') ?? (await App.translate('Package', App.selectedLanguage) + ' #' + i)"></dbe-list>
             <template id="packagesModal">
                 <div class="grid grid-cols-4 items-center gap-4">
                     <dbe-label name="Name"></dbe-label>

@@ -24,7 +24,7 @@ class AppClass {
 
 	async translate(text, lang) {
 		lang = Object.keys(App.translations).find(x => x.slice(40) === lang && x.slice(40)) ?? lang
-		if(lang === "en") return text;
+		if(lang === "en" || !text.trim()) return text;
 		if(!this.translations[lang]) {
 			this.translations[lang] = {}
 		}
