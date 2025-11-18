@@ -47,7 +47,9 @@
                     aria-expanded={open}
             >
                 <label class="text-ellipsis white-space-nowrap overflow-hidden">
-                    <Translation text={selectedValue?.length ? selectedValue : "Select an option"}/>
+                    {#await App.translate("Select an option", App.selectedLanguage) then text}
+                        {selectedValue?.length ? selectedValue : text}
+                    {/await}
                 </label>
                 <ChevronDownIcon class="ml-auto mt-auto mb-auto size-4 shrink-0 opacity-50" />
             </Button>
