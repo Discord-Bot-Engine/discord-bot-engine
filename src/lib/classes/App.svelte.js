@@ -34,7 +34,7 @@ class AppClass {
 		async function translate(text, lang) {
 			const client = "gtx";
 			const sl = "en";
-			const tl = lang;
+			const tl = lang.slice(40) || lang
 			const hl = "en-US";
 			const dt1 = "t";
 			const dt2 = "bd";
