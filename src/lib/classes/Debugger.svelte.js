@@ -2,6 +2,7 @@ import { invoke } from '@tauri-apps/api/core';
 import {Webview} from "@tauri-apps/api/webview";
 import {getAllWindows, Window} from "@tauri-apps/api/window";
 import {BotManager} from "$lib/classes/BotManager.svelte.js";
+import {App} from "$lib/classes/App.svelte.js";
 import {SvelteMap} from "svelte/reactivity";
 import Action from "$lib/classes/Action.svelte.js"
 
@@ -19,7 +20,7 @@ class DebuggerClass {
 			height: 450,
 		});
 		variablesWindow.once('tauri://created', async () => {
-			variablesWindow.setTitle(`${trigger.name[0].toUpperCase()}${trigger.name.slice(1).toLowerCase()}'s variables`)
+			variablesWindow.setTitle((await App.translate(`%s's variables`, App.selectedLanguage)).replace("%s", `${trigger.name[0].toUpperCase()}${trigger.name.slice(1).toLowerCase()}`))
 			const webview = new Webview(variablesWindow, `variables-${BotManager.selectedBot.name.replace(/\s/g, '_')}-${trigger.id}`, {
 				url: `/variables?path=${BotManager.selectedBot.path}&trigger=${trigger.id}`,
 				x: 0,
@@ -46,7 +47,7 @@ class DebuggerClass {
 			height: 450,
 		});
 		debugWindow.once('tauri://created', async () => {
-			debugWindow.setTitle(`Debugging ${BotManager.selectedBot.name}`)
+			debugWindow.setTitle((await App.translate(`Debugging %s`, App.selectedLanguage)).replace("%s", BotManager.selectedBot.name))
 			this.windows = await getAllWindows()
 			const webview = new Webview(debugWindow, `debug-${BotManager.selectedBot.name.replace(/\s/g, '_')}`, {
 				url: `/debugger?path=${BotManager.selectedBot.path}`,
