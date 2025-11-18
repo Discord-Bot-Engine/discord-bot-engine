@@ -6,6 +6,7 @@ use tauri::{Emitter, Manager};
 use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
 use std::collections::HashMap;
+use std::ops::Add;
 use std::sync::{Arc, Mutex};
 use serde_json::{json, Value};
 
@@ -13,6 +14,53 @@ struct BotManager {
     bots: Mutex<HashMap<String, CommandChild>>,
 }
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+#[tauri::command(rename_all = "snake_case")]
+fn save_translation(
+    app: tauri::AppHandle,
+    name: String,
+    translation: String,
+) {
+    tauri::async_runtime::spawn(async move {
+            let translation_path = app
+                .path()
+                .resolve("translations", BaseDirectory::AppLocalData)
+                .unwrap().join(format!("{name}.json"));
+            if let Err(err) = fs::write(&translation_path, &translation) {
+                eprintln!("Failed to write to {:?}: {}", &translation_path, err);
+            }
+    });
+}
+#[tauri::command]
+fn load_translations(app: tauri::AppHandle) -> String {
+    let translations_dir = app
+        .path()
+        .resolve("translations", BaseDirectory::AppLocalData)
+        .unwrap();
+
+    if !translations_dir.exists() {
+        tauri::async_runtime::spawn(async move {
+            fs::create_dir(translations_dir).unwrap();
+        });
+        return "{}".to_string();
+    }
+
+    let mut map = serde_json::Map::new();
+
+    if let Ok(entries) = fs::read_dir(&translations_dir) {
+        for entry in entries.flatten() {
+            let path: PathBuf = entry.path();
+
+            if path.is_file() && path.extension().and_then(|e| e.to_str()) == Some("json") {
+                if let Some(file_stem) = path.file_stem().and_then(|s| s.to_str()) {
+                    map.insert(file_stem.to_string(), fs::read_to_string(&path).unwrap().parse().unwrap());
+                }
+            }
+        }
+    }
+
+    Value::Object(map).to_string()
+}
+
 #[tauri::command]
 fn load_themes(app: tauri::AppHandle) -> Vec<String> {
     let themes_dir = app
@@ -21,6 +69,9 @@ fn load_themes(app: tauri::AppHandle) -> Vec<String> {
         .unwrap();
 
     if !themes_dir.exists() {
+        tauri::async_runtime::spawn(async move {
+            fs::create_dir(themes_dir).unwrap();
+        });
         return vec![];
     }
 
@@ -477,6 +528,8 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            save_translation,
+            load_translations,
             load_themes,
             debug_action,
             mark_break_point,

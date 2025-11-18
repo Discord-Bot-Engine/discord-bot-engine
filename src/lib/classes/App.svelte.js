@@ -11,19 +11,25 @@ class AppClass {
 	hideVariables = $state(false);
 	hideConsole = $state(false);
 	themes = $state([])
-	theme = $state(null)
-	selectedLanguage = $state("ro")
+	selectedTheme = $state(null)
+	selectedLanguage = $state("en")
+	loadedTranslations = false
 	translations = {}
 
 	constructor() {
 		start("1435285281652867095")
 		this.loadThemes()
+		this.loadTranslations()
 	}
 
 	async translate(text, lang) {
-		this.translations[text] ??= { en: text }
-		this.translations[text][lang] ??= await translate(text, lang)
-		return this.translations[text][lang]
+		if(lang === "en") return text;
+		if(!this.translations[lang]) {
+			this.translations[lang] = {}
+		}
+		if(!this.translations[lang][text]) this.translations[lang][text] = await translate(text, lang)
+		await invoke("save_translation", {name:lang,translation:JSON.stringify(this.translations[lang])})
+		return this.translations[lang][text]
 		async function translate(text, lang) {
 			const client = "gtx";
 			const sl = "en";
@@ -38,9 +44,14 @@ class AppClass {
 		}
 	}
 
+	async loadTranslations() {
+		this.translations = JSON.parse(await invoke("load_translations"))
+		this.selectedLanguage = localStorage.getItem("language") ?? "en"
+	}
+
 	async loadThemes() {
 		this.themes = await invoke("load_themes")
-		this.theme = localStorage.getItem("theme") ?? null
+		this.selectedTheme = localStorage.getItem("theme") ?? null
 	}
 
 	updateActivity(updateTimestamp) {

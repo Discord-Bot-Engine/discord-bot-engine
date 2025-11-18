@@ -32,6 +32,6 @@
 		</main>
 	</Sidebar.Provider>
 {/if}
-{#if App.theme}
-	<link rel="stylesheet" href="{convertFileSrc(App.theme)}">
+{#if App.selectedTheme}
+	<link rel="stylesheet" href="{convertFileSrc(App.selectedTheme)}">
 {/if}
