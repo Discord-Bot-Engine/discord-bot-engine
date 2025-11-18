@@ -1,7 +1,7 @@
 <script>
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-	import { CodeXmlIcon, HouseIcon, SettingsIcon, BlocksIcon, PaletteIcon, CheckIcon } from '@lucide/svelte';
+	import { CodeXmlIcon, HouseIcon, SettingsIcon, BlocksIcon, PaletteIcon, CheckIcon, LanguagesIcon } from '@lucide/svelte';
 	import { page } from '$app/state';
 	import {Button} from "$lib/components/ui/button/index.js";
 	import {App} from "$lib/classes/App.svelte.js"
@@ -236,17 +236,17 @@
 												{#await App.translate("Language", App.selectedLanguage)}
 												<Button title="Language" class="w-8 h-8" variant="ghost"
 												>
-												<PaletteIcon/>
+												<LanguagesIcon/>
 												</Button>
 												{:then title}
 												<Button {title} class="w-8 h-8" variant="ghost"
 												>
-												<PaletteIcon/>
+												<LanguagesIcon/>
 												</Button>
 												{:catch error}
 												<Button title="Theme" class="w-8 h-8" variant="ghost"
 												>
-												<PaletteIcon/>
+												<LanguagesIcon/>
 												</Button>
 												{/await}
 												{/snippet}
