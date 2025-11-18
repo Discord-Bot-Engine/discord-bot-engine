@@ -23,7 +23,7 @@ class AppClass {
 	}
 
 	async translate(text, lang) {
-		lang = PluginManager.isTranslationDownloaded(lang.slice(40)) ? lang.slice(40).slice(0,-5) : lang
+		lang = Object.keys(App.translations).find(x => x.slice(40) === lang && x.slice(40)) ?? lang
 		if(lang === "en") return text;
 		if(!this.translations[lang]) {
 			this.translations[lang] = {}
@@ -47,10 +47,6 @@ class AppClass {
 
 	async loadTranslations() {
 		this.translations = JSON.parse(await invoke("load_translations"))
-		Object.keys(this.translations).forEach((lang) => {
-			const name = PluginManager.isTranslationDownloaded(lang.slice(40) + ".json") ? lang.slice(40) : lang
-			this.translations[name] = this.translations[lang]
-		})
 		this.selectedLanguage = localStorage.getItem("language") ?? "en"
 	}
 
