@@ -48,7 +48,9 @@
 		});
 	}
 </script>
-<Button class="float-right mt-3 mr-3" title="Save" onclick={save}><SaveIcon></SaveIcon></Button>
+{#await App.translate("Save", App.selectedLanguage) then text}
+<Button class="float-right mt-3 mr-3" title={text} onclick={save}><SaveIcon></SaveIcon></Button>
+{/await}
 <div class="w-full h-full flex flex-col gap-4 p-3">
 	<div class="grid grid-cols-5 items-center gap-4">
 		<Label for="name" class="text-right"><Translation text="Name"/></Label>
