@@ -28,6 +28,8 @@
             return PluginManager.isExtensionDownloaded(name);
         } else if (plugin.type === "theme") {
             return PluginManager.isThemeDownloaded(name);
+        } else if (plugin.type === "translation") {
+            return PluginManager.isTranslationDownloaded(name);
         }
     }
     function download(name) {
@@ -39,6 +41,8 @@
             PluginManager.downloadExtension(name, BotManager.selectedBot.path);
         } else if (plugin.type === "theme") {
             PluginManager.downloadTheme(name);
+        } else if (plugin.type === "translation") {
+            PluginManager.downloadTranslation(name);
         }
         isDownloaded = true
         isUpToDate = true
@@ -52,6 +56,8 @@
             PluginManager.removeExtension(name, BotManager.selectedBot.path);
         } else if (plugin.type === "theme") {
             PluginManager.removeTheme(name);
+        } else if (plugin.type === "translation") {
+            PluginManager.removeTranslation(name);
         }
         isDownloaded = false
         isUpToDate = false

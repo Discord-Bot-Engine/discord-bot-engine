@@ -2,6 +2,7 @@ import { start, clearActivity, setActivity } from "tauri-plugin-drpc";
 import { Activity, Timestamps, Button } from "tauri-plugin-drpc/activity";
 import {BotManager} from "$lib/classes/BotManager.svelte.js";
 import {invoke} from "@tauri-apps/api/core";
+import {PluginManager} from "$lib/classes/PluginManager.svelte.js";
 
 class AppClass {
 	selectedTrigger = $state(null);
@@ -13,7 +14,6 @@ class AppClass {
 	themes = $state([])
 	selectedTheme = $state(null)
 	selectedLanguage = $state("en")
-	loadedTranslations = false
 	translations = {}
 
 	constructor() {
@@ -23,6 +23,7 @@ class AppClass {
 	}
 
 	async translate(text, lang) {
+		lang = PluginManager.isTranslationDownloaded(lang.slice(40)) ? lang.slice(40).slice(0,-5) : lang
 		if(lang === "en") return text;
 		if(!this.translations[lang]) {
 			this.translations[lang] = {}
@@ -46,6 +47,10 @@ class AppClass {
 
 	async loadTranslations() {
 		this.translations = JSON.parse(await invoke("load_translations"))
+		Object.keys(this.translations).forEach((lang) => {
+			const name = PluginManager.isTranslationDownloaded(lang.slice(40) + ".json") ? lang.slice(40) : lang
+			this.translations[name] = this.translations[lang]
+		})
 		this.selectedLanguage = localStorage.getItem("language") ?? "en"
 	}
 

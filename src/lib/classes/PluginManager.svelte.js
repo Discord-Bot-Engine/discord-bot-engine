@@ -7,22 +7,25 @@ class PluginManagerClass {
 	triggers = $state([])
 	extensions = $state([])
 	themes = $state([])
-	plugins = $derived([...this.actions, ...this.triggers, ...this.extensions, ...this.themes])
+	translations = $state([])
+	plugins = $derived([...this.actions, ...this.triggers, ...this.extensions, ...this.themes, ...this.translations])
 
 	constructor() {
 		this.fetchPlugins()
 	}
 
 	async fetchPlugins() {
-		const path = `https://api.github.com/repos/Discord-Bot-Engine/Plugins/contents/`
+		const path = `https://api.github.com/repos/Discord-Bot-Engine/Plugins/contents`
 		const actions = await fetch(`${path}/actions`).then(res => res.json())
 		const triggers = await fetch(`${path}/triggers`).then(res => res.json())
 		const extensions = await fetch(`${path}/extensions`).then(res => res.json())
 		const themes = await fetch(`${path}/themes`).then(res => res.json())
+		const translations = await fetch(`${path}/translations`).then(res => res.json())
 		this.actions = actions.filter(file => file.name.endsWith(".js")).map(json => this.convertJSONResponseToPlugin(json, "action"))
 		this.triggers = triggers.filter(file => file.name.endsWith(".js")).map(json => this.convertJSONResponseToPlugin(json, "trigger"))
 		this.extensions = extensions.filter(file => file.name.endsWith(".js")).map(json => this.convertJSONResponseToPlugin(json, "extension"))
 		this.themes = themes.filter(file => file.name.endsWith(".css")).map(json => this.convertJSONResponseToPlugin(json, "theme"))
+		this.translations = translations.filter(file => file.name.endsWith(".json")).map(json => this.convertJSONResponseToPlugin(json, "translation"))
 	}
 
 	async removeAction(name, path) {
@@ -47,6 +50,13 @@ class PluginManagerClass {
 		const theme = this.themes.find(x => x.name === name)
 		await invoke("remove_theme", {theme: name, sha: theme.sha})
 		App.loadThemes()
+	}
+
+
+	async removeTranslation(name) {
+		const translation = this.translations.find(x => x.name === name)
+		await invoke("remove_translation", {translation: name, sha: translation.sha})
+		App.loadTranslations()
 	}
 
 	async downloadAction(name, path) {
@@ -77,6 +87,13 @@ class PluginManagerClass {
 		App.loadThemes()
 	}
 
+	async downloadTranslation(name) {
+		const translation = this.translations.find(x => x.name === name)
+		const data = await fetch(translation.url).then(res => res.text())
+		await invoke("download_translation", {translation: name, sha: translation.sha, data})
+		App.loadTranslations()
+	}
+
 	isActionUpToDate(name) {
 		if(!name) return false;
 		const currentSha = name.slice(0, 40)
@@ -105,13 +122,19 @@ class PluginManagerClass {
 		return currentSha === sha
 	}
 
+	isTranslationUpToDate(name) {
+		if(!name) return false;
+		const currentSha = name?.slice(0, 40)
+		const sha = this.translations.find(x => x.name.slice(0, -5) === name.slice(40)).sha
+		return currentSha === sha
+	}
+
 	isActionDownloaded(name) {
 		return BotManager.selectedBot.actionClasses.find(x => x.file.slice(40) === name && x.file.slice(40))
 	}
 
 	isTriggerDownloaded(name) {
 		return BotManager.selectedBot.triggerClasses.find(x => x.file.slice(40) === name && x.file.slice(40))
-
 	}
 
 	isExtensionDownloaded(name) {
@@ -120,6 +143,10 @@ class PluginManagerClass {
 
 	isThemeDownloaded(name) {
 		return App.themes.find(x => x.split("\\").join("/").split("/").at(-1).slice(40) === name && x.split("\\").join("/").split("/").at(-1).slice(40))
+	}
+
+	isTranslationDownloaded(name) {
+		return Object.keys(App.translations).find(x => x.slice(40) === name.slice(0,-5) && x.slice(40))
 	}
 
 	convertJSONResponseToPlugin(json, type) {

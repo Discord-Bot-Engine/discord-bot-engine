@@ -291,6 +291,24 @@ fn download_extension(_app: tauri::AppHandle, bot_path:String, extension:String,
 }
 
 #[tauri::command(rename_all = "snake_case")]
+fn download_translation(_app: tauri::AppHandle, translation: String, sha: String, data: String) {
+    let translations_dir = _app
+        .path()
+        .resolve("translations", BaseDirectory::AppLocalData)
+        .unwrap();
+
+    if let Err(e) = fs::create_dir_all(&translations_dir) {
+        eprintln!("Failed to create translations directory: {}", e);
+        return;
+    }
+
+    let path = Path::new(&translations_dir).join(sha+&translation);
+
+    tauri::async_runtime::spawn(async move {
+        fs::write(&path, data).unwrap();
+    });
+}
+#[tauri::command(rename_all = "snake_case")]
 fn download_theme(_app: tauri::AppHandle, theme: String, sha: String, data: String) {
     let themes_dir = _app
         .path()
@@ -333,6 +351,17 @@ fn remove_extension(_app: tauri::AppHandle, bot_path:String, extension:String, s
     });
 }
 
+#[tauri::command(rename_all = "snake_case")]
+fn remove_translation(_app: tauri::AppHandle, translation:String, sha:String) {
+    let translations_dir = _app
+        .path()
+        .resolve("translations", BaseDirectory::AppLocalData)
+        .unwrap();
+    let path = Path::new(&translations_dir).join(sha+&translation);
+    tauri::async_runtime::spawn(async move {
+        fs::remove_file(&path).unwrap();
+    });
+}
 #[tauri::command(rename_all = "snake_case")]
 fn remove_theme(_app: tauri::AppHandle, theme:String, sha:String) {
     let themes_dir = _app
@@ -544,10 +573,12 @@ pub fn run() {
             download_trigger,
             download_extension,
             download_theme,
+            download_translation,
             remove_action,
             remove_trigger,
             remove_extension,
             remove_theme,
+            remove_translation,
             save_bot_triggers,
             load_bot_triggers,
             save_bot_extensions,

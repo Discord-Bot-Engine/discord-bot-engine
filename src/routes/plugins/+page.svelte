@@ -36,6 +36,11 @@
 			const themes = App.themes
 			const theme = themes.find(theme => theme.split("\\").join("/").split("/").at(-1).slice(40) === plugin.name).split("\\").join("/").split("/").at(-1)
 			return PluginManager.isThemeUpToDate(theme);
+		} else if (plugin.type === "translation") {
+			const translations = App.translations
+			const translation = Object.keys(translations).find(translation => translation.slice(40) === plugin.name.slice(0, -5))
+			console.log(translation)
+			return PluginManager.isTranslationUpToDate(translation);
 		}
 	}
 </script>
