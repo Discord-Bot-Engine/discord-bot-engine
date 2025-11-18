@@ -117,19 +117,7 @@
     </Menubar.Menu>
     {/each}
 </Menubar.Root>
-{#await App.translate(extension.type, App.selectedLanguage)}
-    <Modal bind:open={isEditing} title={extension.type} onDone={editExtension}>
-        <div class="grid gap-4 py-4" bind:this={ref}>
-            {@html extension?.html ?? ""}
-        </div>
-    </Modal>
-{:then type}
-    <Modal bind:open={isEditing} title={type} onDone={editExtension}>
-        <div class="grid gap-4 py-4" bind:this={ref}>
-            {@html extension?.html ?? ""}
-        </div>
-    </Modal>
-{:catch error}
+{#await App.translate(extension.type, App.selectedLanguage) then type}
     <Modal bind:open={isEditing} title={extension.type} onDone={editExtension}>
         <div class="grid gap-4 py-4" bind:this={ref}>
             {@html extension?.html ?? ""}
