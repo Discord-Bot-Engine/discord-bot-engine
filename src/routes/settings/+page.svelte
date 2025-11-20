@@ -60,7 +60,9 @@
 		<Label for="path" class="text-right"><Translation text="Folder"/></Label>
 		<div class="flex col-span-4 gap-2">
 			<Input id="path" class="flex-auto invalid:ring-2 invalid:ring-destructive" required bind:value={botPath}/>
-			<Button title="Choose Folder" onclick={selectFolder}><FolderOpenIcon/></Button>
+			{#await App.translate("Choose Folder", App.selectedLanguage) then text}
+				<Button title={text} onclick={selectFolder}><FolderOpenIcon/></Button>
+			{/await}
 		</div>
 	</div>
 	<div class="grid grid-cols-5 items-center gap-4">
@@ -76,7 +78,9 @@
 		<Input id="port" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={dashboardPort} />
 	</div>
 	{#if BotManager.selectedBot.clientId}
-		<Button variant="secondary" class="self-end w-fit" title="Copy Invite Link" onclick={copyInviteLink}><LinkIcon/></Button>
+		{#await App.translate("Copy Invite Link", App.selectedLanguage) then text}
+			<Button variant="secondary" class="self-end w-fit" title={text} onclick={copyInviteLink}><LinkIcon/></Button>
+		{/await}
 	{/if}
 		<Card.Root class="w-full h-fit gap-3">
 		<Card.Header>
