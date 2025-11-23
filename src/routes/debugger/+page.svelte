@@ -58,9 +58,10 @@
                     <label class="mt-auto mb-auto font-semibold">{trigger.name}</label>
                     {#if trigger.actions.length}
                         <div class="ml-auto">
-                            {#await App.translate("View Variables", App.selectedLanguage) then text}
+                            {#snippet variablesBtn(text)}
                             <Button variant="secondary" class="size-6 mt-auto mb-auto" title={text} onclick={() => Debugger.attachVariablesWindow(trigger)}><VariableIcon></VariableIcon></Button>
-                            {/await}
+                            {/snippet}
+                            <Translation text="View Variables" el={variablesBtn} />
                                 <Collapsible.Trigger class={buttonVariants({ variant: "ghost", class: "mt-auto mb-auto size-7" })}>
                                 <ChevronDownIcon />
                             </Collapsible.Trigger>
@@ -76,16 +77,18 @@
         {/each}
         {#snippet action(trigger, act, index)}
                 <div class="flex w-full text-xs bg-popover px-2 py-2 border-b-1">
-                    {#await App.translate("Is Break Point?", App.selectedLanguage) then text}
+                    {#snippet breakPoint(text)}
                     <Checkbox bind:checked={act.isBreakPoint} onCheckedChange={(v) => v ? Debugger.markAsBreakPoint(act.id) : Debugger.removeBreakPoint(act.id)} class="mr-3 mt-auto mb-auto" title={text}/>
-                        {/await}
+                        {/snippet}
+                    <Translation text="Is Break Point?" el={breakPoint}/>
                         <label class="mt-auto mb-auto">
                         {index}. <Translation text={act.actionType}/>
                     </label>
                     <div class="ml-auto mt-auto mb-auto">
-                        {#await App.translate("Run Action", App.selectedLanguage) then text}
+                        {#snippet runBtn(text)}
                         <Button class="mr-1 ml-3 size-6 mt-auto mb-auto" onclick={() => Debugger.debugAction(page.url.searchParams.get("path"), trigger.id, act.id)} title={text}><PlayIcon></PlayIcon></Button>
-                            {/await}
+                            {/snippet}
+                        <Translation text="Run Action" el={runBtn}/>
                     </div>
                 </div>
         {/snippet}

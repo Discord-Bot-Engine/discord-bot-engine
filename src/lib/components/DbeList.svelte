@@ -5,6 +5,7 @@
     import Modal from "$lib/components/Modal.svelte";
     import {App} from "$lib/classes/App.svelte.js";
     import CustomElement from "$lib/classes/CustomElement.svelte.js";
+    import Translation from "$lib/components/Translation.svelte";
     let {modalId, itemTitle = "() => {}", ...props} = $props()
     let open = $state(false)
     let items = $state([])
@@ -43,11 +44,12 @@
     items.splice(items.indexOf(selected), 1);
 }} bind:selected></List>
 {#if init}
-{#await itemTitle(selected, items.indexOf(selected) + 1) then title}
-<Modal bind:open title={title} onDone={editItem}>
-    <div class="grid gap-4 py-4 px-1" bind:this={ref}>
-        {@html html}
-    </div>
-</Modal>
-{/await}
+    {#snippet titleSnippet(title)}
+        <Modal bind:open title={title} onDone={editItem}>
+            <div class="grid gap-4 py-4 px-1" bind:this={ref}>
+                {@html html}
+            </div>
+        </Modal>
+    {/snippet}
+<Translation text={itemTitle(selected, items.indexOf(selected) + 1)} el={titleSnippet}/>
     {/if}

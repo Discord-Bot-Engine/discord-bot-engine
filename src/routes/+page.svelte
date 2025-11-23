@@ -33,19 +33,12 @@
 	}
 </script>
 <Dialog.Root bind:open={isCreating}>
-	{#await App.translate("Create Project", App.selectedLanguage)}
-		<Dialog.Trigger title="Create Project" class="absolute top-3 right-3 z-10 {buttonVariants()}"
-		><PlusIcon/></Dialog.Trigger
-		>
-	{:then text}
+	{#snippet createBtn(text)}
 		<Dialog.Trigger title={text} class="absolute top-3 right-3 z-10 {buttonVariants()}"
 	><PlusIcon/></Dialog.Trigger
 	>
-	{:catch error}
-		<Dialog.Trigger title="Create Project" class="absolute top-3 right-3 z-10 {buttonVariants()}"
-		><PlusIcon/></Dialog.Trigger
-		>
-	{/await}
+	{/snippet}
+<Translation text="Create Project" el={createBtn}/>
 	<Dialog.Content class="sm:max-w-[425px] px-4.5" >
 		<Dialog.Header>
 			<Dialog.Title>

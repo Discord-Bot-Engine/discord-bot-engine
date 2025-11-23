@@ -258,9 +258,10 @@
 												<DropdownMenu.Item class="!text-xs" onclick={() => setLanguage(language.value)}><CheckIcon
 												class={cn(`mr-2 size-4 ${App.selectedLanguage === language.value ? "" : "opacity-0"}`)}
 												/>
-													{#await App.translate(language.label, App.selectedLanguage) then label}
+													{#snippet langSnip(label)}
 														{label[0].toUpperCase()}{label.slice(1)}
-												{/await}
+												{/snippet}
+												<Translation text={language.label} el={langSnip}/>
 												</DropdownMenu.Item>
 									{/each}
 												</ScrollArea>

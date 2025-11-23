@@ -2,6 +2,7 @@
     import {Handle, Position, useSvelteFlow} from '@xyflow/svelte';
     import {App} from "$lib/classes/App.svelte.js"
     import {NodeResizer} from "@xyflow/svelte";
+    import Translation from "$lib/components/Translation.svelte";
     let { id, data, selected } = $props();
     const group = $derived(App.selectedTrigger.actions.find(act => act.id === id));
     $effect(() => {
@@ -19,11 +20,12 @@
     }} class="!border-primary !bg-primary" minWidth={120} minHeight={100} />
 {/if}
     <div class="text-3xl w-full h-full">
-        {#await App.translate("Group", App.selectedLanguage) then text}
+        {#snippet group(text)}
 <input class="w-full !outline-none text-primary nodrag" placeholder={text} value={data.get("text") ?? ""}
        oninput={(evt) => {
            data.set("text", evt.target.value)
       }}
 />
-            {/await}
+            {/snippet}
+        <Translation text="Group" el={group}/>
 </div>

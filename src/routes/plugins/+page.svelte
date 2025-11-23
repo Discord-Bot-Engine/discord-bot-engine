@@ -6,6 +6,7 @@
 	import {Input} from "$lib/components/ui/input/index.js";
 	import {goto} from "$app/navigation";
 	import {App} from "$lib/classes/App.svelte.js"
+	import Translation from "$lib/components/Translation.svelte";
 	if(!BotManager.selectedBot) {
 		App.translate("Please select a project!", App.selectedLanguage).then(text => {
 			alert(text)
@@ -45,9 +46,10 @@
 	}
 </script>
 <div class="w-full p-3 pb-0">
-	{#await App.translate("Search plugin...", App.selectedLanguage) then text}
+	{#snippet searchInput(text)}
 		<Input bind:value={name} placeholder={text}/>
-	{/await}
+	{/snippet}
+	<Translation text="Search plugin..." el={searchInput}/>
 </div>
 <ScrollArea>
 	{#if !BotManager.selectedBot.isLoading}

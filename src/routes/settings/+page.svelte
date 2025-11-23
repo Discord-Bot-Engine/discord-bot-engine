@@ -48,9 +48,10 @@
 		});
 	}
 </script>
-{#await App.translate("Save", App.selectedLanguage) then text}
+{#snippet saveBtn(text)}
 <Button class="float-right mt-3 mr-3" title={text} onclick={save}><SaveIcon></SaveIcon></Button>
-{/await}
+{/snippet}
+<Translation text="Save" el={saveBtn}/>
 <div class="w-full h-full flex flex-col gap-4 p-3">
 	<div class="grid grid-cols-5 items-center gap-4">
 		<Label for="name" class="text-right"><Translation text="Name"/></Label>
@@ -60,9 +61,10 @@
 		<Label for="path" class="text-right"><Translation text="Folder"/></Label>
 		<div class="flex col-span-4 gap-2">
 			<Input id="path" class="flex-auto invalid:ring-2 invalid:ring-destructive" required bind:value={botPath}/>
-			{#await App.translate("Choose Folder", App.selectedLanguage) then text}
+			{#snippet folderBtn(text)}
 				<Button title={text} onclick={selectFolder}><FolderOpenIcon/></Button>
-			{/await}
+			{/snippet}
+			<Translation text="Choose Folder" el={folderBtn}/>
 		</div>
 	</div>
 	<div class="grid grid-cols-5 items-center gap-4">
@@ -78,9 +80,10 @@
 		<Input id="port" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={dashboardPort} />
 	</div>
 	{#if BotManager.selectedBot.clientId}
-		{#await App.translate("Copy Invite Link", App.selectedLanguage) then text}
+		{#snippet inviteBtn(text)}
 			<Button variant="secondary" class="self-end w-fit" title={text} onclick={copyInviteLink}><LinkIcon/></Button>
-		{/await}
+		{/snippet}
+		<Translation text="Copy Invite Link" el={inviteBtn}/>
 	{/if}
 		<Card.Root class="w-full h-fit gap-3">
 		<Card.Header>

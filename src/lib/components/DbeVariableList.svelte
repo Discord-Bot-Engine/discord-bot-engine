@@ -44,14 +44,15 @@
         change(statevalue, $host())
     }
 </script>
-{#await App.translate("Add Variable", App.selectedLanguage) then text}
+{#snippet addVar(text)}
 <SearchSelect extra={
 {
     label: text,
     onclick: () => isCreatingVariable = true
 }
 } {...other} values={customSort(statevalues.filter(el => el.trim())).map((el,i)=>({label: el, value:el}))} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
-{/await}
+{/snippet}
+<Translation text="Add Variable" el={addVar}/>
 <Modal bind:open={isCreatingVariable} title="Create Variable" onDone={addVariable}>
     <div class="grid gap-4 py-4">
         <div class="grid grid-cols-4 items-center gap-4">

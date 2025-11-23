@@ -57,9 +57,10 @@
                     open = false
                 }}
         >
-            {#await App.translate(`Insert "%s" variable`, App.selectedLanguage) then text}
+            {#snippet insert(text)}
                 {text.replace("%s", v)}
-            {/await}
+            {/snippet}
+                    <Translation text='Insert "%s" variable' el={insert}/>
         </Button>
 
         </div>
