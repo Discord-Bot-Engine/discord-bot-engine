@@ -30,7 +30,6 @@
         if(actionType.toLowerCase() === "none") return;
         const id = uuidv4()
         const viewport = getViewport()
-        console.log(viewport)
         const act = new Action(id, actionType, (-viewport.x + pos.x) / viewport.zoom, (-viewport.y + pos.y) / viewport.zoom)
         App.selectedTrigger.actions = [...App.selectedTrigger.actions, act]
         isCreatingAction = false;
