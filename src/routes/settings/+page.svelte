@@ -85,7 +85,7 @@
 		<Card.Root class="w-full h-fit gap-3">
 		<Card.Header>
 			<Card.Title class="text-xl">
-				Intents
+				<Translation text="Intents"/>
 			</Card.Title>
 		</Card.Header>
 		<Card.Content class="flex flex-col gap-3">
