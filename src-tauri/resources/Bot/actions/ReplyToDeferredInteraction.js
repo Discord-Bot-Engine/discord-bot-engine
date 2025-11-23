@@ -432,7 +432,7 @@ export default class ReplyToDeferredInteraction {
             el.parentElement.parentElement.querySelector('#cid').style.display = (value !== 'Link' ? '' : 'none');
         }
     }
-    static close(context) {
+    static async close(context) {
         const data = context.data
         const selectmenus = [];
         const buttons = [];
@@ -468,6 +468,8 @@ export default class ReplyToDeferredInteraction {
                 })
             }
         })
+        const btns = await Promise.all(buttons.map(async el => (await App.translate(`%s (on click)`, App.selectedLanguage)).replace("%s", el)))
+        const selects = await Promise.all(selectmenus.map(async el => (await App.translate(`%s (on select)`, App.selectedLanguage)).replace("%s", el)))
         context.outputs = ["action", ...btns.map(b => ({translation:b})), ...selects.map(s => ({translation:s}))]
     }
     static load(context) {
