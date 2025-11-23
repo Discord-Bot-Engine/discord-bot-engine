@@ -28,7 +28,7 @@ export default class StoreValueFromMemberData {
         const defaultValue = data.get("default")
         const member = getVariable(data.get("member"))
         const field = `${member.id}${member.guild.id}${data.get("field")}`
-        setVariable(data.get("value") ?? parse(defaultValue), await Bot.getData(field))
+        setVariable(data.get("value"), await Bot.getData(field) ?? parse(defaultValue))
         actionManager.runNext(id, "action")
         function parse(str) {
             const num = Number(str);
