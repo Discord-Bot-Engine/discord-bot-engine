@@ -51,6 +51,7 @@
     onclick: () => isCreatingVariable = true
 }
 } {...other} values={customSort(statevalues.filter(el => el.trim())).map((el,i)=>({label: el, value:el}))} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
+{/await}
 <Modal bind:open={isCreatingVariable} title="Create Variable" onDone={addVariable}>
     <div class="grid gap-4 py-4">
         <div class="grid grid-cols-4 items-center gap-4">
@@ -59,7 +60,7 @@
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <Label for="type" class="text-right"><Translation text="Type"/></Label>
-            {#await variableTypes.filter(v => types.includes(v.toLowerCase()) || types.includes("any")).map( async el => ({label: (await App.translate(el, App.selectedLanguage)).split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()})) then types}
+            {#await Promise.all(variableTypes.filter(v => types.includes(v.toLowerCase()) || types.includes("any")).map( async el => ({label: (await App.translate(el, App.selectedLanguage)).split(" ").map(el => `${el[0].toUpperCase()}${el.slice(1)}`).join(" "), value: el.toLowerCase()}))) then types}
                 {#await App.translate("None", App.selectedLanguage) then none}
                 <SearchSelect name="type" values={[{label:"None", value: "None", disabled:true}, ...types]} bind:value={newVariableType} class="col-span-3 w-full {newVariableType === 'None' ? 'ring-2 ring-destructive' : ''}"/>
                 {/await}
@@ -67,4 +68,3 @@
         </div>
     </div>
 </Modal>
-{/await}
