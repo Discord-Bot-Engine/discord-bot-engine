@@ -20,12 +20,12 @@
     }} class="!border-primary !bg-primary" minWidth={120} minHeight={100} />
 {/if}
     <div class="text-3xl w-full h-full">
-        {#snippet group(text)}
+        {#snippet groupSnip(text)}
 <input class="w-full !outline-none text-primary nodrag" placeholder={text} value={data.get("text") ?? ""}
        oninput={(evt) => {
            data.set("text", evt.target.value)
       }}
 />
             {/snippet}
-        <Translation text="Group" el={group}/>
+        <Translation text="Group" el={groupSnip}/>
 </div>
