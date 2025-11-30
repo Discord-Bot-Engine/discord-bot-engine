@@ -51,7 +51,7 @@
         }
    }
    function bindings(ev) {
-       if(document.activeElement?.value !== undefined || getSelection().toString()) return;
+       if(document.activeElement.tagName !== "BODY") return;
        ev.preventDefault();
        if(ev.key === "c" && ev.ctrlKey && App.selectedTrigger) copy()
        else if(ev.key === "v" && ev.ctrlKey && App.selectedTrigger) paste()
@@ -156,7 +156,10 @@
     ><MinusIcon /></Button>
         </div>
             {#if App.selectedTrigger}
-                <SvelteFlow bind:this={ref} ondblclick={(ev) => {
+                <SvelteFlow onbeforedelete={({nodes}) => {
+                    if(document.activeElement.tagName !== "BODY" && !nodes.find(n => n.id === document.activeElement.dataset.id && n.selected)) return false;
+                    else return true
+                }} bind:this={ref} ondblclick={(ev) => {
                     if(!ev.ctrlKey) return;
                     isCreatingAction = true;
                     pos = {x: ev.pageX - 300, y: ev.pageY - 100}
