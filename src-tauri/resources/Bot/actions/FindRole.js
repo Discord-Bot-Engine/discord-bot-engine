@@ -3,7 +3,7 @@ import {Bot} from "../classes/Bot.js";
 
 export default class FindRole {
     static type = "Find Role"
-    static variableTypes = ["Role"]
+    static variableTypes = ["Role", "Server"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Server"></dbe-label>

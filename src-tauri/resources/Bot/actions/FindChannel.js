@@ -2,7 +2,7 @@ import {Bot} from "../classes/Bot.js";
 import {ChannelType} from "discord.js"
 export default class FindChannel {
     static type = "Find Channel"
-    static variableTypes = ["Channel"]
+    static variableTypes = ["Channel", "Server"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Server"></dbe-label>
@@ -22,7 +22,7 @@ export default class FindChannel {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store channel in variable"></dbe-label>
-            <dbe-variable-list name="channel" class="col-span-3" variableType="Channel" id="var"></dbe-variable-list>
+            <dbe-variable-list name="channel" class="col-span-3" variableType="Channel"></dbe-variable-list>
         </div>
     `
     static load(context) {
