@@ -12,9 +12,9 @@ export default class FindChannel {
             <dbe-label name="By"></dbe-label>
             <dbe-select name="by" values="Id,Name" change="(v) => document.getElementById('type').style.display = v === 'Id' ? 'none' : ''" class="col-span-3"></dbe-select>
         </div>
-        <div class="grid grid-cols-4 items-center gap-4">
+        <div class="grid grid-cols-4 items-center gap-4" id="type">
             <dbe-label name="Type"></dbe-label>
-            <dbe-select name="type" id="type" values="Text,Voice,Announcement,Stage,Forum,Category,Thread" class="col-span-3"></dbe-select>
+            <dbe-select name="type" values="Text,Voice,Announcement,Stage,Forum,Category,Thread" class="col-span-3"></dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Value"></dbe-label>
