@@ -157,7 +157,7 @@
         </div>
             {#if App.selectedTrigger}
                 <SvelteFlow onbeforedelete={({nodes}) => {
-                    if(document.activeElement.tagName !== "BODY" && !document.activeElement.className.startsWith("svelte-flow")) return false;
+                    if(document.activeElement.tagName !== "BODY" && !document.activeElement.className.toString().startsWith("svelte-flow")) return false;
                     else return true
                 }} bind:this={ref} ondblclick={(ev) => {
                     if(!ev.ctrlKey) return;
