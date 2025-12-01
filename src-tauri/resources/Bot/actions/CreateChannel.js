@@ -22,7 +22,7 @@ export default class CreateChannel {
                 name="channelType"
                 id="channelTypeSelect"
                 class="col-span-3"
-                values="Text,Voice,Announcement,Stage,Forum,Category,Thread"
+                values="Text,Voice,Announcement,Stage,Forum,Category"
                 change="(v) => handlers.onChange(v)"
             ></dbe-select>
         </div>
@@ -64,26 +64,23 @@ export default class CreateChannel {
                 "Send Messages","Send TTS Messages","Send Messages In Threads",
                 "Create Public Threads","Create Private Threads","Manage Messages","Manage Threads",
                 "Embed Links","Attach Files","Add Reactions","Use External Emojis","Use External Stickers",
-                "Use Application Commands","Mention Everyone","Read Message History"
+                "Use Application Commands","Mention Everyone","Read Message History",
+                "Pin Messages","Bypass Slowmode","Send Voice Messages","Create Polls"
             ],
             Announcement: [
                 "View Channel","Manage Channels","Manage Roles","Manage Webhooks","Create Invite",
                 "Send Messages","Send TTS Messages","Send Messages In Threads",
                 "Create Public Threads","Create Private Threads","Manage Messages","Manage Threads",
                 "Embed Links","Attach Files","Add Reactions","Use External Emojis","Use External Stickers",
-                "Use Application Commands","Mention Everyone","Read Message History"
+                "Use Application Commands","Mention Everyone","Read Message History",
+                "Pin Messages","Bypass Slowmode","Send Voice Messages","Create Polls"
             ],
             Forum: [
                 "View Channel","Manage Channels","Manage Roles","Manage Webhooks","Create Invite",
                 "Send Messages","Send Messages In Threads","Create Public Threads","Create Private Threads",
                 "Manage Messages","Manage Threads","Embed Links","Attach Files","Add Reactions",
                 "Use External Emojis","Use External Stickers","Use Application Commands","Mention Everyone",
-                "Read Message History"
-            ],
-            Thread: [
-                "View Channel","Send Messages In Threads","Send Messages","Manage Threads",
-                "Create Public Threads","Create Private Threads","Read Message History",
-                "Use External Emojis","Use External Stickers","Add Reactions"
+                "Read Message History","Pin Messages","Bypass Slowmode","Send Voice Messages","Create Polls"
             ],
             Voice: [
                 "View Channel","Manage Channels","Manage Roles","Manage Webhooks","Create Invite",
@@ -156,7 +153,11 @@ export default class CreateChannel {
             "Move Members": "MoveMembers",
             "Request To Speak": "RequestToSpeak",
             "Manage Events": "ManageEvents",
-            "Use Embedded Activities": "UseEmbeddedActivities"
+            "Use Embedded Activities": "UseEmbeddedActivities",
+            "Pin Messages": "PinMessages",
+            "Bypass Slowmode": "BypassSlowmode",
+            "Send Voice Messages": "SendVoiceMessages",
+            "Create Polls": "CreatePolls"
         };
         const allFlags = Object.values(uiToFlag);
 
