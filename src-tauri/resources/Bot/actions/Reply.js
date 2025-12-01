@@ -258,7 +258,7 @@ export default class Reply {
                         <dbe-select name="tspoiler" class="col-span-3" value="False" values="True,False"></dbe-select>
                     </div>
             </div>
-            <dbe-list name="mediagallery" id="mediagallery" title="Images" modalId="galleryModal" itemTitle="async (item, i) => item.data.get('url') ? : await App.translate('Image #' + i, App.selectedLanguage)"></dbe-list>
+            <dbe-list name="mediagallery" id="mediagallery" title="Images" modalId="galleryModal" itemTitle="async (item, i) => item.data.get('url') ? item.data.get('url') : await App.translate('Image #' + i, App.selectedLanguage)"></dbe-list>
             <div id="file" class="grid gap-4">
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="File URL"></dbe-label>
@@ -334,7 +334,7 @@ export default class Reply {
                         <dbe-label name="Placeholder"></dbe-label>
                         <dbe-input name="splaceholder" class="col-span-3"></dbe-input>
                     </div>
-                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i)"></dbe-list>
+                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Is required?"></dbe-label>
                         <dbe-select name="srequired" class="col-span-3" values="True,False" value="False"></dbe-select>

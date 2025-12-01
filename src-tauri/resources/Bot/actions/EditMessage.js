@@ -250,7 +250,7 @@ export default class EditMessage {
                         <dbe-select name="tspoiler" class="col-span-3" value="False" values="True,False"></dbe-select>
                     </div>
             </div>
-            <dbe-list name="mediagallery" id="mediagallery" title="Images" modalId="galleryModal" itemTitle="async (item, i) => item.data.get('url') ? : await App.translate('Image #' + i, App.selectedLanguage)"></dbe-list>
+            <dbe-list name="mediagallery" id="mediagallery" title="Images" modalId="galleryModal" itemTitle="async (item, i) => item.data.get('url') ? item.data.get('url') : await App.translate('Image #' + i, App.selectedLanguage)"></dbe-list>
             <div id="file" class="grid gap-4">
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="File URL"></dbe-label>
@@ -326,7 +326,7 @@ export default class EditMessage {
                         <dbe-label name="Placeholder"></dbe-label>
                         <dbe-input name="splaceholder" class="col-span-3"></dbe-input>
                     </div>
-                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i)"></dbe-list>
+                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Is required?"></dbe-label>
                         <dbe-select name="srequired" class="col-span-3" values="True,False" value="False"></dbe-select>
@@ -410,6 +410,7 @@ export default class EditMessage {
             </div>
         </template>
     `
+
     static open(context, handlers) {
         handlers.onChange = (v, el) => {
             const parent = el.parentElement.parentElement
@@ -421,23 +422,23 @@ export default class EditMessage {
             parent.querySelector('#separator').style.display = "none"
             parent.querySelector('#button').style.display = "none"
             parent.querySelector('#selectmenu').style.display = "none"
-            if(parent.querySelector('#comps'))
+            if (parent.querySelector('#comps'))
                 parent.querySelector('#comps').style.display = "none"
-            if(v === "Text")
+            if (v === "Text")
                 parent.querySelector('#text').style.display = ""
-            else if(v === "Section")
+            else if (v === "Section")
                 parent.querySelector('#section').style.display = ""
-            else if(v === "Media Gallery")
+            else if (v === "Media Gallery")
                 parent.querySelector('#mediagallery').style.display = ""
-            else if(v === "File")
+            else if (v === "File")
                 parent.querySelector('#file').style.display = ""
-            else if(v === "Separator")
+            else if (v === "Separator")
                 parent.querySelector('#separator').style.display = ""
-            else if(v === "Button")
+            else if (v === "Button")
                 parent.querySelector('#button').style.display = ""
-            else if(v === "Select Menu")
+            else if (v === "Select Menu")
                 parent.querySelector('#selectmenu').style.display = ""
-            else if(v === "Container")
+            else if (v === "Container")
                 parent.querySelector('#comps').style.display = ""
         }
         handlers.onStyleChange = (value, el) => {
@@ -445,6 +446,7 @@ export default class EditMessage {
             el.parentElement.parentElement.querySelector('#cid').style.display = (value !== 'Link' ? '' : 'none');
         }
     }
+
     static async close(context) {
         const data = context.data
         const selectmenus = [];
@@ -452,41 +454,43 @@ export default class EditMessage {
         data.get("components").forEach(comp => {
             const data = comp.data
             const type = data.get("type")
-            if(type === "Section") {
+            if (type === "Section") {
                 const button = data.get("sbutton") === "True";
-                if(button) {
+                if (button) {
                     const id = data.get("bid")
-                    if(data.get("bstyle") !== "Link") buttons.push(id)
+                    if (data.get("bstyle") !== "Link") buttons.push(id)
                 }
-            } else if(type === "Select Menu") {
+            } else if (type === "Select Menu") {
                 selectmenus.push(data.get("sid"))
-            } else if(type === "Button") {
-                if(data.get("bstyle") !== "Link") buttons.push(data.get("bid"))
-            } else if(type === "Container") {
+            } else if (type === "Button") {
+                if (data.get("bstyle") !== "Link") buttons.push(data.get("bid"))
+            } else if (type === "Container") {
                 const components = data.get("components")
                 components.forEach(comp => {
                     const data = comp.data
                     const type = data.get("type")
-                    if(type === "Section") {
+                    if (type === "Section") {
                         const button = data.get("sbutton") === "True";
-                        if(button) {
+                        if (button) {
                             const id = data.get("bid")
-                            if(data.get("bstyle") !== "Link") buttons.push(id)
+                            if (data.get("bstyle") !== "Link") buttons.push(id)
                         }
-                    } else if(type === "Select Menu") {
+                    } else if (type === "Select Menu") {
                         selectmenus.push(data.get("sid"))
-                    } else if(type === "Button") {
-                        if(data.get("bstyle") !== "Link") buttons.push(data.get("bid"))
+                    } else if (type === "Button") {
+                        if (data.get("bstyle") !== "Link") buttons.push(data.get("bid"))
                     }
                 })
             }
         })
         const btns = await Promise.all(buttons.map(async el => (await App.translate(`%s (on click)`, App.selectedLanguage)).replace("%s", el)))
         const selects = await Promise.all(selectmenus.map(async el => (await App.translate(`%s (on select)`, App.selectedLanguage)).replace("%s", el)))
-        context.outputs = ["action", ...btns.map(b => ({translation:b})), ...selects.map(s => ({translation:s}))]
+        context.outputs = ["action", ...btns.map(b => ({translation: b})), ...selects.map(s => ({translation: s}))]
     }
+
     static load(context) {
     }
+
     static async run({id, data, actionManager, getVariable, setVariable}) {
         const components = data.get("components")
         const buttons = []
@@ -495,11 +499,11 @@ export default class EditMessage {
         let currentRow = 0
         components.forEach(({data}, i) => {
             const type = data.get("type")
-            if(type === "Text") {
+            if (type === "Text") {
                 list.push(new TextDisplayBuilder().setContent(
                     data.get("tcontent"),
                 ))
-            } else if(type === "Section") {
+            } else if (type === "Section") {
                 const content = data.get("scontent");
                 const thumbnail = data.get("sthumbnail") === "True";
                 const button = data.get("sbutton") === "True";
@@ -507,13 +511,13 @@ export default class EditMessage {
                 builder.addTextDisplayComponents(
                     text => text.setContent(content)
                 )
-                if(thumbnail) {
+                if (thumbnail) {
                     const url = data.get("turl")
                     const description = data.get("tdescription")
                     const spoiler = data.get("tspoiler") === "True"
                     builder.setThumbnailAccessory(t => t.setURL(url).setDescription(description).setSpoiler(spoiler))
                 }
-                if(button) {
+                if (button) {
                     const id = data.get("bid")
                     const label = data.get("blabel")
                     const style = data.get("bstyle")
@@ -524,15 +528,15 @@ export default class EditMessage {
                     builder.setButtonAccessory(
                         button => {
                             button.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
-                            if(style === "Link") button.setURL(url)
+                            if (style === "Link") button.setURL(url)
                             else button.setCustomId(id)
-                            if(emoji) button.setEmoji(emoji)
+                            if (emoji) button.setEmoji(emoji)
                             return button
                         }
                     )
                 }
                 list.push(builder)
-            } else if(type === "Media Gallery") {
+            } else if (type === "Media Gallery") {
                 const builder = new MediaGalleryBuilder()
                 const images = data.get("mediagallery")
                 images.forEach(({data}) => {
@@ -542,18 +546,18 @@ export default class EditMessage {
                     builder.addItems(item => item.setURL(url).setDescription(description).setSpoiler(spoiler))
                 })
                 list.push(builder)
-            } else if(type === "File") {
+            } else if (type === "File") {
                 const builder = new FileBuilder()
                 const url = data.get("furl")
                 builder.setURL(url)
                 list.push(builder)
-            } else if(type === "Separator") {
+            } else if (type === "Separator") {
                 const builder = new SeparatorBuilder()
                 const divider = data.get("sdivider") === "True"
                 const size = SeparatorSpacingSize[data.get("ssize")]
                 builder.setDivider(divider).setSpacing(size)
                 list.push(builder)
-            } else if(type === "Button") {
+            } else if (type === "Button") {
                 const builder = new ButtonBuilder()
                 const id = data.get("bid")
                 const label = data.get("blabel")
@@ -563,14 +567,14 @@ export default class EditMessage {
                 const disabled = data.get("bdisabled") === "True"
                 buttons.push({id, data})
                 builder.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
-                if(style === "Link") builder.setURL(url)
+                if (style === "Link") builder.setURL(url)
                 else builder.setCustomId(id)
-                if(emoji) builder.setEmoji(emoji)
-                if(!(list[currentRow] instanceof ActionRowBuilder) && list[currentRow]) currentRow++;
-                if(list[currentRow] instanceof ActionRowBuilder && (list[currentRow].data.components.size >= 5 || list[currentRow].data.components.every(c => c.type === ComponentType.Button))) currentRow = i;
-                if(!list[currentRow]) list[currentRow] = new ActionRowBuilder()
+                if (emoji) builder.setEmoji(emoji)
+                if (!(list[currentRow] instanceof ActionRowBuilder) && list[currentRow]) currentRow++;
+                if (list[currentRow] instanceof ActionRowBuilder && (list[currentRow].data.components.size >= 5 || list[currentRow].data.components.every(c => c.type === ComponentType.Button))) currentRow = i;
+                if (!list[currentRow]) list[currentRow] = new ActionRowBuilder()
                 list[currentRow].addComponents(builder)
-            } else if(type === "Select Menu") {
+            } else if (type === "Select Menu") {
                 const builder = new StringSelectMenuBuilder()
                 const id = data.get("sid")
                 const placeholder = data.get("splaceholder")
@@ -587,13 +591,13 @@ export default class EditMessage {
                     const emoji = data.get("emoji")
                     const isdefault = data.get("default") === "True"
                     const opt = new StringSelectMenuOptionBuilder().setLabel(label).setValue(value).setDefault(isdefault)
-                    if(emoji) opt.setEmoji(emoji)
+                    if (emoji) opt.setEmoji(emoji)
                     builder.addOptions(opt)
                 })
                 currentRow = i;
-                if(!list[currentRow]) list[currentRow] = new ActionRowBuilder()
+                if (!list[currentRow]) list[currentRow] = new ActionRowBuilder()
                 list[currentRow].addComponents(builder)
-            } else if(type === "Container") {
+            } else if (type === "Container") {
                 const components = data.get("components")
                 const builder = new ContainerBuilder()
                 const rows = []
@@ -602,11 +606,11 @@ export default class EditMessage {
                 builder.setAccentColor(color)
                 components.forEach(({data}) => {
                     const type = data.get("type")
-                    if(type === "Text") {
-                        builder.addTextDisplayComponents(text=>text.setContent(
+                    if (type === "Text") {
+                        builder.addTextDisplayComponents(text => text.setContent(
                             data.get("tcontent")
                         ))
-                    } else if(type === "Section") {
+                    } else if (type === "Section") {
                         const content = data.get("scontent");
                         const thumbnail = data.get("sthumbnail") === "True";
                         const button = data.get("sbutton") === "True";
@@ -614,13 +618,13 @@ export default class EditMessage {
                             builder.addTextDisplayComponents(
                                 text => text.setContent(content)
                             )
-                            if(thumbnail) {
+                            if (thumbnail) {
                                 const url = data.get("turl")
                                 const description = data.get("tdescription")
                                 const spoiler = data.get("tspoiler") === "True"
                                 builder.setThumbnailAccessory(t => t.setURL(url).setDescription(description).setSpoiler(spoiler))
                             }
-                            if(button) {
+                            if (button) {
                                 const id = data.get("bid")
                                 const label = data.get("blabel")
                                 const style = data.get("bstyle")
@@ -631,16 +635,16 @@ export default class EditMessage {
                                 builder.setButtonAccessory(
                                     button => {
                                         button.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
-                                        if(style === "Link") button.setURL(url)
+                                        if (style === "Link") button.setURL(url)
                                         else button.setCustomId(id)
-                                        if(emoji) button.setEmoji(emoji)
+                                        if (emoji) button.setEmoji(emoji)
                                         return button
                                     }
                                 )
                             }
                             return builder
                         })
-                    } else if(type === "Media Gallery") {
+                    } else if (type === "Media Gallery") {
                         builder.addMediaGalleryComponents(builder => {
                             const images = data.get("mediagallery")
                             images.forEach(({data}) => {
@@ -651,20 +655,20 @@ export default class EditMessage {
                             })
                             return builder
                         })
-                    } else if(type === "File") {
+                    } else if (type === "File") {
                         builder.addFileComponents(builder => {
                             const url = data.get("furl")
                             builder.setURL(url)
                             return builder
                         })
-                    } else if(type === "Separator") {
+                    } else if (type === "Separator") {
                         builder.addSeparatorComponents(builder => {
                             const divider = data.get("sdivider") === "True"
                             const size = SeparatorSpacingSize[data.get("ssize")]
                             builder.setDivider(divider).setSpacing(size)
                             return builder
                         })
-                    } else if(type === "Button") {
+                    } else if (type === "Button") {
                         const builder = new ButtonBuilder()
                         const id = data.get("bid")
                         const label = data.get("blabel")
@@ -674,13 +678,13 @@ export default class EditMessage {
                         const disabled = data.get("bdisabled") === "True"
                         buttons.push({id, data})
                         builder.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
-                        if(style === "Link") builder.setURL(url)
+                        if (style === "Link") builder.setURL(url)
                         else builder.setCustomId(id)
-                        if(emoji) builder.setEmoji(emoji)
-                        if(rows[currentRow] && (rows[currentRow].data.components.size >= 5 || rows[currentRow].data.components.every(c => c.type === ComponentType.Button))) currentRow++;
-                        if(!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
+                        if (emoji) builder.setEmoji(emoji)
+                        if (rows[currentRow] && (rows[currentRow].data.components.size >= 5 || rows[currentRow].data.components.every(c => c.type === ComponentType.Button))) currentRow++;
+                        if (!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
                         rows[currentRow].addComponents(builder)
-                    } else if(type === "Select Menu") {
+                    } else if (type === "Select Menu") {
                         const builder = new StringSelectMenuBuilder()
                         const id = data.get("sid")
                         const placeholder = data.get("splaceholder")
@@ -697,11 +701,11 @@ export default class EditMessage {
                             const emoji = data.get("emoji")
                             const isdefault = data.get("default") === "True"
                             const opt = new StringSelectMenuOptionBuilder().setLabel(label).setValue(value).setDefault(isdefault)
-                            if(emoji) opt.setEmoji(emoji)
+                            if (emoji) opt.setEmoji(emoji)
                             builder.addOptions(opt)
                         })
-                        if(rows[currentRow]) currentRow++;
-                        if(!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
+                        if (rows[currentRow]) currentRow++;
+                        if (!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
                         rows[currentRow].addComponents(builder)
                     }
                 })
@@ -715,7 +719,7 @@ export default class EditMessage {
             const buffer = getVariable(file.data.get("buffer"))
             const name = file.data.get("name")
             const description = file.data.get("description")
-            attachments.push(new AttachmentBuilder(buffer, { name, description }))
+            attachments.push(new AttachmentBuilder(buffer, {name, description}))
         })
         const flags = [MessageFlags.IsComponentsV2]
         const message = getVariable(data.get("message"))
@@ -724,8 +728,14 @@ export default class EditMessage {
             files: attachments,
             flags,
         })
-        const btncollector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
-        const menucollector = message.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
+        const btncollector = message.createMessageComponentCollector({
+            componentType: ComponentType.Button,
+            time: 3_600_000
+        });
+        const menucollector = message.createMessageComponentCollector({
+            componentType: ComponentType.StringSelect,
+            time: 3_600_000
+        });
         btncollector.on('collect', (i) => {
             const btn = buttons.find(b => b.id === i.customId)
             const int = btn.data.get("binteraction")
@@ -761,6 +771,7 @@ export default class EditMessage {
             actionManager.runNext(id, `${i.customId} (on select)`)
         });
         actionManager.runNext(id, "action")
+
         function hexToNumber(hex) {
             if (hex.startsWith('#')) {
                 hex = hex.slice(1);
