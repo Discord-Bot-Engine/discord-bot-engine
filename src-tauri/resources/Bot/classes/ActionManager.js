@@ -1,5 +1,6 @@
 import { Bot } from "./Bot.js";
 import { v4 as uuidv4 } from "uuid";
+import {CustomElement} from "./CustomElement.js";
 
 export class ActionManager {
   id = uuidv4();
@@ -44,7 +45,9 @@ export class ActionManager {
     data.keys().forEach((item) => {
       let result = data.get(item);
       if (typeof result !== "string") {
-        if (Array.isArray(result)) {
+        if (
+            Array.isArray(result) && result.every((el) => el instanceof CustomElement)
+        ) {
           const elements = [];
           result.forEach((item) => {
             const obj = { ...item, data: this.parseFields(item.data) };

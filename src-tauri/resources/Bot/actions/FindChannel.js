@@ -14,7 +14,7 @@ export default class FindChannel {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Type"></dbe-label>
-            <dbe-select name="type" id="type" values="Text,Voice,Forum" class="col-span-3"></dbe-select>
+            <dbe-select name="type" id="type" values="Text,Voice,Announcement,Stage,Forum,Category,Thread" class="col-span-3"></dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Value"></dbe-label>
@@ -32,7 +32,11 @@ export default class FindChannel {
         const types = {
             Text: ChannelType.GuildText,
             Voice: ChannelType.GuildVoice,
-            Forum: ChannelType.GuildForum
+            Announcement: ChannelType.GuildAnnouncement,
+            Stage: ChannelType.GuildStageVoice,
+            Forum: ChannelType.GuildForum,
+            Category: ChannelType.GuildCategory,
+            Thread: ChannelType.PublicThread
         }
         const by = data.get("by")
         const server = getVariable(data.get("server"))
