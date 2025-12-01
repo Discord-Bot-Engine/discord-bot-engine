@@ -571,7 +571,7 @@ export default class SendMessage {
                 else builder.setCustomId(id)
                 if(emoji) builder.setEmoji(emoji)
                 if(!(list[currentRow] instanceof ActionRowBuilder) && list[currentRow]) currentRow++;
-                if(list[currentRow] instanceof ActionRowBuilder && (list[currentRow].data.components.size >= 5 || list[currentRow].data.components.every(c => c.type === ComponentType.Button))) currentRow = i;
+                if(list[currentRow] instanceof ActionRowBuilder && (list[currentRow].components.size >= 5 || list[currentRow].components.every(c => c.type === ComponentType.Button))) currentRow = i;
                 if(!list[currentRow]) list[currentRow] = new ActionRowBuilder()
                 list[currentRow].addComponents(builder)
             } else if(type === "Select Menu") {
@@ -681,7 +681,7 @@ export default class SendMessage {
                         if(style === "Link") builder.setURL(url)
                         else builder.setCustomId(id)
                         if(emoji) builder.setEmoji(emoji)
-                        if(rows[currentRow] && (rows[currentRow].data.components.size >= 5 || rows[currentRow].data.components.every(c => c.type === ComponentType.Button))) currentRow++;
+                        if(rows[currentRow] && (rows[currentRow].components.size >= 5 || rows[currentRow].components.every(c => c.type === ComponentType.Button))) currentRow++;
                         if(!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
                         rows[currentRow].addComponents(builder)
                     } else if(type === "Select Menu") {
