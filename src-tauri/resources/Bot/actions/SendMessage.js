@@ -184,7 +184,7 @@ export default class SendMessage {
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store selected options in variable"></dbe-label>
-                        <dbe-variable-list name="soptions" class="col-span-3" variableType="Any"></dbe-variable-list>
+                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="Any"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store member in variable"></dbe-label>
@@ -353,7 +353,7 @@ export default class SendMessage {
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store selected options in variable"></dbe-label>
-                        <dbe-variable-list name="soptions" class="col-span-3" variableType="Any"></dbe-variable-list>
+                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="Any"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store member in variable"></dbe-label>
@@ -642,6 +642,7 @@ export default class SendMessage {
                                     }
                                 )
                             }
+                            return builder
                         })
                     } else if(type === "Media Gallery") {
                         builder.addMediaGalleryComponents(builder => {
@@ -652,18 +653,20 @@ export default class SendMessage {
                                 const spoiler = data.get("spoiler") === "True"
                                 builder.addItems(item => item.setURL(url).setDescription(description).setSpoiler(spoiler))
                             })
+                            return builder
                         })
                     } else if(type === "File") {
                         builder.addFileComponents(builder => {
                             const url = data.get("furl")
                             builder.setURL(url)
+                            return builder
                         })
                     } else if(type === "Separator") {
                         builder.addSeparatorComponents(builder => {
                             const divider = data.get("sdivider") === "True"
                             const size = SeparatorSpacingSize[data.get("ssize")]
                             builder.setDivider(divider).setSpacing(size)
-
+                            return builder
                         })
                     } else if(type === "Button") {
                         const builder = new ButtonBuilder()
@@ -747,7 +750,7 @@ export default class SendMessage {
         menucollector.on('collect', (i) => {
             const menu = selectmenus.find(s => s.id === i.customId)
             const int = menu.data.get("sinteraction")
-            const opts = menu.data.get("soptions")
+            const opts = menu.data.get("seloptions")
             const msg = menu.data.get("smessage")
             const mem = menu.data.get("smember")
             const user = menu.data.get("suser")
