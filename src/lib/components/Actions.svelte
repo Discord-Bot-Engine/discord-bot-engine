@@ -156,7 +156,7 @@
     ><MinusIcon /></Button>
         </div>
             {#if App.selectedTrigger}
-                <SvelteFlow onbeforedelete={({nodes}) => {
+                <SvelteFlow onbeforedelete={() => {
                     if(document.activeElement.tagName !== "BODY" && !document.activeElement.getAttribute("class").startsWith("svelte-flow")) return false;
                     else return true
                 }} bind:this={ref} ondblclick={(ev) => {
