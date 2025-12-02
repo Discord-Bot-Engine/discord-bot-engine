@@ -157,6 +157,7 @@
         </div>
             {#if App.selectedTrigger}
                 <SvelteFlow onbeforedelete={() => {
+                    BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
                     if(document.activeElement.tagName !== "BODY" && !document.activeElement.getAttribute("class").startsWith("svelte-flow") || getSelection().toString()) return false;
                     else return true
                 }} bind:this={ref} ondblclick={(ev) => {

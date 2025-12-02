@@ -10,6 +10,10 @@
     let statelabels = $state(labels)
     let statevalues = $state(values.split(","))
     let statevalue = $state(value)
+    let translatedvalues = $state([])
+    async function translate() {
+        translatedvalues = await Promise.all(customSort(statevalues.filter(el => el.trim())).map(async (el,i)=>({label: await App.translate(statelabels[i] ?? el, App.selectedLanguage), value:el})))
+    }
     function customSort(arr) {
         if (arr.every(item => !isNaN(item))) {
             return arr.sort((a, b) => a - b);
@@ -22,6 +26,7 @@
     }
     $host().setValues = (newValues) => {
         statevalues = newValues
+        translate()
     }
     $host().setValue = (value) => {
         if(value === undefined) return;
@@ -30,11 +35,10 @@
     }
     $host().getValue = () => statevalue
     $host().init = () => {
+        translate()
         init = true
         change = eval(`(${change})`)
         change(statevalue, $host())
     }
 </script>
-{#await Promise.all(customSort(statevalues.filter(el => el.trim())).map(async (el,i)=>({label: await App.translate(statelabels[i] ?? el, App.selectedLanguage), value:el}))) then values}
-    <SearchSelect {...other} values={values} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
-{/await}
+<SearchSelect {...other} values={translatedvalues} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
