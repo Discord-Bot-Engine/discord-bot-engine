@@ -15,7 +15,6 @@
     let search = $state("")
     let open = $state(false);
     let triggerRef = $state(null);
-    let ref = $state(null);
     if(type === "multiple") value = []
     const selectedValue = $derived(
         type === "single" ? values.find((f) => f.value === value)?.label ?? value : values.filter((f) => value?.includes(f.value))?.map(el => el.label).length ? values.filter((f) => value?.includes(f.value))?.map(el => el.label) : value
@@ -26,14 +25,6 @@
             triggerRef.focus();
         });
     }
-    $effect(() => {
-            if(ref)  {
-                ref.oninput = (ev) => {
-                    if(search.match(/\${(.*?)}/g))
-                        value = search
-                }
-            }
-    })
 </script>
 
 <Popover.Root bind:open>
@@ -59,11 +50,11 @@
     <Popover.Content class="w-full p-0">
         <Command.Root>
             {#await App.translate("Search option", App.selectedLanguage)}
-                <Command.Input bind:ref={ref} bind:value={search} placeholder="Search option" />
+                <Command.Input bind:value={search} placeholder="Search option" />
             {:then value}
-                <Command.Input bind:ref={ref} bind:value={search} placeholder={value} />
+                <Command.Input bind:value={search} placeholder={value} />
             {:catch error}
-                <Command.Input bind:ref={ref} bind:value={search} placeholder="Search option" />
+                <Command.Input bind:value={search} placeholder="Search option" />
             {/await}
             <ScrollArea class="max-h-[30vh]">
             <Command.List class="!overflow-visible !max-h-[200px]">
