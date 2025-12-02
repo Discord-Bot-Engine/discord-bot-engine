@@ -165,7 +165,6 @@ export default class Reply {
                         <dbe-label name="Placeholder"></dbe-label>
                         <dbe-input name="splaceholder" class="col-span-3"></dbe-input>
                     </div>
-                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Is required?"></dbe-label>
                         <dbe-select name="srequired" class="col-span-3" values="True,False" value="False"></dbe-select>
@@ -210,6 +209,7 @@ export default class Reply {
                         <dbe-label name="Store server in variable"></dbe-label>
                         <dbe-variable-list name="sserver" class="col-span-3" variableType="Server"></dbe-variable-list>
                     </div>
+                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
              </div>
              <div id="comps" class="grid gap-4">
                 <div class="grid grid-cols-4 items-center gap-4">
@@ -334,7 +334,6 @@ export default class Reply {
                         <dbe-label name="Placeholder"></dbe-label>
                         <dbe-input name="splaceholder" class="col-span-3"></dbe-input>
                     </div>
-                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Is required?"></dbe-label>
                         <dbe-select name="srequired" class="col-span-3" values="True,False" value="False"></dbe-select>
@@ -379,6 +378,7 @@ export default class Reply {
                         <dbe-label name="Store server in variable"></dbe-label>
                         <dbe-variable-list name="sserver" class="col-span-3" variableType="Server"></dbe-variable-list>
                     </div>
+                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
              </div>
         </template>
         <template id="galleryModal" class="grid gap-4">
