@@ -765,7 +765,7 @@ export default class EditMessage {
             const ch = menu.data.get("schannel")
             const sv = menu.data.get("sserver")
             setVariable(int, i)
-            setVariable(opts, i.options)
+            setVariable(opts, i.values)
             setVariable(msg, i.message)
             setVariable(mem, i.member)
             setVariable(user, i.user)
