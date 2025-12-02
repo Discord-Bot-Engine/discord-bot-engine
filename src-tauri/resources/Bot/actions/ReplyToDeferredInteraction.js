@@ -583,22 +583,22 @@ export default class ReplyToDeferredInteraction {
                 list[currentRow].addComponents(builder)
             } else if(type === "Container") {
                 const components = data.get("components")
-                const builder = new ContainerBuilder()
+                const container = new ContainerBuilder()
                 const rows = []
                 let currentRow = 0
                 const color = hexToNumber(data.get("ccolor").replace("#", ""))
-                builder.setAccentColor(color)
+                container.setAccentColor(color)
                 components.forEach(({data}) => {
                     const type = data.get("type")
                     if(type === "Text") {
-                        builder.addTextDisplayComponents(text=>text.setContent(
+                        container.addTextDisplayComponents(text=>text.setContent(
                             data.get("tcontent")
                         ))
                     } else if(type === "Section") {
                         const content = data.get("scontent");
                         const thumbnail = data.get("sthumbnail") === "True";
                         const button = data.get("sbutton") === "True";
-                        builder.addSectionComponents(builder => {
+                        container.addSectionComponents(builder => {
                             builder.addTextDisplayComponents(
                                 text => text.setContent(content)
                             )
@@ -629,7 +629,7 @@ export default class ReplyToDeferredInteraction {
                             return builder
                         })
                     } else if(type === "Media Gallery") {
-                        builder.addMediaGalleryComponents(builder => {
+                        container.addMediaGalleryComponents(builder => {
                             const images = data.get("mediagallery")
                             images.forEach(({data}) => {
                                 const url = data.get("url")
@@ -640,13 +640,13 @@ export default class ReplyToDeferredInteraction {
                             return builder
                         })
                     } else if(type === "File") {
-                        builder.addFileComponents(builder => {
+                        container.addFileComponents(builder => {
                             const url = data.get("furl")
                             builder.setURL(url)
                             return builder
                         })
                     } else if(type === "Separator") {
-                        builder.addSeparatorComponents(builder => {
+                        container.addSeparatorComponents(builder => {
                             const divider = data.get("sdivider") === "True"
                             const size = SeparatorSpacingSize[data.get("ssize")]
                             builder.setDivider(divider).setSpacing(size)
@@ -668,6 +668,7 @@ export default class ReplyToDeferredInteraction {
                         if(rows[currentRow] && (rows[currentRow].components.size >= 5 || rows[currentRow].components.every(c => c.type === ComponentType.Button))) currentRow++;
                         if(!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
                         rows[currentRow].addComponents(builder)
+                        container.addActionRowComponents(rows[currentRow])
                     } else if(type === "Select Menu") {
                         const builder = new StringSelectMenuBuilder()
                         const id = data.get("sid")
@@ -692,10 +693,10 @@ export default class ReplyToDeferredInteraction {
                         if(rows[currentRow]) currentRow++;
                         if(!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
                         rows[currentRow].addComponents(builder)
+                        container.addActionRowComponents(rows[currentRow])
                     }
                 })
-                builder.addActionRowComponents(...rows)
-                list.push(builder)
+                list.push(container)
             }
         })
         const files = data.get("files")

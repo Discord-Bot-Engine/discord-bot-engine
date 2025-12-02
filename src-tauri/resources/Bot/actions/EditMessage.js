@@ -499,11 +499,11 @@ export default class EditMessage {
         let currentRow = 0
         components.forEach(({data}, i) => {
             const type = data.get("type")
-            if (type === "Text") {
+            if(type === "Text") {
                 list.push(new TextDisplayBuilder().setContent(
                     data.get("tcontent"),
                 ))
-            } else if (type === "Section") {
+            } else if(type === "Section") {
                 const content = data.get("scontent");
                 const thumbnail = data.get("sthumbnail") === "True";
                 const button = data.get("sbutton") === "True";
@@ -511,13 +511,13 @@ export default class EditMessage {
                 builder.addTextDisplayComponents(
                     text => text.setContent(content)
                 )
-                if (thumbnail) {
+                if(thumbnail) {
                     const url = data.get("turl")
                     const description = data.get("tdescription")
                     const spoiler = data.get("tspoiler") === "True"
                     builder.setThumbnailAccessory(t => t.setURL(url).setDescription(description).setSpoiler(spoiler))
                 }
-                if (button) {
+                if(button) {
                     const id = data.get("bid")
                     const label = data.get("blabel")
                     const style = data.get("bstyle")
@@ -528,15 +528,15 @@ export default class EditMessage {
                     builder.setButtonAccessory(
                         button => {
                             button.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
-                            if (style === "Link") button.setURL(url)
+                            if(style === "Link") button.setURL(url)
                             else button.setCustomId(id)
-                            if (emoji) button.setEmoji(emoji)
+                            if(emoji) button.setEmoji(emoji)
                             return button
                         }
                     )
                 }
                 list.push(builder)
-            } else if (type === "Media Gallery") {
+            } else if(type === "Media Gallery") {
                 const builder = new MediaGalleryBuilder()
                 const images = data.get("mediagallery")
                 images.forEach(({data}) => {
@@ -546,18 +546,18 @@ export default class EditMessage {
                     builder.addItems(item => item.setURL(url).setDescription(description).setSpoiler(spoiler))
                 })
                 list.push(builder)
-            } else if (type === "File") {
+            } else if(type === "File") {
                 const builder = new FileBuilder()
                 const url = data.get("furl")
                 builder.setURL(url)
                 list.push(builder)
-            } else if (type === "Separator") {
+            } else if(type === "Separator") {
                 const builder = new SeparatorBuilder()
                 const divider = data.get("sdivider") === "True"
                 const size = SeparatorSpacingSize[data.get("ssize")]
                 builder.setDivider(divider).setSpacing(size)
                 list.push(builder)
-            } else if (type === "Button") {
+            } else if(type === "Button") {
                 const builder = new ButtonBuilder()
                 const id = data.get("bid")
                 const label = data.get("blabel")
@@ -567,14 +567,14 @@ export default class EditMessage {
                 const disabled = data.get("bdisabled") === "True"
                 buttons.push({id, data})
                 builder.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
-                if (style === "Link") builder.setURL(url)
+                if(style === "Link") builder.setURL(url)
                 else builder.setCustomId(id)
-                if (emoji) builder.setEmoji(emoji)
-                if (!(list[currentRow] instanceof ActionRowBuilder) && list[currentRow]) currentRow++;
-                if (list[currentRow] instanceof ActionRowBuilder && (list[currentRow].components.size >= 5 || list[currentRow].components.every(c => c.type === ComponentType.Button))) currentRow = i;
-                if (!list[currentRow]) list[currentRow] = new ActionRowBuilder()
+                if(emoji) builder.setEmoji(emoji)
+                if(!(list[currentRow] instanceof ActionRowBuilder) && list[currentRow]) currentRow++;
+                if(list[currentRow] instanceof ActionRowBuilder && (list[currentRow].components.size >= 5 || list[currentRow].components.every(c => c.type === ComponentType.Button))) currentRow = i;
+                if(!list[currentRow]) list[currentRow] = new ActionRowBuilder()
                 list[currentRow].addComponents(builder)
-            } else if (type === "Select Menu") {
+            } else if(type === "Select Menu") {
                 const builder = new StringSelectMenuBuilder()
                 const id = data.get("sid")
                 const placeholder = data.get("splaceholder")
@@ -592,40 +592,40 @@ export default class EditMessage {
                     const emoji = data.get("emoji")
                     const isdefault = data.get("default") === "True"
                     const opt = new StringSelectMenuOptionBuilder().setLabel(label).setDescription(description).setValue(value).setDefault(isdefault)
-                    if (emoji) opt.setEmoji(emoji)
+                    if(emoji) opt.setEmoji(emoji)
                     builder.addOptions(opt)
                 })
                 currentRow = i;
-                if (!list[currentRow]) list[currentRow] = new ActionRowBuilder()
+                if(!list[currentRow]) list[currentRow] = new ActionRowBuilder()
                 list[currentRow].addComponents(builder)
-            } else if (type === "Container") {
+            } else if(type === "Container") {
                 const components = data.get("components")
-                const builder = new ContainerBuilder()
+                const container = new ContainerBuilder()
                 const rows = []
                 let currentRow = 0
                 const color = hexToNumber(data.get("ccolor").replace("#", ""))
-                builder.setAccentColor(color)
+                container.setAccentColor(color)
                 components.forEach(({data}) => {
                     const type = data.get("type")
-                    if (type === "Text") {
-                        builder.addTextDisplayComponents(text => text.setContent(
+                    if(type === "Text") {
+                        container.addTextDisplayComponents(text=>text.setContent(
                             data.get("tcontent")
                         ))
-                    } else if (type === "Section") {
+                    } else if(type === "Section") {
                         const content = data.get("scontent");
                         const thumbnail = data.get("sthumbnail") === "True";
                         const button = data.get("sbutton") === "True";
-                        builder.addSectionComponents(builder => {
+                        container.addSectionComponents(builder => {
                             builder.addTextDisplayComponents(
                                 text => text.setContent(content)
                             )
-                            if (thumbnail) {
+                            if(thumbnail) {
                                 const url = data.get("turl")
                                 const description = data.get("tdescription")
                                 const spoiler = data.get("tspoiler") === "True"
                                 builder.setThumbnailAccessory(t => t.setURL(url).setDescription(description).setSpoiler(spoiler))
                             }
-                            if (button) {
+                            if(button) {
                                 const id = data.get("bid")
                                 const label = data.get("blabel")
                                 const style = data.get("bstyle")
@@ -636,17 +636,17 @@ export default class EditMessage {
                                 builder.setButtonAccessory(
                                     button => {
                                         button.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
-                                        if (style === "Link") button.setURL(url)
+                                        if(style === "Link") button.setURL(url)
                                         else button.setCustomId(id)
-                                        if (emoji) button.setEmoji(emoji)
+                                        if(emoji) button.setEmoji(emoji)
                                         return button
                                     }
                                 )
                             }
                             return builder
                         })
-                    } else if (type === "Media Gallery") {
-                        builder.addMediaGalleryComponents(builder => {
+                    } else if(type === "Media Gallery") {
+                        container.addMediaGalleryComponents(builder => {
                             const images = data.get("mediagallery")
                             images.forEach(({data}) => {
                                 const url = data.get("url")
@@ -656,20 +656,20 @@ export default class EditMessage {
                             })
                             return builder
                         })
-                    } else if (type === "File") {
-                        builder.addFileComponents(builder => {
+                    } else if(type === "File") {
+                        container.addFileComponents(builder => {
                             const url = data.get("furl")
                             builder.setURL(url)
                             return builder
                         })
-                    } else if (type === "Separator") {
-                        builder.addSeparatorComponents(builder => {
+                    } else if(type === "Separator") {
+                        container.addSeparatorComponents(builder => {
                             const divider = data.get("sdivider") === "True"
                             const size = SeparatorSpacingSize[data.get("ssize")]
                             builder.setDivider(divider).setSpacing(size)
                             return builder
                         })
-                    } else if (type === "Button") {
+                    } else if(type === "Button") {
                         const builder = new ButtonBuilder()
                         const id = data.get("bid")
                         const label = data.get("blabel")
@@ -679,13 +679,14 @@ export default class EditMessage {
                         const disabled = data.get("bdisabled") === "True"
                         buttons.push({id, data})
                         builder.setLabel(label).setStyle(ButtonStyle[style]).setDisabled(disabled)
-                        if (style === "Link") builder.setURL(url)
+                        if(style === "Link") builder.setURL(url)
                         else builder.setCustomId(id)
-                        if (emoji) builder.setEmoji(emoji)
-                        if (rows[currentRow] && (rows[currentRow].components.size >= 5 || rows[currentRow].components.every(c => c.type === ComponentType.Button))) currentRow++;
-                        if (!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
+                        if(emoji) builder.setEmoji(emoji)
+                        if(rows[currentRow] && (rows[currentRow].components.size >= 5 || rows[currentRow].components.every(c => c.type === ComponentType.Button))) currentRow++;
+                        if(!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
                         rows[currentRow].addComponents(builder)
-                    } else if (type === "Select Menu") {
+                        container.addActionRowComponents(rows[currentRow])
+                    } else if(type === "Select Menu") {
                         const builder = new StringSelectMenuBuilder()
                         const id = data.get("sid")
                         const placeholder = data.get("splaceholder")
@@ -703,16 +704,16 @@ export default class EditMessage {
                             const emoji = data.get("emoji")
                             const isdefault = data.get("default") === "True"
                             const opt = new StringSelectMenuOptionBuilder().setLabel(label).setDescription(description).setValue(value).setDefault(isdefault)
-                            if (emoji) opt.setEmoji(emoji)
+                            if(emoji) opt.setEmoji(emoji)
                             builder.addOptions(opt)
                         })
-                        if (rows[currentRow]) currentRow++;
-                        if (!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
+                        if(rows[currentRow]) currentRow++;
+                        if(!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
                         rows[currentRow].addComponents(builder)
+                        container.addActionRowComponents(rows[currentRow])
                     }
                 })
-                builder.addActionRowComponents(...rows)
-                list.push(builder)
+                list.push(container)
             }
         })
         const files = data.get("files")
