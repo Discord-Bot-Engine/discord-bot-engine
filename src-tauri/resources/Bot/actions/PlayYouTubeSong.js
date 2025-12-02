@@ -4,11 +4,11 @@ import { DisTubeExtractor } from "discord-player-distube";
 
 export default class PlayYouTubeSong {
     static type = "Play YouTube Song"
-    static variableTypes = []
+    static variableTypes = ["Channel"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Voice channel"></dbe-label>
-            <dbe-variable-list name="vc" class="col-span-3" variableType="Voice Channel"></dbe-variable-list>
+            <dbe-variable-list name="vc" class="col-span-3" variableType="Channel"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Song"></dbe-label>

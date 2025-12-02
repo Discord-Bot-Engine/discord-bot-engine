@@ -4,11 +4,11 @@ import { AttachmentExtractor } from "@discord-player/extractor";
 
 export default class PlaySongFromFolder {
     static type = "Play Song From Folder"
-    static variableTypes = []
+    static variableTypes = ["Channel"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Voice channel"></dbe-label>
-            <dbe-variable-list name="vc" class="col-span-3" variableType="Voice Channel"></dbe-variable-list>
+            <dbe-variable-list name="vc" class="col-span-3" variableType="Channel"></dbe-variable-list>
         </div>
          <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Folder to search song"></dbe-label>

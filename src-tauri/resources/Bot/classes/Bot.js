@@ -160,7 +160,7 @@ class BotClass {
     async setData(key, value) {
         const num = Number(value)
         if (isNaN(num)) return await this.data.set(key, value);
-        await this.data.set(key, Math.abs(num) <= Number.MAX_VALUE ? num : value);
+        await this.data.set(key, String(value).length < 16 ? num : value);
     }
 
     async getData(key) {

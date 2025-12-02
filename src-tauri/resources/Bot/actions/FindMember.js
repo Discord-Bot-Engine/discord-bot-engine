@@ -29,7 +29,7 @@ export default class FindMember {
         const server = getVariable(data.get("server"))
         let member
         if(by === "Id") {
-            member = await server.members.fetch(data.get("value"))
+            member = await server.members.fetch(data.get("value")).catch(() => {})
         } else {
             member = server.members.cache.find(member => member.displayName === data.get("value"))
         }

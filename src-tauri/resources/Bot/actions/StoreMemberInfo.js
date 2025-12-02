@@ -14,6 +14,7 @@ export default class StoreMemberInfo {
         "List",
         "Role",
         "Channel",
+        "Voice State"
     ]
 
     static html = `
@@ -81,9 +82,11 @@ export default class StoreMemberInfo {
                 varlist.setVariableType("Boolean")
             } else if (["User", "User Id", "User Tag"].includes(value)) {
                 varlist.setVariableType("User")
-            } else if (["Display Color", "Display Hex Color", "Display Name", "Nickname", "Avatar URL", "Banner URL", "Voice State"].includes(value)) {
+            } else if (["Display Color", "Display Hex Color", "Display Name", "Nickname", "Avatar URL", "Banner URL"].includes(value)) {
                 varlist.setVariableType("Text")
-            } else {
+            } else if(value === "Voice State")
+                varlist.setVariableType("Voice State")
+            else {
                 varlist.setVariableType("Text")
             }
         }

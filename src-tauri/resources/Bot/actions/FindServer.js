@@ -24,7 +24,7 @@ export default class FindServer {
         const by = data.get("by")
         let server
         if(by === "Id") {
-            server = await Bot.client.guilds.fetch(data.get("value"))
+            server = await Bot.client.guilds.fetch(data.get("value")).catch(() => {})
         } else {
             server = Bot.client.guilds.cache.find(server => server.name === data.get("value"))
         }

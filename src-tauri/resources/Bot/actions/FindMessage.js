@@ -20,7 +20,7 @@ export default class FindMessage {
     static async run({id, data, actionManager, getVariable, setVariable}) {
         const message = data.get("value")
         const channel = getVariable(data.get("channel"))
-        setVariable(data.get("message"), await channel.messages.fetch(message))
+        setVariable(data.get("message"), await channel.messages.fetch(message).catch(() => {}))
         actionManager.runNext(id, "action")
     }
 }

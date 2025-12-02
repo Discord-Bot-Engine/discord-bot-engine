@@ -29,7 +29,7 @@ export default class FindRole {
         const server = getVariable(data.get("server"))
         let role
         if(by === "Id") {
-            role = await server.roles.fetch(data.get("value"))
+            role = await server.roles.fetch(data.get("value")).catch(() => {})
         } else {
             role = server.roles.cache.find(role => role.name === data.get("value"))
         }

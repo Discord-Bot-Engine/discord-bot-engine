@@ -587,10 +587,11 @@ export default class EditMessage {
                 builder.setCustomId(id).setPlaceholder(placeholder).setRequired(srequired).setMinValues(smin).setMaxValues(smax).setDisabled(sdisabled)
                 options.forEach(({data}) => {
                     const label = data.get("label")
+                    const description = data.get("description")
                     const value = data.get("value")
                     const emoji = data.get("emoji")
                     const isdefault = data.get("default") === "True"
-                    const opt = new StringSelectMenuOptionBuilder().setLabel(label).setValue(value).setDefault(isdefault)
+                    const opt = new StringSelectMenuOptionBuilder().setLabel(label).setDescription(description).setValue(value).setDefault(isdefault)
                     if (emoji) opt.setEmoji(emoji)
                     builder.addOptions(opt)
                 })
@@ -697,10 +698,11 @@ export default class EditMessage {
                         builder.setCustomId(id).setPlaceholder(placeholder).setDisabled(sdisabled).setRequired(srequired).setMinValues(smin).setMaxValues(smax)
                         options.forEach(({data}) => {
                             const label = data.get("label")
+                            const description = data.get("description")
                             const value = data.get("value")
                             const emoji = data.get("emoji")
                             const isdefault = data.get("default") === "True"
-                            const opt = new StringSelectMenuOptionBuilder().setLabel(label).setValue(value).setDefault(isdefault)
+                            const opt = new StringSelectMenuOptionBuilder().setLabel(label).setDescription(description).setValue(value).setDefault(isdefault)
                             if (emoji) opt.setEmoji(emoji)
                             builder.addOptions(opt)
                         })

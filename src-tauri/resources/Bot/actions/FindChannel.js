@@ -42,7 +42,7 @@ export default class FindChannel {
         const server = getVariable(data.get("server"))
         let channel
         if(by === "Id") {
-            channel = await server.channels.fetch(data.get("value"))
+            channel = await server.channels.fetch(data.get("value")).catch(() => {})
         } else {
             channel = server.channels.cache.find(channel => channel.name === data.get("value") && channel.type === types[type])
         }

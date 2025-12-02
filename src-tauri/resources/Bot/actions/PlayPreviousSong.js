@@ -2,7 +2,7 @@ import { useHistory } from "discord-player";
 
 export default class PlayPreviousSong {
     static type = "Play Previous Song"
-    static variableTypes = []
+    static variableTypes = ["Server"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Server"></dbe-label>

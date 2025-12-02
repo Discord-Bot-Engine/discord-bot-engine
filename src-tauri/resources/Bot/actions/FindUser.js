@@ -24,7 +24,7 @@ export default class FindUser {
         const by = data.get("by")
         let user
         if(by === "Id") {
-            user = await Bot.client.users.fetch(data.get("value"))
+            user = await Bot.client.users.fetch(data.get("value")).catch(() => {})
         } else {
             user = Bot.client.users.cache.find(user => user.username === data.get("value"))
         }

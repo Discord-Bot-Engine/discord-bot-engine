@@ -2,7 +2,7 @@ import {  useQueue } from "discord-player";
 
 export default class RemoveSongFromQueue {
     static type = "Remove Song From Queue"
-    static variableTypes = []
+    static variableTypes = ["Server"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Server"></dbe-label>
