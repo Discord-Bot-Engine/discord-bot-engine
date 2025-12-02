@@ -52,7 +52,7 @@
 </script>
 <TopBar />
 <div class="flex flex-col w-full h-full gap-3 p-3">
-	<div class="flex gap-3 grow">
+	<div class="flex gap-3 grow overflow-hidden">
 		<Triggers />
 		<div class="grow">
 			<SvelteFlowProvider>

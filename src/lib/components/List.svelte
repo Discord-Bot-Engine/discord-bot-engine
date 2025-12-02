@@ -33,8 +33,8 @@
 	}
 </script>
 
-<Card.Root class="w-full h-full min-w-40 p-1 relative {props.class}">
-	<Card.Content class="p-1 !px-0.5">
+<Card.Root class="w-full h-full min-h-40 min-w-40 p-1 relative {props.class}">
+	<Card.Content class="p-1 !px-0.5 h-full">
 		<div class="flex h-fit -mr-1.5 mb-1 px-0.5">
 			<label class="mr-auto text-md overflow-hidden text-ellipsis">
 				<Translation text={title} />
@@ -43,7 +43,7 @@
 				<Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {hideControls ? 'hidden' : ''}" onclick={() => {ondelete(); selected = null }}><MinusIcon /></Button>
 		</div>
 		<Separator />
-		<ScrollArea>
+		<ScrollArea class="h-[90%]">
 			{#if allowMoving}
 			<div
 					use:dndzone={{ items, flipDurationMs: 150 }}

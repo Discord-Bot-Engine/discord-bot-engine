@@ -35,7 +35,7 @@
 			return PluginManager.isExtensionUpToDate(extension?.file);
 		} else if (plugin.type === "theme") {
 			const themes = App.themes
-			const theme = themes.find(theme => theme.split("\\").join("/").split("/").at(-1).slice(40) === plugin.name).split("\\").join("/").split("/").at(-1)
+			const theme = themes.find(theme => theme.split("\\").join("/").split("/").at(-1).slice(40) === plugin.name)?.split("\\").join("/").split("/").at(-1)
 			return PluginManager.isThemeUpToDate(theme);
 		} else if (plugin.type === "translation") {
 			const translations = App.translations

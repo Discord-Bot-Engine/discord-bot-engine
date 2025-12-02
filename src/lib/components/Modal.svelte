@@ -13,7 +13,7 @@
                 <Translation text={title} />
             </Dialog.Title>
         </Dialog.Header>
-        <ScrollArea class="max-h-[70vh]">
+        <ScrollArea class="max-h-[60vh]">
             {@render children()}
         </ScrollArea>
         <Dialog.Footer>
