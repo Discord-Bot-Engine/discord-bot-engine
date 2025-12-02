@@ -66,7 +66,9 @@
 								{#if html}
 									{@render html(item, i)}
 								{/if}
-								<Translation text={itemTitle(item, i)}/>
+								{#await itemTitle(item, i) then text}
+									{text}
+								{/await}
 							</Button>
 						</div>
 						<Separator />
@@ -85,7 +87,9 @@
 								{#if html}
 									{@render html(item, i)}
 									{/if}
-								<Translation text={itemTitle(item, i)}/>
+								{#await itemTitle(item, i) then text}
+									{text}
+								{/await}
 							</Button>
 						</div>
 						<Separator />

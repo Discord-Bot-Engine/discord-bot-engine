@@ -37,11 +37,7 @@
                 {#each action.outputs ?? BotManager.selectedBot.actionClasses.find(act => act.type === actionType)?.outputs ?? ["action"] as op}
                     <div class="flex !text-xs justify-end">
                         <label class="pl-2 pr-0">
-                            {#if op.translation}
-                                {op.translation}
-                            {:else}
-                                <Translation text={op}/>
-                            {/if}
+                            <Translation text={op}/>
                         </label><Handle
                             id={op}
                             type="source"

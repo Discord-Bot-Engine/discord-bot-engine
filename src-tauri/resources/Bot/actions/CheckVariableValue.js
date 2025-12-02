@@ -11,11 +11,11 @@ export default class CheckVariableValue {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Condition"></dbe-label>
-            <dbe-select name="condition" class="col-span-3" change="(v) => document.getElementById('val').setVariableType(['Greater than', 'Less than'].includes(v) ? ['Number', 'Text'] : 'Any')" value="Equal to" values="Equal to,Greater than,Less than,Includes"></dbe-select>
+            <dbe-select name="condition" class="col-span-3" value="Equal to" values="Equal to,Greater than,Less than,Includes"></dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Value"></dbe-label>
-            <dbe-input name="value" id="val" class="col-span-3"></dbe-input>
+            <dbe-input name="value" class="col-span-3"></dbe-input>
         </div>
     `
     static load(context) {

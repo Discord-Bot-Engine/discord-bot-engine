@@ -489,9 +489,7 @@ export default class Reply {
                 })
             }
         })
-        const btns = await Promise.all(buttons.map(async el => (await App.translate(`%s (on click)`, App.selectedLanguage)).replace("%s", el)))
-        const selects = await Promise.all(selectmenus.map(async el => (await App.translate(`%s (on select)`, App.selectedLanguage)).replace("%s", el)))
-        context.outputs = ["action", ...btns.map(b => ({translation:b})), ...selects.map(s => ({translation:s}))]
+        context.outputs = ["action", ...buttons.map(b => `${b} (on click)`), ...selectmenus.map(s => `${s} (on select)`)]
     }
     static load(context) {
     }
