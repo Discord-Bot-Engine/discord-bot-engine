@@ -17,19 +17,7 @@ export default class StoreVoiceStateInfo {
                 name="info" 
                 class="col-span-3" 
                 change="(v) => handlers.onChange(v)"
-                values="
-                    Channel,
-                    Server,
-                    Session ID,
-                    Is Deaf,
-                    Is Self Deaf,
-                    Is Muted,
-                    Is Self Muted,
-                    Is Self Video Enabled,
-                    Is Streaming,
-                    Is Suppressed,
-                    Request to Speak Timestamp,
-                "
+                values="Channel,Server,Session ID,Is Deaf,Is Self Deaf,Is Muted,Is Self Muted,Is Self Video Enabled,Is Streaming,Is Suppressed,Request to Speak Timestamp"
             ></dbe-select>
         </div>
 

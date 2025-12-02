@@ -180,7 +180,7 @@ export default class EditMessage {
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store selected options in variable"></dbe-label>
-                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="Any"></dbe-variable-list>
+                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="Text"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store member in variable"></dbe-label>
@@ -349,7 +349,7 @@ export default class EditMessage {
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store selected options in variable"></dbe-label>
-                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="Any"></dbe-variable-list>
+                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="Text"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store member in variable"></dbe-label>

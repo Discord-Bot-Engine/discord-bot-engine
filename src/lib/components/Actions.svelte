@@ -51,7 +51,7 @@
         }
    }
    function bindings(ev) {
-       if(document.activeElement.tagName !== "BODY" && !document.activeElement.className.startsWith("svelte-flow")) return;
+       if(document.activeElement.tagName !== "BODY" && !document.activeElement.className.startsWith("svelte-flow") || getSelection().toString()) return;
        ev.preventDefault();
        if(ev.key === "c" && ev.ctrlKey && App.selectedTrigger) copy()
        else if(ev.key === "v" && ev.ctrlKey && App.selectedTrigger) paste()
@@ -157,7 +157,7 @@
         </div>
             {#if App.selectedTrigger}
                 <SvelteFlow onbeforedelete={() => {
-                    if(document.activeElement.tagName !== "BODY" && !document.activeElement.getAttribute("class").startsWith("svelte-flow")) return false;
+                    if(document.activeElement.tagName !== "BODY" && !document.activeElement.getAttribute("class").startsWith("svelte-flow") || getSelection().toString()) return false;
                     else return true
                 }} bind:this={ref} ondblclick={(ev) => {
                     if(!ev.ctrlKey) return;

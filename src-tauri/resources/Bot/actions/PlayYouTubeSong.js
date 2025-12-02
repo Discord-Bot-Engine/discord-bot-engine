@@ -1,6 +1,6 @@
 import { Bot } from "../classes/Bot.js";
 import { Player, useMainPlayer, useQueue } from "discord-player";
-import { DisTubeExtractor } from "discord-player-distube";
+import { YoutubeSabrExtractor } from 'discord-player-googlevideo';
 
 export default class PlayYouTubeSong {
     static type = "Play YouTube Song"
@@ -25,7 +25,7 @@ export default class PlayYouTubeSong {
             Bot.player.events.on("error", console.log)
             Bot.player.events.on("playerError", console.log)
         }
-        if(!Bot.player.extractors.get(DisTubeExtractor.identifier)) Bot.player.extractors.register(DisTubeExtractor, {});
+        if(!Bot.player.extractors.get(YoutubeSabrExtractor.identifier)) Bot.player.extractors.register(YoutubeSabrExtractor, {});
     }
     static async run({id, data, actionManager, getVariable}) {
         const player = useMainPlayer()
