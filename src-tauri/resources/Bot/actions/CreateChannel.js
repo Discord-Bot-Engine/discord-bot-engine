@@ -3,7 +3,7 @@ import { ChannelType, PermissionsBitField } from "discord.js";
 export default class CreateChannel {
     static type = "Create Channel";
 
-    static variableTypes = ["Channel", "Text", "Boolean", "Number", "Server", "List"];
+    static variableTypes = ["Channel", "Text", "Boolean", "Number", "Server", "List", "Role", "Member", "User"];
 
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -23,7 +23,6 @@ export default class CreateChannel {
                 id="channelTypeSelect"
                 class="col-span-3"
                 values="Text,Voice,Announcement,Stage,Forum,Category"
-                change="(v) => handlers.onChange(v)"
             ></dbe-select>
         </div>
 
@@ -31,19 +30,6 @@ export default class CreateChannel {
             <dbe-label name="Category"></dbe-label>
             <dbe-variable-list name="category" class="col-span-3" variableType="Channel"></dbe-variable-list>
         </div>
-
-        <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Permissions"></dbe-label>
-            <dbe-select 
-                id="permissionsSelect"
-                name="permissions" 
-                class="col-span-3"
-                type="multiple"
-                values=""
-            ></dbe-select>
-
-        </div>
-
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store channel in variable"></dbe-label>
             <dbe-variable-list 
@@ -52,66 +38,32 @@ export default class CreateChannel {
                 variableType="Channel"
             ></dbe-variable-list>
         </div>
+        <dbe-list name="perms" title="Permissions" modalId="permsModal" itemTitle="async (item, i) => item.data.get('target') ?? await App.translate('Permission #'+i, App.selectedLanguage)"></dbe-list>
+        <template id="permsModal">
+        <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Target role, member or user"></dbe-label>            
+            <dbe-variable-list name="target" class="col-span-3" variableType="Role,Member,User"></dbe-variable-list>
+        </div>        
+        <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Permissions"></dbe-label>
+            <dbe-select 
+                id="permissionsSelect"
+                name="permissions" 
+                class="col-span-3"
+                type="multiple"
+                values="View Channel,Manage Channels,Manage Roles,Manage Webhooks,Create Invite,Send Messages,Send TTS Messages,Send Messages In Threads,Create Public Threads,Create Private Threads,Manage Messages,Manage Threads,Embed Links,Attach Files,Add Reactions,Use External Emojis,Use External Stickers,Use Application Commands,Mention Everyone,Read Message History,Pin Messages,Bypass Slowmode,Send Voice Messages,Send Polls,Connect,Speak,Stream,Use VAD,Priority Speaker,Mute Members,Deafen Members,Move Members,Use Embedded Activities,Request To Speak,Manage Events"
+            ></dbe-select>
+        </div>
+</template>
     `;
 
     static load() {}
-    static open(action, handlers) {
-        const permissionsSelect = document.getElementById("permissionsSelect");
-
-        const permissionOptions = {
-            Text: [
-                "View Channel","Manage Channels","Manage Roles","Manage Webhooks","Create Invite",
-                "Send Messages","Send TTS Messages","Send Messages In Threads",
-                "Create Public Threads","Create Private Threads","Manage Messages","Manage Threads",
-                "Embed Links","Attach Files","Add Reactions","Use External Emojis","Use External Stickers",
-                "Use Application Commands","Mention Everyone","Read Message History",
-                "Pin Messages","Bypass Slowmode","Send Voice Messages","Create Polls"
-            ],
-            Announcement: [
-                "View Channel","Manage Channels","Manage Roles","Manage Webhooks","Create Invite",
-                "Send Messages","Send TTS Messages","Send Messages In Threads",
-                "Create Public Threads","Create Private Threads","Manage Messages","Manage Threads",
-                "Embed Links","Attach Files","Add Reactions","Use External Emojis","Use External Stickers",
-                "Use Application Commands","Mention Everyone","Read Message History",
-                "Pin Messages","Bypass Slowmode","Send Voice Messages","Create Polls"
-            ],
-            Forum: [
-                "View Channel","Manage Channels","Manage Roles","Manage Webhooks","Create Invite",
-                "Send Messages","Send Messages In Threads","Create Public Threads","Create Private Threads",
-                "Manage Messages","Manage Threads","Embed Links","Attach Files","Add Reactions",
-                "Use External Emojis","Use External Stickers","Use Application Commands","Mention Everyone",
-                "Read Message History","Pin Messages","Bypass Slowmode","Send Voice Messages","Create Polls"
-            ],
-            Voice: [
-                "View Channel","Manage Channels","Manage Roles","Manage Webhooks","Create Invite",
-                "Connect","Speak","Stream","Use VAD","Priority Speaker",
-                "Mute Members","Deafen Members","Move Members","Use Embedded Activities"
-            ],
-            Stage: [
-                "View Channel","Manage Channels","Manage Roles","Manage Webhooks","Create Invite",
-                "Connect","Speak","Request To Speak","Mute Members","Deafen Members",
-                "Move Members","Manage Events","Use Embedded Activities"
-            ],
-            Category: [
-                "View Channel","Manage Channels","Manage Roles","Manage Webhooks","Create Invite",
-                "Send Messages"
-            ]
-        };
-
-        handlers.onChange = (value) => {
-            const perms = permissionOptions[value] || [];
-            permissionsSelect.setValues(perms)
-        };
-    }
     static async run({ id, data, actionManager, getVariable, setVariable }) {
         const guild = getVariable(data.get("server"));
-        if (!guild) return actionManager.runNext(id, "action");
-
+        const perms = data.get("perms");
         const name = data.get("channelName");
         const typeStr = data.get("channelType");
         const category = getVariable(data.get("category"));
-        const permissionFlags = data.get("permissions") || [];
-
         const typeMap = {
             Text: ChannelType.GuildText,
             Voice: ChannelType.GuildVoice,
@@ -157,34 +109,36 @@ export default class CreateChannel {
             "Pin Messages": "PinMessages",
             "Bypass Slowmode": "BypassSlowmode",
             "Send Voice Messages": "SendVoiceMessages",
-            "Create Polls": "CreatePolls"
+            "Send Polls": "SendPolls"
         };
         const allFlags = Object.values(uiToFlag);
-
-        const selectedFlags = permissionFlags.map(p => uiToFlag[p]);
-
-        const allow = new PermissionsBitField();
-        const deny = new PermissionsBitField();
-
-        for (const flag of allFlags) {
-            if (selectedFlags.includes(flag)) {
-                allow.add(PermissionsBitField.Flags[flag]);
-            } else {
-                deny.add(PermissionsBitField.Flags[flag]);
-            }
-        }
-        let permissionOverwrites = [{
-            id: guild.id,
-            allow,
-            deny
-        }]
-
         const options = {
             name,
             type,
             parent: category,
+            permissionOverwrites: []
         };
-        options.permissionOverwrites = permissionOverwrites;
+        perms.forEach(perm => {
+            const permissionFlags = perm.data.get("permissions");
+
+            const selectedFlags = permissionFlags.map(p => uiToFlag[p]);
+
+            const allow = new PermissionsBitField();
+            const deny = new PermissionsBitField();
+
+            for (const flag of allFlags) {
+                if (selectedFlags.includes(flag)) {
+                    allow.add(flag);
+                } else {
+                    deny.add(flag);
+                }
+            }
+            options.permissionOverwrites.push({
+                id: getVariable(perm.data.get("target")).id,
+                allow,
+                deny
+            })
+        })
         const channel = await guild.channels.create(options);
         setVariable(data.get("value"), channel);
         actionManager.runNext(id, "action");
