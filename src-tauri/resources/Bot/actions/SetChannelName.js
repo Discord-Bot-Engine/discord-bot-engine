@@ -12,10 +12,7 @@ export default class SetChannelName {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="New name"></dbe-label>
-            <dbe-input 
-                name="name" 
-                class="col-span-3"
-            </dbe-input>
+            <dbe-input name="name" class="col-span-3"></dbe-input>
         </div>
     `;
 
