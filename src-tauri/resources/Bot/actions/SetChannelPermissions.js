@@ -1,42 +1,14 @@
 import { ChannelType, PermissionsBitField } from "discord.js";
 
-export default class CreateChannel {
-    static type = "Create Channel";
+export default class SetChannelPermissions {
+    static type = "Set Channel Permissions";
 
-    static variableTypes = ["Server", "Channel", "Role", "Member", "User"];
+    static variableTypes = ["Channel", "Role", "Member", "User"];
 
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Server"></dbe-label>
-            <dbe-variable-list name="server" class="col-span-3" variableType="Server"></dbe-variable-list>
-        </div>
-
-        <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Channel name"></dbe-label>
-            <dbe-input name="channelName" class="col-span-3"></dbe-input>
-        </div>
-
-        <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Type"></dbe-label>
-           <dbe-select
-                name="channelType"
-                id="channelTypeSelect"
-                class="col-span-3"
-                values="Text,Voice,Announcement,Stage,Forum,Category"
-            ></dbe-select>
-        </div>
-
-        <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Category"></dbe-label>
-            <dbe-variable-list name="category" class="col-span-3" variableType="Channel"></dbe-variable-list>
-        </div>
-        <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Store channel in variable"></dbe-label>
-            <dbe-variable-list 
-                name="value" 
-                class="col-span-3"
-                variableType="Channel"
-            ></dbe-variable-list>
+            <dbe-label name="Channel"></dbe-label>
+            <dbe-variable-list name="channel" class="col-span-3" variableType="Channel"></dbe-variable-list>
         </div>
         <dbe-list name="perms" title="Permissions" modalId="permsModal" itemTitle="async (item, i) => item.data.get('target') ?? await App.translate('Permission #'+i, App.selectedLanguage)"></dbe-list>
         <template id="permsModal">
@@ -58,21 +30,8 @@ export default class CreateChannel {
 
     static load() {}
     static async run({ id, data, actionManager, getVariable, setVariable }) {
-        const guild = getVariable(data.get("server"));
+        const channel = getVariable(data.get("channel"));
         const perms = data.get("perms");
-        const name = data.get("channelName");
-        const typeStr = data.get("channelType");
-        const category = getVariable(data.get("category"));
-        const typeMap = {
-            Text: ChannelType.GuildText,
-            Voice: ChannelType.GuildVoice,
-            Announcement: ChannelType.GuildAnnouncement,
-            Stage: ChannelType.GuildStageVoice,
-            Forum: ChannelType.GuildForum,
-            Category: ChannelType.GuildCategory,
-        };
-
-        const type = typeMap[typeStr];
         const uiToFlag = {
             "View Channel": "ViewChannel",
             "Manage Channels": "ManageChannels",
@@ -111,12 +70,7 @@ export default class CreateChannel {
             "Send Polls": "SendPolls"
         };
         const allFlags = Object.values(uiToFlag);
-        const options = {
-            name,
-            type,
-            parent: category,
-            permissionOverwrites: []
-        };
+        const permissionOverwrites = []
         perms.forEach(perm => {
             const permissionFlags = perm.data.get("permissions");
 
@@ -132,14 +86,13 @@ export default class CreateChannel {
                     deny.add(flag);
                 }
             }
-            options.permissionOverwrites.push({
+            permissionOverwrites.push({
                 id: getVariable(perm.data.get("target")).id,
                 allow,
                 deny
             })
         })
-        const channel = await guild.channels.create(options);
-        setVariable(data.get("value"), channel);
+        await channel.permissionOverwrites.set(options);
         actionManager.runNext(id, "action");
     }
 }
