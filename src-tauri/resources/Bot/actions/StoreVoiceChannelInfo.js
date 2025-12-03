@@ -13,7 +13,7 @@ export default class StoreVoiceChannelInfo {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
             <dbe-select name="info" class="col-span-3" change="(v) => handlers.onChange(v)" 
-                values="Name,Bitrate,User Limit,Position,Category,Parent,Is Deletable,Is Manageable,Is Viewable,Server,RTC Region,Is Full,Members,Messages">
+                values="Id,Name,Bitrate,User Limit,Position,Category,Parent,Is Deletable,Is Manageable,Is Viewable,Server,RTC Region,Is Full,Members,Messages">
             </dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
@@ -42,6 +42,7 @@ export default class StoreVoiceChannelInfo {
         let value;
 
         switch (info) {
+            case "Id": value = channel.id; break;
             case "Name": value = channel.name; break;
             case "Bitrate": value = channel.bitrate; break;
             case "User Limit": value = channel.userLimit; break;

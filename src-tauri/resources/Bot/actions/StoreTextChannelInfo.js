@@ -16,7 +16,7 @@ export default class StoreTextChannelInfo {
                 name="info" 
                 class="col-span-3" 
                 change="(v) => handlers.onChange(v)"
-                values="Name,Topic,Is NSFW,Created At,Slowmode,Category,Parent,Is Thread,Server,Position,Is Deletable,Is Manageable,Is Viewable,Permissions,Recipients,Messages">
+                values="Id,Name,Topic,Is NSFW,Created At,Slowmode,Category,Parent,Is Thread,Server,Position,Is Deletable,Is Manageable,Is Viewable,Permissions,Recipients,Messages">
             </dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
@@ -58,6 +58,9 @@ export default class StoreTextChannelInfo {
         let value;
 
         switch (info) {
+            case "Id":
+                value = channel.id;
+                break;
             case "Name":
                 value = channel.name;
                 break;

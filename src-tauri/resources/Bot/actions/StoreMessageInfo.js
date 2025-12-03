@@ -26,7 +26,7 @@ export default class StoreMessageInfo {
                 name="info" 
                 class="col-span-3" 
                 change="(v) => handlers.onChange(v)"
-                values="ID,Content,Author,Channel,Created At,Edited At,Is Pinned,Is TTS,Is System,URL,Attachments,Embeds,Reactions,Mentions,Referenced Message,Type">
+                values="Id,Content,Author,Channel,Created At,Edited At,Is Pinned,Is TTS,Is System,URL,Attachments,Embeds,Reactions,Mentions,Referenced Message,Type">
             </dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
@@ -77,7 +77,7 @@ export default class StoreMessageInfo {
         let value
 
         switch (info) {
-            case "ID":
+            case "Id":
                 value = message.id
                 break
             case "Content":

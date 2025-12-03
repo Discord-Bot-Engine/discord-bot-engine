@@ -13,7 +13,7 @@ export default class StoreThreadChannelInfo {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
             <dbe-select name="info" class="col-span-3" change="(v) => handlers.onChange(v)" 
-                values="Name,Topic,Is NSFW,Created At,Archived,Auto Archive Duration,Is Locked,Is Manageable,Is Viewable,Server,Parent,Members,Member Count,Messages">
+                values="Id,Name,Topic,Is NSFW,Created At,Archived,Auto Archive Duration,Is Locked,Is Manageable,Is Viewable,Server,Parent,Members,Member Count,Messages">
             </dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
@@ -43,6 +43,7 @@ export default class StoreThreadChannelInfo {
         let value;
 
         switch (info) {
+            case "Id": value = channel.id; break;
             case "Name": value = channel.name; break;
             case "Topic": value = channel.topic; break;
             case "Is NSFW": value = channel.nsfw; break;
