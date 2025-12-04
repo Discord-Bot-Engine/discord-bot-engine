@@ -92,7 +92,7 @@ export default class SetChannelPermissions {
                 deny
             })
         })
-        await channel.permissionOverwrites.set(options);
+        await channel.permissionOverwrites.set(permissionOverwrites);
         actionManager.runNext(id, "action");
     }
 }
