@@ -471,6 +471,52 @@ export default class ReplyToDeferredInteraction {
         context.outputs = ["action", ...buttons.map(b => `${b} (on click)`), ...selectmenus.map(s => `${s} (on select)`)]
     }
     static load(context) {
+        if(!Bot.initComponents) {
+            Bot.initComponents = true
+            Bot.client.on(Events.InteractionCreate, async (i) => {
+                if(!i.isButton() && !i.isSelectMenu()) return;
+                const data = JSON.parse(await Bot.getData(`$COMPONENTS$$$${i.channel.id}${i.message.id}`))
+                const triggerId = data.triggerId
+                const actionId = data.actionId
+                const t = Bot.triggers.find(t => t.id === triggerId)
+                const action = t.actions.find(act => act.id === actionId)
+                const actionManager = new ActionManager(t)
+                const buttons = data.serializedButtons
+                const selectmenus = data.serializedSelects
+                if(i.isButton()) {
+                    const btn = buttons.find(b => b.id === i.customId)
+                    const int = btn.data["binteraction"]
+                    const msg = btn.data["bmessage"]
+                    const mem = btn.data["bmember"]
+                    const user = btn.data["buser"]
+                    const ch = btn.data["bchannel"]
+                    const sv = btn.data["bserver"]
+                    actionManager.setVariable(int, i)
+                    actionManager.setVariable(msg, i.message)
+                    actionManager.setVariable(mem, i.member)
+                    actionManager.setVariable(user, i.user)
+                    actionManager.setVariable(ch, i.channel)
+                    actionManager.setVariable(sv, i.guild)
+                } else {
+                    const menu = selectmenus.find(s => s.id === i.customId)
+                    const int = menu.data["sinteraction"]
+                    const opts = menu.data["seloptions"]
+                    const msg = menu.data["smessage"]
+                    const mem = menu.data["smember"]
+                    const user = menu.data["suser"]
+                    const ch = menu.data["schannel"]
+                    const sv = menu.data["sserver"]
+                    actionManager.setVariable(int, i)
+                    actionManager.setVariable(opts, i.values)
+                    actionManager.setVariable(msg, i.message)
+                    actionManager.setVariable(mem, i.member)
+                    actionManager.setVariable(user, i.user)
+                    actionManager.setVariable(ch, i.channel)
+                    actionManager.setVariable(sv, i.guild)
+                }
+                actionManager.runNext(actionId, !i.isButton() ? `${i.customId} (on select)` : `${i.customId} (on click)`)
+            })
+        }
     }
     static async run({id, data, actionManager, getVariable, setVariable}) {
         const components = data.get("components")
@@ -713,42 +759,28 @@ export default class ReplyToDeferredInteraction {
             flags,
         })
         setVariable(data.get("message"), r)
-        const btncollector = r.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
-        const menucollector = r.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
-        btncollector.on('collect', (i) => {
-            const btn = buttons.find(b => b.id === i.customId)
-            const int = btn.data.get("binteraction")
-            const msg = btn.data.get("bmessage")
-            const mem = btn.data.get("bmember")
-            const user = btn.data.get("buser")
-            const ch = btn.data.get("bchannel")
-            const sv = btn.data.get("bserver")
-            setVariable(int, i)
-            setVariable(msg, i.message)
-            setVariable(mem, i.member)
-            setVariable(user, i.user)
-            setVariable(ch, i.channel)
-            setVariable(sv, i.guild)
-            actionManager.runNext(id, `${i.customId} (on click)`)
-        });
-        menucollector.on('collect', (i) => {
-            const menu = selectmenus.find(s => s.id === i.customId)
-            const int = menu.data.get("sinteraction")
-            const opts = menu.data.get("seloptions")
-            const msg = menu.data.get("smessage")
-            const mem = menu.data.get("smember")
-            const user = menu.data.get("suser")
-            const ch = menu.data.get("schannel")
-            const sv = menu.data.get("sserver")
-            setVariable(int, i)
-            setVariable(opts, i.values)
-            setVariable(msg, i.message)
-            setVariable(mem, i.member)
-            setVariable(user, i.user)
-            setVariable(ch, i.channel)
-            setVariable(sv, i.guild)
-            actionManager.runNext(id, `${i.customId} (on select)`)
-        });
+        const serializedButtons = []
+        const serializedSelects = []
+        buttons.forEach(btn => {
+            const data = {}
+            btn.data.keys().forEach(key => {
+                data[key] = btn.data.get(key)
+            })
+            serializedButtons.push({...btn, data})
+        })
+        selectmenus.forEach(select => {
+            const data = {}
+            select.data.keys().forEach(key => {
+                data[key] = select.data.get(key)
+            })
+            serializedSelects.push({...select, data})
+        })
+        await Bot.setData(`$COMPONENTS$$$${r.channel.id}${r.id}`, JSON.stringify({
+            triggerId: actionManager.trigger.id,
+            actionId: id,
+            serializedSelects,
+            serializedButtons
+        }))
         actionManager.runNext(id, "action")
         function hexToNumber(hex) {
             if (hex.startsWith('#')) {
