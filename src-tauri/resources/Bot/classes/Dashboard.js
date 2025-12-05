@@ -85,13 +85,15 @@ class DashboardClass {
         this.app.use((req, res, next) => {
             req.bot = Bot;
             req.dashboard = this
-            Bot.client.emit("httpRequest", req, res)
             next();
         });
         this.app.use((req, res, next) => {
-            if(req.path.startsWith('/guild/') || req.path.startsWith("/_app/") || req.path.startsWith("/auth/") ||
-                ['/', '/admin', '/admin/__data.json', '/admin/add', '/admin/delete'].includes(req.path))
+            if(req.path.startsWith('/guild/') || req.path.startsWith("/_app/") || req.path.startsWith("/auth/")|| req.path.startsWith("/admin/") || req.path == "/")
                 handler(req,res,next)
+            else {
+                express.json()(req,res,next)
+                Bot.client.emit("httpRequest", req, res)
+            }
         });
     }
 }
