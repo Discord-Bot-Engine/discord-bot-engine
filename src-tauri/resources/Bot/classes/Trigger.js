@@ -30,10 +30,14 @@ export class Trigger {
             data: actionManager.parseFields(this.data),
             rawData: this.data,
             actionManager,
+            setVariable: actionManager.setVariable.bind(actionManager),
+            getVariable: actionManager.getVariable.bind(actionManager),
         });
         actionManager.actions.forEach((action) =>
             action.load({
                 actionManager,
+                setVariable: actionManager.setVariable.bind(actionManager),
+                getVariable: actionManager.getVariable.bind(actionManager),
             })
         );
     }
@@ -48,8 +52,8 @@ export class Trigger {
                     data: actionManager.parseFields(this.data),
                     rawData: this.data,
                     actionManager,
-                    setVariable: actionManager.setVariable.bind(this),
-                    getVariable: actionManager.getVariable.bind(this),
+                    setVariable: actionManager.setVariable.bind(actionManager),
+                    getVariable: actionManager.getVariable.bind(actionManager),
                 },
                 ...args
             )
@@ -81,8 +85,8 @@ export class Trigger {
                     data: actionManager.parseFields(this.data),
                     rawData: this.data,
                     actionManager: actionManager,
-                    setVariable: actionManager.setVariable.bind(this),
-                    getVariable: actionManager.getVariable.bind(this),
+                    setVariable: actionManager.setVariable.bind(actionManager),
+                    getVariable: actionManager.getVariable.bind(actionManager),
                 },
                 ...args
             );
