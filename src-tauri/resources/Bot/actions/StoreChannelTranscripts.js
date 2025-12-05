@@ -1,4 +1,4 @@
-import {createTranscript} from "discord-html-transcripts"
+import {generateFromMessages} from "discord-html-transcripts"
 export default class StoreChannelTranscripts {
     static type = "Store Channel Transcripts";
 
@@ -20,7 +20,18 @@ export default class StoreChannelTranscripts {
     static async run({ id, data, actionManager, getVariable, setVariable }) {
         const channel = getVariable(data.get("channel"));
         const transcripts = data.get("transcripts");
-        const result = await createTranscript(channel, {
+        let allMessages = [];
+        let lastMessageId;
+        while (true) {
+            const fetchLimitOptions = { limit: 100, before: lastMessageId };
+            if (!lastMessageId) delete fetchLimitOptions.before;
+            const messages = await channel.messages.fetch(fetchLimitOptions);
+            const filteredMessages = messages.filter(msg => !msg.author.bot);
+            allMessages.push(...filteredMessages.values());
+            lastMessageId = messages.lastKey();
+            if (messages.size < 100) break;
+        }
+        const result = await generateFromMessages(allMessages.reverse(), channel, {
             limit: -1,
             returnType: 'buffer',
             saveImages: true,
