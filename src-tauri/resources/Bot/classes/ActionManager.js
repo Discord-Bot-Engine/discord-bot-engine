@@ -32,8 +32,8 @@ export class ActionManager {
       if (Bot.debugger?.breakPoints.includes(action.id)) return;
       action.run({
         actionManager: this,
-        setVariable: this.trigger.setVariable.bind(this.trigger),
-        getVariable: this.trigger.getVariable.bind(this.trigger),
+        setVariable: this.setVariable.bind(this.trigger),
+        getVariable: this.getVariable.bind(this.trigger),
       });
     })
   }
