@@ -69,8 +69,8 @@ class BotClass {
             const action = t.actions.find(act => act.id === actionId)
             action.run({
                 actionManager: t.lastManager,
-                setVariable: t.lastManager.setVariable.bind(t),
-                getVariable: t.lastManager.getVariable.bind(t),
+                setVariable: t.lastManager.setVariable.bind(t.lastManager),
+                getVariable: t.lastManager.getVariable.bind(t.lastManager),
             })
             Bot.sendVariablesData(t, t.lastManager.variables);
         });
