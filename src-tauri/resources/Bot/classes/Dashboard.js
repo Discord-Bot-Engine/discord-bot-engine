@@ -88,7 +88,7 @@ class DashboardClass {
             next();
         });
         this.app.use((req, res, next) => {
-            if(req.path.startsWith('/guild/') || req.path.startsWith("/_app/") || req.path.startsWith("/auth/")|| req.path.startsWith("/admin/") || req.path == "/")
+            if(req.path.startsWith('/guild/') || req.path.startsWith("/_app/") || req.path.startsWith("/auth/")|| req.path.startsWith("/admin/") || req.path === "/")
                 handler(req,res,next)
             else {
                 express.json()(req,res,next)
