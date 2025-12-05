@@ -11,6 +11,7 @@ import extensions from "../data/extensions.json" with { type: "json" };
 import {EmbedBuilder, Events} from "discord.js";
 import Keyv from "keyv";
 import {KeyvFile} from "keyv-file"
+import {ActionManager} from "./ActionManager.js";
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
@@ -39,10 +40,10 @@ class BotClass {
         this.debugger.sendDebugData(JSON.stringify(data))
     }
 
-    sendVariablesData(trigger) {
+    sendVariablesData(trigger, variables) {
         if(!this.debugger) return;
-        trigger.variables.keys().forEach(name => {
-            const value = trigger.variables.get(name);
+        variables.keys().forEach(name => {
+            const value = variables.get(name);
             const data = {
                 name,
                 value,
@@ -65,13 +66,13 @@ class BotClass {
     attachDebugger() {
         this.debugger = new Debugger(async (triggerId, actionId) => {
             const t = this.triggers.find(t => t.id === triggerId)
-            const action = t.actionManager.actions.find(act => act.id === actionId)
+            const action = t.actions.find(act => act.id === actionId)
             action.run({
-                actionManager: t.actionManager,
-                setVariable: t.setVariable.bind(t),
-                getVariable: t.getVariable.bind(t),
+                actionManager: t.lastManager,
+                setVariable: t.lastManager.setVariable.bind(t),
+                getVariable: t.lastManager.getVariable.bind(t),
             })
-            Bot.sendVariablesData(t);
+            Bot.sendVariablesData(t, t.lastManager.variables);
         });
     }
 
@@ -100,62 +101,6 @@ class BotClass {
         this.extensions.keys().forEach(extension => this.extensions.get(extension).load())
         this.triggers.forEach(trigger => trigger.load())
     }
-
-    async parse(value) {
-        try {
-            if (typeof value === 'string') {
-                if (value.startsWith('dbe$mem-')) {
-                    const values = value.split('_');
-                    const member = values[0].replace('dbe$mem-', '');
-                    const guildId = values[1];
-                    const guild = await this.client.guilds.fetch(guildId)
-                    return await guild.members.fetch(member);
-                } else if (value.startsWith('dbe$usr-')) {
-                    const user = value.replace('dbe$usr-', '');
-                    return await this.client.users.fetch(user);
-                } else if (value.startsWith('dbe$msg-')) {
-                    const values = value.split('_');
-                    const message = values[0].replace('dbe$msg-', '');
-                    const channel = values[1];
-                    return await (await this.client.channels.fetch(channel))?.messages.fetch(message);
-                } else if (value.startsWith('dbe$ch-')) {
-                    const channel = value.replace('dbe$ch-', '');
-                    return await this.client.channels.fetch(channel);
-                } else if (value.startsWith('dbe$r-')) {
-                    const values = value.split('_');
-                    const role = values[0].replace('dbe$r-', '');
-                    const guildId = values[1];
-                    const guild = await this.client.guilds.fetch(guildId)
-                    return await guild.roles.fetch(role);
-                } else if (value.startsWith('dbe$s-')) {
-                    const guildId = value.replace('dbe$s-', '');
-                    return await this.client.guilds.fetch(guildId);
-                } else if (value.startsWith('dbe$e-')) {
-                    const values = value.split('_');
-                    const emoji = values[0].replace('dbe$e-', '');
-                    const guildId = values[1];
-                    const guild = await this.client.guilds.fetch(guildId)
-                    return await guild.emojis.fetch(emoji);
-                } else {
-                    return value;
-                }
-            } else if (Array.isArray(value)) {
-                for (let index = 0; index < value.length; index++) {
-                    value[index] = await this.parse(value[index]);
-                }
-                return value;
-            } else if (typeof value === 'object') {
-                const obj = {};
-                for (const key in value)
-                    obj[key] = await this.parse(value[key]);
-                return obj;
-            } else if (value.type === 'embed') {
-                return new EmbedBuilder(value.data);
-            } else {
-                return value;
-            }
-        } catch {}
-    };
 
     async setData(key, value) {
         const num = Number(value)

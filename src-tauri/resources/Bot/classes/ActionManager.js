@@ -10,11 +10,13 @@ export class ActionManager {
   onReturn = () => {};
   onContinue = () => {};
   onBreak = () => {};
+  variables = new Map();
 
-  constructor(trigger, actions, edges, onReturn = () => {}, onContinue = () => {}, onBreak = () => {}) {
+  constructor(trigger, onReturn = () => {}, onContinue = () => {}, onBreak = () => {}) {
     this.trigger = trigger;
-    this.actions = actions;
-    this.edges = edges;
+    this.actions = trigger.actions;
+    this.edges = trigger.edges;
+    this.trigger.lastManager = this
     this.onReturn = onReturn;
     this.onContinue = onContinue;
     this.onBreak = onBreak;
@@ -39,8 +41,8 @@ export class ActionManager {
   parseFields(data) {
     const parsed = new Map();
     const variables = {};
-    this.trigger.variables.keys().forEach((key) => {
-      variables[key] = this.trigger.variables.get(key);
+    this.variables.keys().forEach((key) => {
+      variables[key] = this.variables.get(key);
     });
     data.keys().forEach((item) => {
       let result = data.get(item);
@@ -59,6 +61,17 @@ export class ActionManager {
       parsed.set(item, this.eval(result, variables));
     });
     return parsed;
+  }
+
+  setVariable(name, value) {
+    if(!name) return;
+    this.variables.set(name, value);
+    Bot.sendVariablesData(this.trigger, this.variables);
+  }
+
+  getVariable(name) {
+    if(!name) return;
+    return this.variables.get(name);
   }
 
   eval(text, variables) {

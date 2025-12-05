@@ -8,48 +8,48 @@ export class Trigger {
     name = "";
     type = "";
     data = new Map();
-    variables = new Map();
-    actionManager = null;
+    actions = []
+    edges = []
+    lastManager = null
 
     constructor(id, name, type, actions, edges) {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.actionManager = new ActionManager(this, actions, edges);
+        this.actions = actions;
+        this.edges = edges;
     }
 
     load() {
         const triggerClass = Bot.triggerClasses.find((t) => t.type === this.type);
         if (!triggerClass) return;
         Bot.client.on(triggerClass.event, (...args) => this.run(...args));
+        const actionManager = new ActionManager(this)
         triggerClass.load({
             id: this.id,
-            data: this.actionManager.parseFields(this.data),
+            data: actionManager.parseFields(this.data),
             rawData: this.data,
-            actionManager: this.actionManager,
-            setVariable: this.setVariable.bind(this),
-            getVariable: this.getVariable.bind(this),
+            actionManager,
         });
-        this.actionManager.actions.forEach((action) =>
+        actionManager.actions.forEach((action) =>
             action.load({
-                actionManager: this.actionManager,
-                setVariable: this.setVariable.bind(this),
-                getVariable: this.getVariable.bind(this),
+                actionManager,
             })
         );
     }
 
     async run(...args) {
+        const actionManager = new ActionManager(this)
         const triggerClass = Bot.triggerClasses.find((t) => t.type === this.type);
         if (
             !triggerClass.runIf(
                 {
                     id: this.id,
-                    data: this.actionManager.parseFields(this.data),
+                    data: actionManager.parseFields(this.data),
                     rawData: this.data,
-                    actionManager: this.actionManager,
-                    setVariable: this.setVariable.bind(this),
-                    getVariable: this.getVariable.bind(this),
+                    actionManager,
+                    setVariable: actionManager.setVariable.bind(this),
+                    getVariable: actionManager.getVariable.bind(this),
                 },
                 ...args
             )
@@ -65,7 +65,7 @@ export class Trigger {
                 name: this.name,
                 data,
                 type: this.type,
-                actions: this.actionManager.actions.map((act) => {
+                actions: this.actions.map((act) => {
                     const data = {};
                     act.data.keys().forEach((key) => {
                         data[key] = act.data.get(key);
@@ -78,29 +78,18 @@ export class Trigger {
             await triggerClass.run(
                 {
                     id: this.id,
-                    data: this.actionManager.parseFields(this.data),
+                    data: actionManager.parseFields(this.data),
                     rawData: this.data,
-                    actionManager: this.actionManager,
-                    setVariable: this.setVariable.bind(this),
-                    getVariable: this.getVariable.bind(this),
+                    actionManager: actionManager,
+                    setVariable: actionManager.setVariable.bind(this),
+                    getVariable: actionManager.getVariable.bind(this),
                 },
                 ...args
             );
-            if (Bot.debugger) Bot.sendVariablesData(this);
+            if (Bot.debugger) Bot.sendVariablesData(this, actionManager.variables);
         } catch (error) {
             console.log(`Error at trigger: ${this.name}\nError: ${error.stack}`);
         }
-    }
-
-    setVariable(name, value) {
-        if(!name) return;
-        this.variables.set(name, value);
-        Bot.sendVariablesData(this);
-    }
-
-    getVariable(name) {
-        if(!name) return;
-        return this.variables.get(name);
     }
 
     toJSON() {
