@@ -33,7 +33,7 @@ export default class StoreValueFromMemberData {
         function parse(str) {
             const num = Number(str);
             if (isNaN(num)) return str;
-            return Math.abs(num) <= Number.MAX_VALUE ? num : str;
+            return String(value).length < 16 ? num : str;
         }
     }
 }
