@@ -1,6 +1,23 @@
 import {ActionManager} from "../classes/ActionManager.js";
 import {Bot} from "../classes/Bot.js";
-import {TextDisplayBuilder, SectionBuilder, MediaGalleryBuilder, FileBuilder, SeparatorBuilder, ButtonBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, ContainerBuilder, AttachmentBuilder, SeparatorSpacingSize, ButtonStyle, ComponentType, MessageFlags} from "discord.js"
+import {
+    TextDisplayBuilder,
+    SectionBuilder,
+    MediaGalleryBuilder,
+    FileBuilder,
+    SeparatorBuilder,
+    ButtonBuilder,
+    StringSelectMenuBuilder,
+    StringSelectMenuOptionBuilder,
+    ActionRowBuilder,
+    ContainerBuilder,
+    AttachmentBuilder,
+    SeparatorSpacingSize,
+    ButtonStyle,
+    ComponentType,
+    MessageFlags,
+    Events
+} from "discord.js"
 
 export default class ReplyToDeferredInteraction {
     static type = "Reply To Deferred Interaction"
@@ -474,13 +491,12 @@ export default class ReplyToDeferredInteraction {
         if(!Bot.initComponents) {
             Bot.initComponents = true
             Bot.client.on(Events.InteractionCreate, async (i) => {
-                if(!i.isButton() && !i.isSelectMenu()) return;
+                if(!i.isButton() && !i.isStringSelectMenu()) return;
                 const data = JSON.parse(await Bot.getData(`$COMPONENTS$$$${i.channel.id}${i.message.id}`))
                 const triggerId = data.triggerId
                 const actionId = data.actionId
                 const t = Bot.triggers.find(t => t.id === triggerId)
-                const action = t.actions.find(act => act.id === actionId)
-                const actionManager = new ActionManager(t)
+                const actionManager = t.lastManager ?? new ActionManager(t)
                 const buttons = data.serializedButtons
                 const selectmenus = data.serializedSelects
                 if(i.isButton()) {

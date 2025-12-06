@@ -491,13 +491,12 @@ export default class SendMessage {
         if(!Bot.initComponents) {
             Bot.initComponents = true
             Bot.client.on(Events.InteractionCreate, async (i) => {
-                if(!i.isButton() && !i.isSelectMenu()) return;
+                if(!i.isButton() && !i.isStringSelectMenu()) return;
                 const data = JSON.parse(await Bot.getData(`$COMPONENTS$$$${i.channel.id}${i.message.id}`))
                 const triggerId = data.triggerId
                 const actionId = data.actionId
                 const t = Bot.triggers.find(t => t.id === triggerId)
-                const action = t.actions.find(act => act.id === actionId)
-                const actionManager = new ActionManager(t)
+                const actionManager = t.lastManager ?? new ActionManager(t)
                 const buttons = data.serializedButtons
                 const selectmenus = data.serializedSelects
                 if(i.isButton()) {

@@ -15,7 +15,7 @@ import {
     SeparatorSpacingSize,
     ButtonStyle,
     ComponentType,
-    MessageFlags,
+    MessageFlags, Events,
 } from "discord.js"
 
 export default class EditMessage {
@@ -495,8 +495,7 @@ export default class EditMessage {
                 const triggerId = data.triggerId
                 const actionId = data.actionId
                 const t = Bot.triggers.find(t => t.id === triggerId)
-                const action = t.actions.find(act => act.id === actionId)
-                const actionManager = new ActionManager(t)
+                const actionManager = t.lastManager ?? new ActionManager(t)
                 const buttons = data.serializedButtons
                 const selectmenus = data.serializedSelects
                 if(i.isButton()) {
