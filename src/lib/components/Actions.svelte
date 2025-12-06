@@ -111,34 +111,48 @@
        localStorage.setItem("copiedActions", JSON.stringify(newActions));
        localStorage.setItem("copiedEdges", JSON.stringify(edges));
    }
-   function paste() {
-       App.updateUndo()
-       let actions = localStorage.getItem("copiedActions");
-       let edges = localStorage.getItem("copiedEdges");
-       if(!actions || !edges) return;
-       actions = JSON.parse(actions);
-       edges = JSON.parse(edges)
-       const newActions = []
-       const newEdges = []
-       actions.forEach(act => {
-           const newAct = Action.fromJSON(act)
-           newAct.id = uuidv4()
-           edges.forEach(edge => {
-               if(edge.source === act.id) {
-                   edge.source = newAct.id
-               }
-               if(edge.target === act.id) {
-                   edge.target = newAct.id
-               }
-               edge.id = edge.id.replace(act.id, newAct.id)
-               newEdges.push(edge)
-           })
-           newActions.push(newAct)
-       })
-       App.selectedTrigger.actions = [...App.selectedTrigger.actions, ...newActions]
-       App.selectedTrigger.edges = [...App.selectedTrigger.edges, ...newEdges]
-   }
-   function deleteActions() {
+    function paste() {
+        App.updateUndo();
+        let actions = localStorage.getItem("copiedActions");
+        let edges = localStorage.getItem("copiedEdges");
+        if (!actions || !edges) return;
+        actions = JSON.parse(actions);
+        edges = JSON.parse(edges);
+        const newActions = [];
+        const newEdges = [];
+        const idMap = {};
+        actions.forEach(act => {
+            const newAct = Action.fromJSON(act);
+            const newId = uuidv4();
+            idMap[act.id] = newId;
+            newAct.id = newId;
+            newActions.push(newAct);
+        });
+        edges.forEach(edge => {
+            const newEdge = { ...edge };
+            if (idMap[newEdge.source]) {
+                newEdge.source = idMap[newEdge.source];
+            }
+            if (idMap[newEdge.target]) {
+                newEdge.target = idMap[newEdge.target];
+            }
+            newEdge.id = uuidv4();
+
+            newEdges.push(newEdge);
+        });
+
+        App.selectedTrigger.actions = [
+            ...App.selectedTrigger.actions,
+            ...newActions
+        ];
+
+        App.selectedTrigger.edges = [
+            ...App.selectedTrigger.edges,
+            ...newEdges
+        ];
+    }
+
+    function deleteActions() {
        App.updateUndo()
        const list = App.selectedTrigger.actions.filter(act => act.selected)
        App.selectedTrigger.actions = App.selectedTrigger.actions.filter(act => !act.actionType || !list.find(n => n.id === act.id))
