@@ -8,23 +8,23 @@ export default class XPSystem {
         <dbe-select name="enable" class="col-span-3" value="False" values="True,False"></dbe-select>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
-        <dbe-label name="XP Member Data Field"></dbe-label>
+        <dbe-label name="XP member data field"></dbe-label>
         <dbe-input name="xp" class="col-span-3" value="XP"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
-        <dbe-label name="Max XP Member Data Field"></dbe-label>
+        <dbe-label name="Max XP member data field"></dbe-label>
         <dbe-input name="maxxp" class="col-span-3" value="MAX_XP"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
-        <dbe-label name="Level Member Data Field"></dbe-label>
+        <dbe-label name="Level member data field"></dbe-label>
         <dbe-input name="level" class="col-span-3" value="LEVEL"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
-        <dbe-label name="Max XP Multiplier"></dbe-label>
+        <dbe-label name="Max XP multiplier"></dbe-label>
         <dbe-input name="maxxpmulti" class="col-span-3" value="1.5"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
-        <dbe-label name="XP Multiplier"></dbe-label>
+        <dbe-label name="XP multiplier"></dbe-label>
         <dbe-input name="xpmulti" class="col-span-3" value="1"></dbe-input>
     </div>
     `
