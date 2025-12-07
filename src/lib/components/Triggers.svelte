@@ -53,7 +53,7 @@
         <ErrorIcon />
     {/if}
 {/snippet}
-    <div class="flex bg-card rounded-xl shadow-sm">
+    <div class="flex bg-card rounded-xl shadow-sm max-w-[200px]">
         {#if !App.hideTriggers}
         <List class="rounded-r-none border-r-0 shadow-none" ondblclick={() => {
     triggerEditName = App.selectedTrigger.name;

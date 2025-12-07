@@ -278,3 +278,7 @@
 .svelte-flow__container {
     background: transparent!important;
 }
+
+dbe-list {
+    overflow:hidden;
+}

@@ -7,13 +7,13 @@
     let {open = $bindable(), title, children, onDone = () => {}, onOpenChange = () => {} } = $props()
 </script>
 <Dialog.Root bind:open onOpenChange={onOpenChange}>
-    <Dialog.Content class="sm:max-w-[65vw] px-4.5 overflow-hidden" >
+    <Dialog.Content class="sm:max-w-[65vw] w-full px-4.5 overflow-hidden" >
         <Dialog.Header>
             <Dialog.Title>
                 <Translation text={title} />
             </Dialog.Title>
         </Dialog.Header>
-        <ScrollArea class="max-h-[60vh]">
+        <ScrollArea class="max-h-[60vh] w-full">
             {@render children()}
         </ScrollArea>
         <Dialog.Footer>

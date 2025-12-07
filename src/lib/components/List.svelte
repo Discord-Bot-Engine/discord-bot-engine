@@ -33,8 +33,8 @@
 	}
 </script>
 
-<Card.Root class="w-full h-full min-h-40 min-w-40 p-1 relative {props.class}">
-	<Card.Content class="p-1 !px-0.5 h-full">
+<Card.Root class="w-full overflow-hidden h-full min-h-40 min-w-40 p-1 relative {props.class}">
+	<Card.Content class="p-1 !px-0.5 h-full w-full overflow-hidden">
 		<div class="flex h-fit -mr-1.5 mb-1 px-0.5">
 			<label class="mr-auto text-md overflow-hidden text-ellipsis">
 				<Translation text={title} />
@@ -43,7 +43,7 @@
 				<Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {hideControls ? 'hidden' : ''}" onclick={() => {ondelete(); selected = null }}><MinusIcon /></Button>
 		</div>
 		<Separator />
-		<ScrollArea class="h-[90%]">
+		<ScrollArea class="h-[90%] w-full overflow-hidden">
 			{#if allowMoving}
 			<div
 					use:dndzone={{ items, flipDurationMs: 150 }}
@@ -51,15 +51,15 @@
 					onfinalize={handleDnd}
 			>
 				{#each items as item, i (item.id)}
-					<div>
-						<div class="flex flex-row w-full">
+					<div class="w-full overflow-hidden">
+						<div class="flex flex-row w-full overflow-hidden">
 							<div class="py-1.25 opacity-50">
 								<EllipsisVerticalIcon size={18} />
 							</div>
 							<Button
 									noVariables
 									variant={selected === item ? undefined : "ghost"}
-									class="!p-1 !h-fit flex-1 hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
+									class="!p-1 !h-fit flex-1 hover:{selected === item ? '!bg-primary' : '!bg-accent'} w-full block text-ellipsis overflow-hidden"
 									ondblclick={() => { selected = item; ondblclick(item) }}
 									onclick={() => { selected = item; onclick(item)}}
 							>
@@ -77,7 +77,7 @@
 			</div>
 				{:else}
 				{#each items as item, i}
-					<div>
+					<div class="w-full overflow-hidden">
 							<Button
 									variant={selected === item ? undefined : "ghost"}
 									class="!p-1 !h-fit w-full hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
