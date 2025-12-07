@@ -7,7 +7,7 @@
     let {open = $bindable(), title, children, onDone = () => {}, onOpenChange = () => {} } = $props()
 </script>
 <Dialog.Root bind:open onOpenChange={onOpenChange}>
-    <Dialog.Content class="sm:max-w-[65vw] px-4.5" >
+    <Dialog.Content class="sm:max-w-[65vw] px-4.5 overflow-hidden" >
         <Dialog.Header>
             <Dialog.Title>
                 <Translation text={title} />
