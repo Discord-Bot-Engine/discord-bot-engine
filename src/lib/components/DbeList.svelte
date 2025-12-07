@@ -16,6 +16,7 @@
         init = true
         itemTitle = eval(`(${itemTitle})`)
     }
+    $host().style.overflow = "hidden"
     let selected = $state(new CustomElement())
     let ref;
     document.getElementById(modalId).querySelectorAll("*").forEach((el) => {
