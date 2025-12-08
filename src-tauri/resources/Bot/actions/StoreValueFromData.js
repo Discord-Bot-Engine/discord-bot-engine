@@ -27,7 +27,7 @@ export default class StoreValueFromData {
         function parse(str) {
             const num = Number(str);
             if (isNaN(num)) return str;
-            return String(value).length < 16 ? num : str;
+            return str.length < 16 ? num : str;
         }
     }
 }
