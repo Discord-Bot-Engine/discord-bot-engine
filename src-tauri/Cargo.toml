@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "An app for creating bots that interact with the discord api."
 authors = ["Discord Bot Engine"]
 edition = "2021"
-license = Proprietary"
+license = "Proprietary"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
