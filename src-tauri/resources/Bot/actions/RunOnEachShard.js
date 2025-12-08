@@ -1,4 +1,5 @@
 import {Bot} from "../classes/Bot.js";
+import {ActionManager} from "../classes/ActionManager.js";
 
 export default class RunOnEachShard {
     static type = "Run On Each Shard"
@@ -8,21 +9,18 @@ export default class RunOnEachShard {
     static load(context) {
     }
     static async run({id, actionManager}) {
-        Bot.client.cluster.broadcastEval(async (client, {trigger, actions, edges}) =>
+        Bot.client.cluster.broadcastEval(async (client, {trigger, id}) =>
             {
                 const Bot = (await import("../classes/Bot.js")).Bot;
-                const Action = (await import("../classes/Action.js")).Action
                 const ActionManager = (await import("../classes/ActionManager.js")).ActionManager
-                actions = actions.map(action => Action.fromJSON(action))
                 const t = Bot.triggers.find(t => t.id === trigger)
-                const manager = new ActionManager(t, actions, edges)
-                manager.runNext(trigger.id, "each")
+                const actionManager = t.lastManager ?? new ActionManager(t)
+                actionManager.runNext(id, "each")
             },
             {
                 context: {
                     trigger: actionManager.trigger.id,
-                    actions: actionManager.actions.map(act => act.toJSON()),
-                    edges: actionManager.edges
+                    id
                 }
             }
         )
