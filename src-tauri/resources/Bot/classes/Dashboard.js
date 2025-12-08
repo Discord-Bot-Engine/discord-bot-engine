@@ -81,7 +81,6 @@ class DashboardClass {
             resave: false,
             saveUninitialized: false
         }));
-        this.app.use(express.json());
         this.app.use((req, res, next) => {
             req.bot = Bot;
             req.dashboard = this
