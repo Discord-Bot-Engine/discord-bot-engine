@@ -33,6 +33,8 @@
     ],
     "icon": [
       "icons/dbe.ico"
-    ]
+    ],
+    "licenseFile": "../LICENSE",
+    "license": "Proprietary"
   }
 }
