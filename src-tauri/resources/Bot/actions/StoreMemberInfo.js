@@ -28,7 +28,7 @@ export default class StoreMemberInfo {
                 name="info" 
                 class="col-span-3" 
                 change="(v) => handlers.onChange(v)"
-                values="Avatar URL,Banner URL,Communication Disabled Until,Display Color,Display Hex Color,Display Name,Joined At,Nickname,User,User Id,User Tag,Is Bannable,Is Communication Disabled,Is Kickable,Is Manageable,Is Owner,Is Pending,Is Premium Since,Roles,Permissions,Voice State">
+                values="Avatar URL,Banner URL,Communication Disabled Until,Display Color,Display Hex Color,Display Name,Joined At,Nickname,User,Id,Is Bannable,Is Communication Disabled,Is Kickable,Is Manageable,Is Owner,Is Pending,Is Premium Since,Roles,Permissions,Voice State">
             </dbe-select>
         </div>
         <div id="imgsettings" class="grid gap-4" style="display: none">
@@ -80,7 +80,7 @@ export default class StoreMemberInfo {
                 "Is Pending",
             ].includes(value)) {
                 varlist.setVariableType("Boolean")
-            } else if (["User", "User Id", "User Tag"].includes(value)) {
+            } else if (["User"].includes(value)) {
                 varlist.setVariableType("User")
             } else if (["Display Color", "Display Hex Color", "Display Name", "Nickname", "Avatar URL", "Banner URL"].includes(value)) {
                 varlist.setVariableType("Text")
@@ -134,11 +134,8 @@ export default class StoreMemberInfo {
             case "User":
                 value = member.user
                 break
-            case "User Id":
+            case "Id":
                 value = member.id
-                break
-            case "User Tag":
-                value = member.user.tag
                 break
             case "Is Bannable":
                 value = member.bannable
