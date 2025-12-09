@@ -16,6 +16,15 @@
             title:"Project",
             items: [
                 {
+                    title: "Upload Project Files",
+                    onclick: async () => {
+                        await BotManager.uploadBotFiles()
+                    },
+                    get disable() {
+                        return !BotManager.selectedBot.url
+                    }
+                },
+                {
                     title: "Update Project Files",
                     onclick: async () => {
                         await BotManager.updateBotFiles()

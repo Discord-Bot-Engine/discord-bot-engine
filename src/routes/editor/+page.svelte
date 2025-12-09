@@ -39,8 +39,8 @@
 		window.Action = Action;
 		window.Trigger = Trigger;
 		window.App = App;
-		Window.Bot = Bot;
-		Window.BotManager = BotManager;
+		window.Bot = Bot;
+		window.BotManager = BotManager;
 		window.CustomElement = CustomElement;
 		window.Debugger = Debugger;
 		window.Extension = Extension;

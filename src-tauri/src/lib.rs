@@ -7,6 +7,7 @@ use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
 use std::collections::HashMap;
 use std::ops::Add;
+use std::process::Command;
 use std::sync::{Arc, Mutex};
 use serde_json::{json, Value};
 
@@ -170,6 +171,43 @@ fn remove_debugger(
     bot.write(data.as_bytes()).map_err(|e| e.to_string())?;
 
     Ok(())
+}
+
+#[tauri::command(rename_all = "snake_case")]
+async fn upload_bot(
+    _app: tauri::AppHandle,
+    state: tauri::State<'_, BotManager>,
+    host: String,
+    port: String,
+    username: String,
+    password: String,
+    bot_path: String,
+) -> Result<(), String> {
+    // Resolve path to bundled executable
+    let node = _app
+        .path()
+        .resolve("resources/sftp", BaseDirectory::Resource)
+        .map_err(|e| e.to_string())?;
+
+    let exe_path = node.join("sftp.exe");
+
+    // Build and run the command, wait for it to finish
+    let output = Command::new(exe_path)
+        .current_dir(&bot_path)
+        .args(vec![&bot_path, "/", &host, &username, &password, &port])
+        .output()
+        .map_err(|e| e.to_string())?;
+
+    // Check if the process succeeded
+    if output.status.success() {
+        Ok(())
+    } else {
+        Err(format!(
+            "Uploader failed with code {:?}. stderr: {}",
+            output.status.code(),
+            String::from_utf8_lossy(&output.stderr)
+        ))
+    }
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -565,6 +603,7 @@ pub fn run() {
             remove_break_point,
             attach_debugger,
             remove_debugger,
+            upload_bot,
             run_bot,
             stop_bot,
             is_bot_running,

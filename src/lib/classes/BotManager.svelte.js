@@ -112,18 +112,24 @@ class BotManagerClass {
 		App.updateActivity()
 	}
 
-	saveBotSettings(botName, botPath, botToken, clientSecret, dashboardPort, presenceIntent, membersIntent, messageContentIntent) {
+	saveBotSettings(botName, botPath, botToken, clientSecret, dashboardPort, url, username, password, presenceIntent, membersIntent, messageContentIntent) {
 		botName = botName.trim()
 		botPath = botPath.trim()
 		botToken = botToken.trim()
 		clientSecret = clientSecret.trim()
 		dashboardPort = dashboardPort.trim()
+		url = url.trim()
+		username = username.trim()
+		password = password.trim()
 		this.selectedBot.name = botName;
 		this.selectedBot.path = botPath;
 		this.selectedBot.token = botToken;
 		this.selectedBot.clientId = atob(botToken.split(".")[0]);
 		this.selectedBot.clientSecret = clientSecret
 		this.selectedBot.port = dashboardPort
+		this.selectedBot.url = url;
+		this.selectedBot.username = username;
+		this.selectedBot.password = password;
 		this.selectedBot.presenceIntent = presenceIntent
 		this.selectedBot.membersIntent = membersIntent
 		this.selectedBot.messageContentIntent = messageContentIntent
@@ -135,6 +141,9 @@ class BotManagerClass {
 				token: botToken,
 				clientSecret,
 				port: dashboardPort,
+				url,
+				username,
+				password,
 				presenceIntent,
 				membersIntent,
 				messageContentIntent,
@@ -170,6 +179,25 @@ class BotManagerClass {
 		this.bots.find(bot => bot.path === this.selectedBot.path).isRunning = false;
 		Debugger.removeDebugger(this.selectedBot.path)
 		await invoke('stop_bot', {bot_path: this.selectedBot.path}).catch(() => {})
+	}
+
+	async uploadBotFiles() {
+			try {
+				this.selectedBot.isLoading = true
+				const host = this.selectedBot.url.split(":")[0]
+				const port = this.selectedBot.url.split(":")[1]
+				await invoke("upload_bot", {
+					host,
+					port,
+					username:this.selectedBot.username,
+					password:this.selectedBot.password,
+					bot_path: this.selectedBot.path
+				});
+				setTimeout(() => this.selectedBot.isLoading = false, 5000)
+			} catch (err) {
+				alert(`SFTP error: ${err}`);
+				this.selectedBot.isLoading = false
+			}
 	}
 }
 

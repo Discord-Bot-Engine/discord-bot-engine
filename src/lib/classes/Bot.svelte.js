@@ -12,6 +12,9 @@ class Bot {
 	token = '';
 	port = '';
 	clientSecret = '';
+	url = '';
+	username = '';
+	password = '';
 	presenceIntent = false
 	membersIntent = false
 	messageContentIntent = false
@@ -46,6 +49,9 @@ class Bot {
 		this.token = data.token;
 		this.port = data.port;
 		this.clientId = atob(this.token.split(".")[0]);
+		this.url = data.url;
+		this.username = data.username;
+		this.password = data.password;
 		this.presenceIntent = data.presenceIntent;
 		this.membersIntent = data.membersIntent;
 		this.messageContentIntent = data.messageContentIntent;
