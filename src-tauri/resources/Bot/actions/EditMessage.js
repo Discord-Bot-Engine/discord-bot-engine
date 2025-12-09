@@ -545,10 +545,12 @@ export default class EditMessage {
         components.forEach(({data}, i) => {
             const type = data.get("type")
             if(type === "Text") {
+                currentRow++
                 list.push(new TextDisplayBuilder().setContent(
                     data.get("tcontent"),
                 ))
             } else if(type === "Section") {
+                currentRow++
                 const content = data.get("scontent");
                 const thumbnail = data.get("sthumbnail") === "True";
                 const button = data.get("sbutton") === "True";
@@ -582,6 +584,7 @@ export default class EditMessage {
                 }
                 list.push(builder)
             } else if(type === "Media Gallery") {
+                currentRow++
                 const builder = new MediaGalleryBuilder()
                 const images = data.get("mediagallery")
                 images.forEach(({data}) => {
@@ -592,11 +595,13 @@ export default class EditMessage {
                 })
                 list.push(builder)
             } else if(type === "File") {
+                currentRow++
                 const builder = new FileBuilder()
                 const url = data.get("furl")
                 builder.setURL(url)
                 list.push(builder)
             } else if(type === "Separator") {
+                currentRow++
                 const builder = new SeparatorBuilder()
                 const divider = data.get("sdivider") === "True"
                 const size = SeparatorSpacingSize[data.get("ssize")]
@@ -644,6 +649,7 @@ export default class EditMessage {
                 if(!list[currentRow]) list[currentRow] = new ActionRowBuilder()
                 list[currentRow].addComponents(builder)
             } else if(type === "Container") {
+                currentRow++
                 const components = data.get("components")
                 const container = new ContainerBuilder()
                 const rows = []
@@ -653,10 +659,12 @@ export default class EditMessage {
                 components.forEach(({data}) => {
                     const type = data.get("type")
                     if(type === "Text") {
+                        currentRow++
                         container.addTextDisplayComponents(text=>text.setContent(
                             data.get("tcontent")
                         ))
                     } else if(type === "Section") {
+                        currentRow++
                         const content = data.get("scontent");
                         const thumbnail = data.get("sthumbnail") === "True";
                         const button = data.get("sbutton") === "True";
@@ -691,6 +699,7 @@ export default class EditMessage {
                             return builder
                         })
                     } else if(type === "Media Gallery") {
+                        currentRow++
                         container.addMediaGalleryComponents(builder => {
                             const images = data.get("mediagallery")
                             images.forEach(({data}) => {
@@ -702,12 +711,14 @@ export default class EditMessage {
                             return builder
                         })
                     } else if(type === "File") {
+                        currentRow++
                         container.addFileComponents(builder => {
                             const url = data.get("furl")
                             builder.setURL(url)
                             return builder
                         })
                     } else if(type === "Separator") {
+                        currentRow++
                         container.addSeparatorComponents(builder => {
                             const divider = data.get("sdivider") === "True"
                             const size = SeparatorSpacingSize[data.get("ssize")]
