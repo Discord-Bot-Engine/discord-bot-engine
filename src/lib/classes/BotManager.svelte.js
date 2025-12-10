@@ -184,8 +184,9 @@ class BotManagerClass {
 	async uploadBotFiles() {
 			try {
 				this.selectedBot.isLoading = true
-				const host = this.selectedBot.url.split(":")[0].replace("sftp://", "")
-				const port = this.selectedBot.url.split(":")[1]
+				const base = this.selectedBot.url.replace("sftp://", "").split(":")
+				const host = base[0]
+				const port = base[1]
 				await invoke("upload_bot", {
 					host,
 					port,
