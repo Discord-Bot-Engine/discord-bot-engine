@@ -75,28 +75,17 @@ export default class SetChannelPermissions {
             const permissionFlags = perm.data.get("permissions");
 
             const selectedFlags = permissionFlags.map(p => uiToFlag[p]);
-
-            const allow = new PermissionsBitField();
-            const deny = new PermissionsBitField();
-
+            const obj = {}
             for (const flag of allFlags) {
-                if (selectedFlags.includes(flag)) {
-                    allow.add(flag);
-                } else {
-                    deny.add(flag);
-                }
+                obj[flag] = selectedFlags.includes(flag);
             }
             permissionOverwrites.push({
-                id: getVariable(perm.data.get("target")).id,
-                allow,
-                deny
+                target: getVariable(perm.data.get("target")),
+                perms: obj
             })
         })
         for (const ow of permissionOverwrites) {
-            await channel.permissionOverwrites.edit(ow.id, {
-                allow: ow.allow,
-                deny: ow.deny
-            });
+            await channel.permissionOverwrites.edit(ow.target, ow.perms);
         }
         actionManager.runNext(id, "action");
     }

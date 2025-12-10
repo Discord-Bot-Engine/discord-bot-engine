@@ -653,18 +653,18 @@ export default class SendMessage {
                 const components = data.get("components")
                 const container = new ContainerBuilder()
                 const rows = []
-                let currentRow = 0
+                let currentCompRow = 0
                 const color = hexToNumber(data.get("ccolor").replace("#", ""))
                 container.setAccentColor(color)
                 components.forEach(({data}) => {
                     const type = data.get("type")
                     if(type === "Text") {
-                        currentRow++
+                        currentCompRow++
                         container.addTextDisplayComponents(text=>text.setContent(
                             data.get("tcontent")
                         ))
                     } else if(type === "Section") {
-                        currentRow++
+                        currentCompRow++
                         const content = data.get("scontent");
                         const thumbnail = data.get("sthumbnail") === "True";
                         const button = data.get("sbutton") === "True";
@@ -699,7 +699,7 @@ export default class SendMessage {
                             return builder
                         })
                     } else if(type === "Media Gallery") {
-                        currentRow++
+                        currentCompRow++
                         container.addMediaGalleryComponents(builder => {
                             const images = data.get("mediagallery")
                             images.forEach(({data}) => {
@@ -711,14 +711,14 @@ export default class SendMessage {
                             return builder
                         })
                     } else if(type === "File") {
-                        currentRow++
+                        currentCompRow++
                         container.addFileComponents(builder => {
                             const url = data.get("furl")
                             builder.setURL(url)
                             return builder
                         })
                     } else if(type === "Separator") {
-                        currentRow++
+                        currentCompRow++
                         container.addSeparatorComponents(builder => {
                             const divider = data.get("sdivider") === "True"
                             const size = SeparatorSpacingSize[data.get("ssize")]
@@ -738,10 +738,10 @@ export default class SendMessage {
                         if(style === "Link") builder.setURL(url)
                         else builder.setCustomId(id)
                         if(emoji) builder.setEmoji(emoji)
-                        if(rows[currentRow] && (rows[currentRow].components.size >= 5 || rows[currentRow].components.every(c => c.type === ComponentType.Button))) currentRow++;
-                        if(!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
-                        rows[currentRow].addComponents(builder)
-                        container.addActionRowComponents(rows[currentRow])
+                        if(rows[currentCompRow] && (rows[currentCompRow].components.size >= 5 || rows[currentCompRow].components.every(c => c.type === ComponentType.Button))) currentCompRow++;
+                        if(!rows[currentCompRow]) rows[currentCompRow] = new ActionRowBuilder()
+                        rows[currentCompRow].addComponents(builder)
+                        container.addActionRowComponents(rows[currentCompRow])
                     } else if(type === "Select Menu") {
                         const builder = new StringSelectMenuBuilder()
                         const id = data.get("sid")
@@ -763,10 +763,10 @@ export default class SendMessage {
                             if(emoji) opt.setEmoji(emoji)
                             builder.addOptions(opt)
                         })
-                        if(rows[currentRow]) currentRow++;
-                        if(!rows[currentRow]) rows[currentRow] = new ActionRowBuilder()
-                        rows[currentRow].addComponents(builder)
-                        container.addActionRowComponents(rows[currentRow])
+                        if(rows[currentCompRow]) currentCompRow++;
+                        if(!rows[currentCompRow]) rows[currentCompRow] = new ActionRowBuilder()
+                        rows[currentCompRow].addComponents(builder)
+                        container.addActionRowComponents(rows[currentCompRow])
                     }
                 })
                 list.push(container)
