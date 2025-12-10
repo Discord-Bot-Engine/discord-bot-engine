@@ -29,7 +29,7 @@ export default class SetChannelPermissions {
     `;
 
     static load() {}
-    static async run({ id, data, actionManager, getVariable, setVariable }) {
+    static async run({ id, data, actionManager, getVariable }) {
         const channel = getVariable(data.get("channel"));
         const perms = data.get("perms");
         const uiToFlag = {
