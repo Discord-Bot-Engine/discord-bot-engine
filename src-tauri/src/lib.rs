@@ -183,22 +183,20 @@ async fn upload_bot(
     password: String,
     bot_path: String,
 ) -> Result<(), String> {
-    // Resolve path to bundled executable
     let node = _app
         .path()
         .resolve("resources/sftp", BaseDirectory::Resource)
         .map_err(|e| e.to_string())?;
 
     let exe_path = node.join("sftp.exe");
-
-    // Build and run the command, wait for it to finish
+    const CREATE_NO_WINDOW: u32 = 0x08000000;
+    
     let output = Command::new(exe_path)
-        .current_dir(&bot_path)
+        .creation_flags(CREATE_NO_WINDOW)
         .args(vec![&bot_path, "/", &host, &username, &password, &port])
         .output()
         .map_err(|e| e.to_string())?;
 
-    // Check if the process succeeded
     if output.status.success() {
         Ok(())
     } else {
