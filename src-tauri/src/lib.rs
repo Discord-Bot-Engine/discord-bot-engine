@@ -7,6 +7,7 @@ use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
 use std::collections::HashMap;
 use std::ops::Add;
+use std::os::windows::process::CommandExt;
 use std::process::Command;
 use std::sync::{Arc, Mutex};
 use serde_json::{json, Value};
