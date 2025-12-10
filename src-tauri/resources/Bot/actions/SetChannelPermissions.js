@@ -92,7 +92,12 @@ export default class SetChannelPermissions {
                 deny
             })
         })
-        await channel.permissionOverwrites.set(permissionOverwrites);
+        for (const ow of permissionOverwrites) {
+            await channel.permissionOverwrites.edit(ow.id, {
+                allow: ow.allow,
+                deny: ow.deny
+            });
+        }
         actionManager.runNext(id, "action");
     }
 }
