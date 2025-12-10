@@ -1,7 +1,7 @@
 import { ChannelType, PermissionsBitField } from "discord.js";
 
-export default class SetChannelPermissions {
-    static type = "Set Channel Permissions";
+export default class EditChannelPermissions {
+    static type = "Edit Channel Permissions";
 
     static variableTypes = ["Channel", "Role", "Member", "User"];
 
@@ -29,7 +29,7 @@ export default class SetChannelPermissions {
     `;
 
     static load() {}
-    static async run({ id, data, actionManager, getVariable, setVariable }) {
+    static async run({ id, data, actionManager, getVariable }) {
         const channel = getVariable(data.get("channel"));
         const perms = data.get("perms");
         const uiToFlag = {
@@ -75,24 +75,18 @@ export default class SetChannelPermissions {
             const permissionFlags = perm.data.get("permissions");
 
             const selectedFlags = permissionFlags.map(p => uiToFlag[p]);
-
-            const allow = new PermissionsBitField();
-            const deny = new PermissionsBitField();
-
+            const obj = {}
             for (const flag of allFlags) {
-                if (selectedFlags.includes(flag)) {
-                    allow.add(flag);
-                } else {
-                    deny.add(flag);
-                }
+                obj[flag] = selectedFlags.includes(flag);
             }
             permissionOverwrites.push({
-                id: getVariable(perm.data.get("target")).id,
-                allow,
-                deny
+                target: getVariable(perm.data.get("target")),
+                perms: obj
             })
         })
-        await channel.permissionOverwrites.set(permissionOverwrites);
+        for (const ow of permissionOverwrites) {
+            await channel.permissionOverwrites.edit(ow.target, ow.perms);
+        }
         actionManager.runNext(id, "action");
     }
 }
