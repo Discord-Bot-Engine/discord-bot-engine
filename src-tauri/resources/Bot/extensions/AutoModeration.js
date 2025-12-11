@@ -78,6 +78,9 @@ export default class AutoModeration {
         const antiSpam = new AntiSpamClient(options);
 
         Bot.client.on(Events.MessageCreate, async (msg) => {
+            if(!msg.guild) return;
+            const disabled = await Bot.getData(`$AUTOMOD$$$${msg.guild.id}`)
+            if(disabled) return;
             antiSpam.message(msg);
         });
 
