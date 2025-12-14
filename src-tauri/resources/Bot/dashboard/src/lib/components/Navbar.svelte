@@ -12,7 +12,7 @@
 	<a class="{buttonVariants({ variant: 'ghost' })} mr-auto ml-auto">{data.guildCount} Servers</a>
 	<div class="flex w-1/3 gap-1">
 		{#if data.isAdmin}
-			<a class={buttonVariants({ variant: 'ghost' })} href="/admin">Edit</a>
+			<a class="{buttonVariants({ variant: 'ghost' })} ml-auto" href="/admin">Edit</a>
 		{/if}
 	</div>
 </div>
