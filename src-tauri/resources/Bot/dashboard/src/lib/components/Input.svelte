@@ -231,8 +231,16 @@
 				</Select.Trigger>
 				<Select.Content>
 					<Select.Group>
-						<Select.Label>Mentionable</Select.Label>
-						{#each mentionables as value, i (i)}
+						<Select.Label>Members</Select.Label>
+						{#each members as value, i (i)}
+							<Select.Item value={value.id} label={'@' + value.name}>
+								@{value.name}
+							</Select.Item>
+						{/each}
+					</Select.Group>
+					<Select.Group>
+						<Select.Label>Roles</Select.Label>
+						{#each roles as value, i (i)}
 							<Select.Item value={value.id} label={'@' + value.name}>
 								@{value.name}
 							</Select.Item>
