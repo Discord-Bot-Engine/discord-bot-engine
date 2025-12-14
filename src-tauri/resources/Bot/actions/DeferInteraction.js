@@ -2,11 +2,11 @@ import { MessageFlags } from "discord.js"
 
 export default class DeferInteraction {
     static type = "Defer Interaction"
-    static variableTypes = ["Command Interaction", "Button Interaction", "Select Menu Interaction"];
+    static variableTypes = ["Command Interaction", "Context Menu Interaction", "Button Interaction", "Select Menu Interaction"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Interaction"></dbe-label>
-            <dbe-variable-list name="origin" class="col-span-3" variableType="Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
+            <dbe-variable-list name="origin" class="col-span-3" variableType="Command Interaction,Context Menu Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Is ephemeral? (only for interactions)"></dbe-label>

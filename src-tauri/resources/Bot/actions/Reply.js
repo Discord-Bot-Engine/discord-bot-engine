@@ -20,11 +20,11 @@ import {
 
 export default class Reply {
     static type = "Reply"
-    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Command Interaction", "Button Interaction", "Select Menu Interaction"];
+    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Context Menu Interaction", "Command Interaction", "Button Interaction", "Select Menu Interaction"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Message or interaction"></dbe-label>
-            <dbe-variable-list name="origin" class="col-span-3" variableType="Message,Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
+            <dbe-variable-list name="origin" class="col-span-3" variableType="Message,Context Menu Interaction,Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Is ephemeral? (only for interactions)"></dbe-label>
