@@ -1,12 +1,16 @@
 <script>
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 
-	const {data} = $props()
+	const { data } = $props();
 </script>
-<div class="w-full p-2 px-3 bg-sidebar flex gap-1">
-	<img class="w-9 h-9" src={data.icon}/>
-	<a class={buttonVariants({variant:"ghost"})} href="/">{data.name}'s dashboard</a>
-	{#if data.isAdmin}
-		<a class="{buttonVariants({variant:'ghost'})} ml-auto" href="/admin">Edit</a>
-	{/if}
+
+<div class="flex w-full gap-1 bg-sidebar p-2 px-3">
+	<img class="h-9 w-9" src={data.icon} />
+	<a class={buttonVariants({ variant: 'ghost' })} href="/">{data.name}'s dashboard</a>
+	<div class="ml-auto">
+		{#if data.isAdmin}
+			<a class={buttonVariants({ variant: 'ghost' })} href="/admin">Edit</a>
+		{/if}
+		<a class={buttonVariants({ variant: 'ghost' })} href="./">{data.guildCount} Servers</a>
+	</div>
 </div>

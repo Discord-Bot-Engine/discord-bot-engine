@@ -50,7 +50,13 @@ export async function GET({ url, platform }) {
 	const data = await botRes.json();
 
 	platform.req.session.user = user;
-	platform.req.session.isAdmin = data.owner.id === user.id || data.owner.members?.get(user.id);
+
+	const isTeamOwner =
+		Array.isArray(data.owner?.members) &&
+		data.owner.members.some((m) => m.user.id === user.id && m.role === 'owner');
+
+	platform.req.session.isAdmin = data.owner?.id === user.id || isTeamOwner;
+
 	platform.req.session.guilds = guilds.filter(
 		(guild) =>
 			platform?.req.bot.client.guilds.cache.get(guild.id) &&
