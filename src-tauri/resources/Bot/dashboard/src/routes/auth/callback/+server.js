@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-const ADMIN = 0x8;
+const MANAGE_GUILD = 0x20;
 
 export async function GET({ url, platform }) {
 	const code = url.searchParams.get('code');
@@ -60,7 +60,7 @@ export async function GET({ url, platform }) {
 	platform.req.session.guilds = guilds.filter(
 		(guild) =>
 			platform?.req.bot.client.guilds.cache.get(guild.id) &&
-			(BigInt(guild.permissions) & BigInt(ADMIN)) === BigInt(ADMIN)
+			(BigInt(guild.permissions) & BigInt(MANAGE_GUILD)) === BigInt(MANAGE_GUILD)
 	);
 
 	return Response.redirect(origin, 302);
