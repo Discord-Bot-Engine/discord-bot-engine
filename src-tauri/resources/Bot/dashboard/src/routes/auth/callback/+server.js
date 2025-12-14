@@ -12,9 +12,10 @@ export async function GET({ url, platform }) {
 	if (!code) return new Response('Missing code', { status: 400 });
 
 	const redirectUri = `${origin}/auth/callback`;
+	const bot = platform?.req.bot.client;
 
 	const body = new URLSearchParams({
-		client_id: platform?.req.bot.client.user.id,
+		client_id: bot.user.id,
 		client_secret: platform?.req.dashboard.clientSecret,
 		grant_type: 'authorization_code',
 		code,
@@ -41,25 +42,14 @@ export async function GET({ url, platform }) {
 		headers: { Authorization: `Bearer ${tokenData.access_token}` }
 	});
 	const guilds = await guildsRes.json();
-
-	const botRes = await fetch('https://discord.com/api/v10/oauth2/applications/@me', {
-		headers: {
-			Authorization: `Bot ${platform?.req.bot.client.token}`
-		}
-	});
-	const data = await botRes.json();
-
 	platform.req.session.user = user;
-
-	const isTeamOwner =
-		Array.isArray(data.owner?.members) &&
-		data.owner.members.some((m) => m.user.id === user.id && m.role === 'owner');
-
-	platform.req.session.isAdmin = data.owner?.id === user.id || isTeamOwner;
+	const application = bot.application.partial ? await bot.application.fetch() : bot.application;
+	platform.req.session.isAdmin =
+		application.owner.id === user.id || application.owner.members?.has(user.id);
 
 	platform.req.session.guilds = guilds.filter(
 		(guild) =>
-			platform?.req.bot.client.guilds.cache.get(guild.id) &&
+			bot.guilds.cache.get(guild.id) &&
 			(BigInt(guild.permissions) & BigInt(MANAGE_GUILD)) === BigInt(MANAGE_GUILD)
 	);
 
