@@ -154,7 +154,7 @@
 				<Select.Content>
 					<Select.Group>
 						<Select.Label>Text Channels</Select.Label>
-						{#each channels.filter((c) => c.isTextBased()) as value, i (i)}
+						{#each channels.filter((c) => c.isTextBased) as value, i (i)}
 							<Select.Item value={value.id} label={'#' + value.name}>
 								#{value.name}
 							</Select.Item>
@@ -180,7 +180,7 @@
 				<Select.Content>
 					<Select.Group>
 						<Select.Label>Voice Channels</Select.Label>
-						{#each channels.filter((c) => c.isVoiceBased()) as value, i (i)}
+						{#each channels.filter((c) => c.isVoiceBased) as value, i (i)}
 							<Select.Item value={value.id} label={'#' + value.name}>
 								#{value.name}
 							</Select.Item>
