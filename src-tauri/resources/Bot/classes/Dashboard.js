@@ -8,6 +8,9 @@ import * as fs from "node:fs";
 import path from "node:path"
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 class DashboardClass {
     port = process.env.PORT ?? settings.port ?? 3000;
     app = express();
@@ -43,8 +46,6 @@ class DashboardClass {
                 data[server][key] = inputs.get(key)
             })
         })
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = dirname(__filename);
         fs.writeFileSync(path.resolve(__dirname, "../data/dashboard.json"), JSON.stringify({inputs: this.inputs, data}))
     }
 
@@ -86,6 +87,7 @@ class DashboardClass {
             req.dashboard = this
             next();
         });
+        this.app.use(express.static(path.resolve(__dirname, "../dashboard/static")));
         this.app.use((req, res, next) => {
             if(req.path.startsWith('/guild/') || req.path.startsWith("/_app/") || req.path.startsWith("/auth/")|| req.path.startsWith("/admin/") || req.path === "/")
                 handler(req,res,next)
