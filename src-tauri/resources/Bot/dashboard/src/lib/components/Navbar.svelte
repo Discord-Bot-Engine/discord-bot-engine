@@ -12,9 +12,9 @@
 	<a class="{buttonVariants({ variant: 'ghost' })} mr-auto ml-auto truncate"
 		>{data.guildCount} Servers</a
 	>
-	<div class="flex w-full max-w-1/3 gap-1 overflow-hidden">
+	<div class="flex w-full max-w-1/3 justify-end gap-1 overflow-hidden">
 		{#if data.isAdmin}
-			<a class="{buttonVariants({ variant: 'ghost' })} ml-auto truncate" href="/admin">Edit</a>
+			<a class="{buttonVariants({ variant: 'ghost' })} truncate" href="/admin">Edit</a>
 		{/if}
 	</div>
 </div>
