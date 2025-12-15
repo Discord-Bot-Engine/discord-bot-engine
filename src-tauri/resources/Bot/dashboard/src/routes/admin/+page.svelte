@@ -10,6 +10,7 @@
 	const { data } = $props();
 	let name = $state('');
 	let value = $state('');
+	let page = $state('general');
 	let types = [
 		'Text',
 		'Dropdown',
@@ -26,11 +27,17 @@
 	let inputs = $state(data.inputs);
 	let open = $state(false);
 	async function addInput() {
-		inputs.push({ name, value, type: type.toLowerCase(), values });
+		inputs.push({ name, value, page: page.toLowerCase().trim(), type: type.toLowerCase(), values });
 		const res = await fetch(`/admin/add`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ name, value, type, values })
+			body: JSON.stringify({
+				name,
+				value,
+				page: page.toLowerCase().trim(),
+				type: type.toLowerCase(),
+				values
+			})
 		});
 
 		if (!res.ok) {
@@ -66,6 +73,10 @@
 					<Dialog.Title>Add Input</Dialog.Title>
 				</Dialog.Header>
 				<div class="grid gap-4 py-4">
+					<div class="grid grid-cols-4 items-center gap-4">
+						<Label for="page" class="text-right">Page</Label>
+						<Input id="page" bind:value={page} class="col-span-3 uppercase" />
+					</div>
 					<div class="grid grid-cols-4 items-center gap-4">
 						<Label for="name" class="text-right">Name</Label>
 						<Input id="name" bind:value={name} class="col-span-3" />

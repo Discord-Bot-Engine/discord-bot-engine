@@ -22,15 +22,13 @@ export async function load({ locals, params }) {
 	members = members.flat();
 	let channels = await locals.bot.client.cluster.broadcastEval(
 		(c, { guildId }) =>
-			c.guilds.cache
-				.get(guildId)
-				.channels.cache.map((v) => ({
-					name: v.name,
-					id: v.id,
-					type: v.type,
-					isTextBased: v.isTextBased(),
-					isVoiceBased: v.isVoiceBased()
-				})),
+			c.guilds.cache.get(guildId).channels.cache.map((v) => ({
+				name: v.name,
+				id: v.id,
+				type: v.type,
+				isTextBased: v.isTextBased(),
+				isVoiceBased: v.isVoiceBased()
+			})),
 		{ context: { guildId: guild.id } }
 	);
 	channels = channels.flat();
@@ -39,6 +37,7 @@ export async function load({ locals, params }) {
 		members,
 		channels,
 		guild,
-		inputs
+		inputs,
+		page: params.page.toLowerCase()
 	};
 }

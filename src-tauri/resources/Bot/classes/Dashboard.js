@@ -48,8 +48,8 @@ class DashboardClass {
         fs.writeFileSync(path.resolve(__dirname, "../data/dashboard.json"), JSON.stringify({inputs: this.inputs, data}))
     }
 
-    addInput(name, type, value, values) {
-        this.inputs.push({ name, type, value, values });
+    addInput(name, page, type, value, values) {
+        this.inputs.push({ name, page, type, value, values });
         this.saveFiles()
     }
 
