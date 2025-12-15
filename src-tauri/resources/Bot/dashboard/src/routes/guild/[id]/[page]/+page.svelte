@@ -5,7 +5,6 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	const { data } = $props();
-	console.log(data.inputs);
 	let pages = $derived([...new Set(data.inputs.map((i) => i.page?.toUpperCase() ?? 'GENERAL'))]);
 	async function setValue(name, value) {
 		const res = await fetch(`./${data.guild.id}/update`, {
