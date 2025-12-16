@@ -11,6 +11,9 @@
 	import {goto} from "$app/navigation";
 	import Translation from "$lib/components/Translation.svelte";
 	import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
+	import SearchSelect from "$lib/components/SearchSelect.svelte";
+	import {cn} from "$lib/utils.js";
+	import {PluginManager} from "$lib/classes/PluginManager.svelte.js";
 	if(!BotManager.selectedBot) {
 		App.translate("Please select a project!", App.selectedLanguage).then(text => {
 			alert(text)
@@ -21,6 +24,7 @@
 	let botPath = $state(BotManager.selectedBot?.path ?? "")
 	let botToken = $state(BotManager.selectedBot?.token ?? "")
 	let dashboardPort = $state(BotManager.selectedBot?.port ?? "3000")
+	let dashboardTheme = $state(App.themes.find(t => t.split("\\").join("/").split("/").at(-1) === BotManager.selectedBot?.theme) ?? "default")
 	let clientSecret = $state(BotManager.selectedBot?.clientSecret ?? "")
 	let url = $state(BotManager.selectedBot?.url ?? "")
 	let username = $state(BotManager.selectedBot?.username ?? "")
@@ -41,7 +45,7 @@
 		if(BotManager.bots.find(b =>  b.name === botName.trim() || b.path === botPath.trim()) && botName.trim() !== BotManager.selectedBot.name && botPath.trim() !== BotManager.selectedBot.path) return App.translate("Bot already exists!", App.selectedLanguage).then(text => {
 			alert(text)
 		})
-		BotManager.saveBotSettings(botName, botPath, botToken, clientSecret, dashboardPort, url, username, password, presenceIntent, membersIntent, messageContentIntent)
+		BotManager.saveBotSettings(botName, botPath, botToken, clientSecret, dashboardPort, dashboardTheme, url, username, password, presenceIntent, membersIntent, messageContentIntent)
 	}
 	function copyInviteLink() {
 		const inviteLink = `https://discord.com/oauth2/authorize?client_id=${BotManager.selectedBot.clientId}&permissions=8&integration_type=0&scope=bot+applications.commands`
@@ -84,6 +88,25 @@
 			<Label for="port" class="text-right"><Translation text="Dashboard Port"/></Label>
 			<Input id="port" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={dashboardPort} />
 		</div>
+			<div class="grid grid-cols-5 items-center gap-4">
+				<Label for="theme" class="text-right"><Translation text="Dashboard Theme"/></Label>
+				{#await App.translate("Default", App.selectedLanguage)}
+				<SearchSelect name="type" values={[{label:"Default", value: "default"}, ...App.themes.map(theme => {
+					const name = theme.split("\\").join("/").split("/").at(-1)
+					return {label: PluginManager.isThemeDownloaded(name.slice(40)) ? name.slice(40) : name, value: name}
+				})]} bind:value={dashboardTheme} class="col-span-4 w-full"/>
+					{:then text}
+					<SearchSelect name="type" values={[{label:"Default", value: "default"}, ...App.themes.map(theme => {
+					const name = theme.split("\\").join("/").split("/").at(-1)
+					return {label: PluginManager.isThemeDownloaded(name.slice(40)) ? name.slice(40) : name, value: name}
+				})]} bind:value={dashboardTheme} class="col-span-4 w-full"/>
+				{:catch error}
+					<SearchSelect name="type" values={[{label:"Default", value: "default"}, ...App.themes.map(theme => {
+					const name = theme.split("\\").join("/").split("/").at(-1)
+										return {label: PluginManager.isThemeDownloaded(name.slice(40)) ? name.slice(40) : name, value: name}
+				})]} bind:value={dashboardTheme} class="col-span-4 w-full"/>
+				{/await}
+			</div>
 		<div class="grid grid-cols-5 items-center gap-4">
 			<Label for="url" class="text-right"><Translation text="SFTP Server URL"/></Label>
 			<Input id="url" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={url} />

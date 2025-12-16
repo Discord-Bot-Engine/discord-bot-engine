@@ -10,7 +10,8 @@ class Bot {
 	name = '';
 	path = '';
 	token = '';
-	port = '';
+	port = '3000';
+	theme = 'default'
 	clientSecret = '';
 	url = '';
 	username = '';
@@ -48,6 +49,7 @@ class Bot {
 		this.clientSecret = data.clientSecret;
 		this.token = data.token;
 		this.port = data.port;
+		this.theme = data.theme
 		this.clientId = atob(this.token.split(".")[0]);
 		this.url = data.url;
 		this.username = data.username;

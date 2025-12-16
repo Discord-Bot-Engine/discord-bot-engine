@@ -217,7 +217,7 @@
 									<ScrollArea class="max-h-[50vh] [&>div]:max-h-[50vh]">
 									<DropdownMenu.Item class="!text-xs" onclick={() => setTheme(null)}><CheckIcon
 											class={cn(`mr-2 size-4 ${App.selectedTheme === null ? "" : "opacity-0"}`)}
-									/>Default</DropdownMenu.Item>
+									/><Translation text="Default"/></DropdownMenu.Item>
 									{#each App.themes as theme}
 										<DropdownMenu.Item class="!text-xs" onclick={() => setTheme(theme)}><CheckIcon
 												class={cn(`mr-2 size-4 ${App.selectedTheme === theme ? "" : "opacity-0"}`)}

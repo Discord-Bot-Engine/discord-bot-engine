@@ -1,1 +1,1 @@
-{"token": "", "clientSecret": "", "presenceIntent": true, "membersIntent": true, "messageContentIntent": true, "port": "3000", "url": "", "username": "", "password": ""}
+{"token": "", "clientSecret": "", "presenceIntent": true, "membersIntent": true, "messageContentIntent": true, "port": "3000", "theme": "default", "url": "", "username": "", "password": ""}

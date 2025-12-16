@@ -112,7 +112,7 @@ class BotManagerClass {
 		App.updateActivity()
 	}
 
-	saveBotSettings(botName, botPath, botToken, clientSecret, dashboardPort, url, username, password, presenceIntent, membersIntent, messageContentIntent) {
+	saveBotSettings(botName, botPath, botToken, clientSecret, dashboardPort, dashboardTheme, url, username, password, presenceIntent, membersIntent, messageContentIntent) {
 		botName = botName.trim()
 		botPath = botPath.trim()
 		botToken = botToken.trim()
@@ -127,6 +127,7 @@ class BotManagerClass {
 		this.selectedBot.clientId = atob(botToken.split(".")[0]);
 		this.selectedBot.clientSecret = clientSecret
 		this.selectedBot.port = dashboardPort
+		this.selectedBot.theme = dashboardTheme
 		this.selectedBot.url = url;
 		this.selectedBot.username = username;
 		this.selectedBot.password = password;
@@ -141,13 +142,16 @@ class BotManagerClass {
 				token: botToken,
 				clientSecret,
 				port: dashboardPort,
+				theme: dashboardTheme,
 				url,
 				username,
 				password,
 				presenceIntent,
 				membersIntent,
 				messageContentIntent,
-			})}
+			}),
+			theme: dashboardTheme
+			}
 		).then(() => {
 			alert("Project saved successfully!");
 		})

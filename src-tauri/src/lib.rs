@@ -346,22 +346,30 @@ fn download_translation(_app: tauri::AppHandle, translation: String, sha: String
     });
 }
 #[tauri::command(rename_all = "snake_case")]
-fn download_theme(_app: tauri::AppHandle, theme: String, sha: String, data: String) {
+fn download_theme(_app: tauri::AppHandle, theme: String, sha: String, data: String, bot_path: String, dashboard_theme: String) {
     let themes_dir = _app
         .path()
         .resolve("themes", BaseDirectory::AppLocalData)
         .unwrap();
-
+    let dashboard_theme_path = Path::new(&bot_path).join("dashboard").join("static").join("index.css");
     if let Err(e) = fs::create_dir_all(&themes_dir) {
         eprintln!("Failed to create themes directory: {}", e);
         return;
     }
 
     let path = Path::new(&themes_dir).join(sha+&theme);
+    let data_for_theme = data.clone();
 
     tauri::async_runtime::spawn(async move {
-        fs::write(&path, data).unwrap();
+        fs::write(&path, data_for_theme).unwrap();
     });
+
+    if &theme == &dashboard_theme {
+        let data_for_dashboard = data.clone();
+        tauri::async_runtime::spawn(async move {
+            fs::write(&dashboard_theme_path, data_for_dashboard).unwrap();
+        });
+    }
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -400,15 +408,21 @@ fn remove_translation(_app: tauri::AppHandle, translation:String, sha:String) {
     });
 }
 #[tauri::command(rename_all = "snake_case")]
-fn remove_theme(_app: tauri::AppHandle, theme:String, sha:String) {
+fn remove_theme(_app: tauri::AppHandle, theme:String, sha:String, bot_path:String, dashboard_theme:String) {
     let themes_dir = _app
         .path()
         .resolve("themes", BaseDirectory::AppLocalData)
         .unwrap();
     let path = Path::new(&themes_dir).join(sha+&theme);
+    let dashboard_theme_path = Path::new(&bot_path).join("dashboard").join("static").join("index.css");
     tauri::async_runtime::spawn(async move {
         fs::remove_file(&path).unwrap();
     });
+    if &theme == &dashboard_theme {
+        tauri::async_runtime::spawn(async move {
+            fs::remove_file(&dashboard_theme_path).unwrap();
+        });
+    }
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -487,17 +501,30 @@ fn load_bot_settings(bot_path:String) -> String {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn save_bot_settings(_app: tauri::AppHandle, bot_path:String, bots_json:String, settings_json:String) {
+fn save_bot_settings(_app: tauri::AppHandle, bot_path:String, bots_json:String, settings_json:String, theme:String) {
     let bots_path = _app
         .path()
         .resolve("bots.json", BaseDirectory::AppLocalData)
         .unwrap();
+    let themes_path = _app
+        .path()
+        .resolve("themes", BaseDirectory::AppLocalData)
+        .unwrap();
+    let theme_path = themes_path.join(&theme);
+    let dashboard_theme_path = Path::new(&bot_path).join("dashboard").join("static").join("index.css");
     let settings_path = Path::new(&bot_path).join("data").join("settings.json");
     tauri::async_runtime::spawn(async move {
         fs::write(&bots_path, bots_json).unwrap();
     });
     tauri::async_runtime::spawn(async move {
         fs::write(&settings_path, settings_json).unwrap();
+    });
+    tauri::async_runtime::spawn(async move {
+        if &theme == "default" {
+            fs::remove_file(dashboard_theme_path).unwrap();
+        } else {
+            fs::copy(&theme_path, dashboard_theme_path).unwrap();
+        }
     });
 }
 
