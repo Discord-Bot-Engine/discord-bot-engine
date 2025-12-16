@@ -19,6 +19,7 @@ export default class CreateChannel {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Type"></dbe-label>
            <dbe-select
+                change="(v) => document.getElementById('parent').style.display = v === 'Category' ? 'none' : ''"
                 name="channelType"
                 id="channelTypeSelect"
                 class="col-span-3"
@@ -26,7 +27,7 @@ export default class CreateChannel {
             ></dbe-select>
         </div>
 
-        <div class="grid grid-cols-4 items-center gap-4">
+        <div class="grid grid-cols-4 items-center gap-4" id="parent">
             <dbe-label name="Category"></dbe-label>
             <dbe-variable-list name="category" class="col-span-3" variableType="Channel"></dbe-variable-list>
         </div>
@@ -114,7 +115,7 @@ export default class CreateChannel {
         const options = {
             name,
             type,
-            parent: category,
+            parent: typeStr === "Category" ? undefined : category,
             permissionOverwrites: []
         };
         perms.forEach(perm => {
