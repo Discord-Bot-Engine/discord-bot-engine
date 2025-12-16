@@ -174,8 +174,8 @@
                     BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
                     if(document.activeElement.tagName !== "BODY" && !document.activeElement.getAttribute("class").startsWith("svelte-flow") || getSelection().toString()) return false;
                     else return true
-                }} bind:this={ref} onmousedown={(ev) => {
-                    if(ev.which !== 3) return;
+                }} bind:this={ref} oncontextmenu={(ev) => {
+                    ev.preventDefault()
                     isCreatingAction = true;
                     pos = {x: ev.pageX - 300, y: ev.pageY - 100}
                 }} onnodedragstart={() => App.updateUndo()} onconnectstart={() => App.updateUndo()} proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
