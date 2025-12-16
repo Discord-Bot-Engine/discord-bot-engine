@@ -13,7 +13,7 @@ export default class StoreCategoryChannelInfo {
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Info"></dbe-label>
             <dbe-select name="info" class="col-span-3" change="(v) => handlers.onChange(v)" 
-                values="Name,Position,Is Deletable,Is Manageable,Is Viewable,Server,Children">
+                values="Name,Position,Is Deletable,Is Manageable,Is Viewable,Server,Channels">
             </dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
@@ -26,7 +26,7 @@ export default class StoreCategoryChannelInfo {
         const varlist = document.getElementById("var");
 
         handlers.onChange = (value) => {
-            if (["Children"].includes(value)) varlist.setVariableType("List");
+            if (["Channels"].includes(value)) varlist.setVariableType("List");
             else if (["Is Deletable", "Is Manageable", "Is Viewable"].includes(value)) varlist.setVariableType("Boolean");
             else if (["Position"].includes(value)) varlist.setVariableType("Number");
             else if (["Server"].includes(value)) varlist.setVariableType("Server");
@@ -48,7 +48,7 @@ export default class StoreCategoryChannelInfo {
             case "Is Manageable": value = channel.manageable; break;
             case "Is Viewable": value = channel.viewable; break;
             case "Server": value = channel.guild; break;
-            case "Children": value = [...channel.children.values()]; break;
+            case "Channels": value = [...channel.children.values()]; break;
             default: value = null; break;
         }
 
