@@ -160,15 +160,6 @@
    }
    let ref
 </script>
-<style>
-    .svelte-flow__node-group {
-        background: color-mix(
-                in oklch,
-                var(--primary) 10%,
-                transparent
-        )!important
-    }
-</style>
 <svelte:window onkeydown={bindings}></svelte:window>
 <Card.Root class="w-full h-full min-h-40 p-1 px-0 pb-0 relative">
     <Card.Content class="p-1 px-0.5 pb-0 h-full overflow-hidden">

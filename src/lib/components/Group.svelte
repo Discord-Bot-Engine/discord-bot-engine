@@ -3,13 +3,23 @@
     import {App} from "$lib/classes/App.svelte.js"
     import {NodeResizer} from "@xyflow/svelte";
     import Translation from "$lib/components/Translation.svelte";
+    import {onMount} from "svelte";
     let { id, data, selected } = $props();
+    let ref
     const group = $derived(App.selectedTrigger.actions.find(act => act.id === id));
     $effect(() => {
         if(group) {
             group.width = data.get("width")
             group.height = data.get("height")
         }
+    })
+    onMount(() => {
+        ref.parentElement.style.background = `
+        color-mix(
+                in oklch,
+                var(--primary) 10%,
+                transparent
+        )!important`
     })
 </script>
 
@@ -19,7 +29,7 @@
         data.set("height", height);
     }} class="!border-primary !bg-primary" minWidth={120} minHeight={100} />
 {/if}
-    <div class="text-3xl w-full h-full">
+    <div bind:this={ref} class="text-3xl w-full h-full">
         {#snippet groupSnip(text)}
 <input class="w-full !outline-none text-primary nodrag" placeholder={text} value={data.get("text") ?? ""}
        oninput={(evt) => {
