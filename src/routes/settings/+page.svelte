@@ -24,7 +24,7 @@
 	let botPath = $state(BotManager.selectedBot?.path ?? "")
 	let botToken = $state(BotManager.selectedBot?.token ?? "")
 	let dashboardPort = $state(BotManager.selectedBot?.port ?? "3000")
-	let dashboardTheme = $state(App.themes.find(t => t.split("\\").join("/").split("/").at(-1) === BotManager.selectedBot?.theme) ?? "default")
+	let dashboardTheme = $state(App.themes.find(t => t.split("\\").join("/").split("/").at(-1) === BotManager.selectedBot?.theme)?.split("\\").join("/").split("/").at(-1) ?? "default")
 	let clientSecret = $state(BotManager.selectedBot?.clientSecret ?? "")
 	let url = $state(BotManager.selectedBot?.url ?? "")
 	let username = $state(BotManager.selectedBot?.username ?? "")
