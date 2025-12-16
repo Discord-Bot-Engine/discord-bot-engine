@@ -161,11 +161,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-.svelte-flow__node-group {
-  background: color-mix(
-    in oklch,
-    var(--primary) 10%,
-    transparent
-  )!important
-}
