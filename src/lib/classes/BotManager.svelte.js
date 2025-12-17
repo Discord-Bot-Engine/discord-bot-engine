@@ -157,7 +157,7 @@ class BotManagerClass {
 		})
 	}
 
-	async saveBotData() {
+	async saveBotData(noAlert = false) {
 		const extensions = {}
 		this.selectedBot.extensions.keys().forEach(key => {
 			extensions[key] = this.selectedBot.extensions.get(key)
@@ -167,11 +167,12 @@ class BotManagerClass {
 		await invoke('save_bot_extensions', {bot_path: this.selectedBot.path, extensions_json: JSON.stringify(extensions)})
 		this.selectedBot.modifiedTriggers = []
 		this.selectedBot.removedTriggers = []
-		alert("Project saved successfully!");
+		if(!noAlert) alert("Project saved successfully!");
 	}
 
 	async runBot() {
 		if(this.selectedBot.isRunning) return;
+		await this.saveBotData()
 		await invoke('run_bot', {bot_path: this.selectedBot.path})
 		this.selectedBot.isRunning = true;
 		this.selectedBot.stdout = ""

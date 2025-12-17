@@ -22,7 +22,6 @@ fn save_translation(
     name: String,
     translation: String,
 ) {
-    tauri::async_runtime::spawn(async move {
             let translation_path = app
                 .path()
                 .resolve("translations", BaseDirectory::AppLocalData)
@@ -30,7 +29,6 @@ fn save_translation(
             if let Err(err) = fs::write(&translation_path, &translation) {
                 eprintln!("Failed to write to {:?}: {}", &translation_path, err);
             }
-    });
 }
 #[tauri::command]
 fn load_translations(app: tauri::AppHandle) -> String {
@@ -40,9 +38,7 @@ fn load_translations(app: tauri::AppHandle) -> String {
         .unwrap();
 
     if !translations_dir.exists() {
-        tauri::async_runtime::spawn(async move {
             fs::create_dir(translations_dir).unwrap();
-        });
         return "{}".to_string();
     }
 
@@ -71,9 +67,7 @@ fn load_themes(app: tauri::AppHandle) -> Vec<String> {
         .unwrap();
 
     if !themes_dir.exists() {
-        tauri::async_runtime::spawn(async move {
             fs::create_dir(themes_dir).unwrap();
-        });
         return vec![];
     }
 
@@ -304,32 +298,153 @@ async fn load_bot_plugins(
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn download_action(_app: tauri::AppHandle, bot_path:String, action:String, sha:String, data:String) {
-    let path = Path::new(&bot_path).join("actions").join(sha+&action);
-    tauri::async_runtime::spawn(async move {
-        fs::write(&path, data).unwrap();
-    });
+fn download_action(
+    _app: tauri::AppHandle,
+    bot_path: String,
+    action: String,
+    sha: String,
+    data: String,
+) {
+    let actions_dir = Path::new(&bot_path).join("actions");
+
+    if let Err(e) = fs::create_dir_all(&actions_dir) {
+        eprintln!("Failed to create actions directory: {}", e);
+        return;
+    }
+
+    // Remove old actions with the same name (ignoring first 40 chars)
+    if let Ok(entries) = fs::read_dir(&actions_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+
+            if !path.is_file() {
+                continue;
+            }
+
+            let Some(file_name) = path.file_name().and_then(|n| n.to_str()) else {
+                continue;
+            };
+
+            if file_name.len() <= 40 {
+                continue;
+            }
+
+            let suffix = &file_name[40..];
+
+            if suffix == action {
+                if let Err(e) = fs::remove_file(&path) {
+                    eprintln!("Failed to remove old action {:?}: {}", path, e);
+                }
+            }
+        }
+    }
+
+    // Write new action
+    let new_path = actions_dir.join(format!("{}{}", sha, action));
+
+    if let Err(e) = fs::write(&new_path, data) {
+        eprintln!("Failed to write action {:?}: {}", new_path, e);
+    }
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn download_trigger(_app: tauri::AppHandle, bot_path:String, trigger:String, sha:String, data:String) {
-    let path = Path::new(&bot_path).join("triggers").join(sha+&trigger);
-    tauri::async_runtime::spawn(async move {
-        fs::write(&path, data).unwrap();
-    });
+fn download_trigger(
+    _app: tauri::AppHandle,
+    bot_path: String,
+    trigger: String,
+    sha: String,
+    data: String,
+) {
+    let triggers_dir = Path::new(&bot_path).join("triggers");
+
+    if let Err(e) = fs::create_dir_all(&triggers_dir) {
+        eprintln!("Failed to create triggers directory: {}", e);
+        return;
+    }
+
+    if let Ok(entries) = fs::read_dir(&triggers_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+
+            if !path.is_file() {
+                continue;
+            }
+
+            let Some(file_name) = path.file_name().and_then(|n| n.to_str()) else {
+                continue;
+            };
+
+            if file_name.len() <= 40 {
+                continue;
+            }
+
+            if &file_name[40..] == trigger {
+                let _ = fs::remove_file(&path);
+            }
+        }
+    }
+
+    let new_path = triggers_dir.join(format!("{}{}", sha, trigger));
+
+    if let Err(e) = fs::write(&new_path, data) {
+        eprintln!("Failed to write trigger {:?}: {}", new_path, e);
+    }
 }
 
-#[tauri::command(rename_all = "snake_case")]
-fn download_extension(_app: tauri::AppHandle, bot_path:String, extension:String, sha:String, data:String) {
-    let path = Path::new(&bot_path).join("extensions").join(sha+&extension);
-    tauri::async_runtime::spawn(async move {
-        fs::write(&path, data).unwrap();
-    });
-}
 
 #[tauri::command(rename_all = "snake_case")]
-fn download_translation(_app: tauri::AppHandle, translation: String, sha: String, data: String) {
-    let translations_dir = _app
+fn download_extension(
+    _app: tauri::AppHandle,
+    bot_path: String,
+    extension: String,
+    sha: String,
+    data: String,
+) {
+    let extensions_dir = Path::new(&bot_path).join("extensions");
+
+    if let Err(e) = fs::create_dir_all(&extensions_dir) {
+        eprintln!("Failed to create extensions directory: {}", e);
+        return;
+    }
+
+    if let Ok(entries) = fs::read_dir(&extensions_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+
+            if !path.is_file() {
+                continue;
+            }
+
+            let Some(file_name) = path.file_name().and_then(|n| n.to_str()) else {
+                continue;
+            };
+
+            if file_name.len() <= 40 {
+                continue;
+            }
+
+            if &file_name[40..] == extension {
+                let _ = fs::remove_file(&path);
+            }
+        }
+    }
+
+    let new_path = extensions_dir.join(format!("{}{}", sha, extension));
+
+    if let Err(e) = fs::write(&new_path, data) {
+        eprintln!("Failed to write extension {:?}: {}", new_path, e);
+    }
+}
+
+
+#[tauri::command(rename_all = "snake_case")]
+fn download_translation(
+    app: tauri::AppHandle,
+    translation: String,
+    sha: String,
+    data: String,
+) {
+    let translations_dir = app
         .path()
         .resolve("translations", BaseDirectory::AppLocalData)
         .unwrap();
@@ -339,61 +454,132 @@ fn download_translation(_app: tauri::AppHandle, translation: String, sha: String
         return;
     }
 
-    let path = Path::new(&translations_dir).join(sha+&translation);
+    if let Ok(entries) = fs::read_dir(&translations_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
 
-    tauri::async_runtime::spawn(async move {
-        fs::write(&path, data).unwrap();
-    });
+            if !path.is_file() {
+                continue;
+            }
+
+            let Some(file_name) = path.file_name().and_then(|n| n.to_str()) else {
+                continue;
+            };
+
+            if file_name.len() <= 40 {
+                continue;
+            }
+
+            if &file_name[40..] == translation {
+                let _ = fs::remove_file(&path);
+            }
+        }
+    }
+
+    let new_path = translations_dir.join(format!("{}{}", sha, translation));
+
+    if let Err(e) = fs::write(&new_path, data) {
+        eprintln!("Failed to write translation {:?}: {}", new_path, e);
+    }
 }
+
+
 #[tauri::command(rename_all = "snake_case")]
-fn download_theme(_app: tauri::AppHandle, theme: String, sha: String, data: String, bot_path: String, dashboard_theme: String) {
-    let themes_dir = _app
+fn download_dashboard_theme(
+    _app: tauri::AppHandle,
+    theme: String,
+    sha: String,
+    data: String,
+    bot_paths: Vec<String>,
+    dashboard_themes: Vec<String>,
+) {
+    for (bot_path, dashboard_theme) in bot_paths.iter().zip(dashboard_themes.iter()) {
+        if dashboard_theme != &format!("{}{}", sha, theme) {
+            continue;
+        }
+
+        let dashboard_theme_path = Path::new(bot_path)
+            .join("dashboard")
+            .join("static")
+            .join("index.css");
+
+        if let Err(e) = fs::write(&dashboard_theme_path, &data) {
+            eprintln!(
+                "Failed to write dashboard theme to {:?}: {}",
+                dashboard_theme_path, e
+            );
+        }
+    }
+}
+
+
+#[tauri::command(rename_all = "snake_case")]
+fn download_theme(
+    app: tauri::AppHandle,
+    theme: String,
+    sha: String,
+    data: String,
+) {
+    let themes_dir = app
         .path()
         .resolve("themes", BaseDirectory::AppLocalData)
         .unwrap();
-    let dashboard_theme_path = Path::new(&bot_path).join("dashboard").join("static").join("index.css");
+
     if let Err(e) = fs::create_dir_all(&themes_dir) {
         eprintln!("Failed to create themes directory: {}", e);
         return;
     }
 
-    let path = Path::new(&themes_dir).join(sha+&theme);
-    let data_for_theme = data.clone();
+    if let Ok(entries) = fs::read_dir(&themes_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
 
-    tauri::async_runtime::spawn(async move {
-        fs::write(&path, data_for_theme).unwrap();
-    });
+            if !path.is_file() {
+                continue;
+            }
 
-    if &theme == &dashboard_theme {
-        let data_for_dashboard = data.clone();
-        tauri::async_runtime::spawn(async move {
-            fs::write(&dashboard_theme_path, data_for_dashboard).unwrap();
-        });
+            let Some(file_name) = path.file_name().and_then(|n| n.to_str()) else {
+                continue;
+            };
+
+            if file_name.len() <= 40 {
+                continue;
+            }
+
+            let suffix = &file_name[40..];
+
+            if suffix == theme {
+                if let Err(e) = fs::remove_file(&path) {
+                    eprintln!("Failed to remove old theme {:?}: {}", path, e);
+                }
+            }
+        }
+    }
+
+    let new_path = themes_dir.join(format!("{}{}", sha, theme));
+
+    if let Err(e) = fs::write(&new_path, data) {
+        eprintln!("Failed to write theme {:?}: {}", new_path, e);
     }
 }
+
 
 #[tauri::command(rename_all = "snake_case")]
 fn remove_action(_app: tauri::AppHandle, bot_path:String, action:String, sha:String) {
     let path = Path::new(&bot_path).join("actions").join(sha+&action);
-    tauri::async_runtime::spawn(async move {
-        fs::remove_file(&path).unwrap();
-    });
+    fs::remove_file(&path).unwrap();
 }
 
 #[tauri::command(rename_all = "snake_case")]
 fn remove_trigger(_app: tauri::AppHandle, bot_path:String, trigger:String, sha:String) {
     let path = Path::new(&bot_path).join("triggers").join(sha+&trigger);
-    tauri::async_runtime::spawn(async move {
-        fs::remove_file(&path).unwrap();
-    });
+    fs::remove_file(&path).unwrap();
 }
 
 #[tauri::command(rename_all = "snake_case")]
 fn remove_extension(_app: tauri::AppHandle, bot_path:String, extension:String, sha:String) {
     let path = Path::new(&bot_path).join("extensions").join(sha+&extension);
-    tauri::async_runtime::spawn(async move {
-        fs::remove_file(&path).unwrap();
-    });
+    fs::remove_file(&path).unwrap();
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -403,26 +589,43 @@ fn remove_translation(_app: tauri::AppHandle, translation:String, sha:String) {
         .resolve("translations", BaseDirectory::AppLocalData)
         .unwrap();
     let path = Path::new(&translations_dir).join(sha+&translation);
-    tauri::async_runtime::spawn(async move {
-        fs::remove_file(&path).unwrap();
-    });
+    fs::remove_file(&path).unwrap();
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn remove_dashboard_theme(
+    _app: tauri::AppHandle,
+    theme: String,
+    sha: String,
+    bot_paths: Vec<String>,
+    dashboard_themes: Vec<String>,
+) {
+    for (bot_path, dashboard_theme) in bot_paths.iter().zip(dashboard_themes.iter()) {
+        if dashboard_theme != &format!("{}{}", sha, theme) {
+            continue;
+        }
+
+        let dashboard_theme_path = Path::new(bot_path)
+            .join("dashboard")
+            .join("static")
+            .join("index.css");
+
+        if let Err(e) = fs::remove_file(&dashboard_theme_path) {
+            eprintln!(
+                "Failed to remove dashboard theme to {:?}: {}",
+                dashboard_theme_path, e
+            );
+        }
+    }
 }
 #[tauri::command(rename_all = "snake_case")]
-fn remove_theme(_app: tauri::AppHandle, theme:String, sha:String, bot_path:String, dashboard_theme:String) {
+fn remove_theme(_app: tauri::AppHandle, theme:String, sha:String) {
     let themes_dir = _app
         .path()
         .resolve("themes", BaseDirectory::AppLocalData)
         .unwrap();
     let path = Path::new(&themes_dir).join(sha+&theme);
-    let dashboard_theme_path = Path::new(&bot_path).join("dashboard").join("static").join("index.css");
-    tauri::async_runtime::spawn(async move {
-        fs::remove_file(&path).unwrap();
-    });
-    if &theme == &dashboard_theme {
-        tauri::async_runtime::spawn(async move {
-            fs::remove_file(&dashboard_theme_path).unwrap();
-        });
-    }
+    fs::remove_file(&path).unwrap();
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -433,7 +636,6 @@ fn save_bot_triggers(
     trigger_contents: Vec<String>,
     removed_triggers: Vec<String>,
 ) {
-    tauri::async_runtime::spawn(async move {
         for (file, content) in modified_triggers.into_iter().zip(trigger_contents.into_iter()) {
             let trigger_path = Path::new(&bot_path).join("data").join(file + ".json");
             if let Err(err) = fs::write(&trigger_path, content) {
@@ -446,7 +648,6 @@ fn save_bot_triggers(
                 eprintln!("Failed to remove {:?}: {}", trigger_path, err);
             }
         }
-    });
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -483,9 +684,7 @@ fn load_bot_triggers(bot_path: String) -> String {
 #[tauri::command(rename_all = "snake_case")]
 fn save_bot_extensions(_app: tauri::AppHandle, bot_path:String, extensions_json:String) {
     let extensions_path = Path::new(&bot_path).join("data").join("extensions.json");
-    tauri::async_runtime::spawn(async move {
-        fs::write(&extensions_path, extensions_json).unwrap();
-    });
+    fs::write(&extensions_path, extensions_json).unwrap();
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -513,19 +712,13 @@ fn save_bot_settings(_app: tauri::AppHandle, bot_path:String, bots_json:String, 
     let theme_path = themes_path.join(&theme);
     let dashboard_theme_path = Path::new(&bot_path).join("dashboard").join("static").join("index.css");
     let settings_path = Path::new(&bot_path).join("data").join("settings.json");
-    tauri::async_runtime::spawn(async move {
         fs::write(&bots_path, bots_json).unwrap();
-    });
-    tauri::async_runtime::spawn(async move {
         fs::write(&settings_path, settings_json).unwrap();
-    });
-    tauri::async_runtime::spawn(async move {
         if &theme == "default" {
             fs::remove_file(dashboard_theme_path).unwrap();
         } else {
             fs::copy(&theme_path, dashboard_theme_path).unwrap();
         }
-    });
 }
 
 #[tauri::command]
@@ -548,9 +741,7 @@ fn save_bots(_app: tauri::AppHandle, json: String) {
         .path()
         .resolve("bots.json", BaseDirectory::AppLocalData)
         .unwrap();
-    tauri::async_runtime::spawn(async move {
         fs::write(&bots_path, json).unwrap();
-    });
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -559,10 +750,8 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
         .path()
         .resolve("resources/Bot", BaseDirectory::Resource)
         .unwrap();
-    tauri::async_runtime::spawn(async move {
         copy_dir_all(&resource_path, &bot_path, None).unwrap();
         _app.emit("finished_copying", &bot_path).unwrap();
-    });
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -572,10 +761,8 @@ fn update_bot_files(_app: tauri::AppHandle, bot_path: String) {
         .resolve("resources/Bot", BaseDirectory::Resource)
         .unwrap();
 
-    tauri::async_runtime::spawn(async move {
         copy_dir_all(&resource_path, &bot_path, Some(&resource_path.join("data"))).unwrap();
         _app.emit("finished_copying", &bot_path).unwrap();
-    });
 }
 
 fn copy_dir_all(
@@ -637,11 +824,13 @@ pub fn run() {
             download_action,
             download_trigger,
             download_extension,
+            download_dashboard_theme,
             download_theme,
             download_translation,
             remove_action,
             remove_trigger,
             remove_extension,
+            remove_dashboard_theme,
             remove_theme,
             remove_translation,
             save_bot_triggers,

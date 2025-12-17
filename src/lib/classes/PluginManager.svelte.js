@@ -48,7 +48,8 @@ class PluginManagerClass {
 
 	async removeTheme(name) {
 		const theme = this.themes.find(x => x.name === name)
-		await invoke("remove_theme", {theme: name, sha: theme.sha, bot_path: BotManager.selectedBot.path, dashboard_theme: BotManager.selectedBot.theme})
+		await invoke("remove_theme", {theme: name, sha: theme.sha})
+		await invoke("remove_dashboard_theme", {theme: name, sha: theme.sha, bot_paths: BotManager.bots.map(b => b.path), dashboard_themes: BotManager.bots.map(b => b.theme)})
 		App.loadThemes()
 	}
 
@@ -83,7 +84,8 @@ class PluginManagerClass {
 	async downloadTheme(name) {
 		const theme = this.themes.find(x => x.name === name)
 		const data = await fetch(theme.url).then(res => res.text())
-		await invoke("download_theme", {theme: name, sha: theme.sha, data, bot_path: BotManager.selectedBot.path, dashboard_theme: BotManager.selectedBot.theme})
+		await invoke("download_theme", {theme: name, sha: theme.sha, data})
+		await invoke("download_dashboard_theme", {theme: name, sha: theme.sha, data, bot_paths: BotManager.bots.map(b => b.path), dashboard_themes: BotManager.bots.map(b => b.theme)})
 		App.loadThemes()
 	}
 
