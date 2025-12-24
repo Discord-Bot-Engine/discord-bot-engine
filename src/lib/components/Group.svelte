@@ -9,8 +9,8 @@
     const group = $derived(App.selectedTrigger.actions.find(act => act.id === id));
     $effect(() => {
         if(group) {
-            group.width = data.get("width")
-            group.height = data.get("height")
+            group.width = data.get("width") ?? 120
+            group.height = data.get("height") ?? 100
         }
     })
     onMount(() => {

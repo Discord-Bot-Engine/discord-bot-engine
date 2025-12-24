@@ -157,17 +157,20 @@ class BotManagerClass {
 		})
 	}
 
-	async saveBotData(noAlert = false) {
+	async saveBotData() {
+		if(!this.selectedBot.modifiedTriggers.length && !this.selectedBot.removedTriggers.length && !this.selectedBot.extensions.keys().some(key => this.selectedBot.extensions.get(key).isModified)) return
 		const extensions = {}
 		this.selectedBot.extensions.keys().forEach(key => {
-			extensions[key] = this.selectedBot.extensions.get(key)
+			const ext = this.selectedBot.extensions.get(key)
+			ext.isModified = false
+			extensions[key] = ext
 		})
 		const triggerContents = this.selectedBot.modifiedTriggers.filter(id => this.selectedBot.triggers.find(t => t.id === id)).map(id => JSON.stringify(this.selectedBot.triggers.find(t => t.id === id)))
 		await invoke('save_bot_triggers', {bot_path: this.selectedBot.path, modified_triggers: this.selectedBot.modifiedTriggers, trigger_contents: triggerContents, removed_triggers: this.selectedBot.removedTriggers})
 		await invoke('save_bot_extensions', {bot_path: this.selectedBot.path, extensions_json: JSON.stringify(extensions)})
 		this.selectedBot.modifiedTriggers = []
 		this.selectedBot.removedTriggers = []
-		if(!noAlert) alert("Project saved successfully!");
+		alert("Project saved successfully!");
 	}
 
 	async runBot() {

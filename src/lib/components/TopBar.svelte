@@ -101,6 +101,7 @@
             window.handlers[handler] = handlersCopy[handler];
         })
         handlersCopy = window.handlers
+        BotManager.selectedBot.extensions.get(extension.type).isModified = true;
         const data = BotManager.selectedBot.extensions.get(extension.type)?.data
         App.saveUIData(ref, data)
         isEditing = false

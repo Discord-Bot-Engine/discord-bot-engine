@@ -3,6 +3,7 @@ import CustomElement from "$lib/classes/CustomElement.svelte.js";
 
 class Extension {
     data = new SvelteMap()
+    isModified = false
 
     toJSON() {
         const data = {}
