@@ -1,7 +1,7 @@
 <script>
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-	import { CodeXmlIcon, HouseIcon, SettingsIcon, BlocksIcon, PaletteIcon, CheckIcon, LanguagesIcon } from '@lucide/svelte';
+	import { CodeXmlIcon, BookMarkedIcon, HouseIcon, SettingsIcon, BlocksIcon, PaletteIcon, CheckIcon, LanguagesIcon } from '@lucide/svelte';
 	import { page } from '$app/state';
 	import {Button} from "$lib/components/ui/button/index.js";
 	import {App} from "$lib/classes/App.svelte.js"
@@ -9,6 +9,7 @@
 	import {PluginManager} from "$lib/classes/PluginManager.svelte.js";
 	import Translation from "$lib/components/Translation.svelte";
 	import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
+	import { openUrl } from '@tauri-apps/plugin-opener';
 
 	const items = [
 		{
@@ -269,6 +270,34 @@
 							</DropdownMenu.Content>
 						</DropdownMenu.Root>
 					</Sidebar.MenuItem>
+												<Sidebar.MenuItem>
+												<Sidebar.MenuButton>
+												{#snippet child({ props })}
+												{#await App.translate("Documentation", App.selectedLanguage)}
+												<a
+												title="Documentation"
+												onclick={() => openUrl("https://discord-bot-engine.gitbook.io/discord-bot-engine")}
+												{...props}>
+												<BookMarkedIcon />
+												</a>
+												{:then title}
+												<a
+												{title}
+												onclick={() => openUrl("https://discord-bot-engine.gitbook.io/discord-bot-engine")}
+												{...props}>
+												<BookMarkedIcon />
+												</a>
+												{:catch error}
+												<a
+												title="Documentation"
+												onclick={() => openUrl("https://discord-bot-engine.gitbook.io/discord-bot-engine")}
+												{...props}>
+												<BookMarkedIcon />
+												</a>
+												{/await}
+												{/snippet}
+												</Sidebar.MenuButton>
+												</Sidebar.MenuItem>
 				</Sidebar.Menu>
 			</Sidebar.GroupContent>
 		</Sidebar.Group>
