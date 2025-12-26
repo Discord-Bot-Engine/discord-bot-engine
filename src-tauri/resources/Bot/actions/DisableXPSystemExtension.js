@@ -10,7 +10,7 @@ export default class DisableXPSystemExtension {
             <dbe-variable-list name="server" class="col-span-3" variableType="server"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Is disabled?"></dbe-label>
+            <dbe-label name="Disable?"></dbe-label>
             <dbe-select name="value" value="True" values="True,False" class="col-span-3"></dbe-select>
         </div>
     `

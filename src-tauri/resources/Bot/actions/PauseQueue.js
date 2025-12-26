@@ -1,7 +1,7 @@
 import {  useQueue } from "discord-player";
 
-export default class PauseResumeQueue {
-    static type = "Pause/Resume Queue"
+export default class PauseQueue {
+    static type = "Pause Queue"
     static variableTypes = ["Server"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
@@ -9,8 +9,8 @@ export default class PauseResumeQueue {
             <dbe-variable-list name="server" class="col-span-3" variableType="Server"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Action"></dbe-label>
-            <dbe-select name="action" class="col-span-3" value="Pause" values="Pause,Resume"></dbe-select>
+            <dbe-label name="Pause?"></dbe-label>
+            <dbe-select name="pause" class="col-span-3" value="True" values="True,False"></dbe-select>
         </div>
     `
     static load(context) {
@@ -18,7 +18,7 @@ export default class PauseResumeQueue {
     static async run({id, data, actionManager, getVariable}) {
         const server = getVariable(data.get("server"))
         const queue = useQueue(server.id)
-        const pause = data.get("action") === "Pause"
+        const pause = data.get("pause") === "True"
         queue.node.setPaused(pause)
         actionManager.runNext(id, "action")
     }
