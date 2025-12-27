@@ -766,10 +766,6 @@ fn update_bot_files(_app: tauri::AppHandle, bot_path: String) {
         .resolve("resources/Bot", BaseDirectory::Resource)
         .unwrap();
     tauri::async_runtime::spawn(async move {
-        let base = Path::new(&bot_path);
-        std::fs::remove_dir_all(base.join("actions")).unwrap();
-        std::fs::remove_dir_all(base.join("triggers")).unwrap();
-        std::fs::remove_dir_all(base.join("extensions")).unwrap();
         copy_dir_all(&resource_path, &bot_path, Some(&resource_path.join("data"))).unwrap();
         _app.emit("finished_copying", &bot_path).unwrap();
     });
