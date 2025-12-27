@@ -636,7 +636,6 @@ fn save_bot_triggers(
     trigger_contents: Vec<String>,
     removed_triggers: Vec<String>,
 ) {
-    tauri::async_runtime::spawn(async move {
         for (file, content) in modified_triggers.into_iter().zip(trigger_contents.into_iter()) {
             let trigger_path = Path::new(&bot_path).join("data").join(file + ".json");
             if let Err(err) = fs::write(&trigger_path, content) {
@@ -649,7 +648,6 @@ fn save_bot_triggers(
                 eprintln!("Failed to remove {:?}: {}", trigger_path, err);
             }
         }
-    });
 }
 
 #[tauri::command(rename_all = "snake_case")]
