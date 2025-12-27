@@ -715,7 +715,10 @@ fn save_bot_settings(_app: tauri::AppHandle, bot_path:String, bots_json:String, 
         fs::write(&bots_path, bots_json).unwrap();
         fs::write(&settings_path, settings_json).unwrap();
         if &theme == "default" {
-            fs::remove_file(dashboard_theme_path).unwrap();
+            if fs::exists(dashboard_theme_path)
+            {
+                fs::remove_file(dashboard_theme_path).unwrap();
+            }
         } else {
             fs::copy(&theme_path, dashboard_theme_path).unwrap();
         }

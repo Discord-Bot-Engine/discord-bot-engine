@@ -109,15 +109,15 @@
 			</div>
 		<div class="grid grid-cols-5 items-center gap-4">
 			<Label for="url" class="text-right"><Translation text="SFTP Server URL"/></Label>
-			<Input id="url" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={url} />
+			<Input id="url" class="col-span-4" bind:value={url} />
 		</div>
 		<div class="grid grid-cols-5 items-center gap-4">
 			<Label for="username" class="text-right"><Translation text="SFTP Username"/></Label>
-			<Input id="username" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={username} />
+			<Input id="username" class="col-span-4" bind:value={username} />
 		</div>
 		<div class="grid grid-cols-5 items-center gap-4">
 			<Label for="password" class="text-right"><Translation text="SFTP Password"/></Label>
-			<Input id="password" type="password" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={password} />
+			<Input id="password" type="password" class="col-span-4" bind:value={password} />
 		</div>
 		{#if BotManager.selectedBot.clientId}
 			{#snippet inviteBtn(text)}
