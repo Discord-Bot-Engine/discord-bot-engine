@@ -636,6 +636,7 @@ fn save_bot_triggers(
     trigger_contents: Vec<String>,
     removed_triggers: Vec<String>,
 ) {
+    tauri::async_runtime::spawn(async move {
         for (file, content) in modified_triggers.into_iter().zip(trigger_contents.into_iter()) {
             let trigger_path = Path::new(&bot_path).join("data").join(file + ".json");
             if let Err(err) = fs::write(&trigger_path, content) {
@@ -648,6 +649,7 @@ fn save_bot_triggers(
                 eprintln!("Failed to remove {:?}: {}", trigger_path, err);
             }
         }
+    });
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -750,8 +752,10 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
         .path()
         .resolve("resources/Bot", BaseDirectory::Resource)
         .unwrap();
+    tauri::async_runtime::spawn(async move {
         copy_dir_all(&resource_path, &bot_path, None).unwrap();
         _app.emit("finished_copying", &bot_path).unwrap();
+    });
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -760,9 +764,14 @@ fn update_bot_files(_app: tauri::AppHandle, bot_path: String) {
         .path()
         .resolve("resources/Bot", BaseDirectory::Resource)
         .unwrap();
-
+    tauri::async_runtime::spawn(async move {
+        let base = Path::new(&bot_path);
+        std::fs::remove_dir_all(base.join("actions")).unwrap();
+        std::fs::remove_dir_all(base.join("triggers")).unwrap();
+        std::fs::remove_dir_all(base.join("extensions")).unwrap();
         copy_dir_all(&resource_path, &bot_path, Some(&resource_path.join("data"))).unwrap();
         _app.emit("finished_copying", &bot_path).unwrap();
+    });
 }
 
 fn copy_dir_all(
