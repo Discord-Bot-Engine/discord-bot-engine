@@ -45,7 +45,7 @@
 				}}
 			>
 				<Select.Trigger class="w-full">
-					{multiple
+					{input.multiple
 						? value.filter((value) => input.values.includes(value)).length !== 0
 							? `${value}`
 							: 'Select options'
@@ -75,7 +75,7 @@
 				}}
 			>
 				<Select.Trigger class="w-full">
-					{multiple
+					{input.multiple
 						? value.filter((value) => roles.find((v) => v.id === value)).length !== 0
 							? `${value.map((value) => '@' + roles.find((v) => v.id === value).name)}`
 							: 'Select roles'
@@ -105,7 +105,7 @@
 				}}
 			>
 				<Select.Trigger class="w-full">
-					{multiple
+					{input.multiple
 						? value.filter((value) => members.find((v) => v.id === value)).length !== 0
 							? `${value.map((value) => '@' + members.find((v) => v.id === value).name)}`
 							: 'Select members'
@@ -135,7 +135,7 @@
 				}}
 			>
 				<Select.Trigger class="w-full">
-					{multiple
+					{input.multiple
 						? value.filter((value) => channels.find((v) => v.id === value)).length !== 0
 							? `${value.map((value) => '#' + channels.find((v) => v.id === value).name)}`
 							: 'Select channels'
@@ -165,7 +165,7 @@
 				}}
 			>
 				<Select.Trigger class="w-full">
-					{multiple
+					{input.multiple
 						? value.filter((value) => channels.find((v) => v.id === value)).length !== 0
 							? `${value.map((value) => '#' + channels.find((v) => v.id === value).name)}`
 							: 'Select channels'
@@ -195,7 +195,7 @@
 				}}
 			>
 				<Select.Trigger class="w-full">
-					{multiple
+					{input.multiple
 						? value.filter((value) => channels.find((v) => v.id === value)).length !== 0
 							? `${value.map((value) => '#' + channels.find((v) => v.id === value).name)}`
 							: 'Select channels'
@@ -225,7 +225,7 @@
 				}}
 			>
 				<Select.Trigger class="w-full">
-					{multiple
+					{input.multiple
 						? value.filter((value) => channels.find((v) => v.id === value)).length !== 0
 							? `${value.map((value) => channels.find((v) => v.id === value).name)}`
 							: 'Select categories'
@@ -255,7 +255,7 @@
 				}}
 			>
 				<Select.Trigger class="w-full">
-					{multiple
+					{input.multiple
 						? value.filter((value) => mentionables.find((v) => v.id === value)).length !== 0
 							? `${value.map((value) => '@' + mentionables.find((v) => v.id === value).name)}`
 							: 'Select mentionable'

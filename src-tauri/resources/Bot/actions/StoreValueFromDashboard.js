@@ -28,16 +28,15 @@ export default class StoreValueFromDashboard {
         if(!input.multiple) {
             result = await parseValue(value, input)
         } else {
-            value.forEach(async (v) => {
-                result.push(await parseValue(v, input))
-            })
+            for (let i = 0; i < value.length; i++)
+                result.push(await parseValue(value[i], input));
         }
         setVariable(data.get("value"), result)
         actionManager.runNext(id, "action")
         async function parseValue(value, input) {
             if(input?.type === "role") {
                 return await server.roles.fetch(value)
-            } else if(input?.type === "channel") {
+            } else if(input?.type.includes("channel") || input?.type === "category") {
                 return await server.channels.fetch(value)
             } else if(input?.type === "member") {
                 return await server.members.fetch(value)
@@ -49,7 +48,7 @@ export default class StoreValueFromDashboard {
                         return await server.members.fetch(value)
                     } catch {}
                 }
-            }
+            } else return value
         }
     }
 }
