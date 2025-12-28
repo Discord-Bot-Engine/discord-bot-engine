@@ -24,22 +24,32 @@ export default class StoreValueFromDashboard {
         const name = data.get("input")
         let value = Dashboard.getInputValue(server.id, name)
         const input = Dashboard.inputs.find(i => i.name === name)
-        if(input?.type === "role") {
-            value = await server.roles.fetch(value)
-        } else if(input?.type === "channel") {
-            value = await server.channels.fetch(value)
-        } else if(input?.type === "member") {
-            value = await server.members.fetch(value)
-        } else if(input?.type === "mentionable") {
-            try {
-                value = await server.roles.fetch(value)
-            } catch {
+        let result = [];
+        if(!input.multiple) {
+            result = await parseValue(value, input)
+        } else {
+            value.forEach(async (v) => {
+                result.push(await parseValue(v, input))
+            })
+        }
+        setVariable(data.get("value"), result)
+        actionManager.runNext(id, "action")
+        async function parseValue(value, input) {
+            if(input?.type === "role") {
+                return await server.roles.fetch(value)
+            } else if(input?.type === "channel") {
+                return await server.channels.fetch(value)
+            } else if(input?.type === "member") {
+                return await server.members.fetch(value)
+            } else if(input?.type === "mentionable") {
+                try {
+                    return await server.roles.fetch(value)
+                } catch {
                     try {
-                        value = await server.members.fetch(value)
+                        return await server.members.fetch(value)
                     } catch {}
+                }
             }
         }
-        setVariable(data.get("value"), value)
-        actionManager.runNext(id, "action")
     }
 }

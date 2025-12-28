@@ -23,6 +23,7 @@
 		'Mentionable'
 	].sort();
 	let type = $state(types[0]);
+	let multiple = $state(false);
 	let values = $state('');
 	let inputs = $state(data.inputs);
 	let open = $state(false);
@@ -36,7 +37,8 @@
 				value,
 				page: page.toLowerCase().trim(),
 				type: type.toLowerCase(),
-				values
+				values,
+				multiple
 			})
 		});
 
@@ -114,6 +116,17 @@
 								placeholder="Separated by ,"
 								class="col-span-3"
 							/>
+							<Label for="multiple" class="text-right">Select Multiple?</Label>
+							<Select.Root id="multiple" type="single" bind:value={multiple}>
+								<Select.Trigger class="col-span-3 w-full">False</Select.Trigger>
+								<Select.Content>
+									<Select.Group>
+										<Select.Label>Options</Select.Label>
+										<Select.Item value={true} label="True">True</Select.Item>
+										<Select.Item value={false} label="False">False</Select.Item>
+									</Select.Group>
+								</Select.Content>
+							</Select.Root>
 						</div>
 					{/if}
 				</div>
