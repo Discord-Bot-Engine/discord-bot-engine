@@ -119,17 +119,21 @@
 						</div>
 					{/if}
 					{#if type !== 'Text'}
-						<Label for="multiple" class="text-right">Select Multiple?</Label>
-						<Select.Root id="multiple" type="single" bind:value={multiple}>
-							<Select.Trigger class="col-span-3 w-full">False</Select.Trigger>
-							<Select.Content>
-								<Select.Group>
-									<Select.Label>Options</Select.Label>
-									<Select.Item value={true} label="True">True</Select.Item>
-									<Select.Item value={false} label="False">False</Select.Item>
-								</Select.Group>
-							</Select.Content>
-						</Select.Root>
+						<div class="grid grid-cols-4 items-center gap-4">
+							<Label for="multiple" class="text-right">Select Multiple?</Label>
+							<Select.Root id="multiple" type="single" bind:value={multiple}>
+								<Select.Trigger class="col-span-3 w-full"
+									>{multiple ? 'True' : 'False'}</Select.Trigger
+								>
+								<Select.Content>
+									<Select.Group>
+										<Select.Label>Options</Select.Label>
+										<Select.Item value={true} label="True">True</Select.Item>
+										<Select.Item value={false} label="False">False</Select.Item>
+									</Select.Group>
+								</Select.Content>
+							</Select.Root>
+						</div>
 					{/if}
 				</div>
 				<Dialog.Footer>
