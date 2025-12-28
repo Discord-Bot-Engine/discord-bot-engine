@@ -121,6 +121,7 @@ class BotManagerClass {
 		url = url.trim()
 		username = username.trim()
 		password = password.trim()
+		const reload = this.selectedBot.path !== botPath
 		this.selectedBot.name = botName;
 		this.selectedBot.path = botPath;
 		this.selectedBot.token = botToken;
@@ -154,6 +155,7 @@ class BotManagerClass {
 			}
 		).then(() => {
 			alert("Project saved successfully!");
+			if(reload) this.selectedBot.loadFiles()
 		})
 	}
 
