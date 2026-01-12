@@ -34,7 +34,7 @@
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				name,
-				value,
+				value: type.toLowerCase() !== 'text' && multiple ? value.split(',') : value,
 				page: page.toLowerCase().trim(),
 				type: type.toLowerCase(),
 				values,
