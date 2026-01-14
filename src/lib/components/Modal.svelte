@@ -11,7 +11,7 @@
     <Dialog.Content class="sm:max-w-[65vw] w-full px-4.5 overflow-hidden" >
         <Dialog.Header>
             <Dialog.Title>
-                <div class="flex items-center gap-1">
+                <div class="flex items-center gap-2">
                     {#if url}
                     <Translation text="View Documentation" el={readMore}/>
                     {#snippet readMore(text)}
