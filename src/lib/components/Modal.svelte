@@ -3,14 +3,23 @@
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
     import Translation from "$lib/components/Translation.svelte";
-
-    let {open = $bindable(), title, children, onDone = () => {}, onOpenChange = () => {} } = $props()
+    import {ExternalLinkIcon} from "@lucide/svelte"
+    import { openUrl } from '@tauri-apps/plugin-opener';
+    let {open = $bindable(), url, title, children, onDone = () => {}, onOpenChange = () => {} } = $props()
 </script>
 <Dialog.Root bind:open onOpenChange={onOpenChange}>
     <Dialog.Content class="sm:max-w-[65vw] w-full px-4.5 overflow-hidden" >
         <Dialog.Header>
             <Dialog.Title>
-                <Translation text={title} />
+                <div class="flex items-center gap-1">
+                    {#if url}
+                    <Translation text="Read More" el={readMore}/>
+                    {#snippet readMore(text)}
+                        <a class="!w-7 !p-0 !h-7 mt-[calc(var(--spacing)_*_-0.1)] {buttonVariants({ variant:'ghost'})}" title={text} onclick={() => openUrl(url)}><ExternalLinkIcon></ExternalLinkIcon></a>
+                    {/snippet}
+                    {/if}
+                    <Translation text={title} />
+                </div>
             </Dialog.Title>
         </Dialog.Header>
         <ScrollArea class="max-h-[60vh] w-full">

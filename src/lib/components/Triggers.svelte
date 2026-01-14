@@ -106,9 +106,8 @@
         </div>
     </div>
 </Modal>
-<Modal bind:open={isEditingTrigger} title="{App.selectedTrigger?.name} - {App.selectedTrigger?.type}" onDone={editTrigger}>
-
-        <div class="grid gap-4 py-4 px-1" bind:this={ref}>
+<Modal bind:open={isEditingTrigger} title="{App.selectedTrigger?.name} - {App.selectedTrigger?.type}" onDone={editTrigger} url="https://discord-bot-engine.gitbook.io/discord-bot-engine/triggers/{App.selectedTrigger?.type.toLowerCase().replaceAll(' ', '-')}">
+        <div class="grid gap-4 py-4 px-1" bind:this={ref} >
                 <div class="grid grid-cols-4 items-center gap-4">
                     <Label for="name" class="text-right">Name</Label>
                     <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={triggerEditName} noVariables />

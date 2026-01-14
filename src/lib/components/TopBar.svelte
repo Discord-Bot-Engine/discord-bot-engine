@@ -128,7 +128,7 @@
     {/each}
 </Menubar.Root>
 {#snippet extType(type)}
-    <Modal bind:open={isEditing} title={extension.type} onDone={editExtension}>
+    <Modal bind:open={isEditing} title={extension.type} onDone={editExtension} url="https://discord-bot-engine.gitbook.io/discord-bot-engine/extensions/{extension.type?.toLowerCase().replaceAll(' ', '-')}">
         <div class="grid gap-4 py-4" bind:this={ref}>
             {@html extension?.html ?? ""}
         </div>

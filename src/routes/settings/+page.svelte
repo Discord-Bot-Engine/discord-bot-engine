@@ -57,12 +57,12 @@
 	}
 </script>
 	<ScrollArea class="h-full ">
-		<Translation text="Save" el={saveBtn}/>
-		{#snippet saveBtn(text)}
-			<Button class="float-right mt-3 mr-3" title={text} onclick={save}><SaveIcon></SaveIcon></Button>
-		{/snippet}
 		<div class="w-full h-full flex flex-col gap-4 p-3">
-		<div class="grid grid-cols-5 items-center gap-4">
+			<Translation text="Save" el={saveBtn}/>
+			{#snippet saveBtn(text)}
+				<Button class="self-end w-fit" title={text} onclick={save}><SaveIcon></SaveIcon></Button>
+			{/snippet}
+			<div class="grid grid-cols-5 items-center gap-4">
 			<Label for="name" class="text-right"><Translation text="Name"/></Label>
 			<Input id="name" class="col-span-4 invalid:ring-2 invalid:ring-destructive" required bind:value={botName} />
 		</div>
