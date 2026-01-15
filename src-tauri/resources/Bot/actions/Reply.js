@@ -503,6 +503,9 @@ export default class Reply {
                 const actionId = data.actionId
                 const t = Bot.triggers.find(t => t.id === triggerId)
                 const actionManager = t.lastManager ?? new ActionManager(t)
+                for (const key in (data.variables ?? {})) {
+                    actionManager.setVariable(key, await Bot.restore(data.variables[key]));
+                };
                 const buttons = data.serializedButtons
                 const selectmenus = data.serializedSelects
                 if(i.isButton()) {
@@ -821,9 +824,14 @@ export default class Reply {
             })
             serializedSelects.push({...select, data})
         })
+        const variables = {}
+        actionManager.variables.keys().forEach(key => {
+            variables[key] = Bot.serialize(getVariable(key))
+        })
         await Bot.setData(`$COMPONENTS$$$${r.channel.id}${r.id}`, JSON.stringify({
             triggerId: actionManager.trigger.id,
             actionId: id,
+            variables,
             serializedSelects,
             serializedButtons
         }))

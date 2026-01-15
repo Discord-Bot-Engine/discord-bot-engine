@@ -2,16 +2,14 @@ import {Debugger} from "./Debugger.js";
 import * as fs from "node:fs";
 import path from "node:path"
 import {Trigger} from "./Trigger.js";
-import {Action} from "./Action.js";
 import Client from "./Client.js";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import {Extension} from "./Extension.js";
 import extensions from "../data/extensions.json" with { type: "json" };
-import {EmbedBuilder, Events} from "discord.js";
+import {EmbedBuilder} from "discord.js";
 import Keyv from "keyv";
 import {KeyvFile} from "keyv-file"
-import {ActionManager} from "./ActionManager.js";
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
@@ -112,6 +110,78 @@ class BotClass {
         const value = await this.data.get(key)
         return value;
     }
+
+    async restore(value) {
+        try {
+            if (typeof value == "string") {
+                if (value.startsWith("big-")) {
+                    const number = value.replace("big-", "");
+                    return BigInt(number);
+                } else if (value.startsWith("mem-")) {
+                    const values = value.split("_");
+                    const member = values[0].replace("mem-", "");
+                    const server = values[1];
+                    return await this.client.guilds.resolve(server).members.fetch(member);
+                } else if (value.startsWith("usr-")) {
+                    const user = value.replace("usr-", "");
+                    return await this.client.users.fetch(user);
+                } else if (value.startsWith("msg-")) {
+                    const values = value.split("_");
+                    const message = values[0].replace("msg-", "");
+                    const channel = values[1];
+                    return await (await this.client.channels.fetch(channel))?.messages.fetch(message);
+                } else if (value.startsWith("ch-")) {
+                    const channel = value.replace("ch-", "");
+                    return await this.client.channels.fetch(channel);
+                } else if (value.startsWith("r-")) {
+                    const values = value.split("_");
+                    const role = values[0].replace("r-", "");
+                    const server = values[1];
+                    return this.client.guilds.resolve(server).roles.resolve(role);
+                } else if (value.startsWith("s-")) {
+                    const server = value.replace("s-", "");
+                    return this.client.guilds.resolve(server);
+                } else if (value.startsWith("e-")) {
+                    const emoji = value.replace("e-", "");
+                    return this.client.emojis.resolve(emoji);
+                } else {
+                    return value;
+                }
+            } else if (Array.isArray(value)) {
+                for (let index = 0; index < value.length; index++) {
+                    value[index] = await this.restore(value[index]);
+                };
+                return value;
+            } else if (value.type === "embed") {
+                return new EmbedBuilder(value.data);
+            } else if(typeof value === "object") {
+                for (const key in value) {
+                    value[key] = await this.restore(value[key]);
+                }
+                return value
+            } else {
+                return value;
+            }
+        } catch { }
+    };
+
+    serialize(value) {
+        if (Array.isArray(value)) {
+            const arr = [];
+            for (const el of value) {
+                arr.push(this.serialize(el));
+            }
+            return arr;
+        } else if (typeof value == "object" && value && !value.toDBEString) {
+            const obj = {};
+            for (const key in value) {
+                obj[key] = this.serialize(value[key]);
+            }
+            return obj;
+        } else {
+            return value?.toDBEString?.() ?? value;
+        }
+    };
 }
 
 export const Bot = new BotClass()

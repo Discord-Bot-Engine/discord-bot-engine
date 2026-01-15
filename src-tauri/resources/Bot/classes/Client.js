@@ -31,3 +31,48 @@ export default class Client {
         this.client.login(token)
     }
 }
+Reflect.defineProperty(BigInt.prototype, "toDBEString", {
+    value() {
+        return `big-${this}`;
+    }
+});
+Reflect.defineProperty(EmbedBuilder.prototype, "toDBEString", {
+    value() {
+        return { type: "embed", data: this.data };
+    }
+});
+Reflect.defineProperty(GuildMember.prototype, "toDBEString", {
+    value() {
+        return `mem-${this.id}_${this.guild.id}`;
+    }
+});
+Reflect.defineProperty(User.prototype, "toDBEString", {
+    value() {
+        return `usr-${this.id}`;
+    }
+});
+Reflect.defineProperty(Guild.prototype, "toDBEString", {
+    value() {
+        return `s-${this.id}`;
+    }
+});
+Reflect.defineProperty(Message.prototype, "toDBEString", {
+    value() {
+        return `msg-${this.id}_${this.channel.id}`;
+    }
+});
+Reflect.defineProperty(BaseChannel.prototype, "toDBEString", {
+    value() {
+        return `ch-${this.id}`;
+    }
+});
+Reflect.defineProperty(Role.prototype, "toDBEString", {
+    value() {
+        return `r-${this.id}_${this.guild.id}`;
+    }
+});
+Reflect.defineProperty(GuildEmoji.prototype, "toDBEString", {
+    value() {
+        return `e-${this.id}`;
+    }
+});
