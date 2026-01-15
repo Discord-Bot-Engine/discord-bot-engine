@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import {Extension} from "./Extension.js";
 import extensions from "../data/extensions.json" with { type: "json" };
-import {EmbedBuilder} from "discord.js";
+import {EmbedBuilder, Collection, GuildMember, User, Guild, Message, BaseChannel, Role, GuildEmoji} from "discord.js";
 import Keyv from "keyv";
 import {KeyvFile} from "keyv-file"
 const __filename = fileURLToPath(import.meta.url);
@@ -154,6 +154,12 @@ class BotClass {
                 return value;
             } else if (value.type === "embed") {
                 return new EmbedBuilder(value.data);
+            } else if (value.type === "collection") {
+                const col = new Collection()
+                for (const key in value.data) {
+                    col.set(key, await this.restore(value.data[key]));
+                }
+                return col;
             } else if(typeof value === "object") {
                 for (const key in value) {
                     value[key] = await this.restore(value[key]);
@@ -183,5 +189,58 @@ class BotClass {
         }
     };
 }
-
 export const Bot = new BotClass()
+Reflect.defineProperty(BigInt.prototype, "toDBEString", {
+    value() {
+        return `big-${this}`;
+    }
+});
+Reflect.defineProperty(Collection.prototype, "toDBEString", {
+    value() {
+        const obj = {}
+        this.keys().forEach((key) => {
+            obj[key] = Bot.serialize(this.get(key))
+        })
+        return { type: "collection", data: obj };
+    }
+});
+Reflect.defineProperty(EmbedBuilder.prototype, "toDBEString", {
+    value() {
+        return { type: "embed", data: this.data };
+    }
+});
+Reflect.defineProperty(GuildMember.prototype, "toDBEString", {
+    value() {
+        return `mem-${this.id}_${this.guild.id}`;
+    }
+});
+Reflect.defineProperty(User.prototype, "toDBEString", {
+    value() {
+        return `usr-${this.id}`;
+    }
+});
+Reflect.defineProperty(Guild.prototype, "toDBEString", {
+    value() {
+        return `s-${this.id}`;
+    }
+});
+Reflect.defineProperty(Message.prototype, "toDBEString", {
+    value() {
+        return `msg-${this.id}_${this.channel.id}`;
+    }
+});
+Reflect.defineProperty(BaseChannel.prototype, "toDBEString", {
+    value() {
+        return `ch-${this.id}`;
+    }
+});
+Reflect.defineProperty(Role.prototype, "toDBEString", {
+    value() {
+        return `r-${this.id}_${this.guild.id}`;
+    }
+});
+Reflect.defineProperty(GuildEmoji.prototype, "toDBEString", {
+    value() {
+        return `e-${this.id}`;
+    }
+});
