@@ -20,7 +20,7 @@ import {
 
 export default class SendMessage {
     static type = "Send Message"
-    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Button Interaction", "Select Menu Interaction", "Modal Interaction", "List"];
+    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Button Interaction", "Select Menu Interaction", "List"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Channel, member or user"></dbe-label>
