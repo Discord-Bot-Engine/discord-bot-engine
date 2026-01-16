@@ -147,8 +147,8 @@
 					<Select.Group>
 						<Select.Label>Channels</Select.Label>
 						{#each channels as value, i (i)}
-							<Select.Item value={value.id} label={'#' + value.name}>
-								#{value.name}
+							<Select.Item value={value.id} label={(value.type === 4 ? '' : '#') + value.name}>
+								{(value.type === 4 ? '' : '#') + value.name}
 							</Select.Item>
 						{/each}
 					</Select.Group>
