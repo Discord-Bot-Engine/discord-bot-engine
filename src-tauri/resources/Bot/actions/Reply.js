@@ -20,11 +20,11 @@ import {
 
 export default class Reply {
     static type = "Reply"
-    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Context Menu Interaction", "Command Interaction", "Button Interaction", "Select Menu Interaction"];
+    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Context Menu Interaction", "Command Interaction", "Button Interaction", "Select Menu Interaction", "Modal Interaction", "List"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Message or interaction"></dbe-label>
-            <dbe-variable-list name="origin" class="col-span-3" variableType="Message,Context Menu Interaction,Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
+            <dbe-variable-list name="origin" class="col-span-3" variableType="Message,Context Menu Interaction,Command Interaction,Button Interaction,Select Menu Interaction,Modal Interaction"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Is ephemeral? (only for interactions)"></dbe-label>
@@ -191,7 +191,7 @@ export default class Reply {
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store selected options in variable"></dbe-label>
-                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="Text"></dbe-variable-list>
+                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="List"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store member in variable"></dbe-label>
@@ -360,7 +360,7 @@ export default class Reply {
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store selected options in variable"></dbe-label>
-                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="Text"></dbe-variable-list>
+                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="List"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store member in variable"></dbe-label>

@@ -20,7 +20,7 @@ import {
 
 export default class SendMessage {
     static type = "Send Message"
-    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Button Interaction", "Select Menu Interaction"];
+    static variableTypes = ["Message", "User", "Member", "Channel", "Server", "Button Interaction", "Select Menu Interaction", "Modal Interaction", "List"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Channel, member or user"></dbe-label>
@@ -187,7 +187,7 @@ export default class SendMessage {
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store selected options in variable"></dbe-label>
-                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="Text"></dbe-variable-list>
+                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="List"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store member in variable"></dbe-label>
@@ -356,7 +356,7 @@ export default class SendMessage {
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store selected options in variable"></dbe-label>
-                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="Text"></dbe-variable-list>
+                        <dbe-variable-list name="seloptions" class="col-span-3" variableType="List"></dbe-variable-list>
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Store member in variable"></dbe-label>
