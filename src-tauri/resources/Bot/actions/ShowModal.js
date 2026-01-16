@@ -252,7 +252,7 @@ export default class ShowModal {
                         const results = []
                         for(let i = 0; i < urls.length; i++) {
                             const result = await fetch(urls[i].attachment).then(res => res.arrayBuffer())
-                            results.push(result)
+                            results.push(Buffer.from(result))
                         }
                         actionManager.setVariable(variable, results)
                     } else if(type === "SelectMenu") {
