@@ -140,7 +140,7 @@
 							? `${value.map((value) => '#' + channels.find((v) => v.id === value).name)}`
 							: 'Select channels'
 						: channels.find((v) => v.id === value)
-							? `#${channels.find((v) => v.id === value).name}`
+							? `${channels.find((v) => v.id === value).type === 4 ? '' : '#'}${channels.find((v) => v.id === value).name}`
 							: 'Select a channel'}
 				</Select.Trigger>
 				<Select.Content>
