@@ -153,7 +153,6 @@
     }
 
     function deleteActions() {
-       App.updateUndo()
        const list = App.selectedTrigger.actions.filter(act => act.selected)
        App.selectedTrigger.actions = App.selectedTrigger.actions.filter(act => !act.actionType || !list.find(n => n.id === act.id))
        App.selectedTrigger.edges = App.selectedTrigger.edges.filter(edge => App.selectedTrigger.actions.find(n => n.id === edge.source) && App.selectedTrigger.actions.find(n => n.id === edge.target))
@@ -173,7 +172,10 @@
                 <SvelteFlow onbeforedelete={() => {
                     BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
                     if(document.activeElement.tagName !== "BODY" && !document.activeElement.getAttribute("class").startsWith("svelte-flow") || getSelection().toString()) return false;
-                    else return true
+                    else {
+                        App.updateUndo()
+                        return true
+                    }
                 }} bind:this={ref} oncontextmenu={(ev) => {
                     ev.preventDefault()
                     isCreatingAction = true;
