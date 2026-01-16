@@ -26,6 +26,10 @@ export default class EditMessage {
             <dbe-label name="Message"></dbe-label>
             <dbe-variable-list name="message" class="col-span-3" variableType="Message"></dbe-variable-list>
         </div>
+        <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Interactive components mode"></dbe-label>
+            <dbe-select name="mode" class="col-span-3" value="Persistent" values="Persistent,Temporary"></dbe-select>
+        </div>
          <dbe-list name="files" title="Files" modalId="filesModal" itemTitle="async (item, i) => item.data.get('name') ?? await App.translate('File', App.selectedLanguage)+' #'+i"></dbe-list>
          <dbe-list name="components" title="Components" modalId="componentsModal" itemTitle="async (item, i) => await App.translate(item.data.get('type') ?? 'Component', App.selectedLanguage)+' #'+i"></dbe-list>
         <template id="filesModal">
@@ -493,7 +497,9 @@ export default class EditMessage {
             Bot.initComponents = true
             Bot.client.on(Events.InteractionCreate, async (i) => {
                 if(!i.isButton() && !i.isSelectMenu()) return;
-                const data = JSON.parse(await Bot.getData(`$COMPONENTS$$$${i.channel.id}${i.message.id}`))
+                const raw = await Bot.getData(`$COMPONENTS$$$${i.channel.id}${i.message.id}`);
+                if(!raw) return;
+                const data = JSON.parse(raw)
                 const triggerId = data.triggerId
                 const actionId = data.actionId
                 const t = Bot.triggers.find(t => t.id === triggerId)
@@ -540,6 +546,7 @@ export default class EditMessage {
     }
 
     static async run({id, data, actionManager, getVariable, setVariable}) {
+        const temp = data.get("mode") === "Temporary"
         const components = data.get("components")
         const buttons = []
         const selectmenus = []
@@ -790,33 +797,71 @@ export default class EditMessage {
             files: attachments,
             flags,
         })
-        const serializedButtons = []
-        const serializedSelects = []
-        buttons.forEach(btn => {
-            const data = {}
-            btn.data.keys().forEach(key => {
-                data[key] = btn.data.get(key)
+        if(!temp) {
+            const serializedButtons = []
+            const serializedSelects = []
+            buttons.forEach(btn => {
+                const data = {}
+                btn.data.keys().forEach(key => {
+                    data[key] = btn.data.get(key)
+                })
+                serializedButtons.push({...btn, data})
             })
-            serializedButtons.push({...btn, data})
-        })
-        selectmenus.forEach(select => {
-            const data = {}
-            select.data.keys().forEach(key => {
-                data[key] = select.data.get(key)
+            selectmenus.forEach(select => {
+                const data = {}
+                select.data.keys().forEach(key => {
+                    data[key] = select.data.get(key)
+                })
+                serializedSelects.push({...select, data})
             })
-            serializedSelects.push({...select, data})
-        })
-        const variables = {}
-        actionManager.variables.keys().forEach(key => {
-            variables[key] = Bot.serialize(getVariable(key))
-        })
-        await Bot.setData(`$COMPONENTS$$$${message.channel.id}${message.id}`, JSON.stringify({
-            triggerId: actionManager.trigger.id,
-            actionId: id,
-            variables,
-            serializedSelects,
-            serializedButtons
-        }))
+            const variables = {}
+            actionManager.variables.keys().forEach(key => {
+                variables[key] = Bot.serialize(getVariable(key))
+            })
+            await Bot.setData(`$COMPONENTS$$$${message.channel.id}${message.id}`, JSON.stringify({
+                triggerId: actionManager.trigger.id,
+                actionId: id,
+                variables,
+                serializedSelects,
+                serializedButtons
+            }))
+        } else {
+            const collector = message.createMessageComponentCollector()
+            collector.on("collect", i => {
+                if(i.isButton()) {
+                    const btn = buttons.find(b => b.id === i.customId)
+                    const int = btn.data.get("binteraction")
+                    const msg = btn.data.get("bmessage")
+                    const mem = btn.data.get("bmember")
+                    const user = btn.data.get("buser")
+                    const ch = btn.data.get("bchannel")
+                    const sv = btn.data.get("bserver")
+                    actionManager.setVariable(int, i)
+                    actionManager.setVariable(msg, i.message)
+                    actionManager.setVariable(mem, i.member)
+                    actionManager.setVariable(user, i.user)
+                    actionManager.setVariable(ch, i.channel)
+                    actionManager.setVariable(sv, i.guild)
+                } else {
+                    const menu = selectmenus.find(s => s.id === i.customId)
+                    const int = menu.data.get("sinteraction")
+                    const opts = menu.data.get("seloptions")
+                    const msg = menu.data.get("smessage")
+                    const mem = menu.data.get("smember")
+                    const user = menu.data.get("suser")
+                    const ch = menu.data.get("schannel")
+                    const sv = menu.data.get("sserver")
+                    actionManager.setVariable(int, i)
+                    actionManager.setVariable(opts, i.values)
+                    actionManager.setVariable(msg, i.message)
+                    actionManager.setVariable(mem, i.member)
+                    actionManager.setVariable(user, i.user)
+                    actionManager.setVariable(ch, i.channel)
+                    actionManager.setVariable(sv, i.guild)
+                }
+                actionManager.runNext(id, !i.isButton() ? `${i.customId} (on select)` : `${i.customId} (on click)`)
+            })
+        }
         actionManager.runNext(id, "action")
         function hexToNumber(hex) {
             if (hex.startsWith('#')) {
