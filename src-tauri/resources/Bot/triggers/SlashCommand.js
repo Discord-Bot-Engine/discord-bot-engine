@@ -50,7 +50,7 @@ export default class SlashCommand {
     };
 
     static html = `
-        <div class="grid grid-cols-4 items-center gap-4">
+         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Description"></dbe-label>
             <dbe-input name="description" class="col-span-3"></dbe-input>
         </div>
@@ -74,7 +74,7 @@ export default class SlashCommand {
             <dbe-label name="Store server in variable"></dbe-label>
             <dbe-variable-list name="server" class="col-span-3" variableType="Server"></dbe-variable-list>
         </div>
-        <dbe-list name="options" title="Options" modalId="optionsModal"></dbe-list>
+        <dbe-list name="options" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('name') ?? await App.translate('Option', App.selectedLanguage) + ' #' + i"></dbe-list>
         <template id="optionsModal">
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Name"></dbe-label>
@@ -86,15 +86,15 @@ export default class SlashCommand {
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Type"></dbe-label>
-                <dbe-select name="type" values="Attachment,Boolean,Channel,Integer,Mentionable,Number,Role,Text,User" value="Text" class="col-span-3"></dbe-select>
+                <dbe-select name="type" change="(value) => document.getElementById('var').setVariableType(value.replace('Integer', 'Number'))" values="Attachment,Boolean,Channel,Integer,Mentionable,Number,Role,Text,User" value="Text" class="col-span-3"></dbe-select>
             </div>
-            <div class="grid grid-cols-4 items-center gap-4">
+             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Is Required?"></dbe-label>
                 <dbe-select name="required" value="False" values="True,False" class="col-span-3"></dbe-select>
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Store value in variable"></dbe-label>
-                <dbe-variable-list name="value" class="col-span-3" variableType="Attachment,Boolean,Channel,Mentionable,Number,Role,Text,User"></dbe-variable-list>
+                <dbe-variable-list name="value" class="col-span-3" id="var" variableType="Attachment,Boolean,Channel,Mentionable,Number,Role,Text,User"></dbe-variable-list>
             </div>
         </template>
     `;
