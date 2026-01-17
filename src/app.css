@@ -267,7 +267,11 @@
 
 .svelte-flow__node-group {
     z-index: -1!important;
-    background: oklch(0.63 0.20 8.73 / 0.1)!important;
+    background: color-mix(
+            in oklch,
+            var(--primary) 10%,
+            transparent
+    )!important;
     border: 0px!important;
 }
 

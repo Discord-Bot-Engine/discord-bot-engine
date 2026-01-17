@@ -13,14 +13,6 @@
             group.height = data.get("height") ?? 100
         }
     })
-    onMount(() => {
-        ref.parentElement.style.background = `
-        color-mix(
-                in oklch,
-                var(--primary) 10%,
-                transparent
-        )!important`
-    })
 </script>
 
 {#if selected}
@@ -29,7 +21,7 @@
         data.set("height", height);
     }} class="!border-primary !bg-primary" minWidth={120} minHeight={100} />
 {/if}
-    <div bind:this={ref} class="text-3xl w-full h-full">
+    <div bind:this={ref} class="text-3xl w-full h-full ">
         {#snippet groupSnip(text)}
 <input class="w-full !outline-none text-primary nodrag" placeholder={text} value={data.get("text") ?? ""}
        oninput={(evt) => {
