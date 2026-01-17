@@ -1,6 +1,7 @@
 import {invoke} from "@tauri-apps/api/core";
 import {BotManager} from "$lib/classes/BotManager.svelte.js";
 import {App} from "$lib/classes/App.svelte.js"
+import plugin from "@tailwindcss/typography";
 
 class PluginManagerClass {
 	actions = $state([])
@@ -16,11 +17,55 @@ class PluginManagerClass {
 
 	async fetchPlugins() {
 		const path = `https://api.github.com/repos/Discord-Bot-Engine/Plugins/contents`
-		const actions = await fetch(`${path}/actions`).then(res => res.json())
-		const triggers = await fetch(`${path}/triggers`).then(res => res.json())
-		const extensions = await fetch(`${path}/extensions`).then(res => res.json())
-		const themes = await fetch(`${path}/themes`).then(res => res.json())
-		const translations = await fetch(`${path}/translations`).then(res => res.json())
+		const plugins = localStorage.getItem('plugins')
+		let actions = []
+		let triggers = []
+		let extensions = []
+		let themes = []
+		let translations = []
+		if(plugins) {
+			const parsed = JSON.parse(plugins)
+			const timestamp = parsed.timestamp;
+			if(Date.now() >= timestamp) {
+				const now = new Date();
+				const future = new Date(now.getTime() + 2 * 60 * 1000);
+				actions = await fetch(`${path}/actions`).then(res => res.json())
+				triggers = await fetch(`${path}/triggers`).then(res => res.json())
+				extensions = await fetch(`${path}/extensions`).then(res => res.json())
+				themes = await fetch(`${path}/themes`).then(res => res.json())
+				translations = await fetch(`${path}/translations`).then(res => res.json())
+				localStorage.setItem('plugins', JSON.stringify({
+					actions,
+					triggers,
+					extensions,
+					themes,
+					translations,
+					timestamp: future.getTime()
+				}))
+			} else {
+				actions = parsed.actions
+				triggers = parsed.triggers
+				extensions = parsed.extensions
+				themes = parsed.themes
+				translations = parsed.translations
+			}
+		} else {
+			const now = new Date();
+			const future = new Date(now.getTime() + 2 * 60 * 1000);
+			actions = await fetch(`${path}/actions`).then(res => res.json())
+			triggers = await fetch(`${path}/triggers`).then(res => res.json())
+			extensions = await fetch(`${path}/extensions`).then(res => res.json())
+			themes = await fetch(`${path}/themes`).then(res => res.json())
+			translations = await fetch(`${path}/translations`).then(res => res.json())
+			localStorage.setItem('plugins', JSON.stringify({
+				actions,
+				triggers,
+				extensions,
+				themes,
+				translations,
+				timestamp: future.getTime()
+			}))
+		}
 		this.actions = actions.filter(file => file.name.endsWith(".js")).map(json => this.convertJSONResponseToPlugin(json, "action"))
 		this.triggers = triggers.filter(file => file.name.endsWith(".js")).map(json => this.convertJSONResponseToPlugin(json, "trigger"))
 		this.extensions = extensions.filter(file => file.name.endsWith(".js")).map(json => this.convertJSONResponseToPlugin(json, "extension"))
