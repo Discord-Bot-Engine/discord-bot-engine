@@ -5,7 +5,6 @@
     import Translation from "$lib/components/Translation.svelte";
     import {onMount} from "svelte";
     let { id, data, selected } = $props();
-    let ref
     const group = $derived(App.selectedTrigger.actions.find(act => act.id === id));
     $effect(() => {
         if(group) {
@@ -21,7 +20,7 @@
         data.set("height", height);
     }} class="!border-primary !bg-primary" minWidth={120} minHeight={100} />
 {/if}
-    <div bind:this={ref} class="text-3xl w-full h-full ">
+    <div class="text-3xl w-full h-full ">
         {#snippet groupSnip(text)}
 <input class="w-full !outline-none text-primary nodrag" placeholder={text} value={data.get("text") ?? ""}
        oninput={(evt) => {
