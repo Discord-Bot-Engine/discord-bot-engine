@@ -1,22 +1,36 @@
-import {ActionManager} from "../classes/ActionManager.js";
-import {Bot} from "../classes/Bot.js";
+import { ActionManager } from "../classes/ActionManager.js";
+import { Bot } from "../classes/Bot.js";
 import {
+    ChannelSelectMenuBuilder,
     Events,
     FileUploadBuilder,
     LabelBuilder,
+    MentionableSelectMenuBuilder,
     ModalBuilder,
+    RoleSelectMenuBuilder,
     StringSelectMenuBuilder,
     StringSelectMenuOptionBuilder,
     TextDisplayBuilder,
     TextInputBuilder,
-    TextInputStyle
-} from "discord.js"
+    TextInputStyle,
+    UserSelectMenuBuilder,
+} from "discord.js";
 import fetch from "node-fetch";
 
 export default class ShowModal {
-    static type = "Show Modal"
-    static variableTypes = ["User", "Member", "Channel", "Server", "Context Menu Interaction", "Command Interaction", "Select Menu Interaction", "Modal Interaction", "List"];
-    static outputs = ["action", "on submit"]
+    static type = "Show Modal";
+    static variableTypes = [
+        "User",
+        "Member",
+        "Channel",
+        "Server",
+        "Context Menu Interaction",
+        "Command Interaction",
+        "Select Menu Interaction",
+        "Modal Interaction",
+        "List",
+    ];
+    static outputs = ["action", "on submit"];
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Interaction"></dbe-label>
@@ -152,6 +166,10 @@ export default class ShowModal {
                         <dbe-input name="sdesc" class="col-span-3"></dbe-input>
                     </div>
                      <div class="grid grid-cols-4 items-center gap-4">
+                        <dbe-label name="Type"></dbe-label>
+                        <dbe-select name="stype" class="col-span-3" change="(value, el) => el.parentElement.parentElement.querySelector('#opts').style.display = value === 'Text' ? '' : 'none'" values="Text,Mentionable,Role,Channel,User" value="Text"></dbe-select>
+                    </div>
+                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Placeholder"></dbe-label>
                         <dbe-input name="splaceholder" class="col-span-3"></dbe-input>
                     </div>
@@ -171,7 +189,7 @@ export default class ShowModal {
                         <dbe-label name="Store selected options in variable"></dbe-label>
                         <dbe-variable-list name="seloptions" class="col-span-3" variableType="List"></dbe-variable-list>
                     </div>
-                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
+                    <dbe-list name="soptions" id='opts' title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
              </div>
         </template>
         <template id="optionsModal">
@@ -196,83 +214,101 @@ export default class ShowModal {
                 <dbe-select name="default" class="col-span-3" values="True,False" value="False"></dbe-select>
             </div>
         </template>
-    `
+    `;
     static open(context, handlers) {
         handlers.onChange = (v, el) => {
             setTimeout(() => {
-                const parent = el.parentElement.parentElement
-                parent.querySelector('#text').style.display = "none"
-                parent.querySelector('#textinput').style.display = "none"
-                parent.querySelector('#fileupload').style.display = "none"
-                parent.querySelector('#selectmenu').style.display = "none"
-                if(v === "Text")
-                    parent.querySelector('#text').style.display = ""
-                else if(v === "Text Input")
-                    parent.querySelector('#textinput').style.display = ""
-                else if(v === "File Upload")
-                    parent.querySelector('#fileupload').style.display = ""
-                else if(v === "Select Menu")
-                    parent.querySelector('#selectmenu').style.display = ""
-            }, 10)
-        }
+                const parent = el.parentElement.parentElement;
+                parent.querySelector("#text").style.display = "none";
+                parent.querySelector("#textinput").style.display = "none";
+                parent.querySelector("#fileupload").style.display = "none";
+                parent.querySelector("#selectmenu").style.display = "none";
+                if (v === "Text") parent.querySelector("#text").style.display = "";
+                else if (v === "Text Input")
+                    parent.querySelector("#textinput").style.display = "";
+                else if (v === "File Upload")
+                    parent.querySelector("#fileupload").style.display = "";
+                else if (v === "Select Menu")
+                    parent.querySelector("#selectmenu").style.display = "";
+            }, 10);
+        };
     }
     static load(context) {
-        if(!Bot.initModals) {
-            Bot.initModals = true
-            Bot.modals = {}
+        if (!Bot.initModals) {
+            Bot.initModals = true;
+            Bot.modals = {};
             Bot.client.on(Events.InteractionCreate, async (i) => {
-                if(!i.isModalSubmit()) return;
-                const data = Bot.modals[i.customId]
-                if(!data) return;
-                const triggerId = data.triggerId
-                const actionId = data.actionId
-                const t = Bot.triggers.find(t => t.id === triggerId)
-                const actionManager = t.lastManager ?? new ActionManager(t)
-                data.variables.keys().forEach(key => {
-                    actionManager.setVariable(key, data.variables.get(key))
-                })
-                const int = data["interaction"]
-                const msg = data["message"]
-                const mem = data["member"]
-                const user = data["user"]
-                const ch = data["channel"]
-                const sv = data["server"]
-                actionManager.setVariable(int, i)
-                actionManager.setVariable(msg, i.message)
-                actionManager.setVariable(mem, i.member)
-                actionManager.setVariable(user, i.user)
-                actionManager.setVariable(ch, i.channel)
-                actionManager.setVariable(sv, i.guild)
-                for(const key in data.data) {
-                    const {type, variable} = data.data[key]
-                    if(type === "TextInput") {
-                        actionManager.setVariable(variable, i.fields.getTextInputValue(key))
-                    } else if(type === "FileUpload") {
-                        const urls = [...i.fields.getUploadedFiles(key).values()]
-                        const results = []
-                        for(let i = 0; i < urls.length; i++) {
-                            const result = await fetch(urls[i].attachment).then(res => res.arrayBuffer())
-                            results.push(Buffer.from(result))
+                if (!i.isModalSubmit()) return;
+                const data = Bot.modals[i.customId];
+                if (!data) return;
+                const triggerId = data.triggerId;
+                const actionId = data.actionId;
+                const t = Bot.triggers.find((t) => t.id === triggerId);
+                const actionManager = t.lastManager ?? new ActionManager(t);
+                data.variables.keys().forEach((key) => {
+                    actionManager.setVariable(key, data.variables.get(key));
+                });
+                const int = data["interaction"];
+                const msg = data["message"];
+                const mem = data["member"];
+                const user = data["user"];
+                const ch = data["channel"];
+                const sv = data["server"];
+                actionManager.setVariable(int, i);
+                actionManager.setVariable(msg, i.message);
+                actionManager.setVariable(mem, i.member);
+                actionManager.setVariable(user, i.user);
+                actionManager.setVariable(ch, i.channel);
+                actionManager.setVariable(sv, i.guild);
+                for (const key in data.data) {
+                    const { type, variable, stype } = data.data[key];
+                    if (type === "TextInput") {
+                        actionManager.setVariable(
+                            variable,
+                            i.fields.getTextInputValue(key),
+                        );
+                    } else if (type === "FileUpload") {
+                        const val = i.fields.getUploadedFiles(key);
+                        const results = [];
+                        if (val) {
+                            const urls = [...i.fields.getUploadedFiles(key).values()];
+                            for (let i = 0; i < urls.length; i++) {
+                                const result = await fetch(urls[i].attachment).then((res) =>
+                                    res.arrayBuffer(),
+                                );
+                                results.push(Buffer.from(result));
+                            }
                         }
-                        actionManager.setVariable(variable, results)
-                    } else if(type === "SelectMenu") {
-                        actionManager.setVariable(variable, i.fields.getStringSelectValues(key))
+                        actionManager.setVariable(variable, results);
+                    } else if (type === "SelectMenu") {
+                        let val;
+                        if (stype === "Text")
+                            val = [...i.fields.getStringSelectValues(key).values()];
+                        else if (stype === "User")
+                            val = [...i.fields.getSelectedUsers(key).values()];
+                        else if (stype === "Role")
+                            val = [...i.fields.getSelectedRoles(key).values()];
+                        else if (stype === "Mentionable")
+                            val = [...i.fields.getSelectedMentionables(key).values()];
+                        else if (stype === "Channel")
+                            val = [...i.fields.getSelectedChannels(key).values()];
+                        actionManager.setVariable(variable, val);
                     }
                 }
-                actionManager.runNext(actionId, `on submit`)
-            })
+                actionManager.runNext(actionId, `on submit`);
+            });
         }
     }
-    static async run({id, data, actionManager, getVariable, setVariable}) {
-        const customId = data.get("id")
-        const title = data.get("title")
-        const components = data.get("components")
-        const interaction = data.get("interaction")
-        const member = data.get("member")
-        const user = data.get("user")
-        const message = data.get("message")
-        const channel = data.get("channel")
-        const server = data.get("server")
+    static async run({ id, data, actionManager, getVariable, setVariable }) {
+        const customId = data.get("id");
+        const title = data.get("title");
+        const components = data.get("components");
+        const interaction = data.get("interaction");
+        const member = data.get("member");
+        const user = data.get("user");
+        const message = data.get("message");
+        const channel = data.get("channel");
+        const server = data.get("server");
         const modal = new ModalBuilder().setCustomId(customId).setTitle(title);
         Bot.modals[customId] = {
             triggerId: actionManager.trigger.id,
@@ -284,30 +320,28 @@ export default class ShowModal {
             channel: channel,
             server: server,
             data: {},
-            variables: actionManager.variables
-        }
-        components.forEach(({data}) => {
-            const type = data.get("type")
-            if(type === "Text") {
-                const builder =  new TextDisplayBuilder()
-                builder.setContent(
-                    data.get("tcontent")
-                );
+            variables: actionManager.variables,
+        };
+        components.forEach(({ data }) => {
+            const type = data.get("type");
+            if (type === "Text") {
+                const builder = new TextDisplayBuilder();
+                builder.setContent(data.get("tcontent"));
                 modal.addTextDisplayComponents(builder);
-            } else if(type === "Text Input") {
-                const id = data.get("tid")
-                const style = data.get("ttype")
-                const value = data.get("tvalue")
-                const placeholder = data.get("tplaceholder")
-                const required = data.get("trequired") === "True"
-                const min = Number(data.get("tmin"))
-                const max = Number(data.get("tmax"))
-                const label = data.get("tlabel")
-                const desc = data.get("tdesc")
+            } else if (type === "Text Input") {
+                const id = data.get("tid");
+                const style = data.get("ttype");
+                const value = data.get("tvalue");
+                const placeholder = data.get("tplaceholder");
+                const required = data.get("trequired") === "True";
+                const min = Number(data.get("tmin"));
+                const max = Number(data.get("tmax"));
+                const label = data.get("tlabel");
+                const desc = data.get("tdesc");
                 Bot.modals[customId].data[id] = {
                     type: "TextInput",
-                    variable: data.get("ttext")
-                }
+                    variable: data.get("ttext"),
+                };
                 const input = new TextInputBuilder()
                     .setCustomId(id)
                     .setStyle(TextInputStyle[style])
@@ -315,69 +349,103 @@ export default class ShowModal {
                     .setRequired(required)
                     .setMinLength(min)
                     .setMaxLength(max);
-                if(value.trim()) {
-                    input.setValue(value)
+                if (value.trim()) {
+                    input.setValue(value);
                 }
                 const inputLabel = new LabelBuilder()
                     .setLabel(label)
                     .setDescription(desc)
                     .setTextInputComponent(input);
                 modal.addLabelComponents(inputLabel);
-            } else if(type === "Select Menu") {
-                const builder = new StringSelectMenuBuilder()
-                const id = data.get("sid")
-                const label = data.get("slabel")
-                const desc = data.get("sdesc")
-                const placeholder = data.get("splaceholder")
-                const srequired = data.get("srequired") === "True"
-                const smin = Number(data.get("smin"))
-                const smax = Number(data.get("smax"))
-                const options = data.get("soptions")
+            } else if (type === "Select Menu") {
+                const stype = data.get("stype");
+                let builder;
+                if (stype === "User") {
+                    builder = new UserSelectMenuBuilder();
+                } else if (stype === "Role") {
+                    builder = new RoleSelectMenuBuilder();
+                } else if (stype === "Mentionable") {
+                    builder = new MentionableSelectMenuBuilder();
+                } else if (stype === "Channel") {
+                    builder = new ChannelSelectMenuBuilder();
+                } else {
+                    builder = new StringSelectMenuBuilder();
+                }
+                const id = data.get("sid");
+                const label = data.get("slabel");
+                const desc = data.get("sdesc");
+                const placeholder = data.get("splaceholder");
+                const srequired = data.get("srequired") === "True";
+                const smin = Number(data.get("smin"));
+                const smax = Number(data.get("smax"));
+                const options = data.get("soptions");
                 Bot.modals[customId].data[id] = {
                     type: "SelectMenu",
-                    variable: data.get("seloptions")
+                    variable: data.get("seloptions"),
+                    stype,
+                };
+                builder
+                    .setCustomId(id)
+                    .setPlaceholder(placeholder)
+                    .setRequired(srequired)
+                    .setMinValues(smin)
+                    .setMaxValues(smax);
+                if (stype === "Text") {
+                    options.forEach(({ data }) => {
+                        const label = data.get("label");
+                        const description = data.get("description");
+                        const value = data.get("value");
+                        const emoji = data.get("emoji");
+                        const isdefault = data.get("default") === "True";
+                        const opt = new StringSelectMenuOptionBuilder()
+                            .setLabel(label)
+                            .setDescription(description)
+                            .setValue(value)
+                            .setDefault(isdefault);
+                        if (emoji) opt.setEmoji(emoji);
+                        builder.addOptions(opt);
+                    });
                 }
-                builder.setCustomId(id).setPlaceholder(placeholder).setRequired(srequired).setMinValues(smin).setMaxValues(smax)
-                options.forEach(({data}) => {
-                    const label = data.get("label")
-                    const description = data.get("description")
-                    const value = data.get("value")
-                    const emoji = data.get("emoji")
-                    const isdefault = data.get("default") === "True"
-                    const opt = new StringSelectMenuOptionBuilder().setLabel(label).setDescription(description).setValue(value).setDefault(isdefault)
-                    if(emoji) opt.setEmoji(emoji)
-                    builder.addOptions(opt)
-                })
                 const selectLabel = new LabelBuilder()
                     .setLabel(label)
-                    .setDescription(desc)
-                    .setStringSelectMenuComponent(builder);
-                modal.addLabelComponents(selectLabel)
-            } else if(type === "File Upload") {
-                const id = data.get("fid")
-                const label = data.get("flabel")
-                const desc = data.get("fdesc")
-                const required = data.get("frequired") === "True"
-                const min = Number(data.get("fmin"))
-                const max = Number(data.get("fmax"))
+                    .setDescription(desc);
+                if (stype === "User") {
+                    selectLabel.setUserSelectMenuComponent(builder);
+                } else if (stype === "Role") {
+                    selectLabel.setRoleSelectMenuComponent(builder);
+                } else if (stype === "Mentionable") {
+                    selectLabel.setMentionableSelectMenuComponent(builder);
+                } else if (stype === "Channel") {
+                    selectLabel.setChannelSelectMenuComponent(builder);
+                } else {
+                    selectLabel.setStringSelectMenuComponent(builder);
+                }
+                modal.addLabelComponents(selectLabel);
+            } else if (type === "File Upload") {
+                const id = data.get("fid");
+                const label = data.get("flabel");
+                const desc = data.get("fdesc");
+                const required = data.get("frequired") === "True";
+                const min = Number(data.get("fmin"));
+                const max = Number(data.get("fmax"));
                 Bot.modals[customId].data[id] = {
                     type: "FileUpload",
-                    variable: data.get("fbuffer")
-                }
+                    variable: data.get("fbuffer"),
+                };
                 const file = new FileUploadBuilder()
                     .setCustomId(id)
                     .setRequired(required)
                     .setMinValues(min)
-                    .setMaxValues(max)
+                    .setMaxValues(max);
                 const fileLabel = new LabelBuilder()
                     .setLabel(label)
                     .setDescription(desc)
                     .setFileUploadComponent(file);
                 modal.addLabelComponents(fileLabel);
             }
-        })
-        const origin = getVariable(data.get("origin"))
-        origin.showModal(modal)
-        actionManager.runNext(id, "action")
+        });
+        const origin = getVariable(data.get("origin"));
+        origin.showModal(modal);
+        actionManager.runNext(id, "action");
     }
 }

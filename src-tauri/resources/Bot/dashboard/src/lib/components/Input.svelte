@@ -77,18 +77,21 @@
 				<Select.Trigger class="w-full">
 					{input.multiple
 						? value.filter((value) => roles.find((v) => v.id === value)).length !== 0
-							? `${value.map((value) => '@' + roles.find((v) => v.id === value).name)}`
+							? `${value.map((value) => (roles.find((v) => v.id === value).name === '@everyone' ? '' : '@') + roles.find((v) => v.id === value).name)}`
 							: 'Select roles'
 						: roles.find((v) => v.id === value)
-							? `@${roles.find((v) => v.id === value).name}`
+							? `${(roles.find((v) => v.id === value).name === '@everyone' ? '' : '@') + roles.find((v) => v.id === value).name}`
 							: 'Select a role'}
 				</Select.Trigger>
 				<Select.Content>
 					<Select.Group>
 						<Select.Label>Roles</Select.Label>
 						{#each roles as value, i (i)}
-							<Select.Item value={value.id} label={'@' + value.name}>
-								@{value.name}
+							<Select.Item
+								value={value.id}
+								label={(value.name === '@everyone' ? '' : '@') + value.name}
+							>
+								{(value.name === '@everyone' ? '' : '@') + value.name}
 							</Select.Item>
 						{/each}
 					</Select.Group>
@@ -137,7 +140,7 @@
 				<Select.Trigger class="w-full">
 					{input.multiple
 						? value.filter((value) => channels.find((v) => v.id === value)).length !== 0
-							? `${value.map((value) => '#' + channels.find((v) => v.id === value).name)}`
+							? `${value.map((value) => (channels.find((v) => v.id === value).type === 4 ? '' : '#') + channels.find((v) => v.id === value).name)}`
 							: 'Select channels'
 						: channels.find((v) => v.id === value)
 							? `${channels.find((v) => v.id === value).type === 4 ? '' : '#'}${channels.find((v) => v.id === value).name}`
