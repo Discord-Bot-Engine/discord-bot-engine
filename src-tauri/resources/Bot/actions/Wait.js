@@ -19,7 +19,7 @@ export default class Wait {
     static async load(context) {
         if(!Bot.initWaits) {
             Bot.initWaits = true
-            Bot.client.on(Events.ClientReady, async (reaction, user) => {
+            Bot.client.on(Events.ClientReady, async () => {
                 const raw = await Bot.getData(`$WAITS$$$`);
                 if (!raw) return;
                 const date = Date.now()
