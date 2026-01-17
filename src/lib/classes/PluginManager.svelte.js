@@ -28,7 +28,7 @@ class PluginManagerClass {
 			const timestamp = parsed.timestamp;
 			if(Date.now() >= timestamp) {
 				const now = new Date();
-				const future = new Date(now.getTime() + 2 * 60 * 1000);
+				const future = new Date(now.getTime() + 2 * 60 * 1000).getTime();
 				actions = await fetch(`${path}/actions`).then(res => res.json())
 				triggers = await fetch(`${path}/triggers`).then(res => res.json())
 				extensions = await fetch(`${path}/extensions`).then(res => res.json())

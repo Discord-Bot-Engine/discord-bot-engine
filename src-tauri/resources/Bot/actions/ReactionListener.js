@@ -82,25 +82,25 @@ export default class ReactionListener {
                 const data = JSON.parse(raw)
                 const triggerIds = data.triggerIds
                 Object.keys(triggerIds).forEach(triggerId => {
-                    triggerIds[triggerId].actionIds.forEach(async actionId => {
+                    triggerIds[triggerId].actionIds.forEach(async action => {
                         const t = Bot.triggers.find(t => t.id === triggerId)
                         const actionManager = t.lastManager ?? new ActionManager(t)
                         for (const key in (data.variables ?? {})) {
                             actionManager.setVariable(key, await Bot.restore(data.variables[key]));
                         }
-                        const react = data.data["reaction"]
-                        const mem = data.data["member"]
-                        const u = data.data["user"]
-                        const ch = data.data["channel"]
-                        const sv = data.data["server"]
-                        const emojis = data.emojis;
+                        const react = action.data["reaction"]
+                        const mem = action.data["member"]
+                        const u = action.data["user"]
+                        const ch = action.data["channel"]
+                        const sv = action.data["server"]
+                        const emojis = action.emojis;
                         const op = reaction.emoji.id ? emojis[reaction.emoji.id] : emojis[reaction.emoji.name];
                         actionManager.setVariable(react, reaction)
                         actionManager.setVariable(mem, await reaction.message.guild.members.fetch(user.id))
                         actionManager.setVariable(u, user)
                         actionManager.setVariable(ch, reaction.message.channel)
                         actionManager.setVariable(sv, reaction.message.guild)
-                        actionManager.runNext(actionId, `${op} added`)
+                        actionManager.runNext(action.id, `${op} added`)
                     })
                 })
             })
@@ -112,25 +112,25 @@ export default class ReactionListener {
                 const data = JSON.parse(raw)
                 const triggerIds = data.triggerIds
                 Object.keys(triggerIds).forEach(triggerId => {
-                    triggerIds[triggerId].actionIds.forEach(async actionId => {
+                    triggerIds[triggerId].actionIds.forEach(async action => {
                         const t = Bot.triggers.find(t => t.id === triggerId)
                         const actionManager = t.lastManager ?? new ActionManager(t)
                         for (const key in (data.variables ?? {})) {
                             actionManager.setVariable(key, await Bot.restore(data.variables[key]));
                         }
-                        const react = data.data["reaction"]
-                        const mem = data.data["member"]
-                        const u = data.data["user"]
-                        const ch = data.data["channel"]
-                        const sv = data.data["server"]
-                        const emojis = data.emojis;
+                        const react = action.data["reaction"]
+                        const mem = action.data["member"]
+                        const u = action.data["user"]
+                        const ch = action.data["channel"]
+                        const sv = action.data["server"]
+                        const emojis = action.emojis;
                         const op = reaction.emoji.id ? emojis[reaction.emoji.id] : emojis[reaction.emoji.name];
                         actionManager.setVariable(react, reaction)
                         actionManager.setVariable(mem, await reaction.message.guild.members.fetch(user.id))
                         actionManager.setVariable(u, user)
                         actionManager.setVariable(ch, reaction.message.channel)
                         actionManager.setVariable(sv, reaction.message.guild)
-                        actionManager.runNext(actionId, `${op} removed`)
+                        actionManager.runNext(action.id, `${op} added`)
                     })
                 })
             })
@@ -158,36 +158,41 @@ export default class ReactionListener {
             if(raw) {
                 const data = JSON.parse(raw)
                 data.triggerIds[actionManager.trigger.id] ??= { actionIds: [] }
-                if(data.triggerIds[actionManager.trigger.id].actionIds.indexOf(id) === -1)
-                    data.triggerIds[actionManager.trigger.id].actionIds.push(id)
+                if(!data.triggerIds[actionManager.trigger.id].actionIds.find(act => act.id === id))
+                    data.triggerIds[actionManager.trigger.id].actionIds.push({
+                        id,
+                        emojis: map,
+                        data: {
+                            reaction: data.get("reaction"),
+                            member: data.get("member"),
+                            user: data.get("user"),
+                            channel: data.get("channel"),
+                            server: data.get("server")
+                        }
+                    })
                 await Bot.setData(`$REACTIONS$$$${origin.channel.id}${origin.id}`, JSON.stringify({
                     triggerIds: data.triggerIds,
-                    variables,
-                    emojis: map,
-                    data: {
-                        reaction: data.get("reaction"),
-                        member: data.get("member"),
-                        user: data.get("user"),
-                        channel: data.get("channel"),
-                        server: data.get("server")
-                    }
+                    variables
                 }))
             } else {
                 await Bot.setData(`$REACTIONS$$$${origin.channel.id}${origin.id}`, JSON.stringify({
                     triggerIds: {
                         [actionManager.trigger.id]: {
-                            actionIds: [id]
+                            actionIds: [{
+                                id,
+                                emojis: map,
+                                data: {
+                                    reaction: data.get("reaction"),
+                                    member: data.get("member"),
+                                    user: data.get("user"),
+                                    channel: data.get("channel"),
+                                    server: data.get("server")
+                                }
+                            }]
                         }
                     },
                     variables,
                     emojis: map,
-                    data: {
-                        reaction: data.get("reaction"),
-                        member: data.get("member"),
-                        user: data.get("user"),
-                        channel: data.get("channel"),
-                        server: data.get("server")
-                    }
                 }))
             }
         } else {
