@@ -15,7 +15,12 @@ import {
     SeparatorSpacingSize,
     ButtonStyle,
     ComponentType,
-    MessageFlags, Events,
+    MessageFlags,
+    Events,
+    UserSelectMenuBuilder,
+    MentionableSelectMenuBuilder,
+    ChannelSelectMenuBuilder,
+    RoleSelectMenuBuilder,
 } from "discord.js"
 
 export default class Reply {
@@ -165,6 +170,10 @@ export default class Reply {
                         <dbe-label name="Custom ID"></dbe-label>
                         <dbe-input name="sid" class="col-span-3"></dbe-input>
                     </div>
+                    <div class="grid grid-cols-4 items-center gap-4">
+                        <dbe-label name="Type"></dbe-label>
+                        <dbe-select name="stype" class="col-span-3" change="(value, el) => el.parentElement.parentElement.querySelector('#opts').style.display = value === 'Text' ? '' : 'none'" values="Text,Mentionable,Role,Channel,User" value="Text"></dbe-select>
+                    </div>
                      <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Placeholder"></dbe-label>
                         <dbe-input name="splaceholder" class="col-span-3"></dbe-input>
@@ -213,7 +222,7 @@ export default class Reply {
                         <dbe-label name="Store server in variable"></dbe-label>
                         <dbe-variable-list name="sserver" class="col-span-3" variableType="Server"></dbe-variable-list>
                     </div>
-                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
+                    <dbe-list name="soptions" id="opts" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
              </div>
              <div id="comps" class="grid gap-4">
                 <div class="grid grid-cols-4 items-center gap-4">
@@ -334,6 +343,10 @@ export default class Reply {
                         <dbe-label name="Custom ID"></dbe-label>
                         <dbe-input name="sid" class="col-span-3"></dbe-input>
                     </div>
+                    <div class="grid grid-cols-4 items-center gap-4">
+                        <dbe-label name="Type"></dbe-label>
+                        <dbe-select name="stype" class="col-span-3" change="(value, el) => el.parentElement.parentElement.querySelector('#opts').style.display = value === 'Text' ? '' : 'none'" values="Text,Mentionable,Role,Channel,User" value="Text"></dbe-select>
+                    </div>
                      <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Placeholder"></dbe-label>
                         <dbe-input name="splaceholder" class="col-span-3"></dbe-input>
@@ -382,7 +395,7 @@ export default class Reply {
                         <dbe-label name="Store server in variable"></dbe-label>
                         <dbe-variable-list name="sserver" class="col-span-3" variableType="Server"></dbe-variable-list>
                     </div>
-                    <dbe-list name="soptions" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
+                    <dbe-list name="soptions" id="opts" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('label') ? item.data.get('label') : await App.translate('Option #'+i, App.selectedLanguage)"></dbe-list>
              </div>
         </template>
         <template id="galleryModal" class="grid gap-4">
@@ -501,7 +514,7 @@ export default class Reply {
         if(!Bot.initComponents) {
             Bot.initComponents = true
             Bot.client.on(Events.InteractionCreate, async (i) => {
-                if(!i.isButton() && !i.isStringSelectMenu()) return;
+                if(!i.isButton() && !i.isAnySelectMenu()) return;
                 const raw = await Bot.getData(`$COMPONENTS$$$${i.channel.id}${i.message.id}`);
                 if(!raw) return;
                 const data = JSON.parse(raw)
@@ -530,6 +543,7 @@ export default class Reply {
                     actionManager.setVariable(sv, i.guild)
                 } else {
                     const menu = selectmenus.find(s => s.id === i.customId)
+                    const type = menu.type
                     const int = menu.data["sinteraction"]
                     const opts = menu.data["seloptions"]
                     const msg = menu.data["smessage"]
@@ -537,8 +551,20 @@ export default class Reply {
                     const user = menu.data["suser"]
                     const ch = menu.data["schannel"]
                     const sv = menu.data["sserver"]
+                    let values;
+                    if(type === "User") {
+                        values = await Promise.all(i.values.map(v => Bot.client.users.fetch(v)))
+                    } else if(type === "Channel") {
+                        values = await Promise.all(i.values.map(v => i.guild.channels.fetch(v)))
+                    } else if(type === "Role") {
+                        values = await Promise.all(i.values.map(v => i.guild.roles.fetch(v)))
+                    } else if(type === "Mentionable") {
+                        values = await Promise.all(i.values.map(async v => await i.guild.roles.fetch(v).catch(() => {}) ?? await Bot.client.users.fetch(v).catch(() => {})))
+                    } else {
+                        values = i.values
+                    }
                     actionManager.setVariable(int, i)
-                    actionManager.setVariable(opts, i.values)
+                    actionManager.setVariable(opts, values)
                     actionManager.setVariable(msg, i.message)
                     actionManager.setVariable(mem, i.member)
                     actionManager.setVariable(user, i.user)
@@ -640,7 +666,19 @@ export default class Reply {
                 if(!list[currentRow]) list[currentRow] = new ActionRowBuilder()
                 list[currentRow].addComponents(builder)
             } else if(type === "Select Menu") {
-                const builder = new StringSelectMenuBuilder()
+                const stype = data.get("stype")
+                let builder;
+                if(stype === "User") {
+                    builder = new UserSelectMenuBuilder()
+                } else if(stype === "Role") {
+                    builder = new RoleSelectMenuBuilder()
+                } else if(stype === "Channel") {
+                    builder = new ChannelSelectMenuBuilder()
+                } else if(stype === "Mentionable") {
+                    builder = new MentionableSelectMenuBuilder()
+                } else {
+                    builder = new StringSelectMenuBuilder()
+                }
                 const id = data.get("sid")
                 const placeholder = data.get("splaceholder")
                 const srequired = data.get("srequired") === "True"
@@ -648,18 +686,20 @@ export default class Reply {
                 const smax = Number(data.get("smax"))
                 const sdisabled = data.get("sdisabled") === "True"
                 const options = data.get("soptions")
-                selectmenus.push({id, data})
+                selectmenus.push({id, data, type: stype})
                 builder.setCustomId(id).setPlaceholder(placeholder).setRequired(srequired).setMinValues(smin).setMaxValues(smax).setDisabled(sdisabled)
-                options.forEach(({data}) => {
-                    const label = data.get("label")
-                    const description = data.get("description")
-                    const value = data.get("value")
-                    const emoji = data.get("emoji")
-                    const isdefault = data.get("default") === "True"
-                    const opt = new StringSelectMenuOptionBuilder().setLabel(label).setDescription(description).setValue(value).setDefault(isdefault)
-                    if(emoji) opt.setEmoji(emoji)
-                    builder.addOptions(opt)
-                })
+                if(stype === "Text") {
+                   options.forEach(({data}) => {
+                       const label = data.get("label")
+                       const description = data.get("description")
+                       const value = data.get("value")
+                       const emoji = data.get("emoji")
+                       const isdefault = data.get("default") === "True"
+                       const opt = new StringSelectMenuOptionBuilder().setLabel(label).setDescription(description).setValue(value).setDefault(isdefault)
+                       if (emoji) opt.setEmoji(emoji)
+                       builder.addOptions(opt)
+                   })
+                }
                 currentRow = i;
                 if(!list[currentRow]) list[currentRow] = new ActionRowBuilder()
                 list[currentRow].addComponents(builder)
@@ -758,7 +798,19 @@ export default class Reply {
                         rows[currentCompRow].addComponents(builder)
                         container.addActionRowComponents(rows[currentCompRow])
                     } else if(type === "Select Menu") {
-                        const builder = new StringSelectMenuBuilder()
+                        const stype = data.get("stype")
+                        let builder
+                        if(stype === "User") {
+                            builder = new UserSelectMenuBuilder()
+                        } else if(stype === "Role") {
+                            builder = new RoleSelectMenuBuilder()
+                        } else if(stype === "Channel") {
+                            builder = new ChannelSelectMenuBuilder()
+                        } else if(stype === "Mentionable") {
+                            builder = new MentionableSelectMenuBuilder()
+                        } else {
+                            builder = new StringSelectMenuBuilder()
+                        }
                         const id = data.get("sid")
                         const placeholder = data.get("splaceholder")
                         const srequired = data.get("srequired") === "True"
@@ -766,18 +818,20 @@ export default class Reply {
                         const smax = Number(data.get("smax"))
                         const sdisabled = data.get("sdisabled") === "True"
                         const options = data.get("soptions")
-                        selectmenus.push({id, data})
+                        selectmenus.push({id, data, type: stype})
                         builder.setCustomId(id).setPlaceholder(placeholder).setDisabled(sdisabled).setRequired(srequired).setMinValues(smin).setMaxValues(smax)
-                        options.forEach(({data}) => {
-                            const label = data.get("label")
-                            const description = data.get("description")
-                            const value = data.get("value")
-                            const emoji = data.get("emoji")
-                            const isdefault = data.get("default") === "True"
-                            const opt = new StringSelectMenuOptionBuilder().setLabel(label).setDescription(description).setValue(value).setDefault(isdefault)
-                            if(emoji) opt.setEmoji(emoji)
-                            builder.addOptions(opt)
-                        })
+                        if(type === "Text") {
+                            options.forEach(({data}) => {
+                                const label = data.get("label")
+                                const description = data.get("description")
+                                const value = data.get("value")
+                                const emoji = data.get("emoji")
+                                const isdefault = data.get("default") === "True"
+                                const opt = new StringSelectMenuOptionBuilder().setLabel(label).setDescription(description).setValue(value).setDefault(isdefault)
+                                if (emoji) opt.setEmoji(emoji)
+                                builder.addOptions(opt)
+                            })
+                        }
                         if(rows[currentCompRow]) currentCompRow++;
                         if(!rows[currentCompRow]) rows[currentCompRow] = new ActionRowBuilder()
                         rows[currentCompRow].addComponents(builder)
@@ -845,7 +899,7 @@ export default class Reply {
             }))
         } else {
             const collector = r.createMessageComponentCollector()
-            collector.on("collect", i => {
+            collector.on("collect", async i => {
                 if(i.isButton()) {
                     const btn = buttons.find(b => b.id === i.customId)
                     const int = btn.data.get("binteraction")
@@ -862,6 +916,7 @@ export default class Reply {
                     actionManager.setVariable(sv, i.guild)
                 } else {
                     const menu = selectmenus.find(s => s.id === i.customId)
+                    const type = menu.type
                     const int = menu.data.get("sinteraction")
                     const opts = menu.data.get("seloptions")
                     const msg = menu.data.get("smessage")
@@ -869,8 +924,28 @@ export default class Reply {
                     const user = menu.data.get("suser")
                     const ch = menu.data.get("schannel")
                     const sv = menu.data.get("sserver")
+                    let values;
+                    if(type === "User") {
+                        values = await Promise.all(i.values.map(v => Bot.client.users.fetch(v)))
+                    } else if(type === "Channel") {
+                        values = await Promise.all(i.values.map(v => i.guild.channels.fetch(v)))
+                    } else if(type === "Role") {
+                        values = await Promise.all(i.values.map(v => i.guild.roles.fetch(v)))
+                    } else if(type === "Mentionable") {
+                        values = await Promise.all(i.values.map(async v => {
+                            let value
+                            try {
+                                value = await i.guild.roles.fetch(v)
+                            } catch {
+                                value = await Bot.client.users.fetch(v)
+                            }
+                            return value
+                        }))
+                    } else {
+                        values = i.values
+                    }
                     actionManager.setVariable(int, i)
-                    actionManager.setVariable(opts, i.values)
+                    actionManager.setVariable(opts, values)
                     actionManager.setVariable(msg, i.message)
                     actionManager.setVariable(mem, i.member)
                     actionManager.setVariable(user, i.user)

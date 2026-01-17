@@ -15,6 +15,7 @@ class AppClass {
 	selectedTheme = $state(null)
 	selectedLanguage = $state("en")
 	translations = {}
+	state = new Activity()
 
 	constructor() {
 		start("1435285281652867095")
@@ -56,23 +57,22 @@ class AppClass {
 	}
 
 	updateActivity(updateTimestamp) {
-		const state = new Activity()
 		if(BotManager.selectedBot) {
-			state.setDetails(`Discord Bot Engine - ${BotManager.selectedBot.name}`)
+			this.state.setDetails(`Discord Bot Engine - ${BotManager.selectedBot.name}`)
 			if(App.selectedTrigger) {
 				state.setState(`${App.selectedTrigger.name} - ${App.selectedTrigger.actions.length} actions`)
 			}
 		}
-		state.setButton(
+		this.state.setButton(
 			[
 				new Button("Buy", "https://discordbotengine.itch.io/discord-bot-engine"),
 				new Button("Join Discord", "https://discord.gg/wNCFpR6JJX")
 			]
 		)
 		if(updateTimestamp) {
-			state.setTimestamps(new Timestamps(Date.now()))
+			this.state.setTimestamps(new Timestamps(Date.now()))
 		}
-		setActivity(state)
+		setActivity(this.state)
 	}
 	updateUndo() {
 		BotManager.selectedBot.markAsModified(this.selectedTrigger.id);

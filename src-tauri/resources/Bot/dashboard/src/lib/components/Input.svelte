@@ -77,10 +77,10 @@
 				<Select.Trigger class="w-full">
 					{input.multiple
 						? value.filter((value) => roles.find((v) => v.id === value)).length !== 0
-							? `${value.map((value) => (roles.find((v) => v.id === value).name === '@everyone' ? '' : '@') + roles.find((v) => v.id === value).name)}`
+							? `${value.filter((value) => roles.find((v) => v.id === value)).map((value) => (roles.find((v) => v.id === value)?.name === '@everyone' ? '' : '@') + roles.find((v) => v.id === value)?.name)}`
 							: 'Select roles'
 						: roles.find((v) => v.id === value)
-							? `${(roles.find((v) => v.id === value).name === '@everyone' ? '' : '@') + roles.find((v) => v.id === value).name}`
+							? `${(roles.find((v) => v.id === value)?.name === '@everyone' ? '' : '@') + roles.find((v) => v.id === value)?.name}`
 							: 'Select a role'}
 				</Select.Trigger>
 				<Select.Content>
@@ -110,10 +110,10 @@
 				<Select.Trigger class="w-full">
 					{input.multiple
 						? value.filter((value) => members.find((v) => v.id === value)).length !== 0
-							? `${value.map((value) => '@' + members.find((v) => v.id === value).name)}`
+							? `${value.filter((value) => members.find((v) => v.id === value)).map((value) => '@' + members.find((v) => v.id === value)?.name)}`
 							: 'Select members'
 						: members.find((v) => v.id === value)
-							? `#${members.find((v) => v.id === value).name}`
+							? `#${members.find((v) => v.id === value)?.name}`
 							: 'Select a member'}
 				</Select.Trigger>
 				<Select.Content>
@@ -140,10 +140,10 @@
 				<Select.Trigger class="w-full">
 					{input.multiple
 						? value.filter((value) => channels.find((v) => v.id === value)).length !== 0
-							? `${value.map((value) => (channels.find((v) => v.id === value).type === 4 ? '' : '#') + channels.find((v) => v.id === value).name)}`
+							? `${value.filter((value) => channels.find((v) => v.id === value)).map((value) => (channels.find((v) => v.id === value)?.type === 4 ? '' : '#') + channels.find((v) => v.id === value)?.name)}`
 							: 'Select channels'
 						: channels.find((v) => v.id === value)
-							? `${channels.find((v) => v.id === value).type === 4 ? '' : '#'}${channels.find((v) => v.id === value).name}`
+							? `${channels.find((v) => v.id === value)?.type === 4 ? '' : '#'}${channels.find((v) => v.id === value)?.name}`
 							: 'Select a channel'}
 				</Select.Trigger>
 				<Select.Content>
@@ -170,10 +170,10 @@
 				<Select.Trigger class="w-full">
 					{input.multiple
 						? value.filter((value) => channels.find((v) => v.id === value)).length !== 0
-							? `${value.map((value) => '#' + channels.find((v) => v.id === value).name)}`
+							? `${value.filter((value) => channels.find((v) => v.id === value)).map((value) => '#' + channels.find((v) => v.id === value)?.name)}`
 							: 'Select channels'
 						: channels.find((v) => v.id === value)
-							? `#${channels.find((v) => v.id === value).name}`
+							? `#${channels.find((v) => v.id === value)?.name}`
 							: 'Select a channel'}
 				</Select.Trigger>
 				<Select.Content>
@@ -200,10 +200,10 @@
 				<Select.Trigger class="w-full">
 					{input.multiple
 						? value.filter((value) => channels.find((v) => v.id === value)).length !== 0
-							? `${value.map((value) => '#' + channels.find((v) => v.id === value).name)}`
+							? `${value.filter((value) => channels.find((v) => v.id === value)).map((value) => '#' + channels.find((v) => v.id === value)?.name)}`
 							: 'Select channels'
 						: channels.find((v) => v.id === value)
-							? `#${channels.find((v) => v.id === value).name}`
+							? `#${channels.find((v) => v.id === value)?.name}`
 							: 'Select a channel'}
 				</Select.Trigger>
 				<Select.Content>
@@ -230,10 +230,10 @@
 				<Select.Trigger class="w-full">
 					{input.multiple
 						? value.filter((value) => channels.find((v) => v.id === value)).length !== 0
-							? `${value.map((value) => channels.find((v) => v.id === value).name)}`
+							? `${value.filter((value) => channels.find((v) => v.id === value)).map((value) => channels.find((v) => v.id === value)?.name)}`
 							: 'Select categories'
 						: channels.find((v) => v.id === value)
-							? `${channels.find((v) => v.id === value).name}`
+							? `${channels.find((v) => v.id === value)?.name}`
 							: 'Select a category'}
 				</Select.Trigger>
 				<Select.Content>
@@ -260,10 +260,10 @@
 				<Select.Trigger class="w-full">
 					{input.multiple
 						? value.filter((value) => mentionables.find((v) => v.id === value)).length !== 0
-							? `${value.map((value) => '@' + mentionables.find((v) => v.id === value).name)}`
+							? `${value.filter((value) => mentionables.find((v) => v.id === value)).map((value) => '@' + mentionables.find((v) => v.id === value)?.name)}`
 							: 'Select mentionable'
 						: mentionables.find((v) => v.id === value)
-							? `@${mentionables.find((v) => v.id === value).name}`
+							? `@${mentionables.find((v) => v.id === value)?.name}`
 							: 'Select a mentionable'}
 				</Select.Trigger>
 				<Select.Content>

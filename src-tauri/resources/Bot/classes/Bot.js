@@ -160,6 +160,8 @@ class BotClass {
                     col.set(key, await this.restore(value.data[key]));
                 }
                 return col;
+            } else if(value.type === "Buffer") {
+                return Buffer.from(value.data)
             } else if(typeof value === "object") {
                 for (const key in value) {
                     value[key] = await this.restore(value[key]);
@@ -172,6 +174,7 @@ class BotClass {
     };
 
     serialize(value) {
+        if(Buffer.isBuffer(value)) return value;
         if (Array.isArray(value)) {
             const arr = [];
             for (const el of value) {
