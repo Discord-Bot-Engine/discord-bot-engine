@@ -20,7 +20,7 @@ import {
     UserSelectMenuBuilder,
     RoleSelectMenuBuilder,
     ChannelSelectMenuBuilder,
-    MentionableSelectMenuBuilder,
+    MentionableSelectMenuBuilder, ChannelType,
 } from "discord.js"
 
 export default class EditMessage {
@@ -164,7 +164,11 @@ export default class EditMessage {
                     </div>
                     <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Type"></dbe-label>
-                        <dbe-select name="stype" class="col-span-3" change="(value, el) => el.parentElement.parentElement.querySelector('#opts').style.display = value === 'Text' ? '' : 'none'" values="Text,Mentionable,Role,Channel,User" value="Text"></dbe-select>
+                        <dbe-select name="stype" class="col-span-3" change="(value, el) => {el.parentElement.parentElement.querySelector('#opts').style.display = value === 'Text' ? '' : 'none'; el.parentElement.parentElement.querySelector('#chtype').style.display = value === 'Channel' ? '' : 'none';}" values="Text,Mentionable,Role,Channel,User" value="Text"></dbe-select>
+                    </div>
+                    <div class="grid grid-cols-4 items-center gap-4" id="chtype">
+                        <dbe-label name="Channel Type"></dbe-label>
+                        <dbe-select name="schtype" class="col-span-3" values="Any,Text,Voice,Category" value="Any"></dbe-select>
                     </div>
                      <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Placeholder"></dbe-label>
@@ -335,9 +339,13 @@ export default class EditMessage {
                         <dbe-label name="Custom ID"></dbe-label>
                         <dbe-input name="sid" class="col-span-3"></dbe-input>
                     </div>
-                    <div class="grid grid-cols-4 items-center gap-4">
+                   <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Type"></dbe-label>
-                        <dbe-select name="stype" class="col-span-3" change="(value, el) => el.parentElement.parentElement.querySelector('#opts').style.display = value === 'Text' ? '' : 'none'" values="Text,Mentionable,Role,Channel,User" value="Text"></dbe-select>
+                        <dbe-select name="stype" class="col-span-3" change="(value, el) => {el.parentElement.parentElement.querySelector('#opts').style.display = value === 'Text' ? '' : 'none'; el.parentElement.parentElement.querySelector('#chtype').style.display = value === 'Channel' ? '' : 'none';}" values="Text,Mentionable,Role,Channel,User" value="Text"></dbe-select>
+                    </div>
+                    <div class="grid grid-cols-4 items-center gap-4" id="chtype">
+                        <dbe-label name="Channel Type"></dbe-label>
+                        <dbe-select name="schtype" class="col-span-3" values="Any,Text,Voice,Category" value="Any"></dbe-select>
                     </div>
                      <div class="grid grid-cols-4 items-center gap-4">
                         <dbe-label name="Placeholder"></dbe-label>
@@ -683,7 +691,16 @@ export default class EditMessage {
                 const options = data.get("soptions")
                 selectmenus.push({id, data, type: stype})
                 builder.setCustomId(id).setPlaceholder(placeholder).setRequired(srequired).setMinValues(smin).setMaxValues(smax).setDisabled(sdisabled)
-                if(stype === "Text") {
+                if(stype === "Channel") {
+                    const chtype = data.get("schtype")
+                    if(chtype === "Text") {
+                        builder.setChannelTypes([ChannelType.GuildText])
+                    } else if(chtype === "Voice") {
+                        builder.setChannelTypes([ChannelType.GuildVoice])
+                    } else if(chtype === "Category") {
+                        builder.setChannelTypes([ChannelType.GuildCategory])
+                    }
+                } else if(stype === "Text") {
                     options.forEach(({data}) => {
                         const label = data.get("label")
                         const description = data.get("description")
@@ -815,7 +832,16 @@ export default class EditMessage {
                         const options = data.get("soptions")
                         selectmenus.push({id, data, type: stype})
                         builder.setCustomId(id).setPlaceholder(placeholder).setDisabled(sdisabled).setRequired(srequired).setMinValues(smin).setMaxValues(smax)
-                        if(type === "Text") {
+                        if(stype === "Channel") {
+                            const chtype = data.get("schtype")
+                            if(chtype === "Text") {
+                                builder.setChannelTypes([ChannelType.GuildText])
+                            } else if(chtype === "Voice") {
+                                builder.setChannelTypes([ChannelType.GuildVoice])
+                            } else if(chtype === "Category") {
+                                builder.setChannelTypes([ChannelType.GuildCategory])
+                            }
+                        } else if(stype === "Text") {
                             options.forEach(({data}) => {
                                 const label = data.get("label")
                                 const description = data.get("description")
