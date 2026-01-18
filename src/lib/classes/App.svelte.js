@@ -60,7 +60,7 @@ class AppClass {
 		if(BotManager.selectedBot) {
 			this.state.setDetails(`Discord Bot Engine - ${BotManager.selectedBot.name}`)
 			if(App.selectedTrigger) {
-				state.setState(`${App.selectedTrigger.name} - ${App.selectedTrigger.actions.length} actions`)
+				this.state.setState(`${App.selectedTrigger.name} - ${App.selectedTrigger.actions.length} actions`)
 			}
 		}
 		this.state.setButton(
