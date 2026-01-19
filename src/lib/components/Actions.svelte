@@ -170,8 +170,8 @@
             <Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => deleteActions()}
     ><MinusIcon /></Button>
         </div>
+        <div class="bg-muted h-full w-full border-t-1">
             {#if App.selectedTrigger}
-                <div class="bg-muted h-full w-full border-t-1">
                     <SvelteFlow onbeforedelete={() => {
                     BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
                     if(document.activeElement.tagName !== "BODY" && !document.activeElement.getAttribute("class").startsWith("svelte-flow") || getSelection().toString()) return false;
@@ -186,8 +186,8 @@
                 }} onnodedragstart={() => App.updateUndo()} onconnectstart={() => App.updateUndo()} proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
                         <Background bgColor="transparent"></Background>
                     </SvelteFlow>
-                </div>
             {/if}
+        </div>
     </Card.Content>
 </Card.Root>
 <Modal bind:open={isCreatingAction} title="Add Action" onDone={() => addAction()}>

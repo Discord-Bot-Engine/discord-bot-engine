@@ -16,7 +16,7 @@
         {/if}
     </Button>
     {#if !App.hideConsole}
-<Card.Root class="!rounded-none w-full h-full min-h-50 p-1 relative shadow-none">
+<Card.Root class="!rounded-none border-t-0 w-full h-full min-h-50 p-1 relative shadow-none">
     <Card.Content class="p-1 px-1 overflow-hidden h-full">
         <div class="flex justify-end h-fit font-bold">
             <label class="mr-auto text-md"><Translation text="Console"/></label>
