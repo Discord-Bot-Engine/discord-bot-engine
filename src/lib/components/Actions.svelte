@@ -67,6 +67,7 @@
            nodes.update(nodes => nodes.map(n => ({...n, selected: true})))
        } else if(ev.key === "z" && ev.ctrlKey && App.selectedTrigger) {
            if(!BotManager.selectedBot.undos.length) return;
+           BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
            const state = JSON.parse(BotManager.selectedBot.undos.pop())
            const newActions = []
            App.selectedTrigger.actions.forEach(action => {
@@ -81,6 +82,7 @@
            App.selectedTrigger.edges = state.edges
        } else if(ev.key === "y" && ev.ctrlKey && App.selectedTrigger) {
            if(!BotManager.selectedBot.redos.length) return;
+           BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
            const state = JSON.parse(BotManager.selectedBot.redos.pop())
            const newActions = []
            App.selectedTrigger.actions.forEach(action => {

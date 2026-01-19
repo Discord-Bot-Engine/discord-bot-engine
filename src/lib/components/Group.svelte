@@ -4,6 +4,7 @@
     import {NodeResizer} from "@xyflow/svelte";
     import Translation from "$lib/components/Translation.svelte";
     import {onMount} from "svelte";
+    import {BotManager} from "$lib/classes/BotManager.svelte.js";
     let { id, data, selected } = $props();
     const group = $derived(App.selectedTrigger.actions.find(act => act.id === id));
     $effect(() => {
@@ -15,7 +16,10 @@
 </script>
 
 {#if selected}
-    <NodeResizer onResize={(ev, {width, height}) => {
+    <NodeResizer onResizeStart={() => {
+        BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
+        App.updateUndo()
+    }} onResize={(ev, {width, height}) => {
         data.set("width", width);
         data.set("height", height);
     }} class="!border-primary !bg-primary" minWidth={120} minHeight={100} />
