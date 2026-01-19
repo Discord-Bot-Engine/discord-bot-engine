@@ -82,7 +82,7 @@
     App.selectedTrigger = null
 }} title="Triggers" bind:selected={App.selectedTrigger}></List>
 {/if}
-<Button variant="ghost" class="h-full rounded-none border-1 border-r-0 !p-0" onclick={() => App.hideTriggers = !App.hideTriggers}>
+<Button variant="ghost" class="h-full rounded-none border-1 !p-0" onclick={() => App.hideTriggers = !App.hideTriggers}>
     {#if !App.hideTriggers}
         <ChevronLeftIcon/>
     {:else}

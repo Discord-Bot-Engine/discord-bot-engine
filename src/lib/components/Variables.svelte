@@ -42,7 +42,7 @@
     {/if}
 {/snippet}
 <div class="flex bg-card rounded-none shadow-sm max-w-[200px]">
-    <Button variant="ghost" class="h-full rounded-none border-1 border-l-0 !p-0" onclick={() => App.hideVariables = !App.hideVariables}>
+    <Button variant="ghost" class="h-full rounded-none border-1 !p-0" onclick={() => App.hideVariables = !App.hideVariables}>
         {#if !App.hideVariables}
             <ChevronRightIcon/>
         {:else}
