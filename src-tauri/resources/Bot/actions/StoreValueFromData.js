@@ -3,7 +3,7 @@ import {Bot} from "../classes/Bot.js";
 
 export default class StoreValueFromData {
     static type = "Store Value From Data"
-    static variableTypes = []
+    static variableTypes = ["Text", "Number"]
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Field"></dbe-label>
@@ -15,7 +15,7 @@ export default class StoreValueFromData {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store value in variable"></dbe-label>
-            <dbe-variable-list name="value" class="col-span-3" variableType="Any"></dbe-variable-list>
+            <dbe-variable-list name="value" class="col-span-3" variableType="Text,Number"></dbe-variable-list>
         </div>
     `
     static load(context) {
