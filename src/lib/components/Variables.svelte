@@ -55,6 +55,7 @@
     variableEditType = App.selectedTrigger?.variables.get(variableEditName);
     isEditingVariable = true;
 }} {html} items={App.selectedTrigger?.variables.keys().toArray().sort()} hideControls={!App.selectedTrigger} allowMoving={false} itemTitle={(item) => item} onadd={() => isCreatingVariable = true} ondelete={() => {
+    BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
     App.selectedTrigger?.variables.delete(selectedVariable);
 }} title="Variables" bind:selected={selectedVariable}></List>
         {/if}
