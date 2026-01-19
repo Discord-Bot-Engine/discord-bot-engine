@@ -9,7 +9,7 @@
     const actionType = $derived(action.actionType)
 </script>
 
-<div class="bg-muted rounded-lg text-xs pb-1 min-w-20">
+<div class="bg-muted rounded-lg text-xs pb-1 min-w-20 outline-1 {selected ? 'outline-primary' : 'outline-secondary'}">
         <label class="p-3 py-1 rounded-t-lg block w-full text-center {selected ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}" ondblclick={() => {
             if(actionType) App.openAction()
         }}>

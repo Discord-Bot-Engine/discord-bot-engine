@@ -41,8 +41,8 @@
         <ErrorIcon />
     {/if}
 {/snippet}
-<div class="flex bg-card rounded-xl shadow-sm max-w-[200px]">
-    <Button variant="ghost" class="h-full rounded-xl rounded-r-none border-1 !p-0" onclick={() => App.hideVariables = !App.hideVariables}>
+<div class="flex bg-card rounded-none shadow-sm max-w-[200px]">
+    <Button variant="ghost" class="h-full rounded-none border-1 border-l-0 !p-0" onclick={() => App.hideVariables = !App.hideVariables}>
         {#if !App.hideVariables}
             <ChevronRightIcon/>
         {:else}
@@ -50,7 +50,7 @@
         {/if}
     </Button>
     {#if !App.hideVariables}
-    <List class="rounded-l-none border-l-0 shadow-none" ondblclick={() => {
+    <List class="rounded-none border-l-0 shadow-none" ondblclick={() => {
     variableEditName = selectedVariable;
     variableEditType = App.selectedTrigger?.variables.get(variableEditName);
     isEditingVariable = true;

@@ -7,8 +7,8 @@
     import {App} from "$lib/classes/App.svelte.js";
     import Translation from "$lib/components/Translation.svelte";
 </script>
-<div class="flex flex-col bg-card rounded-xl shadow-sm">
-    <Button variant="ghost" class="w-full rounded-xl rounded-b-none border-1 h-fit !p-0" onclick={() => App.hideConsole = !App.hideConsole}>
+<div class="flex flex-col bg-card rounded-none shadow-sm">
+    <Button variant="ghost" class="w-full rounded-none border-1 border-t-0 h-fit !p-0" onclick={() => App.hideConsole = !App.hideConsole}>
         {#if !App.hideConsole}
             <ChevronDownIcon/>
         {:else}
@@ -16,9 +16,9 @@
         {/if}
     </Button>
     {#if !App.hideConsole}
-<Card.Root class="!rounded-t-none border-t-0 w-full h-full min-h-50 p-1 relative shadow-none">
+<Card.Root class="!rounded-none border-t-0 w-full h-full min-h-50 p-1 relative shadow-none">
     <Card.Content class="p-1 px-1 overflow-hidden h-full">
-        <div class="flex justify-end h-fit">
+        <div class="flex justify-end h-fit font-bold">
             <label class="mr-auto text-md"><Translation text="Console"/></label>
             <Button variant={BotManager.selectedBot?.isRunning ? undefined : 'secondary'} size="icon" class="size-8 -mt-1 rounded-lg rounded-r-none" onclick={() => BotManager.runBot()}><PlayIcon size={16} /></Button>
             <Button variant={BotManager.selectedBot?.isRunning ? 'secondary' : undefined} size="icon" class="size-8 -mt-1 rounded-lg rounded-l-none" onclick={() => BotManager.stopBot()}><SquareIcon size={16} /></Button>

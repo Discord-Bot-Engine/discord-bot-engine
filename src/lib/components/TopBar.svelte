@@ -113,10 +113,10 @@
     }
 </script>
 
-<Menubar.Root class="bg-sidebar border-none rounded-none text-muted-foreground h-fit">
+<Menubar.Root class="bg-sidebar border-y-0 rounded-none text-muted-foreground h-fit p-0">
     {#each items as item}
     <Menubar.Menu>
-        <Menubar.Trigger class="hover:bg-accent hover:text-foreground text-sm py-0"><Translation text={item.title}/></Menubar.Trigger>
+        <Menubar.Trigger class="hover:bg-accent hover:text-foreground text-sm p-2"><Translation text={item.title}/></Menubar.Trigger>
         <Menubar.Content>
             {#each item.items ?? [] as item}
                 <Menubar.Item class="text-muted-foreground hover:bg-accent hover:text-foreground text-xs" disabled={item.disable} onclick={item.onclick}>

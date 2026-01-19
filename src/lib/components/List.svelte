@@ -35,8 +35,8 @@
 
 <Card.Root class="w-full overflow-hidden h-full min-h-40 min-w-40 p-1 relative {props.class}">
 	<Card.Content class="p-1 !px-0.5 h-full w-full overflow-hidden">
-		<div class="flex h-fit -mr-1.5 mb-1 px-0.5">
-			<label class="mr-auto text-md overflow-hidden text-ellipsis">
+		<div class="flex h-fit -mr-1.5 mt-[-0.5em] px-1.5 py-0.5 font-bold">
+		<label class="mr-auto text-md overflow-hidden text-ellipsis">
 				<Translation text={title} />
 			</label>
 				<Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {hideControls ? 'hidden' : ''}" onclick={onadd}><PlusIcon /></Button>

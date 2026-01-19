@@ -272,7 +272,11 @@
             var(--primary) 10%,
             transparent
     )!important;
-    border: 0px!important;
+    outline: 3px solid color-mix(
+            in oklch,
+            var(--primary) 50%,
+            transparent
+    )!important;
 }
 
 .svelte-flow__node-group:hover {

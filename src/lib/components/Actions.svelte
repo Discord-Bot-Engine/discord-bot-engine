@@ -160,16 +160,17 @@
    let ref
 </script>
 <svelte:window onkeydown={bindings}></svelte:window>
-<Card.Root class="w-full h-full min-h-40 p-1 px-0 pb-0 relative">
+<Card.Root class="w-full h-full min-h-40 p-1 px-0 pb-0 relative rounded-none shadow-none">
     <Card.Content class="p-1 px-0.5 pb-0 h-full overflow-hidden">
-        <div class="flex h-fit -mr-1.5 mb-1 px-1.5">
+        <div class="flex h-fit -mr-1.5 mt-[-0.5em] px-1.5 py-0.5 font-bold">
             <label class="mr-auto text-md overflow-hidden text-ellipsis"><Translation text="Actions"/></label>
             <Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => {isCreatingAction = true; pos = {x: 0, y: 0}}}><PlusIcon /></Button>
             <Button variant="ghost" size="icon" class="!p-1 !w-fit !h-fit !bg-transparent !cursor-pointer {!App.selectedTrigger ? 'hidden' : ''}" onclick={() => deleteActions()}
     ><MinusIcon /></Button>
         </div>
             {#if App.selectedTrigger}
-                <SvelteFlow onbeforedelete={() => {
+                <div class="bg-muted h-full w-full border-t-1">
+                    <SvelteFlow onbeforedelete={() => {
                     BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
                     if(document.activeElement.tagName !== "BODY" && !document.activeElement.getAttribute("class").startsWith("svelte-flow") || getSelection().toString()) return false;
                     else {
@@ -181,8 +182,9 @@
                     isCreatingAction = true;
                     pos = {x: ev.pageX - 300, y: ev.pageY - 100}
                 }} onnodedragstart={() => App.updateUndo()} onconnectstart={() => App.updateUndo()} proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
-                    <Background bgColor="transparent"></Background>
-                </SvelteFlow>
+                        <Background bgColor="transparent"></Background>
+                    </SvelteFlow>
+                </div>
             {/if}
     </Card.Content>
 </Card.Root>

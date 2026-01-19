@@ -53,9 +53,9 @@
         <ErrorIcon />
     {/if}
 {/snippet}
-    <div class="flex bg-card rounded-xl shadow-sm max-w-[200px]">
+    <div class="flex bg-card rounded-none shadow-sm max-w-[200px]">
         {#if !App.hideTriggers}
-        <List class="rounded-r-none border-r-0 shadow-none" ondblclick={() => {
+        <List class="rounded-none border-r-0 shadow-none" ondblclick={() => {
     triggerEditName = App.selectedTrigger.name;
     const triggerClass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type);
     if(!triggerClass) return alert("Trigger failed to load.");
@@ -82,7 +82,7 @@
     App.selectedTrigger = null
 }} title="Triggers" bind:selected={App.selectedTrigger}></List>
 {/if}
-<Button variant="ghost" class="h-full rounded-xl rounded-l-none border-1 !p-0" onclick={() => App.hideTriggers = !App.hideTriggers}>
+<Button variant="ghost" class="h-full rounded-none border-1 border-r-0 !p-0" onclick={() => App.hideTriggers = !App.hideTriggers}>
     {#if !App.hideTriggers}
         <ChevronLeftIcon/>
     {:else}
