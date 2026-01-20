@@ -130,7 +130,7 @@ export default class ReactionListener {
                         actionManager.setVariable(u, user)
                         actionManager.setVariable(ch, reaction.message.channel)
                         actionManager.setVariable(sv, reaction.message.guild)
-                        actionManager.runNext(action.id, `${op} added`)
+                        actionManager.runNext(action.id, `${op} removed`)
                     })
                 })
             })
