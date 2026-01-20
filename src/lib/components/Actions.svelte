@@ -182,7 +182,10 @@
                 }} bind:this={ref} oncontextmenu={(ev) => {
                     ev.preventDefault()
                     isCreatingAction = true;
-                    pos = {x: ev.pageX - 300, y: ev.pageY - 100}
+                    let offset = 300
+                    if(App.hideTriggers)
+                        offset = 150
+                    pos = {x: ev.pageX - offset, y: ev.pageY - 75}
                 }} onnodedragstart={() => App.updateUndo()} onconnectstart={() => App.updateUndo()} proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
                         <Background bgColor="transparent"></Background>
                     </SvelteFlow>
