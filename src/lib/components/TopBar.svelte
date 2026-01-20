@@ -113,7 +113,7 @@
     }
 </script>
 
-<Menubar.Root class="bg-sidebar border-0 rounded-none text-muted-foreground h-fit border-b-1 p-0">
+<Menubar.Root class="bg-sidebar border-0 rounded-none text-muted-foreground h-fit p-0">
     {#each items as item}
     <Menubar.Menu>
         <Menubar.Trigger class="hover:bg-accent hover:text-foreground text-sm py-1"><Translation text={item.title}/></Menubar.Trigger>

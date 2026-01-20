@@ -155,7 +155,7 @@
 
 </script>
 
-<Sidebar.Root class="border-none" collapsible="icon">
+<Sidebar.Root class="!border-0" collapsible="icon">
 	<Sidebar.Content>
 		<Sidebar.Group>
 			<Sidebar.GroupLabel>Discord Bot Engine</Sidebar.GroupLabel>
