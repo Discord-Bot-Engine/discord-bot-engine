@@ -26,9 +26,13 @@
 {/if}
     <div class="text-3xl w-full h-full ">
         {#snippet groupSnip(text)}
-<input class="w-full !outline-none text-primary nodrag" placeholder={text} value={data.get("text") ?? ""}
+<input class="w-full !outline-none text-primary nodrag" placeholder={text} value={data.get("text") ?? ""} noVariables
        oninput={(evt) => {
            data.set("text", evt.target.value)
+      }}
+       onchange={() => {
+          BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
+          App.updateUndo()
       }}
 />
             {/snippet}
