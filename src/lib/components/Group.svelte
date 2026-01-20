@@ -30,7 +30,7 @@
        oninput={(evt) => {
            data.set("text", evt.target.value)
       }}
-       onchange={() => {
+       onfocus={() => {
           BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
           App.updateUndo()
       }}
