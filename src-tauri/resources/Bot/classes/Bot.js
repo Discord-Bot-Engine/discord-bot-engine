@@ -111,7 +111,8 @@ class BotClass {
         return value;
     }
 
-    async restore(value) {
+    async restore(value, k = 1) {
+        if(k > 10) return value;
         try {
             if (typeof value == "string") {
                 if (value.startsWith("big-")) {
@@ -149,7 +150,7 @@ class BotClass {
                 }
             } else if (Array.isArray(value)) {
                 for (let index = 0; index < value.length; index++) {
-                    value[index] = await this.restore(value[index]);
+                    value[index] = await this.restore(value[index], k);
                 };
                 return value;
             } else if (value.type === "embed") {
@@ -157,14 +158,14 @@ class BotClass {
             } else if (value.type === "collection") {
                 const col = new Collection()
                 for (const key in value.data) {
-                    col.set(key, await this.restore(value.data[key]));
+                    col.set(key, await this.restore(value.data[key], k));
                 }
                 return col;
             } else if(value.type === "Buffer") {
                 return Buffer.from(value.data)
             } else if(typeof value === "object") {
                 for (const key in value) {
-                    value[key] = await this.restore(value[key]);
+                    value[key] = await this.restore(value[key], k + 1);
                 }
                 return value
             } else {
@@ -173,18 +174,18 @@ class BotClass {
         } catch { }
     };
 
-    serialize(value) {
-        if(Buffer.isBuffer(value)) return value;
+    serialize(value, k = 1) {
+        if(Buffer.isBuffer(value) || k > 10) return value;
         if (Array.isArray(value)) {
             const arr = [];
             for (const el of value) {
-                arr.push(this.serialize(el));
+                arr.push(this.serialize(el, k));
             }
             return arr;
         } else if (typeof value == "object" && value && !value.toDBEString) {
             const obj = {};
             for (const key in value) {
-                obj[key] = this.serialize(value[key]);
+                obj[key] = this.serialize(value[key], k + 1);
             }
             return obj;
         } else {
