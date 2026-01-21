@@ -86,6 +86,7 @@ class AppClass {
 		})
 		BotManager.selectedBot.undos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
 		BotManager.selectedBot.undos = BotManager.selectedBot.undos.filter((s,i) => BotManager.selectedBot.undos.indexOf(s) === i);
+		if(BotManager.selectedBot.undos.length > 100) BotManager.selectedBot.undos.shift()
 		BotManager.selectedBot.redos = []
 	}
 	ref = null

@@ -78,6 +78,8 @@
                newActions.push({...action, data})
            })
            BotManager.selectedBot.redos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
+           BotManager.selectedBot.redos = BotManager.selectedBot.redos.filter((s,i) => BotManager.selectedBot.redos.indexOf(s) === i);
+           if(BotManager.selectedBot.redos.length > 100) BotManager.selectedBot.redos.shift()
            App.selectedTrigger.actions = state.actions.map(act => Action.fromJSON(act))
            App.selectedTrigger.edges = state.edges
        } else if(ev.key === "y" && ev.ctrlKey && App.selectedTrigger) {
@@ -93,6 +95,8 @@
                newActions.push({...action, data})
            })
            BotManager.selectedBot.undos.push(JSON.stringify({actions: newActions, edges: App.selectedTrigger.edges}))
+           BotManager.selectedBot.undos = BotManager.selectedBot.undos.filter((s,i) => BotManager.selectedBot.undos.indexOf(s) === i);
+           if(BotManager.selectedBot.undos.length > 100) BotManager.selectedBot.undos.shift()
            App.selectedTrigger.actions = state.actions.map(act => Action.fromJSON(act))
            App.selectedTrigger.edges = state.edges
        }  else if(ev.key === "s" && ev.ctrlKey) {
