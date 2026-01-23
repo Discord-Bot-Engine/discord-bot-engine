@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { XMLParser } from "fast-xml-parser"
 
 export default class StoreResponseFromHTTPRequest {
     static type = "Store Response From HTTP Request"
@@ -14,7 +15,7 @@ export default class StoreResponseFromHTTPRequest {
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Response type"></dbe-label>
-            <dbe-select name="restype" change="(v) => handlers.onResChange(v)" values="Text,JSON" value="JSON" class="col-span-3"></dbe-select>
+            <dbe-select name="restype" change="(v) => handlers.onResChange(v)" values="Text,JSON,XML" value="JSON" class="col-span-3"></dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store response in variable"></dbe-label>
@@ -45,7 +46,7 @@ export default class StoreResponseFromHTTPRequest {
             } else body.style.display = "none";
         }
         handlers.onResChange = (value) => {
-            varlist.setVariableType(value)
+            varlist.setVariableType(value === "XML" ? "JSON" : value)
         }
     }
     static load(context) {
@@ -68,7 +69,13 @@ export default class StoreResponseFromHTTPRequest {
             headers: obj,
             body: type === "POST" ? body : undefined,
         })
-        setVariable(variable, await res[restype]())
+        if(restype === "xml") {
+            const text = await res.text()
+            const parser = new XMLParser({ ignoreAttributes: false })
+            setVariable(variable, parser.parse(text))
+        } else {
+            setVariable(variable, await res[restype]())
+        }
         actionManager.runNext(id, "action")
     }
 }
