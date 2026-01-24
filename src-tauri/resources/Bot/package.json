@@ -20,6 +20,7 @@
     "discord.js": "^14.24.2",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
+    "fast-xml-parser": "^5.3.3",
     "ffmpeg-static": "^5.2.0",
     "keyv": "^5.5.3",
     "keyv-file": "^5.2.0",

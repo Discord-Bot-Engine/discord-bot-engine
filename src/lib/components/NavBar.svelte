@@ -1,7 +1,7 @@
 <script>
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-	import { CodeXmlIcon, BookMarkedIcon, HouseIcon, SettingsIcon, BlocksIcon, PaletteIcon, CheckIcon, LanguagesIcon } from '@lucide/svelte';
+	import { CodeXmlIcon, BookMarkedIcon, MessagesSquareIcon, HouseIcon, SettingsIcon, BlocksIcon, PaletteIcon, CheckIcon, LanguagesIcon } from '@lucide/svelte';
 	import { page } from '$app/state';
 	import {Button} from "$lib/components/ui/button/index.js";
 	import {App} from "$lib/classes/App.svelte.js"
@@ -165,28 +165,15 @@
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton class={page.url.pathname === item.url ? "!bg-primary !text-primary-foreground" : ""}>
 								{#snippet child({ props })}
-									{#await App.translate(item.title, App.selectedLanguage)}
-									<a
-										title={item.title}
+									<Translation text={item.title} el={itemEl}/>
+									{#snippet itemEl(text)}
+										<a
+										title={text}
 										href={item.url}
 										{...props}>
 										<item.icon />
-									</a>
-										{:then title}
-										<a
-												{title}
-												href={item.url}
-												{...props}>
-											<item.icon />
 										</a>
-										{:catch error}
-										<a
-												title={item.title}
-												href={item.url}
-												{...props}>
-											<item.icon />
-										</a>
-									{/await}
+									{/snippet}
 								{/snippet}
 							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
@@ -195,22 +182,13 @@
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger><Sidebar.MenuButton>
 								{#snippet child({ props })}
-									{#await App.translate("Theme", App.selectedLanguage)}
-									<Button title="Theme" class="w-8 h-8" variant="ghost"
-											>
-										<PaletteIcon/>
-									</Button>
-									{:then title}
-										<Button {title} class="w-8 h-8" variant="ghost"
+									<Translation text="Theme" el={theme}/>
+									{#snippet theme(text)}
+										<Button title={text} class="w-8 h-8" variant="ghost"
 										>
 											<PaletteIcon/>
 										</Button>
-										{:catch error}
-										<Button title="Theme" class="w-8 h-8" variant="ghost"
-										>
-											<PaletteIcon/>
-										</Button>
-									{/await}
+									{/snippet}
 								{/snippet}
 							</Sidebar.MenuButton></DropdownMenu.Trigger>
 							<DropdownMenu.Content side="right">
@@ -234,22 +212,13 @@
 						<DropdownMenu.Root>
 												<DropdownMenu.Trigger><Sidebar.MenuButton>
 												{#snippet child({ props })}
-												{#await App.translate("Language", App.selectedLanguage)}
-												<Button title="Language" class="w-8 h-8" variant="ghost"
+												<Translation text="Language" el={lang}/>
+												{#snippet lang(text)}
+												<Button title={text} class="w-8 h-8" variant="ghost"
 												>
 												<LanguagesIcon/>
 												</Button>
-												{:then title}
-												<Button {title} class="w-8 h-8" variant="ghost"
-												>
-												<LanguagesIcon/>
-												</Button>
-												{:catch error}
-												<Button title="Theme" class="w-8 h-8" variant="ghost"
-												>
-												<LanguagesIcon/>
-												</Button>
-												{/await}
+												{/snippet}
 												{/snippet}
 												</Sidebar.MenuButton></DropdownMenu.Trigger>
 												<DropdownMenu.Content side="right">
@@ -273,28 +242,30 @@
 												<Sidebar.MenuItem>
 												<Sidebar.MenuButton>
 												{#snippet child({ props })}
-												{#await App.translate("Documentation", App.selectedLanguage)}
+												{#snippet docs(text)}
 												<a
-												title="Documentation"
+												title={text}
 												onclick={() => openUrl("https://discord-bot-engine.gitbook.io/discord-bot-engine")}
 												{...props}>
 												<BookMarkedIcon />
 												</a>
-												{:then title}
+												{/snippet}
+												<Translation text="Documentation" el={docs}/>
+												{/snippet}
+												</Sidebar.MenuButton>
+												</Sidebar.MenuItem>
+												<Sidebar.MenuItem>
+												<Sidebar.MenuButton>
+												{#snippet child({ props })}
+												{#snippet discord(text)}
 												<a
-												{title}
-												onclick={() => openUrl("https://discord-bot-engine.gitbook.io/discord-bot-engine")}
+												title={text}
+												onclick={() => openUrl("https://discord.gg/wNCFpR6JJX")}
 												{...props}>
-												<BookMarkedIcon />
+												<MessagesSquareIcon />
 												</a>
-												{:catch error}
-												<a
-												title="Documentation"
-												onclick={() => openUrl("https://discord-bot-engine.gitbook.io/discord-bot-engine")}
-												{...props}>
-												<BookMarkedIcon />
-												</a>
-												{/await}
+												{/snippet}
+												<Translation text="Discord Server" el={discord}/>
 												{/snippet}
 												</Sidebar.MenuButton>
 												</Sidebar.MenuItem>
