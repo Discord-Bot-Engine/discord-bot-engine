@@ -37,7 +37,7 @@ export default class XPSystem {
         const maxxpmulti = Number(context.data.get("maxxpmulti"));
         const xpmulti = Number(context.data.get("xpmulti"));
         Bot.client.on(Events.MessageCreate, async msg => {
-            if(!msg.guild) return;
+            if(!msg.guild || msg.author.id === Bot.client.user.id) return;
             const disabled = await Bot.getData(`$XPSYSTEM$$$${msg.guild.id}`)
             if(disabled) return;
             const member = msg.member.id;
