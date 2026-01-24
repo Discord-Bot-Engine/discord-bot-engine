@@ -8,7 +8,7 @@
     import Modal from "$lib/components/Modal.svelte";
     import Translation from "$lib/components/Translation.svelte";
     let {variableType, change = "() => {}", labels="", ...other} = $props()
-    let types = $state(variableType.split(",").map(el => el.toLowerCase()))
+    let types = $state(variableType.split(",").map(el => el.toLowerCase().trim()))
     let variables = $derived(App.selectedTrigger.variables)
     let statevalues = $derived(variables.keys().toArray().sort().filter(v => types.includes(variables.get(v).toLowerCase()) || types.includes("any")))
     let statevalue = $state(undefined)
@@ -32,7 +32,7 @@
         }
     }
     $host().setVariableType = (newType) => {
-        types = [newType].flat().map(el => el.toLowerCase());
+        types = [newType].flat().map(el => el.toLowerCase().trim());
     }
     $host().setValue = (value) => {
         if(value === undefined) return;

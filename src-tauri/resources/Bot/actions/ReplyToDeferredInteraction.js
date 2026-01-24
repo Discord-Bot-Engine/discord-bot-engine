@@ -30,7 +30,7 @@ export default class ReplyToDeferredInteraction {
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Interaction"></dbe-label>
-            <dbe-variable-list name="origin" class="col-span-3" variableType="Context Menu Interaction, Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
+            <dbe-variable-list name="origin" class="col-span-3" variableType="Context Menu Interaction,Command Interaction,Button Interaction,Select Menu Interaction"></dbe-variable-list>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Interactive components mode"></dbe-label>
