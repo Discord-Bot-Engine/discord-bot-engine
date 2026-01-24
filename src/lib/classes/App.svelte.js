@@ -16,6 +16,7 @@ class AppClass {
 	selectedLanguage = $state("en")
 	translations = {}
 	state = new Activity()
+	svelteFlow = null
 
 	constructor() {
 		start("1435285281652867095")

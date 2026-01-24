@@ -12,6 +12,8 @@
     import {Button} from "$lib/components/ui/button/index.js";
     import {ChevronLeftIcon, ChevronRightIcon} from "@lucide/svelte";
     import Translation from "$lib/components/Translation.svelte";
+    import {useSvelteFlow} from "@xyflow/svelte";
+    const {fitView} = useSvelteFlow()
     let triggers = $derived(BotManager.selectedBot?.triggers);
     let triggerName = $state()
     let triggerEditName = $state()
@@ -76,7 +78,13 @@
         }
         App.initUI(ref)
     }, 10)
-}} allowMoving={false} {html} items={triggers ?? []} itemTitle={(item) => item.name} onadd={() => isCreatingTrigger = true} ondelete={() => {
+}} allowMoving={false} {html} items={triggers ?? []} itemTitle={(item) => item.name} onclick={() => {
+    let interval = setInterval(async () => {
+        if(!App.svelteFlow) return;
+        clearInterval(interval);
+        fitView({ maxZoom: 1, interpolate: "smooth", duration: 500 })
+	}, 10)
+}} onadd={() => isCreatingTrigger = true} ondelete={() => {
     BotManager.selectedBot.triggers = BotManager.selectedBot.triggers.filter(el => el !== App.selectedTrigger)
     BotManager.selectedBot.markAsRemoved(App.selectedTrigger.id)
     App.selectedTrigger = null

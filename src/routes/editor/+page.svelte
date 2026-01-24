@@ -53,12 +53,12 @@
 <TopBar />
 <div class="flex flex-col w-full h-full gap-1 p-1">
 	<div class="flex gap-1 grow overflow-hidden">
-		<Triggers />
-		<div class="grow">
-			<SvelteFlowProvider>
+		<SvelteFlowProvider>
+			<Triggers />
+			<div class="grow">
 				<Actions title="Actions" actions={App.selectedTrigger?.actions} />
-			</SvelteFlowProvider>
-		</div>
+			</div>
+		</SvelteFlowProvider>
 		<Variables />
 	</div>
 	<div class="pb-7.5">
