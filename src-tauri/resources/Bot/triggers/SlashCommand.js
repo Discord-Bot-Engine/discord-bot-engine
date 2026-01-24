@@ -37,7 +37,9 @@ export default class SlashCommand {
 
         if (interaction.commandName !== parsed.root) return false;
 
-        if (!parsed.group) return true;
+        if (!parsed.group) {
+            return interaction.options.getSubcommand(false) === null;
+        };
 
         if (parsed.sub) {
             return (
