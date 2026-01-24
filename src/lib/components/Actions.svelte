@@ -163,7 +163,7 @@
        const list = App.selectedTrigger.actions.filter(act => act.selected)
        App.selectedTrigger.actions = App.selectedTrigger.actions.filter(act => !act.actionType || !list.find(n => n.id === act.id))
        App.selectedTrigger.edges = App.selectedTrigger.edges.filter(edge => App.selectedTrigger.actions.find(n => n.id === edge.source) && App.selectedTrigger.actions.find(n => n.id === edge.target))
-   }
+    }
 </script>
 <svelte:window onkeydown={bindings}></svelte:window>
 <Card.Root class="w-full h-full min-h-40 p-1 pt-0 px-0 pb-0 border-0 relative rounded-none shadow-none">

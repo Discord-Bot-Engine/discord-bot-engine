@@ -22,6 +22,7 @@
     let isEditingTrigger = $state(false);
     let ref;
     let handlersCopy = {}
+    let clickTimer = null
     function addTrigger() {
         if(!triggerName.trim() || triggerType.toLowerCase() === "none") return;
         if(BotManager.selectedBot.triggers.find(t => t.name === triggerName.trim() && t.type === triggerType)) return alert("Trigger already exists!");
@@ -58,6 +59,7 @@
     <div class="flex bg-card rounded-none shadow-sm max-w-[200px]">
         {#if !App.hideTriggers}
         <List class="rounded-none border-r-0 shadow-none" ondblclick={() => {
+    clearTimeout(clickTimer)
     triggerEditName = App.selectedTrigger.name;
     const triggerClass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type);
     if(!triggerClass) return alert("Trigger failed to load.");
@@ -79,11 +81,14 @@
         App.initUI(ref)
     }, 10)
 }} allowMoving={false} {html} items={triggers ?? []} itemTitle={(item) => item.name} onclick={() => {
-    let interval = setInterval(async () => {
+    clearTimeout(clickTimer)
+    clickTimer = setTimeout(() => {
+        let interval = setInterval(async () => {
         if(!App.svelteFlow) return;
         clearInterval(interval);
         fitView({ maxZoom: 1, interpolate: "smooth", duration: 500 })
-	}, 10)
+        }, 10)
+    }, 250)
 }} onadd={() => isCreatingTrigger = true} ondelete={() => {
     BotManager.selectedBot.triggers = BotManager.selectedBot.triggers.filter(el => el !== App.selectedTrigger)
     BotManager.selectedBot.markAsRemoved(App.selectedTrigger.id)
