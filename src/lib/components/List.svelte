@@ -95,7 +95,7 @@
 						<Separator />
 					{/if}
 					{#if BotManager.selectedBot.triggerFolderStates[folder] !== false}
-					{#each BotManager.selectedBot.triggers.filter(t => t.folder?.toLowerCase().trim() === folder?.toLowerCase().trim()) as item, j}
+					{#each BotManager.selectedBot.triggers.filter(t => (t.folder?.toLowerCase().trim() || undefined) === folder?.toLowerCase().trim()) as item, j}
 					<div class="w-full overflow-hidden">
 							<Button
 									variant={selected === item ? undefined : "ghost"}

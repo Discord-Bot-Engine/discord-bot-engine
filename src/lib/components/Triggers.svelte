@@ -15,9 +15,9 @@
     import {useSvelteFlow} from "@xyflow/svelte";
     const {fitView} = useSvelteFlow()
     let triggers = $derived(BotManager.selectedBot?.triggers);
-    let triggerName = $state()
-    let triggerEditName = $state()
-    let triggerFolder = $state()
+    let triggerName = $state("")
+    let triggerEditName = $state("")
+    let triggerFolder = $state("")
     let triggerEditFolder = $state("")
     let triggerType = $state("None")
     let isCreatingTrigger = $state(false);
