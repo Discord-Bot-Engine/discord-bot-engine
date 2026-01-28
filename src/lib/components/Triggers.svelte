@@ -17,6 +17,8 @@
     let triggers = $derived(BotManager.selectedBot?.triggers);
     let triggerName = $state()
     let triggerEditName = $state()
+    let triggerFolder = $state()
+    let triggerEditFolder = $state("")
     let triggerType = $state("None")
     let isCreatingTrigger = $state(false);
     let isEditingTrigger = $state(false);
@@ -27,7 +29,12 @@
         if(!triggerName.trim() || triggerType.toLowerCase() === "none") return;
         if(BotManager.selectedBot.triggers.find(t => t.name === triggerName.trim() && t.type === triggerType)) return alert("Trigger already exists!");
         const id = uuidv4()
-        BotManager.selectedBot.triggers.push(new Trigger(id, triggerType, triggerName.trim()))
+        const t = new Trigger(id, triggerType, triggerName.trim(), triggerFolder.trim())
+        const tclass = BotManager.selectedBot.triggerClasses.find(t => t.type === triggerType)
+        tclass.defaultVariables.forEach(v => {
+            t.variables.set(v.name, v.type)
+        })
+        BotManager.selectedBot.triggers.push(t)
         BotManager.selectedBot.markAsModified(id)
         isCreatingTrigger = false;
     }
@@ -36,6 +43,7 @@
         if(BotManager.selectedBot.triggers.find(t => t.name === triggerEditName.trim() && t.type === App.selectedTrigger.type) && App.selectedTrigger.name !== triggerEditName) return alert("Trigger already exists!");
         const triggerClass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type);
         App.selectedTrigger.name = triggerEditName
+        App.selectedTrigger.folder = triggerEditFolder
         BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
         Object.keys(handlersCopy).forEach(handler => {
             window.handlers[handler] = handlersCopy[handler];
@@ -58,9 +66,10 @@
 {/snippet}
     <div class="flex bg-card rounded-none shadow-sm max-w-[200px]">
         {#if !App.hideTriggers}
-        <List class="rounded-none border-r-0 shadow-none" ondblclick={() => {
+        <List class="rounded-none border-r-0 shadow-none" isTriggers={true} ondblclick={() => {
     clearTimeout(clickTimer)
     triggerEditName = App.selectedTrigger.name;
+    triggerEditFolder = App.selectedTrigger.folder;
     const triggerClass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type);
     if(!triggerClass) return alert("Trigger failed to load.");
     isEditingTrigger = true;
@@ -69,7 +78,7 @@
         clearInterval(interval);
         const data = App.selectedTrigger.data
         ref.querySelectorAll("*").forEach(el => el.setAttribute("noVariables", ""))
-        App.loadUIData(ref, data)
+        App.loadUIData(ref, data, true)
         handlersCopy = window.handlers
         Object.freeze(handlersCopy)
         window.handlers = {}
@@ -110,6 +119,10 @@
             <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={triggerName} noVariables />
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
+            <Label for="folder" class="text-right"><Translation text="Folder"/></Label>
+            <Input id="folder" class="col-span-3" bind:value={triggerFolder} noVariables />
+        </div>
+        <div class="grid grid-cols-4 items-center gap-4">
             <Label for="type" class="text-right"><Translation text="Type"/></Label>
             {#await Promise.all((BotManager.selectedBot?.triggerClasses ?? []).map(el => el.type).sort().map(async el => ({label: await App.translate(el, App.selectedLanguage), value: el}))) then types}
                 {#await App.translate("None", App.selectedLanguage) then none}
@@ -129,6 +142,10 @@
                     <Label for="name" class="text-right">Name</Label>
                     <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={triggerEditName} noVariables />
                 </div>
+            <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="folder" class="text-right">Folder</Label>
+                <Input id="folder" class="col-span-3" bind:value={triggerEditFolder} noVariables />
+            </div>
                 {@html BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type)?.html ?? ""}
         </div>
 </Modal>

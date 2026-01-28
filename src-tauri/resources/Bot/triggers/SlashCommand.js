@@ -20,6 +20,34 @@ export default class SlashCommand {
         "User"
     ];
 
+    static defaultVariables = [
+        {
+            name: "interaction",
+            type: "Command Interaction",
+            element: "interaction"
+        },
+        {
+            name: "user",
+            type: "User",
+            element: "user"
+        },
+        {
+            name: "member",
+            type: "Member",
+            element: "member"
+        },
+        {
+            name: "channel",
+            type: "Channel",
+            element: "channel"
+        },
+        {
+            name: "server",
+            type: "Server",
+            element: "server"
+        },
+    ]
+
     static event = Events.InteractionCreate;
 
     static runIf = ({ actionManager }, interaction) => {
@@ -194,11 +222,11 @@ export default class SlashCommand {
             else if (type === "User") setVariable(value, interaction.options.getUser(name));
         });
 
-        setVariable(data.get("interaction"), interaction);
-        setVariable(data.get("user"), interaction.user);
-        setVariable(data.get("member"), interaction.member);
-        setVariable(data.get("channel"), interaction.channel);
-        setVariable(data.get("server"), interaction.guild);
+        setVariable(data.get("interaction") ?? "interaction", interaction);
+        setVariable(data.get("user") ?? "user", interaction.user);
+        setVariable(data.get("member") ?? "member", interaction.member);
+        setVariable(data.get("channel") ?? "channel", interaction.channel);
+        setVariable(data.get("server") ?? "server", interaction.guild);
 
         actionManager.runNext(id, "action");
     }

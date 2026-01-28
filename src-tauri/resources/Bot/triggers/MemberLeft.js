@@ -4,6 +4,23 @@ import {Bot} from "../classes/Bot.js"
 export default class MemberLeft {
     static type = "Member Left"
     static variableTypes = ["Member", "User", "Server"]
+    static defaultVariables = [
+        {
+            name: "member",
+            type: "Member",
+            element: "member"
+        },
+        {
+            name: "user",
+            type: "User",
+            element: "user"
+        },
+        {
+            name: "server",
+            type: "Server",
+            element: "server"
+        },
+    ]
     static event = Events.GuildMemberRemove
     static runIf = () => true
     static html = `
@@ -22,9 +39,9 @@ export default class MemberLeft {
     `
     static load({data, actionManager, setVariable}) {}
     static run({id, data, actionManager, setVariable}, member) {
-        setVariable(data.get("member"), member);
-        setVariable(data.get("user"), member.user);
-        setVariable(data.get("server"), member.guild);
+        setVariable(data.get("member") ?? "member", member);
+        setVariable(data.get("user") ?? "user", member.user);
+        setVariable(data.get("server") ?? "server", member.guild);
         actionManager.runNext(id, "action")
     }
 }

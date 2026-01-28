@@ -7,6 +7,7 @@ class Trigger {
 	id = '';
 	type = '';
 	name = $state('');
+	folder = $state('')
 	data = new SvelteMap();
 	actions = $state([]);
 	edges = $state.raw([])
@@ -14,10 +15,11 @@ class Trigger {
 	debugVariables = new SvelteMap()
 	showInDebugger = $state(false)
 
-	constructor(id, type, name) {
+	constructor(id, type, name, folder) {
 		this.id = id;
 		this.type = type;
 		this.name = name;
+		this.folder = folder;
 		this.actions = [
 			new Action(id, null, 0, 0)
 		]
@@ -44,6 +46,7 @@ class Trigger {
 			id: this.id,
 			type: this.type,
 			name: String(this.name),
+			folder: String(this.folder),
 			data: data,
 			actions,
 			edges: this.edges,
@@ -61,7 +64,7 @@ class Trigger {
 	}
 
 	static fromJSON(json, isDebugger) {
-		const trigger = new Trigger(json.id, json.type, json.name);
+		const trigger = new Trigger(json.id, json.type, json.name, json.folder);
 		trigger.edges = json.edges;
 		Object.keys(json.data).forEach((key) => {
 			if(Array.isArray(json.data[key]) && json.data[key].every(el => typeof el === 'object' && !Array.isArray(el) && el !== null))

@@ -134,7 +134,7 @@ class AppClass {
 		})
 	}
 
-	loadUIData(ref, data) {
+	loadUIData(ref, data, isTrigger) {
 		const marked = ref.querySelectorAll("*[name]")
 		marked.forEach(el => {
 			if(el.hasAttribute("ignoreParsing")) return;
@@ -142,8 +142,14 @@ class AppClass {
 			if(el.tagName.toLowerCase() === "dbe-list") {
 				let elements = data.get(name)
 				el.setItems(elements ?? [])
-			} else if (el.tagName.toLowerCase() === 'dbe-select' || el.tagName.toLowerCase() === "dbe-variable-list") {
+			} else if (el.tagName.toLowerCase() === 'dbe-select') {
 				el.setValue(data.get(name))
+			} else if(el.tagName.toLowerCase() === "dbe-variable-list") {
+				if(isTrigger && data.get(name) === undefined) {
+					const tclass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type)
+					const v = tclass.defaultVariables.find(v => v.element === name)
+					el.setValue(v.name)
+				} else el.setValue(data.get(name))
 			} else if (el.tagName.toLowerCase() === 'select' && el.multiple) {
 				el.options.forEach((o) => {
 					if (data.get(name).indexOf(o.value) !== -1) o.selected = true;

@@ -4,6 +4,44 @@ import {Bot} from "../classes/Bot.js"
 export default class ReactionRemoved {
     static type = "Reaction Removed"
     static variableTypes = ["Message", "Boolean", "User", "Member", "Channel", "Reaction", "Server"]
+
+    static defaultVariables = [
+        {
+            name: "isBurst",
+            type: "Boolean",
+            element: "burst"
+        },
+        {
+            name: "reaction",
+            type: "Reaction",
+            element: "reaction"
+        },
+        {
+            name: "user",
+            type: "User",
+            element: "user"
+        },
+        {
+            name: "member",
+            type: "Member",
+            element: "member"
+        },
+        {
+            name: "message",
+            type: "Message",
+            element: "message"
+        },
+        {
+            name: "channel",
+            type: "Channel",
+            element: "channel"
+        },
+        {
+            name: "server",
+            type: "Server",
+            element: "server"
+        },
+    ]
     static event = Events.MessageReactionRemove
     static runIf = () => true
     static html = `
@@ -42,13 +80,13 @@ export default class ReactionRemoved {
         const message = reaction.message;
         const guild = message.guild;
         const member = await guild?.members.fetch(user.id);
-        setVariable(data.get("burst"), details.burst);
-        setVariable(data.get("reaction"), reaction);
-        setVariable(data.get("message"), message);
-        setVariable(data.get("user"), user);
-        setVariable(data.get("member"), member);
-        setVariable(data.get("channel"), message.channel);
-        setVariable(data.get("server"), message.guild);
+        setVariable(data.get("burst") ?? "burst", details.burst);
+        setVariable(data.get("reaction") ?? "reaction", reaction);
+        setVariable(data.get("message") ?? "message", message);
+        setVariable(data.get("user") ?? "user", user);
+        setVariable(data.get("member") ?? "member", member);
+        setVariable(data.get("channel") ?? "channel", message.channel);
+        setVariable(data.get("server") ?? "server", message.guild);
         actionManager.runNext(id, "action")
     }
 }

@@ -26,6 +26,8 @@ class Bot {
 	triggerClasses = $state([]);
 	actionClasses = $state([]);
 	extensionClasses = $state([]);
+	triggerFolders = $derived([...new Set(BotManager.selectedBot?.triggers?.map(t => t.folder || undefined) ?? [])])
+	triggerFolderStates = $state({})
 	triggerVariableTypes = $derived(BotManager.selectedBot?.triggerClasses?.map(t => t.variableTypes).flat() ?? [])
 	actionVariableTypes = $derived(BotManager.selectedBot?.actionClasses?.map(t => t.variableTypes).flat() ?? [])
 	variableTypes = $derived([...new Set([...this.triggerVariableTypes, ...this.actionVariableTypes])].sort())

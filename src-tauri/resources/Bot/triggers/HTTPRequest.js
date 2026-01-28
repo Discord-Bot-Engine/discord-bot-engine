@@ -1,6 +1,18 @@
 export default class HTTPRequest {
     static type = "HTTP Request"
     static variableTypes = ["HTTP Request", "HTTP Response", "Text", "JSON"]
+    static defaultVariables = [
+        {
+            name: "request",
+            type: "HTTP Request",
+            element: "req"
+        },
+        {
+            name: "response",
+            type: "HTTP Response",
+            element: "res"
+        },
+    ]
     static event = "httpRequest"
     static runIf = ({data, actionManager}, req, res) => req.path === actionManager.trigger.name && req.method === (data.get("type") ?? "GET")
     static html = `
@@ -51,8 +63,8 @@ export default class HTTPRequest {
         headers?.forEach(header => {
             setVariable(header.data.get("var"), req.get(header.data.get("name")))
         })
-        setVariable(data.get("req"), req)
-        setVariable(data.get("res"), res)
+        setVariable(data.get("req") ?? "request", req)
+        setVariable(data.get("res") ?? "response", res)
         actionManager.runNext(id, "action")
     }
 }

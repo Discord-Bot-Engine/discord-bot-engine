@@ -12,9 +12,9 @@ export default class StoreMemberInfo {
         "Boolean",
         "Date",
         "List",
-        "Role",
         "Channel",
-        "Voice State"
+        "Voice State",
+        "Presence"
     ]
 
     static html = `
@@ -28,7 +28,7 @@ export default class StoreMemberInfo {
                 name="info" 
                 class="col-span-3" 
                 change="(v) => handlers.onChange(v)"
-                values="Avatar URL,Banner URL,Communication Disabled Until,Display Color,Display Hex Color,Display Name,Joined At,Nickname,User,Id,Is Bannable,Is Communication Disabled,Is Kickable,Is Manageable,Is Owner,Is Pending,Is Premium Since,Roles,Permissions,Voice State">
+                values="Avatar URL,Banner URL,Communication Disabled Until,Display Color,Display Hex Color,Display Name,Joined At,Nickname,User,Id,Is Bannable,Is Communication Disabled,Is Kickable,Is Manageable,Is Owner,Is Pending,Is Premium Since,Roles,Permissions,Presence,Voice State">
             </dbe-select>
         </div>
         <div id="imgsettings" class="grid gap-4" style="display: none">
@@ -51,7 +51,7 @@ export default class StoreMemberInfo {
                 name="value" 
                 id="var" 
                 class="col-span-3"
-                variableType="Member,User,Server,Text,Number,Boolean,Date,List,Role,Channel">
+                variableType="Member,User,Server,Text,Number,Boolean,Date,List,Presence,Channel">
             </dbe-variable-list>
         </div>
     `
@@ -84,7 +84,9 @@ export default class StoreMemberInfo {
                 varlist.setVariableType("User")
             } else if (["Display Color", "Display Hex Color", "Display Name", "Nickname", "Avatar URL", "Banner URL"].includes(value)) {
                 varlist.setVariableType("Text")
-            } else if(value === "Voice State")
+            } else if(value === "Presence")
+                varlist.setVariableType("Presence")
+            else if(value === "Voice State")
                 varlist.setVariableType("Voice State")
             else {
                 varlist.setVariableType("Text")
@@ -163,6 +165,9 @@ export default class StoreMemberInfo {
                 break
             case "Permissions":
                 value = member.permissions.toArray()
+                break
+            case "Presence":
+                value = member.presence
                 break
             case "Voice State":
                 value = member.voice

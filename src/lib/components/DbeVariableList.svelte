@@ -7,7 +7,7 @@
     import {Input} from "$lib/components/ui/input/index.js";
     import Modal from "$lib/components/Modal.svelte";
     import Translation from "$lib/components/Translation.svelte";
-    let {variableType, change = "() => {}", labels="", ...other} = $props()
+    let {variableType, change = "() => {}", ...other} = $props()
     let types = $state(variableType.split(",").map(el => el.toLowerCase().trim()))
     let variables = $derived(App.selectedTrigger.variables)
     let statevalues = $derived(variables.keys().toArray().sort().filter(v => types.includes(variables.get(v).toLowerCase()) || types.includes("any")))

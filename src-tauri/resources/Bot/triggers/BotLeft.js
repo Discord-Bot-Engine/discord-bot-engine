@@ -4,6 +4,13 @@ import {Bot} from "../classes/Bot.js"
 export default class BotLeft {
     static type = "Bot Left"
     static variableTypes = ["Server"]
+    static defaultVariables = [
+        {
+            name: "server",
+            type: "Server",
+            element: "server"
+        },
+    ]
     static event = Events.GuildDelete
     static runIf = () => true
     static html = `
@@ -14,7 +21,7 @@ export default class BotLeft {
     `
     static load({data, actionManager, setVariable}) {}
     static run({id, data, actionManager, setVariable}, guild) {
-        setVariable(data.get("server"), guild);
+        setVariable(data.get("server") ?? "server", guild);
         actionManager.runNext(id, "action")
     }
 }

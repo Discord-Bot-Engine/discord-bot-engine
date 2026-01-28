@@ -4,6 +4,33 @@ import {Bot} from "../classes/Bot.js"
 export default class MessageSent {
     static type = "Message Sent"
     static variableTypes = ["Message", "Member", "User", "Channel", "Server"]
+    static defaultVariables = [
+        {
+            name: "message",
+            type: "Message",
+            element: "message"
+        },
+        {
+            name: "user",
+            type: "User",
+            element: "user"
+        },
+        {
+            name: "member",
+            type: "Member",
+            element: "member"
+        },
+        {
+            name: "channel",
+            type: "Channel",
+            element: "channel"
+        },
+        {
+            name: "server",
+            type: "Server",
+            element: "server"
+        },
+    ]
     static event = Events.MessageCreate
     static runIf = (context, msg) => msg.author.id !== Bot.client.user.id
     static html = `
@@ -30,11 +57,11 @@ export default class MessageSent {
     `
     static load({data, actionManager, setVariable}) {}
     static run({id, data, actionManager, setVariable}, message) {
-        setVariable(data.get("message"), message);
-        setVariable(data.get("user"), message.author);
-        setVariable(data.get("member"), message.member);
-        setVariable(data.get("channel"), message.channel);
-        setVariable(data.get("server"), message.guild);
+        setVariable(data.get("message") ?? "message", message);
+        setVariable(data.get("user") ?? "user", message.author);
+        setVariable(data.get("member") ?? "member", message.member);
+        setVariable(data.get("channel") ?? "channel", message.channel);
+        setVariable(data.get("server") ?? "server", message.guild);
         actionManager.runNext(id, "action")
     }
 }

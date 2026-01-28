@@ -5,9 +5,20 @@ import {Dashboard} from "../classes/Dashboard.js";
 export default class DashboardValueChanged {
     static type = "Dashboard Value Changed"
     static variableTypes = ["Server", "Text","Role","Channel","Member","Mentionable"]
+    static defaultVariables = [
+        {
+            name: "server",
+            type: "Server",
+            element: "server"
+        },
+    ]
     static event = "dashboardValueChange"
-    static runIf = ({actionManager}, server, name) => actionManager.trigger.name.toLowerCase() === name.toLowerCase()
+    static runIf = ({actionManager, data}, server, name) => data.get("input").toLowerCase() === name.toLowerCase()
     static html = `
+         <div class="grid grid-cols-4 items-center gap-4">
+                <dbe-label name="Input"></dbe-label>
+                <dbe-input name="input" class="col-span-3"></dbe-input>
+            </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store server in variable"></dbe-label>
             <dbe-variable-list name="server" class="col-span-3" variableType="Server"></dbe-variable-list>
@@ -28,7 +39,7 @@ export default class DashboardValueChanged {
             for (let i = 0; i < value.length; i++)
                 result.push(await parseValue(value[i], input));
         }
-        setVariable(data.get("server"), server);
+        setVariable(data.get("server") ?? "server", server);
         setVariable(data.get("value"), result);
         actionManager.runNext(id, "action")
         async function parseValue(value, input) {

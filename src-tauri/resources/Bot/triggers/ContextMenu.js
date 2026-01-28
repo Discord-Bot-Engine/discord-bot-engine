@@ -17,6 +17,33 @@ export default class ContextMenuCommand {
         "Channel",
         "Message"
     ]
+    static defaultVariables = [
+        {
+            name: "interaction",
+            type: "Context Menu Interaction",
+            element: "interaction"
+        },
+        {
+            name: "user",
+            type: "User",
+            element: "user"
+        },
+        {
+            name: "member",
+            type: "Member",
+            element: "member"
+        },
+        {
+            name: "channel",
+            type: "Channel",
+            element: "channel"
+        },
+        {
+            name: "server",
+            type: "Server",
+            element: "server"
+        },
+    ]
 
     static event = Events.InteractionCreate
 
@@ -35,8 +62,6 @@ export default class ContextMenuCommand {
                 class="col-span-3">
             </dbe-select>
         </div>
-        
-        
         <div class="grid grid-cols-4 items-center gap-4" id="message">
             <dbe-label name="Store target message in variable"></dbe-label>
             <dbe-variable-list
@@ -45,8 +70,6 @@ export default class ContextMenuCommand {
                 variableType="Message">
             </dbe-variable-list>
         </div>
-        
-        
         <div class="grid grid-cols-4 items-center gap-4" id="user">
             <dbe-label name="Store target user in variable"></dbe-label>
             <dbe-variable-list
@@ -55,8 +78,6 @@ export default class ContextMenuCommand {
                 variableType="User">
             </dbe-variable-list>
         </div>
-        
-        
         <div class="grid grid-cols-4 items-center gap-4" id="member">
             <dbe-label name="Store target member in variable"></dbe-label>
             <dbe-variable-list
@@ -65,7 +86,6 @@ export default class ContextMenuCommand {
                 variableType="Member">
             </dbe-variable-list>
         </div>
-
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store interaction in variable"></dbe-label>
             <dbe-variable-list
@@ -74,7 +94,6 @@ export default class ContextMenuCommand {
                 variableType="Context Menu Interaction">
             </dbe-variable-list>
         </div>
-
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store user in variable"></dbe-label>
             <dbe-variable-list
@@ -83,7 +102,6 @@ export default class ContextMenuCommand {
                 variableType="User">
             </dbe-variable-list>
         </div>
-
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store member in variable"></dbe-label>
             <dbe-variable-list
@@ -92,7 +110,6 @@ export default class ContextMenuCommand {
                 variableType="Member">
             </dbe-variable-list>
         </div>
-
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store channel in variable"></dbe-label>
             <dbe-variable-list
@@ -101,7 +118,6 @@ export default class ContextMenuCommand {
                 variableType="Channel">
             </dbe-variable-list>
         </div>
-
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store server in variable"></dbe-label>
             <dbe-variable-list
@@ -155,11 +171,11 @@ export default class ContextMenuCommand {
     }
 
     static run({ id, data, actionManager, setVariable }, interaction) {
-        setVariable(data.get("interaction"), interaction)
-        setVariable(data.get("user"), interaction.user)
-        setVariable(data.get("member"), interaction.member)
-        setVariable(data.get("channel"), interaction.channel)
-        setVariable(data.get("server"), interaction.guild)
+        setVariable(data.get("interaction") ?? "interaction", interaction)
+        setVariable(data.get("user") ?? "user", interaction.user)
+        setVariable(data.get("member") ?? "member", interaction.member)
+        setVariable(data.get("channel") ?? "channel", interaction.channel)
+        setVariable(data.get("server") ?? server, interaction.guild)
 
         if (interaction.isUserContextMenuCommand()) {
             setVariable(data.get("targetUser"), interaction.targetUser)

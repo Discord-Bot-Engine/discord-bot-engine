@@ -77,11 +77,6 @@ export default class StoreVoiceStateInfo {
         const voiceState = getVariable(data.get("voice"));
         const info = data.get("info");
 
-        if (!voiceState) {
-            setVariable(data.get("value"), null);
-            return actionManager.runNext(id, "action");
-        }
-
         let value;
 
         switch (info) {

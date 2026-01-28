@@ -3,15 +3,16 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
-	import { PlusIcon, EllipsisVerticalIcon, MinusIcon } from '@lucide/svelte';
+	import { PlusIcon, EllipsisVerticalIcon, MinusIcon, FolderOpenIcon, FolderIcon } from '@lucide/svelte';
 	import { dndzone } from "svelte-dnd-action";
 	import Translation from "$lib/components/Translation.svelte";
+	import {BotManager} from "$lib/classes/BotManager.svelte.js";
 
 	let {
 		title,
 		items,
 		hideControls,
-			extraControl,
+		isTriggers,
 		allowMoving = true,
 		ondelete = () => {},
 		onadd = () => {},
@@ -76,7 +77,25 @@
 				{/each}
 			</div>
 				{:else}
-				{#each items as item, i}
+				{#if isTriggers}
+				{#each BotManager.selectedBot?.triggerFolders.sort((a,b) => String(a).localeCompare(String(b))) as folder, i}
+					{#if folder}
+						<div class="w-full overflow-hidden">
+							<Button
+									variant="ghost"
+									class="!p-1 !h-fit w-full hover:!bg-accent block text-ellipsis overflow-hidden !text-left !font-bold !text-md"
+									onclick={() => { BotManager.selectedBot.triggerFolderStates[folder] = !(BotManager.selectedBot.triggerFolderStates[folder] !== false) }}
+							>
+								{#if BotManager.selectedBot.triggerFolderStates[folder] !== false}
+								<FolderOpenIcon class="inline-block mt-[-0.1em]"/>{:else}
+									<FolderIcon class="inline-block mt-[-0.1em]"/>
+									{/if}<span class="ml-2">{folder}</span>
+							</Button>
+						</div>
+						<Separator />
+					{/if}
+					{#if BotManager.selectedBot.triggerFolderStates[folder] !== false}
+					{#each BotManager.selectedBot.triggers.filter(t => t.folder?.toLowerCase().trim() === folder?.toLowerCase().trim()) as item, j}
 					<div class="w-full overflow-hidden">
 							<Button
 									variant={selected === item ? undefined : "ghost"}
@@ -85,15 +104,38 @@
 									onclick={() => { selected = item; onclick(item) }}
 							>
 								{#if html}
-									{@render html(item, i)}
+									{@render html(item, i+j)}
 									{/if}
+								{#await itemTitle(item, i+j) then text}
+									{text}
+								{/await}
+							</Button>
+						</div>
+						<Separator />
+						{/each}
+					{/if}
+				{/each}
+					{:else}
+
+					{#each items as item, i}
+						<div class="w-full overflow-hidden">
+							<Button
+									variant={selected === item ? undefined : "ghost"}
+									class="!p-1 !h-fit w-full hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
+									ondblclick={() => { selected = item; ondblclick(item) }}
+									onclick={() => { selected = item; onclick(item) }}
+							>
+								{#if html}
+									{@render html(item, i)}
+								{/if}
 								{#await itemTitle(item, i) then text}
 									{text}
 								{/await}
 							</Button>
 						</div>
 						<Separator />
-				{/each}
+					{/each}
+				{/if}
 			{/if}
 		</ScrollArea>
 	</Card.Content>

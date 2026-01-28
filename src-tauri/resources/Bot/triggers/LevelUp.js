@@ -4,6 +4,38 @@ import {Bot} from "../classes/Bot.js"
 export default class LevelUp {
     static type = "Level Up"
     static variableTypes = ["Number", "Message", "User", "Member", "Channel", "Server"]
+    static defaultVariables = [
+        {
+            name: "level",
+            type: "Number",
+            element: "level"
+        },
+        {
+            name: "message",
+            type: "Message",
+            element: "message"
+        },
+        {
+            name: "user",
+            type: "User",
+            element: "user"
+        },
+        {
+            name: "member",
+            type: "Member",
+            element: "member"
+        },
+        {
+            name: "channel",
+            type: "Channel",
+            element: "channel"
+        },
+        {
+            name: "server",
+            type: "Server",
+            element: "server"
+        },
+    ]
     static event = "levelUp"
     static runIf = () => true
     static html = `
@@ -34,12 +66,12 @@ export default class LevelUp {
     `
     static load({data, actionManager, setVariable}) {}
     static run({id, data, actionManager, setVariable}, message, level) {
-        setVariable(data.get("level"), level);
-        setVariable(data.get("message"), message);
-        setVariable(data.get("user"), message.author);
-        setVariable(data.get("member"), message.member);
-        setVariable(data.get("channel"), message.channel);
-        setVariable(data.get("server"), message.guild);
+        setVariable(data.get("level") ?? "level", level);
+        setVariable(data.get("message") ?? "message", message);
+        setVariable(data.get("user") ?? "user", message.author);
+        setVariable(data.get("member") ?? "member", message.member);
+        setVariable(data.get("channel") ?? "channel", message.channel);
+        setVariable(data.get("server") ?? "server", message.guild);
         actionManager.runNext(id, "action")
     }
 }
