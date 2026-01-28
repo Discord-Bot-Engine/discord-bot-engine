@@ -30,8 +30,8 @@ export default class PresenceChanged {
     `
     static load({data, actionManager, setVariable}) {}
     static async run({id, data, actionManager, setVariable}, oldPresence, newPresence) {
-        setVariable(data.get("old") ?? "old", oldPresence);
-        setVariable(data.get("new") ?? "new", newPresence);
+        setVariable(data.get("old") ?? "oldPresence", oldPresence);
+        setVariable(data.get("new") ?? "newPresence", newPresence);
         actionManager.runNext(id, "action")
     }
 }

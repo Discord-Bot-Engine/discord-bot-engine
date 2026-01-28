@@ -31,8 +31,8 @@ export default class VoiceStateChanged {
     `
     static load({data, actionManager, setVariable}) {}
     static async run({id, data, actionManager, setVariable}, oldState, newState) {
-        setVariable(data.get("old") ?? "old", oldState);
-        setVariable(data.get("new") ?? "new", newState);
+        setVariable(data.get("old") ?? "oldState", oldState);
+        setVariable(data.get("new") ?? "newState", newState);
         actionManager.runNext(id, "action")
     }
 }
