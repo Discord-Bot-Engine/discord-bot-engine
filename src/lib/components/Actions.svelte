@@ -26,6 +26,7 @@
     const { getViewport } = useSvelteFlow();
     const nodes = useNodes();
     let pos = {x: 0, y: 0}
+    let selectedTrigger = $derived(App.selectedTrigger ?? new Trigger())
     function addAction() {
         App.updateUndo()
         if(actionType.toLowerCase() === "none") return;
@@ -190,7 +191,7 @@
                     if(App.hideTriggers)
                         offset = 150
                     pos = {x: ev.pageX - offset, y: ev.pageY - 75}
-                }} onnodedragstart={() => App.updateUndo()} onconnectstart={() => App.updateUndo()} proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={App.selectedTrigger.actions} bind:edges={App.selectedTrigger.edges} >
+                }} onnodedragstart={() => App.updateUndo()} onconnectstart={() => App.updateUndo()} proOptions={{ hideAttribution: true }} colorMode="dark" edgeTypes={{default: Edge}} nodeTypes={{action: Node, group: Group}} bind:nodes={selectedTrigger.actions} bind:edges={selectedTrigger.edges} >
                         <Background bgColor="transparent"></Background>
                     </SvelteFlow>
             {/if}
