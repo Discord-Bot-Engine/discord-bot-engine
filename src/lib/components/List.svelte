@@ -7,7 +7,13 @@
 	import { dndzone } from "svelte-dnd-action";
 	import Translation from "$lib/components/Translation.svelte";
 	import {BotManager} from "$lib/classes/BotManager.svelte.js";
-
+	import {App} from "$lib/classes/App.svelte.js";
+	import Modal from "$lib/components/Modal.svelte";
+	import {Input} from "$lib/components/ui/input/index.js";
+	import {Label} from "$lib/components/ui/label/index.js";
+	let folderName = $state("")
+	let selectedFolderName = $state("")
+	let isEditingFolder = $state(false)
 	let {
 		title,
 		items,
@@ -31,6 +37,15 @@
 			items.push(item)
 		})
 		ondnd()
+	}
+	function editFolder() {
+		BotManager.selectedBot.triggers.forEach(t => {
+			if(t.folder === selectedFolderName) {
+				t.folder = folderName
+				BotManager.selectedBot.markAsModified(t.id)
+			}
+		})
+		isEditingFolder = false
 	}
 </script>
 
@@ -83,18 +98,19 @@
 						<div class="w-full overflow-hidden">
 							<Button
 									variant="ghost"
-									class="!p-1 !h-fit w-full hover:!bg-accent block text-ellipsis overflow-hidden !text-left !font-bold !text-md"
-									onclick={() => { BotManager.selectedBot.triggerFolderStates[folder] = !(BotManager.selectedBot.triggerFolderStates[folder] !== false) }}
+									class="!p-1 !h-fit w-full hover:!bg-accent block text-ellipsis overflow-hidden !text-left !font-bold !text-md uppercase"
+									ondblclick={() => { folderName = folder; selectedFolderName = folder; isEditingFolder = true }}
+									onclick={() => { BotManager.selectedBot.triggerFolderStates[folder] = !BotManager.selectedBot.triggerFolderStates[folder] }}
 							>
-								{#if BotManager.selectedBot.triggerFolderStates[folder] !== false}
-								<FolderOpenIcon class="inline-block mt-[-0.1em]"/>{:else}
-									<FolderIcon class="inline-block mt-[-0.1em]"/>
-									{/if}<span class="ml-2">{folder}</span>
+								{#if BotManager.selectedBot.triggerFolderStates[folder]}
+								<FolderOpenIcon class="inline-block"/>{:else}
+									<FolderIcon class="inline-block"/>
+									{/if}<span class="ml-2 align-middle">{folder}</span>
 							</Button>
 						</div>
 						<Separator />
 					{/if}
-					{#if BotManager.selectedBot.triggerFolderStates[folder] !== false}
+					{#if BotManager.selectedBot.triggerFolderStates[folder] || !folder}
 					{#each BotManager.selectedBot.triggers.filter(t => (t.folder?.toLowerCase().trim() || undefined) === folder?.toLowerCase().trim()) as item, j}
 					<div class="w-full overflow-hidden">
 							<Button
@@ -140,3 +156,11 @@
 		</ScrollArea>
 	</Card.Content>
 </Card.Root>
+<Modal bind:open={isEditingFolder} title="{selectedFolderName}" onDone={editFolder}>
+	<div class="grid gap-4 py-4 px-1" >
+		<div class="grid grid-cols-4 items-center gap-4">
+			<Label for="name" class="text-right">Name</Label>
+			<Input id="name" class="col-span-3 uppercase" bind:value={folderName} noVariables />
+		</div>
+	</div>
+</Modal>

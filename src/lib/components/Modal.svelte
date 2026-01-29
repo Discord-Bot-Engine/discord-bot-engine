@@ -8,7 +8,7 @@
     let {open = $bindable(), url, title, children, onDone = () => {}, onOpenChange = () => {} } = $props()
 </script>
 <Dialog.Root bind:open onOpenChange={onOpenChange}>
-    <Dialog.Content class="sm:max-w-[65vw] w-full px-4.5 overflow-hidden" >
+    <Dialog.Content class="sm:max-w-[65vw] w-full px-4.5 overflow-hidden" interactOutsideBehavior="ignore">
         <Dialog.Header>
             <Dialog.Title>
                 <div class="flex items-center gap-2">

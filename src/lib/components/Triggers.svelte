@@ -31,7 +31,7 @@
         const id = uuidv4()
         const t = new Trigger(id, triggerType, triggerName.trim(), triggerFolder.trim())
         const tclass = BotManager.selectedBot.triggerClasses.find(t => t.type === triggerType)
-        tclass.defaultVariables.forEach(v => {
+        tclass.defaultVariables?.forEach(v => {
             t.variables.set(v.name, v.type)
         })
         BotManager.selectedBot.triggers.push(t)
