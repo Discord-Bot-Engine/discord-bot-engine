@@ -93,7 +93,7 @@
 			</div>
 				{:else}
 				{#if isTriggers}
-				{#each BotManager.selectedBot?.triggerFolders.sort((a,b) => String(a).localeCompare(String(b))) as folder, i}
+				{#each BotManager.selectedBot?.triggerFolders.sort((a,b) => String(a).localeCompare(String(b))) as folder}
 					{#if folder}
 						<div class="w-full overflow-hidden">
 							<Button
@@ -111,7 +111,7 @@
 						<Separator />
 					{/if}
 					{#if BotManager.selectedBot.triggerFolderStates[folder] || !folder}
-					{#each BotManager.selectedBot.triggers.filter(t => (t.folder?.toLowerCase().trim() || undefined) === folder?.toLowerCase().trim()) as item, j}
+					{#each BotManager.selectedBot.triggers.filter(t => (t.folder?.toLowerCase().trim() || undefined) === folder?.toLowerCase().trim()) as item, i}
 					<div class="w-full overflow-hidden">
 							<Button
 									variant={selected === item ? undefined : "ghost"}
@@ -120,9 +120,9 @@
 									onclick={() => { selected = item; onclick(item) }}
 							>
 								{#if html}
-									{@render html(item, i+j)}
+									{@render html(item, BotManager.selectedBot.triggers.indexOf(item))}
 									{/if}
-								{#await itemTitle(item, i+j) then text}
+								{#await itemTitle(item, BotManager.selectedBot.triggers.indexOf(item)) then text}
 									{text}
 								{/await}
 							</Button>
