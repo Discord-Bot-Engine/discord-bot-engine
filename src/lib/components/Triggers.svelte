@@ -120,7 +120,7 @@
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <Label for="folder" class="text-right"><Translation text="Folder"/></Label>
-            <Input id="folder" class="col-span-3 uppercase" bind:value={triggerFolder} noVariables />
+            <Input id="folder" class="col-span-3 capitalize" bind:value={triggerFolder} noVariables />
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <Label for="type" class="text-right"><Translation text="Type"/></Label>
@@ -144,7 +144,7 @@
                 </div>
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="folder" class="text-right">Folder</Label>
-                <Input id="folder" class="col-span-3 uppercase" bind:value={triggerEditFolder} noVariables />
+                <Input id="folder" class="col-span-3 capitalize" bind:value={triggerEditFolder} noVariables />
             </div>
                 {@html BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type)?.html ?? ""}
         </div>

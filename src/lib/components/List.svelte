@@ -98,7 +98,7 @@
 						<div class="w-full overflow-hidden">
 							<Button
 									variant="ghost"
-									class="!p-1 !h-fit w-full hover:!bg-accent block text-ellipsis overflow-hidden !text-left !font-bold !text-md uppercase"
+									class="!p-1 !h-fit w-full hover:!bg-accent block text-ellipsis overflow-hidden !text-left !font-bold !text-md capitalize"
 									ondblclick={() => { folderName = folder; selectedFolderName = folder; isEditingFolder = true }}
 									onclick={() => { BotManager.selectedBot.triggerFolderStates[folder] = !BotManager.selectedBot.triggerFolderStates[folder] }}
 							>
@@ -109,10 +109,10 @@
 							</Button>
 						</div>
 						<Separator />
-					{/if}
+						{/if}
 					{#if BotManager.selectedBot.triggerFolderStates[folder] || !folder}
 					{#each BotManager.selectedBot.triggers.filter(t => (t.folder?.toLowerCase().trim() || undefined) === folder?.toLowerCase().trim()) as item, i}
-					<div class="w-full overflow-hidden">
+					<div class="w-full overflow-hidden relative">
 							<Button
 									variant={selected === item ? undefined : "ghost"}
 									class="!p-1 !h-fit w-full hover:{selected === item ? '!bg-primary' : '!bg-accent'} block text-ellipsis overflow-hidden"
@@ -160,7 +160,7 @@
 	<div class="grid gap-4 py-4 px-1" >
 		<div class="grid grid-cols-4 items-center gap-4">
 			<Label for="name" class="text-right">Name</Label>
-			<Input id="name" class="col-span-3 uppercase" bind:value={folderName} noVariables />
+			<Input id="name" class="col-span-3 capitalize" bind:value={folderName} noVariables />
 		</div>
 	</div>
 </Modal>
