@@ -26,7 +26,7 @@
     const { getViewport } = useSvelteFlow();
     const nodes = useNodes();
     let pos = {x: 0, y: 0}
-    let selectedTrigger = $derived(App.selectedTrigger ?? new Trigger())
+    let selectedTrigger = $derived(App.selectedTrigger ?? {nodes: [], edges: []})
     function addAction() {
         App.updateUndo()
         if(actionType.toLowerCase() === "none") return;
