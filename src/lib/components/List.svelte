@@ -40,8 +40,8 @@
 	}
 	function editFolder() {
 		BotManager.selectedBot.triggers.forEach(t => {
-			if(t.folder === selectedFolderName) {
-				t.folder = folderName
+			if(t.folder.toLowerCase().trim() === selectedFolderName.toLowerCase().trim()) {
+				t.folder = folderName.toLowerCase().trim()
 				BotManager.selectedBot.markAsModified(t.id)
 			}
 		})

@@ -29,7 +29,7 @@
         if(!triggerName.trim() || triggerType.toLowerCase() === "none") return;
         if(BotManager.selectedBot.triggers.find(t => t.name === triggerName.trim() && t.type === triggerType)) return alert("Trigger already exists!");
         const id = uuidv4()
-        const t = new Trigger(id, triggerType, triggerName.trim(), triggerFolder.trim())
+        const t = new Trigger(id, triggerType, triggerName.trim(), triggerFolder.toLowerCase().trim())
         const tclass = BotManager.selectedBot.triggerClasses.find(t => t.type === triggerType)
         tclass.defaultVariables?.forEach(v => {
             t.variables.set(v.name, v.type)
@@ -43,7 +43,7 @@
         if(BotManager.selectedBot.triggers.find(t => t.name === triggerEditName.trim() && t.type === App.selectedTrigger.type) && App.selectedTrigger.name !== triggerEditName) return alert("Trigger already exists!");
         const triggerClass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type);
         App.selectedTrigger.name = triggerEditName
-        App.selectedTrigger.folder = triggerEditFolder
+        App.selectedTrigger.folder = triggerEditFolder.toLowerCase().trim()
         BotManager.selectedBot.markAsModified(App.selectedTrigger.id)
         Object.keys(handlersCopy).forEach(handler => {
             window.handlers[handler] = handlersCopy[handler];
