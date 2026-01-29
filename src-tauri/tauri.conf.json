@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "discord-bot-engine",
+  "productName": "Discord Bot Engine",
   "version": "0.1.0",
   "identifier": "com.discord-bot-engine.app",
   "build": {
