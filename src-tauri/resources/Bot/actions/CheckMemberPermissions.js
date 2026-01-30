@@ -83,7 +83,6 @@ export default class CheckMemberPermissions {
 
         const requiredFlags = permissions
             .map(p => uiToFlag[p])
-            .filter(Boolean);
 
         const memberPerms = member.permissions;
 

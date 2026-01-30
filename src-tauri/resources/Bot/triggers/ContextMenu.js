@@ -171,11 +171,11 @@ export default class ContextMenuCommand {
     }
 
     static run({ id, data, actionManager, setVariable }, interaction) {
-        setVariable(data.get("interaction") ?? "interaction", interaction)
-        setVariable(data.get("user") ?? "user", interaction.user)
-        setVariable(data.get("member") ?? "member", interaction.member)
-        setVariable(data.get("channel") ?? "channel", interaction.channel)
-        setVariable(data.get("server") ?? server, interaction.guild)
+        setVariable(data.get("interaction"), interaction)
+        setVariable(data.get("user"), interaction.user)
+        setVariable(data.get("member"), interaction.member)
+        setVariable(data.get("channel"), interaction.channel)
+        setVariable(data.get("server"), interaction.guild)
 
         if (interaction.isUserContextMenuCommand()) {
             setVariable(data.get("targetUser"), interaction.targetUser)

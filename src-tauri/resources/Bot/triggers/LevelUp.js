@@ -66,12 +66,12 @@ export default class LevelUp {
     `
     static load({data, actionManager, setVariable}) {}
     static run({id, data, actionManager, setVariable}, message, level) {
-        setVariable(data.get("level") ?? "level", level);
-        setVariable(data.get("message") ?? "message", message);
-        setVariable(data.get("user") ?? "user", message.author);
-        setVariable(data.get("member") ?? "member", message.member);
-        setVariable(data.get("channel") ?? "channel", message.channel);
-        setVariable(data.get("server") ?? "server", message.guild);
+        setVariable(data.get("level"), level);
+        setVariable(data.get("message"), message);
+        setVariable(data.get("user"), message.author);
+        setVariable(data.get("member"), message.member);
+        setVariable(data.get("channel"), message.channel);
+        setVariable(data.get("server"), message.guild);
         actionManager.runNext(id, "action")
     }
 }

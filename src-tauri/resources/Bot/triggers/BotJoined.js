@@ -21,7 +21,7 @@ export default class BotJoined {
     `
     static load({data, actionManager, setVariable}) {}
     static run({id, data, actionManager, setVariable}, guild) {
-        setVariable(data.get("server") ?? "server", guild);
+        setVariable(data.get("server"), guild);
         actionManager.runNext(id, "action")
     }
 }

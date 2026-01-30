@@ -10,4 +10,4 @@
         ref.setValues(triggers.filter(v => types.includes(v.type.toLowerCase()) || types.includes("any")).map(el => el.name).sort())
     }
 </script>
-<dbe-select bind:this={ref} {...other} labels={triggers.filter(v => types.includes(v.type.toLowerCase()) || types.includes("any")).map(el => el.name).sort().toString()} values={triggers.filter(v => types.includes(v.type.toLowerCase()) || types.includes("any")).sort((a, b) => a.name.localeCompare(b.name)).map(el => el.id).toString()}/>
+<dbe-select bind:this={ref} {...other} labels={triggers.filter(v => types.includes(v.type.toLowerCase()) || types.includes("any")).map(el => el.name).sort((a, b) => a.name.localeCompare(b.name)).toString()} values={triggers.filter(v => types.includes(v.type.toLowerCase()) || types.includes("any")).sort((a, b) => a.name.localeCompare(b.name)).map(el => el.id).toString()}/>

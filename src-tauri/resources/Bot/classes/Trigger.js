@@ -78,6 +78,9 @@ export class Trigger {
                 }),
             });
         }
+        triggerClass.defaultVariables?.forEach(v => {
+            if(!this.data.get(v.element)) this.data.set(v.element, v.name);
+        })
         try {
             await triggerClass.run(
                 {

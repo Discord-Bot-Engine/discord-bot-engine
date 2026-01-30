@@ -1,4 +1,4 @@
-import { Events, REST, Routes, SlashCommandBuilder } from "discord.js";
+import { Events, REST, Routes, SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
 import { Bot } from "../classes/Bot.js";
 
 export default class SlashCommand {
@@ -85,6 +85,25 @@ export default class SlashCommand {
             <dbe-input name="description" class="col-span-3"></dbe-input>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Requires permissions?"></dbe-label>
+            <dbe-select
+                name="hasPerms"
+                class="col-span-3"
+                values="True,False"
+                value="False"
+                change="(v) => document.getElementById('perms').style.display = v === 'True' ? '' : 'none'"
+            ></dbe-select>
+        </div>
+        <div class="grid grid-cols-4 items-center gap-4" id="perms">
+            <dbe-label name="Required permissions"></dbe-label>
+            <dbe-select
+                name="permissions"
+                class="col-span-3"
+                type="multiple"
+                values="Administrator,View Channels,Manage Channels,Manage Roles,Manage Webhooks,Create Invite,Send Messages,Send TTS Messages,Send Messages In Threads,Create Public Threads,Create Private Threads,Manage Messages,Manage Threads,Embed Links,Attach Files,Add Reactions,Use External Emojis,Use External Stickers,Use Application Commands,Mention Everyone,Read Message History,Pin Messages,Bypass Slowmode,Send Voice Messages,Send Polls,Connect,Speak,Stream,Use VAD,Priority Speaker,Mute Members,Deafen Members,Move Members,Use Embedded Activities,Request To Speak,Manage Events,Manage Server,View Audit Log,Manage Emojis and Stickers,Manage Guild Expressions,Manage Nicknames,Change Nickname,Manage Threads,Create Events,Moderate Members"
+            ></dbe-select>
+        </div>
+        <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store interaction in variable"></dbe-label>
             <dbe-variable-list name="interaction" class="col-span-3" variableType="Command Interaction"></dbe-variable-list>
         </div>
@@ -133,6 +152,59 @@ export default class SlashCommand {
         Bot.commands ??= [];
         Bot.registeredCommands = false;
 
+        const permissions = data.get("permissions") ?? [];
+
+        const hasPerms = data.get("hasPerms") === "True";
+        const uiToFlag = {
+            "Administrator": "Administrator",
+            "View Channels": "ViewChannel",
+            "Manage Channels": "ManageChannels",
+            "Manage Roles": "ManageRoles",
+            "Manage Webhooks": "ManageWebhooks",
+            "Create Invite": "CreateInstantInvite",
+            "Send Messages": "SendMessages",
+            "Send TTS Messages": "SendTTSMessages",
+            "Send Messages In Threads": "SendMessagesInThreads",
+            "Create Public Threads": "CreatePublicThreads",
+            "Create Private Threads": "CreatePrivateThreads",
+            "Manage Messages": "ManageMessages",
+            "Manage Threads": "ManageThreads",
+            "Embed Links": "EmbedLinks",
+            "Attach Files": "AttachFiles",
+            "Add Reactions": "AddReactions",
+            "Use External Emojis": "UseExternalEmojis",
+            "Use External Stickers": "UseExternalStickers",
+            "Use Application Commands": "UseApplicationCommands",
+            "Mention Everyone": "MentionEveryone",
+            "Read Message History": "ReadMessageHistory",
+            "Pin Messages": "PinMessages",
+            "Bypass Slowmode": "BypassSlowmode",
+            "Send Voice Messages": "SendVoiceMessages",
+            "Send Polls": "SendPolls",
+            "Connect": "Connect",
+            "Speak": "Speak",
+            "Stream": "Stream",
+            "Use VAD": "UseVAD",
+            "Priority Speaker": "PrioritySpeaker",
+            "Mute Members": "MuteMembers",
+            "Deafen Members": "DeafenMembers",
+            "Move Members": "MoveMembers",
+            "Use Embedded Activities": "UseEmbeddedActivities",
+            "Request To Speak": "RequestToSpeak",
+            "Manage Events": "ManageEvents",
+            "Manage Server": "ManageGuild",
+            "View Audit Log": "ViewAuditLog",
+            "Manage Emojis and Stickers": "ManageEmojisAndStickers",
+            "Manage Guild Expressions": "ManageGuildExpressions",
+            "Manage Nicknames": "ManageNicknames",
+            "Change Nickname": "ChangeNickname",
+            "Create Events": "CreateEvents",
+            "Moderate Members": "ModerateMembers"
+        };
+
+        const requiredFlags = permissions
+            .map(p => PermissionFlagsBits[uiToFlag[p]])
+        const bitfield = requiredFlags.reduce((acc, flag) => acc | flag, 0n);
         const parts = actionManager.trigger.name.toLowerCase().trim().split(/\s+/);
 
         const parsed = {
@@ -149,7 +221,8 @@ export default class SlashCommand {
             command = new SlashCommandBuilder()
                 .setName(parsed.root)
                 .setDescription(data.get("description")?.trim() || "No description provided.");
-
+            if(hasPerms)
+                command.setDefaultMemberPermissions(bitfield)
             Bot.commands.push(command);
         }
 
@@ -222,11 +295,11 @@ export default class SlashCommand {
             else if (type === "User") setVariable(value, interaction.options.getUser(name));
         });
 
-        setVariable(data.get("interaction") ?? "interaction", interaction);
-        setVariable(data.get("user") ?? "user", interaction.user);
-        setVariable(data.get("member") ?? "member", interaction.member);
-        setVariable(data.get("channel") ?? "channel", interaction.channel);
-        setVariable(data.get("server") ?? "server", interaction.guild);
+        setVariable(data.get("interaction"), interaction);
+        setVariable(data.get("user"), interaction.user);
+        setVariable(data.get("member"), interaction.member);
+        setVariable(data.get("channel"), interaction.channel);
+        setVariable(data.get("server"), interaction.guild);
 
         actionManager.runNext(id, "action");
     }

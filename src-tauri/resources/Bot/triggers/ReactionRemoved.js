@@ -80,13 +80,13 @@ export default class ReactionRemoved {
         const message = reaction.message;
         const guild = message.guild;
         const member = await guild?.members.fetch(user.id);
-        setVariable(data.get("burst") ?? "burst", details.burst);
-        setVariable(data.get("reaction") ?? "reaction", reaction);
-        setVariable(data.get("message") ?? "message", message);
-        setVariable(data.get("user") ?? "user", user);
-        setVariable(data.get("member") ?? "member", member);
-        setVariable(data.get("channel") ?? "channel", message.channel);
-        setVariable(data.get("server") ?? "server", message.guild);
+        setVariable(data.get("burst"), details.burst);
+        setVariable(data.get("reaction"), reaction);
+        setVariable(data.get("message"), message);
+        setVariable(data.get("user"), user);
+        setVariable(data.get("member"), member);
+        setVariable(data.get("channel"), message.channel);
+        setVariable(data.get("server"), message.guild);
         actionManager.runNext(id, "action")
     }
 }

@@ -1,4 +1,4 @@
-import { ThreadAutoArchiveDuration } from "discord.js";
+import { ThreadAutoArchiveDuration, ChannelType } from "discord.js";
 
 export default class CreateThread {
     static type = "Create Thread";

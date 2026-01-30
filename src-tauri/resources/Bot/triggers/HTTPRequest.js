@@ -63,8 +63,8 @@ export default class HTTPRequest {
         headers?.forEach(header => {
             setVariable(header.data.get("var"), req.get(header.data.get("name")))
         })
-        setVariable(data.get("req") ?? "request", req)
-        setVariable(data.get("res") ?? "response", res)
+        setVariable(data.get("req"), req)
+        setVariable(data.get("res"), res)
         actionManager.runNext(id, "action")
     }
 }

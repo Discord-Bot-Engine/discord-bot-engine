@@ -16,7 +16,7 @@ export default class StoreTextChannelInfo {
                 name="info" 
                 class="col-span-3" 
                 change="(v) => handlers.onChange(v)"
-                values="Id,Name,Topic,Is NSFW,Created At,Slowmode,Category,Parent,Is Thread,Server,Position,Is Deletable,Is Manageable,Is Viewable,Permissions,Recipients,Messages">
+                values="Id,Name,Topic,Is NSFW,Created At,Slowmode,Category,Is Thread,Server,Position,Is Deletable,Is Manageable,Is Viewable,Permissions,Recipients,Messages,Threads">
             </dbe-select>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
@@ -40,10 +40,12 @@ export default class StoreTextChannelInfo {
                 varlist.setVariableType("Boolean");
             } else if (["Slowmode", "Position"].includes(value)) {
                 varlist.setVariableType("Number");
-            } else if (["Permissions", "Recipients", "Messages"].includes(value)) {
+            } else if (["Permissions", "Recipients", "Messages", "Threads"].includes(value)) {
                 varlist.setVariableType("List");
-            } else if (["Server", "Category", "Parent"].includes(value)) {
+            } else if (["Server"].includes(value)) {
                 varlist.setVariableType("Server");
+            } else if(["Category"].includes(value)) {
+                varlist.setVariableType("Channel");
             } else {
                 varlist.setVariableType("Text");
             }
@@ -77,7 +79,6 @@ export default class StoreTextChannelInfo {
                 value = channel.rateLimitPerUser;
                 break;
             case "Category":
-            case "Parent":
                 value = channel.parent;
                 break;
             case "Is Thread":
@@ -107,6 +108,11 @@ export default class StoreTextChannelInfo {
             case "Messages":
                 const fetched = await channel.messages.fetch({ limit: 100 });
                 value = [...fetched.values()];
+                break;
+            case "Threads":
+                const fetchedActive = await channel.threads.fetchActive();
+                const fetchedArchived = await channel.threads.fetchArchived();
+                value = [...fetchedActive.threads.values(), ...fetchedArchived.threads.values()];
                 break;
             default:
                 value = null;

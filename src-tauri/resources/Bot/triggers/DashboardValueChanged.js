@@ -39,7 +39,7 @@ export default class DashboardValueChanged {
             for (let i = 0; i < value.length; i++)
                 result.push(await parseValue(value[i], input));
         }
-        setVariable(data.get("server") ?? "server", server);
+        setVariable(data.get("server"), server);
         setVariable(data.get("value"), result);
         actionManager.runNext(id, "action")
         async function parseValue(value, input) {

@@ -39,9 +39,9 @@ export default class MemberJoined {
     `
     static load({data, actionManager, setVariable}) {}
     static run({id, data, actionManager, setVariable}, member) {
-        setVariable(data.get("member") ?? "member", member);
-        setVariable(data.get("user") ?? "user", member.user);
-        setVariable(data.get("server") ?? "server", member.guild);
+        setVariable(data.get("member"), member);
+        setVariable(data.get("user"), member.user);
+        setVariable(data.get("server"), member.guild);
         actionManager.runNext(id, "action")
     }
 }
