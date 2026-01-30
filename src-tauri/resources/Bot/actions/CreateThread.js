@@ -21,7 +21,7 @@ export default class CreateThread {
             <dbe-select 
                 name="threadType"
                 class="col-span-3"
-                values="Public,Private,Announcement"
+                values="Public,Private"
             ></dbe-select>
         </div>
 
@@ -55,7 +55,6 @@ export default class CreateThread {
         const typeMap = {
             Public: ChannelType.PublicThread,
             Private: ChannelType.PrivateThread,
-            Announcement: ChannelType.AnnouncementThread
         };
 
         const type = typeMap[typeStr];
