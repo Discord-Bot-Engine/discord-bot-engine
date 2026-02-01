@@ -1,23 +1,5 @@
-
-import {ActionManager} from "../classes/ActionManager.js";
 import {Bot} from "../classes/Bot.js";
-import {
-    TextDisplayBuilder,
-    SectionBuilder,
-    MediaGalleryBuilder,
-    FileBuilder,
-    SeparatorBuilder,
-    ButtonBuilder,
-    StringSelectMenuBuilder,
-    StringSelectMenuOptionBuilder,
-    ActionRowBuilder,
-    ContainerBuilder,
-    AttachmentBuilder,
-    SeparatorSpacingSize,
-    ButtonStyle,
-    ComponentType,
-    MessageFlags, Events,
-} from "discord.js"
+import discordjs from "discord.js"
 
 export default class RunJavaScriptCode {
     static type = "Run JavaScript Code"
@@ -46,7 +28,7 @@ export default class RunJavaScriptCode {
     }
     static async run(context) {
         const code = context.rawData.get("code")
-        eval(code)
+        eval(`(async () => {${code}})()`)
         context.actionManager.runNext(context.id, "action")
     }
 }

@@ -55,11 +55,11 @@ export default class StoreThreadChannelInfo {
             case "Is Viewable": value = channel.viewable; break;
             case "Server": value = channel.guild; break;
             case "Parent": value = channel.parent; break;
-            case "Members": value = channel.members ? [...channel.members.values()] : []; break;
+            case "Members": value = [...channel.members.cache.values()]; break;
             case "Member Count": value = channel.memberCount; break;
             case "Messages":
                 const fetched = await channel.messages.fetch({ limit: 100 });
-                value = [...fetched.values()]; // store as list of message objects
+                value = [...fetched.values()];
                 break;
             default: value = null; break;
         }

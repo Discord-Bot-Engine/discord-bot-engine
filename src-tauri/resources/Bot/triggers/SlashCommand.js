@@ -1,4 +1,4 @@
-import { Events, REST, Routes, SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
+import {Events, REST, Routes, SlashCommandBuilder, PermissionFlagsBits, ChannelType} from "discord.js";
 import { Bot } from "../classes/Bot.js";
 
 export default class SlashCommand {
@@ -124,6 +124,8 @@ export default class SlashCommand {
             <dbe-variable-list name="server" class="col-span-3" variableType="Server"></dbe-variable-list>
         </div>
         <dbe-list name="options" title="Options" modalId="optionsModal" itemTitle="async (item, i) => item.data.get('name') ?? await App.translate('Option', App.selectedLanguage) + ' #' + i"></dbe-list>
+        <dbe-list name="nameLocalization" title="Translations (for name)" modalId="localizationModal" itemTitle="async (item, i) => item.data.get('locale') ?? await App.translate('Translation', App.selectedLanguage) + ' #' + i"></dbe-list>
+        <dbe-list name="descriptionLocalization" title="Translations (for description)" modalId="localizationModal" itemTitle="async (item, i) => item.data.get('locale') ?? await App.translate('Translation', App.selectedLanguage) + ' #' + i"></dbe-list>
         <template id="optionsModal">
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Name"></dbe-label>
@@ -135,7 +137,27 @@ export default class SlashCommand {
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Type"></dbe-label>
-                <dbe-select name="type" change="(value) => document.getElementById('var').setVariableType(value.replace('Integer', 'Number'))" values="Attachment,Boolean,Channel,Integer,Mentionable,Number,Role,Text,User" value="Text" class="col-span-3"></dbe-select>
+                <dbe-select name="type" change="(value, el) => {document.getElementById('var').setVariableType(value.replace('Integer', 'Number')); el.parentElement.parentElement.querySelector('#maxLength').style.display = value === 'Text' ? '' : 'none'; el.parentElement.parentElement.querySelector('#minLength').style.display = value === 'Text' ? '' : 'none'; el.parentElement.parentElement.querySelector('#minValue').style.display = ['Integer', 'Number'].includes(value) ? '' : 'none'; el.parentElement.parentElement.querySelector('#maxValue').style.display = ['Integer', 'Number'].includes(value) ? '' : 'none'; el.parentElement.parentElement.querySelector('#chtype').style.display = value === 'Channel' ? '' : 'none'; el.parentElement.parentElement.querySelector('#choices').style.display = value === 'Choice' ? '' : 'none'}" values="Attachment,Choice,Boolean,Channel,Integer,Mentionable,Number,Role,Text,User" value="Text" class="col-span-3"></dbe-select>
+            </div>
+             <div class="grid grid-cols-4 items-center gap-4" id="minLength">
+                <dbe-label name="Min length"></dbe-label>
+                <dbe-input name="minLength" class="col-span-3"></dbe-input>
+            </div>
+            <div class="grid grid-cols-4 items-center gap-4" id="maxLength">
+                <dbe-label name="Max length"></dbe-label>
+                <dbe-input name="maxLength" class="col-span-3"></dbe-input>
+            </div>
+            <div class="grid grid-cols-4 items-center gap-4" id="minValue">
+                <dbe-label name="Min value"></dbe-label>
+                <dbe-input name="minValue" class="col-span-3"></dbe-input>
+            </div>
+            <div class="grid grid-cols-4 items-center gap-4" id="maxValue">
+                <dbe-label name="Max value"></dbe-label>
+                <dbe-input name="maxValue" class="col-span-3"></dbe-input>
+            </div>
+            <div class="grid grid-cols-4 items-center gap-4" id="chtype">
+                <dbe-label name="Channel Type"></dbe-label>
+                <dbe-select name="chtype" class="col-span-3" values="Any,Text,Voice,Category" value="Any"></dbe-select>
             </div>
              <div class="grid grid-cols-4 items-center gap-4">
                 <dbe-label name="Is Required?"></dbe-label>
@@ -145,6 +167,29 @@ export default class SlashCommand {
                 <dbe-label name="Store value in variable"></dbe-label>
                 <dbe-variable-list name="value" class="col-span-3" id="var" variableType="Attachment,Boolean,Channel,Mentionable,Number,Role,Text,User"></dbe-variable-list>
             </div>
+        <dbe-list name="choices" title="Choices" id="choices" modalId="choicesModal" itemTitle="async (item, i) => item.data.get('name') ?? await App.translate('Choice', App.selectedLanguage) + ' #' + i"></dbe-list>
+        <dbe-list name="nameLocalization" title="Translations (for name)" modalId="localizationModal" itemTitle="async (item, i) => item.data.get('locale') ?? await App.translate('Translation', App.selectedLanguage) + ' #' + i"></dbe-list>
+        <dbe-list name="descriptionLocalization" title="Translations (for description)" modalId="localizationModal" itemTitle="async (item, i) => item.data.get('locale') ?? await App.translate('Translation', App.selectedLanguage) + ' #' + i"></dbe-list>
+        </template>
+        <template id="choicesModal">
+         <div class="grid grid-cols-4 items-center gap-4">
+                <dbe-label name="Name"></dbe-label>
+                <dbe-input name="name" class="col-span-3"></dbe-input>
+            </div>
+            <div class="grid grid-cols-4 items-center gap-4">
+                <dbe-label name="Value"></dbe-label>
+                <dbe-input name="value" class="col-span-3"></dbe-input>
+            </div>
+        </template>
+        <template id="localizationModal">
+        <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Locale"></dbe-label>
+            <dbe-select name="locale" class="col-span-3" values="Bulgarian,Chinese CN,Chinese TW,Croatian,Czech,Danish,Dutch,English GB,English US,Finnish,French,German,Greek,Hindi,Hungarian,Indonesian,Italian,Japanese,Korean,Lithuanian,Norwegian,Polish,Portuguese BR,Romanian,Russian,Spanish ES,Spanish LATAM,Swedish,Thai,Turkish,Ukrainian,Vietnamese" value="Bulgarian"></dbe-select>
+        </div>
+        <div class="grid grid-cols-4 items-center gap-4">
+            <dbe-label name="Text"></dbe-label>
+            <dbe-input name="text" class="col-span-3"></dbe-input>
+        </div>
         </template>
     `;
 
@@ -202,6 +247,42 @@ export default class SlashCommand {
             "Moderate Members": "ModerateMembers"
         };
 
+        const uiToLocale = {
+            "Bulgarian": "bg",
+            "Chinese CN": "zh-CN",
+            "Chinese TW": "zh-TW",
+            "Croatian": "hr",
+            "Czech": "cs",
+            "Danish": "da",
+            "Dutch": "nl",
+            "English GB": "en-GB",
+            "English US": "en-US",
+            "Finnish": "fi",
+            "French": "fr",
+            "German": "de",
+            "Greek": "el",
+            "Hindi": "hi",
+            "Hungarian": "hu",
+            "Indonesian": "id",
+            "Italian": "it",
+            "Japanese": "ja",
+            "Korean": "ko",
+            "Lithuanian": "lt",
+            "Norwegian": "no",
+            "Polish": "pl",
+            "Portuguese BR": "pt-BR",
+            "Romanian": "ro",
+            "Russian": "ru",
+            "Spanish ES": "es-ES",
+            "Spanish LATAM": "es-419",
+            "Swedish": "sv-SE",
+            "Thai": "th",
+            "Turkish": "tr",
+            "Ukrainian": "uk",
+            "Vietnamese": "vi"
+        }
+
+
         const requiredFlags = permissions
             .map(p => PermissionFlagsBits[uiToFlag[p]])
         const bitfield = requiredFlags.reduce((acc, flag) => acc | flag, 0n);
@@ -216,10 +297,29 @@ export default class SlashCommand {
         };
 
         let command = Bot.commands.find(c => c.name === parsed.root);
-
+        const nameLocalization = {}
+        const subcommandGroupNameLocalization = {}
+        const subcommandNameLocalization = {}
+        data.get("nameLocalization")?.forEach(n => {
+            const names = n.data.get("text").split(/\s+/g)
+            nameLocalization[uiToLocale[n.data.get("locale")]] = names[0];
+            if(names.length === 2) {
+                subcommandNameLocalization[uiToLocale[n.data.get("locale")]] = names[1];
+            }
+            else if(names.length === 3) {
+                subcommandGroupNameLocalization[uiToLocale[n.data.get("locale")]] = names[1];
+                subcommandNameLocalization[uiToLocale[n.data.get("locale")]] = names[2];
+            }
+        });
+        const descriptionLocalization = {}
+        data.get("descriptionLocalization")?.forEach(n => {
+            descriptionLocalization[uiToLocale[n.data.get("locale")]] = n.data.get("text");
+        });
         if (!command) {
             command = new SlashCommandBuilder()
                 .setName(parsed.root)
+                .setNameLocalizations(nameLocalization)
+                .setDescriptionLocalizations(descriptionLocalization)
                 .setDescription(data.get("description")?.trim() || "No description provided.");
             if(hasPerms)
                 command.setDefaultMemberPermissions(bitfield)
@@ -232,33 +332,81 @@ export default class SlashCommand {
                 const desc = option.data.get("description")?.trim() || "No description provided.";
                 const req = option.data.get("required") === "True";
                 const type = option.data.get("type");
+                const nameLocalization = {}
+                option.data.get("nameLocalization")?.forEach(n => {
+                    nameLocalization[uiToLocale[n.data.get("locale")]] = n.data.get("text");
+                });
+                const descriptionLocalization = {}
+                option.data.get("descriptionLocalization")?.forEach(n => {
+                    descriptionLocalization[uiToLocale[n.data.get("locale")]] = n.data.get("text");
+                });
+                const minLength = option.data.get("minLength")?.trim() ? Number(option.data.get("minLength")) : undefined;
+                const maxLength = option.data.get("maxLength") ? Number(option.data.get("maxLength")) : undefined;
+                const minValue = option.data.get("minValue") ? Number(option.data.get("minValue")) : undefined;
+                const maxValue = option.data.get("maxValue") ? Number(option.data.get("maxValue")) : undefined;
+                const chtype = option.data.get("chtype");
 
-                if (type === "Attachment") builder.addAttachmentOption(o => o.setName(name).setDescription(desc).setRequired(req));
-                else if (type === "Boolean") builder.addBooleanOption(o => o.setName(name).setDescription(desc).setRequired(req));
-                else if (type === "Channel") builder.addChannelOption(o => o.setName(name).setDescription(desc).setRequired(req));
-                else if (type === "Integer") builder.addIntegerOption(o => o.setName(name).setDescription(desc).setRequired(req));
-                else if (type === "Mentionable") builder.addMentionableOption(o => o.setName(name).setDescription(desc).setRequired(req));
-                else if (type === "Number") builder.addNumberOption(o => o.setName(name).setDescription(desc).setRequired(req));
-                else if (type === "Role") builder.addRoleOption(o => o.setName(name).setDescription(desc).setRequired(req));
-                else if (type === "Text") builder.addStringOption(o => o.setName(name).setDescription(desc).setRequired(req));
-                else if (type === "User") builder.addUserOption(o => o.setName(name).setDescription(desc).setRequired(req));
+                if (type === "Attachment") builder.addAttachmentOption(o => o.setNameLocalizations(nameLocalization).setDescriptionLocalizations(descriptionLocalization).setName(name).setDescription(desc).setRequired(req));
+                else if (type === "Boolean") builder.addBooleanOption(o => o.setNameLocalizations(nameLocalization).setDescriptionLocalizations(descriptionLocalization).setName(name).setDescription(desc).setRequired(req));
+                else if (type === "Channel") {
+                    builder.addChannelOption(o => {
+                        if(chtype === "Text") {
+                            o.addChannelTypes([ChannelType.GuildText])
+                        } else if(chtype === "Voice") {
+                            o.addChannelTypes([ChannelType.GuildVoice])
+                        } else if(chtype === "Category") {
+                            o.addChannelTypes([ChannelType.GuildCategory])
+                        }
+                        return o.setNameLocalizations(nameLocalization).setDescriptionLocalizations(descriptionLocalization).setName(name).setDescription(desc).setRequired(req)
+                    });
+                }
+                else if (type === "Integer") builder.addIntegerOption(o => o.setNameLocalizations(nameLocalization).setDescriptionLocalizations(descriptionLocalization).setName(name).setDescription(desc).setRequired(req));
+                else if (type === "Mentionable") builder.addMentionableOption(o => o.setNameLocalizations(nameLocalization).setDescriptionLocalizations(descriptionLocalization).setName(name).setDescription(desc).setRequired(req));
+                else if (type === "Number") builder.addNumberOption(o => {
+                    if(!isNaN(minValue))
+                        o.setMinValue(minValue)
+                    if(!isNaN(maxValue))
+                        o.setMaxValue(maxValue)
+                    return o.setNameLocalizations(nameLocalization).setDescriptionLocalizations(descriptionLocalization).setName(name).setDescription(desc).setRequired(req)
+                });
+                else if (type === "Role") builder.addRoleOption(o => o.setNameLocalizations(nameLocalization).setDescriptionLocalizations(descriptionLocalization).setName(name).setDescription(desc).setRequired(req));
+                else if (type === "Text") {
+                    builder.addStringOption(o => {
+                        if(!isNaN(minLength))
+                            o.setMinLength(minLength)
+                        if(!isNaN(maxLength))
+                            o.setMaxLength(maxLength)
+                        return o.setNameLocalizations(nameLocalization).setDescriptionLocalizations(descriptionLocalization).setName(name).setDescription(desc).setRequired(req)
+                    });
+                } else if (type === "Choice") {
+                    builder.addStringOption(o => o.setNameLocalizations(nameLocalization).setDescriptionLocalizations(descriptionLocalization).setName(name).setDescription(desc).setRequired(req).addChoices(...option.data.get("choices").map(choice => ({name: choice.data.get("name"), value: choice.data.get("value")}))));
+                }
+                else if (type === "User") builder.addUserOption(o => o.setNameLocalizations(nameLocalization).setDescriptionLocalizations(descriptionLocalization).setName(name).setDescription(desc).setRequired(req));
             });
         };
 
         if (parsed.sub) {
             command.addSubcommandGroup(group =>
-                group
-                    .setName(parsed.group)
-                    .setDescription("Subcommand group")
-                    .addSubcommand(sub => {
-                        sub.setName(parsed.sub).setDescription("Subcommand");
-                        applyOptions(sub);
-                        return sub;
-                    })
+                    group
+                        .setName(parsed.group)
+                        .setDescription(data.get("description")?.trim() || "No description provided.")
+                        .setNameLocalizations(subcommandGroupNameLocalization)
+                        .setDescriptionLocalizations(descriptionLocalization)
+                        .addSubcommand(sub => {
+                            sub.setName(parsed.sub)
+                                .setDescription("Subcommand")
+                                .setNameLocalizations(subcommandNameLocalization)
+                                .setDescriptionLocalizations(descriptionLocalization);
+                            applyOptions(sub);
+                            return sub;
+                        })
             );
         } else if (parsed.group) {
             command.addSubcommand(sub => {
-                sub.setName(parsed.group).setDescription("Subcommand");
+                sub.setName(parsed.group)
+                    .setDescription(data.get("description")?.trim() || "No description provided.")
+                    .setNameLocalizations(subcommandNameLocalization)
+                    .setDescriptionLocalizations(descriptionLocalization);
                 applyOptions(sub);
                 return sub;
             });

@@ -29,6 +29,8 @@ export class Action{
                 rawData: this.data
             })
         } catch(error) {
+            if(context.actionManager.onError)
+                return context.actionManager.onError(error)
             const action = this.type ? `${context.actionManager.actions.filter(act => act.type !== "group").findIndex(act => act.id === this.id)}. ${this.type}` : "root"
             console.log(`Error at trigger: ${context.actionManager.trigger.name} (${context.actionManager.trigger.type})\nAction: ${action}\n${error.stack}`)
         }
