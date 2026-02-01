@@ -31,10 +31,9 @@ export default class Wait {
                             triggerIds[triggerId].actionIds = triggerIds[triggerId].actionIds.filter(act => act.id !== action.id);
                             const t = Bot.triggers.find(t => t.id === triggerId)
                             const actionManager = t.lastManager ?? new ActionManager(t)
-                            for (const key in (data.variables ?? {})) {
-                                const val = await Bot.restore(data.variables[key])
+                            for (const key in (triggerIds[triggerId].variables ?? {})) {
+                                const val = await Bot.restore(triggerIds[triggerId].variables[key])
                                 actionManager.setVariable(key, val);
-                                console.log(val)
                             }
                             actionManager.runNext(action.id, `action`)
                         } else {
@@ -42,8 +41,8 @@ export default class Wait {
                                 triggerIds[triggerId].actionIds = triggerIds[triggerId].actionIds.filter(act => act.id !== action.id);
                                 const t = Bot.triggers.find(t => t.id === triggerId)
                                 const actionManager = t.lastManager ?? new ActionManager(t)
-                                for (const key in (data.variables ?? {})) {
-                                    actionManager.setVariable(key, await Bot.restore(data.variables[key]));
+                                for (const key in (triggerIds[triggerId].variables ?? {})) {
+                                    actionManager.setVariable(key, await Bot.restore(triggerIds[triggerId].variables[key]));
                                 }
                                 actionManager.runNext(action.id, `action`)
                             }, action.timestamp - date)
@@ -51,8 +50,7 @@ export default class Wait {
                     })
                 })
                 await Bot.setData(`$WAITS$$$`, JSON.stringify({
-                    triggerIds: triggerIds,
-                    variables: data.variables,
+                    triggerIds: triggerIds
                 }))
             })
         }
@@ -70,7 +68,11 @@ export default class Wait {
             const raw = await Bot.getData(`$WAITS$$$`);
             if(raw) {
                 const data = JSON.parse(raw)
-                data.triggerIds[actionManager.trigger.id] ??= { actionIds: [] }
+                data.triggerIds ??= {}
+                data.triggerIds[actionManager.trigger.id] ??= {
+                    actionIds: [],
+                    variables,
+                }
                 if(!data.triggerIds[actionManager.trigger.id].actionIds.find(act => act.id === id))
                     data.triggerIds[actionManager.trigger.id].actionIds.push({
                         id,
@@ -78,7 +80,6 @@ export default class Wait {
                     })
                 await Bot.setData(`$WAITS$$$`, JSON.stringify({
                     triggerIds: data.triggerIds,
-                    variables,
                 }))
             } else {
                 await Bot.setData(`$WAITS$$$`, JSON.stringify({
@@ -87,10 +88,10 @@ export default class Wait {
                             actionIds: [{
                                 id,
                                 timestamp
-                            }]
+                            }],
+                            variables,
                         }
                     },
-                    variables,
                 }))
             }
         }
@@ -98,13 +99,11 @@ export default class Wait {
             const raw = await Bot.getData(`$WAITS$$$`);
             if(raw) {
                 const data = JSON.parse(raw)
-                data.triggerIds[actionManager.trigger.id] ??= {actionIds: []}
-                const el = data.triggerIds[actionManager.trigger.id].actionIds.find(act => act.id === id)
+                const el = data.triggerIds[actionManager.trigger.id]?.actionIds.find(act => act.id === id)
                 if (el)
                     data.triggerIds[actionManager.trigger.id].actionIds = data.triggerIds[actionManager.trigger.id].actionIds.filter(act => act.id !== el.id)
                 await Bot.setData(`$WAITS$$$`, JSON.stringify({
                     triggerIds: data.triggerIds,
-                    variables: data.variables,
                 }))
             }
             actionManager.runNext(id, "action")
