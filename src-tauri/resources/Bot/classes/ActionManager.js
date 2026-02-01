@@ -23,6 +23,25 @@ export class ActionManager {
   }
 
   runNext(id, output) {
+    if (Bot.debugger) {
+      const data = {};
+      this.trigger.data.keys().forEach((key) => {
+        data[key] = this.trigger.data.get(key);
+      });
+      Bot.sendDebugData({
+        id: this.trigger.id,
+        name: this.trigger.name,
+        data,
+        type: this.trigger.type,
+        actions: this.actions.map((act) => {
+          const data = {};
+          act.data.keys().forEach((key) => {
+            data[key] = act.data.get(key);
+          });
+          return { ...act, data };
+        }),
+      });
+    }
     const edges = this.edges.filter(
       (edge) => edge.source === id && edge.sourceHandle === output
     );
