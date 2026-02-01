@@ -3,16 +3,14 @@
     import {App} from "$lib/classes/App.svelte.js"
     import SearchSelect from "$lib/components/SearchSelect.svelte";
     import {onMount} from "svelte";
-    let {change = "() => {}", labels="", value, values, ...other} = $props()
+    let {change = "() => {}", value, values, ...other} = $props()
     values = values ?? []
-    labels = labels.split(",").map(el => el.trim()).filter(el => el)
     let init = false
-    let statelabels = $state(labels)
     let statevalues = $state(values.split(","))
     let statevalue = $state(value)
     let translatedvalues = $state([])
     async function translate() {
-        translatedvalues = await Promise.all(customSort(statevalues.filter(el => el.trim())).map(async (el,i)=>({label: await App.translate(statelabels[i] ?? el, App.selectedLanguage), value:el})))
+        translatedvalues = await Promise.all(customSort(statevalues.filter(el => el.trim())).map((el)=>({label: el, value:el})))
     }
     function customSort(arr) {
         if (arr.every(item => !isNaN(item))) {
@@ -20,9 +18,6 @@
         } else {
             return arr.map(String).sort((a, b) => a.localeCompare(b));
         }
-    }
-    $host().setLabels = (newLabels) => {
-        statelabels = newLabels
     }
     $host().setValues = (newValues) => {
         statevalues = newValues

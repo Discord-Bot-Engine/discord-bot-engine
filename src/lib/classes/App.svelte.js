@@ -120,7 +120,7 @@ class AppClass {
 			let name = el.getAttribute("name");
 			if(el.tagName.toLowerCase() === "dbe-list") {
 				data.set(name, el.getItems())
-			} else if(el.tagName.toLowerCase() === "dbe-select" || el.tagName.toLowerCase() === "dbe-variable-list") {
+			} else if(el.tagName.toLowerCase() === "dbe-select" || el.tagName.toLowerCase() === "dbe-variable-list" || el.tagName.toLowerCase() === "dbe-trigger-list") {
 				data.set(name, el.getValue())
 			} else if (el.tagName.toLowerCase() === 'select' && el.multiple) {
 				data.set(name, el.selectedOptions.map((o) => o.value));
@@ -142,12 +142,12 @@ class AppClass {
 			if(el.tagName.toLowerCase() === "dbe-list") {
 				let elements = data.get(name)
 				el.setItems(elements ?? [])
-			} else if (el.tagName.toLowerCase() === 'dbe-select') {
+			} else if (el.tagName.toLowerCase() === 'dbe-select' || el.tagName.toLowerCase() === "dbe-trigger-list") {
 				el.setValue(data.get(name))
 			} else if(el.tagName.toLowerCase() === "dbe-variable-list") {
 				if(isTrigger && data.get(name) === undefined) {
 					const tclass = BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger.type)
-					const v = tclass.defaultVariables.find(v => v.element === name)
+					const v = tclass.defaultVariables?.find(v => v.element === name)
 					el.setValue(v.name)
 				} else el.setValue(data.get(name))
 			} else if (el.tagName.toLowerCase() === 'select' && el.multiple) {

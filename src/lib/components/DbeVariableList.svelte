@@ -50,7 +50,7 @@
     label: text,
     onclick: () => isCreatingVariable = true
 }
-} {...other} values={customSort(statevalues.filter(el => el.trim())).map((el,i)=>({label: el, value:el}))} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
+} {...other} values={customSort(statevalues.filter(el => el.trim())).map((el)=>({label: el, value:el}))} onvaluechange={(v) => change(v, $host())} bind:value={statevalue}/>
 {/snippet}
 <Translation text="Add Variable" el={addVar}/>
 <Modal bind:open={isCreatingVariable} title="Create Variable" onDone={addVariable}>
