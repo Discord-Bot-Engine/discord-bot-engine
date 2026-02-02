@@ -301,14 +301,14 @@ export default class SlashCommand {
         const subcommandGroupNameLocalization = {}
         const subcommandNameLocalization = {}
         data.get("nameLocalization")?.forEach(n => {
-            const names = n.data.get("text").split(/\s+/g)
-            nameLocalization[uiToLocale[n.data.get("locale")]] = names[0];
+            const names = n.data.get("text").toLowerCase().trim().split(/\s+/g)
+            nameLocalization[uiToLocale[n.data.get("locale")]] = names[0].toLowerCase().trim().replace(/\s+/g, "-");
             if(names.length === 2) {
-                subcommandNameLocalization[uiToLocale[n.data.get("locale")]] = names[1];
+                subcommandNameLocalization[uiToLocale[n.data.get("locale")]] = names[1].toLowerCase().trim().replace(/\s+/g, "-");
             }
             else if(names.length === 3) {
-                subcommandGroupNameLocalization[uiToLocale[n.data.get("locale")]] = names[1];
-                subcommandNameLocalization[uiToLocale[n.data.get("locale")]] = names[2];
+                subcommandGroupNameLocalization[uiToLocale[n.data.get("locale")]] = names[1].toLowerCase().trim().replace(/\s+/g, "-");
+                subcommandNameLocalization[uiToLocale[n.data.get("locale")]] = names.slice(2).join(" ").toLowerCase().trim().replace(/\s+/g, "-");
             }
         });
         const descriptionLocalization = {}
@@ -334,7 +334,7 @@ export default class SlashCommand {
                 const type = option.data.get("type");
                 const nameLocalization = {}
                 option.data.get("nameLocalization")?.forEach(n => {
-                    nameLocalization[uiToLocale[n.data.get("locale")]] = n.data.get("text");
+                    nameLocalization[uiToLocale[n.data.get("locale")]] = n.data.get("text").toLowerCase().trim().replace(/\s+/g, "-");
                 });
                 const descriptionLocalization = {}
                 option.data.get("descriptionLocalization")?.forEach(n => {

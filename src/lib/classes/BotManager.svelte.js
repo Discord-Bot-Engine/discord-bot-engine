@@ -172,7 +172,11 @@ class BotManagerClass {
 		await invoke('save_bot_extensions', {bot_path: this.selectedBot.path, extensions_json: JSON.stringify(extensions)})
 		this.selectedBot.modifiedTriggers = []
 		this.selectedBot.removedTriggers = []
-		alert("Project saved successfully!");
+		if(App.showSavedAlert) return;
+		App.showSavedAlert = true
+		App.timeout = setTimeout(() => {
+			App.showSavedAlert = false
+		}, 4900)
 	}
 
 	async runBot() {

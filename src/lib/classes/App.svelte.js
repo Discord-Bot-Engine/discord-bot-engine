@@ -17,6 +17,7 @@ class AppClass {
 	translations = {}
 	state = new Activity()
 	svelteFlow = null
+	showSavedAlert = $state(false)
 
 	constructor() {
 		start("1435285281652867095")
