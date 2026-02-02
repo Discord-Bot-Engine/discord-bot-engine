@@ -17,7 +17,6 @@
     let variableEditType = $state("None")
     let isCreatingVariable = $state(false);
     let isEditingVariable = $state(false);
-    let action = $state(null)
     const variableTypes = $derived(BotManager.selectedBot.variableTypes)
     function addVariable() {
         if(!variableName.trim() || variableType.toLowerCase() === "none") return;
@@ -35,28 +34,35 @@
         const parser = new DOMParser()
         const dom = parser.parseFromString(BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger?.type)?.html, 'text/html');
         App.selectedTrigger.data.keys().forEach(key => {
-            [...dom.body.querySelectorAll(`[name="${key}"]`)].forEach(el => {
-                if(el.tagName === "DBE-VARIABLE-LIST" && App.selectedTrigger.data.get(key) === selectedVariable) {
-                    App.selectedTrigger.data.set(key, variableEditName)
-                } else if(App.selectedTrigger.data.get(key).includes(`$\{variables[\`${selectedVariable}\`]}`)) {
-                    App.selectedTrigger.data.set(key, App.selectedTrigger.data.get(key).replaceAll(`$\{variables[\`${selectedVariable}\`]}`, `$\{variables[\`${variableEditName}\`]}`));
-                }
-            })
+            replace(App.selectedTrigger, key, selectedVariable, variableEditName, dom)
         })
         App.selectedTrigger.actions.forEach(action => {
             const dom = parser.parseFromString(BotManager.selectedBot.actionClasses.find(a => a.type === action.actionType)?.html, 'text/html');
             action.data.keys().forEach(key => {
-                [...dom.body.querySelectorAll(`[name="${key}"]`)].forEach(el => {
-                    if(el.tagName === "DBE-VARIABLE-LIST" && action.data.get(key) === selectedVariable) {
-                        action.data.set(key, variableEditName)
-                    } else if(action.data.get(key).includes(`$\{variables[\`${selectedVariable}\`]}`)) {
-                        action.data.set(key, action.data.get(key).replaceAll(`$\{variables[\`${selectedVariable}\`]}`, `$\{variables[\`${variableEditName}\`]}`))
-                    }
-                })
+                replace(action, key, selectedVariable, variableEditName, dom)
             })
         })
         selectedVariable = variableEditName;
         isEditingVariable = false
+    }
+
+    function replace(obj, key, variable, newVariable, dom) {
+        if(Array.isArray(obj.data.get(key)) && obj.data.get(key)?.every(el => el instanceof CustomElement)) {
+               obj.data.get(key).forEach(obj => {
+                   obj.data.keys().forEach(key => {
+                       replace(obj, key, variable, newVariable, dom);
+                   })
+               })
+        } else {
+            if (obj.data.get(key)?.includes(`$\{variables[\`${variable}\`]}`)) {
+                obj.data.set(key, obj.data.get(key).replaceAll(`$\{variables[\`${variable}\`]}`, `$\{variables[\`${newVariable}\`]}`))
+            }
+            [...dom.body.querySelectorAll(`[name="${key}"]`)].forEach(el => {
+                if (el.tagName === "DBE-VARIABLE-LIST" && obj.data.get(key) === variable) {
+                    obj.data.set(key, newVariable)
+                }
+            })
+        }
     }
 </script>
 
