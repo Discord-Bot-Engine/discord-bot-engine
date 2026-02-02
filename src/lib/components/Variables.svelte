@@ -17,6 +17,7 @@
     let variableEditType = $state("None")
     let isCreatingVariable = $state(false);
     let isEditingVariable = $state(false);
+    let action = $state(null)
     const variableTypes = $derived(BotManager.selectedBot.variableTypes)
     function addVariable() {
         if(!variableName.trim() || variableType.toLowerCase() === "none") return;
@@ -31,6 +32,29 @@
         App.selectedTrigger?.variables.delete(selectedVariable)
         App.selectedTrigger?.variables.set(variableEditName, variableEditType.toLowerCase())
         BotManager.selectedBot.markAsModified(App.selectedTrigger.id);
+        const parser = new DOMParser()
+        const dom = parser.parseFromString(BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger?.type)?.html, 'text/html');
+        App.selectedTrigger.data.keys().forEach(key => {
+            [...dom.body.querySelectorAll(`[name="${key}"]`)].forEach(el => {
+                if(el.tagName === "DBE-VARIABLE-LIST" && App.selectedTrigger.data.get(key) === selectedVariable) {
+                    App.selectedTrigger.data.set(key, variableEditName)
+                } else if(App.selectedTrigger.data.get(key).includes(`$\{variables[\`${selectedVariable}\`]}`)) {
+                    App.selectedTrigger.data.set(key, App.selectedTrigger.data.get(key).replaceAll(`$\{variables[\`${selectedVariable}\`]}`, `$\{variables[\`${variableEditName}\`]}`));
+                }
+            })
+        })
+        App.selectedTrigger.actions.forEach(action => {
+            const dom = parser.parseFromString(BotManager.selectedBot.actionClasses.find(a => a.type === action.actionType)?.html, 'text/html');
+            action.data.keys().forEach(key => {
+                [...dom.body.querySelectorAll(`[name="${key}"]`)].forEach(el => {
+                    if(el.tagName === "DBE-VARIABLE-LIST" && action.data.get(key) === selectedVariable) {
+                        action.data.set(key, variableEditName)
+                    } else if(action.data.get(key).includes(`$\{variables[\`${selectedVariable}\`]}`)) {
+                        action.data.set(key, action.data.get(key).replaceAll(`$\{variables[\`${selectedVariable}\`]}`, `$\{variables[\`${variableEditName}\`]}`))
+                    }
+                })
+            })
+        })
         selectedVariable = variableEditName;
         isEditingVariable = false
     }
