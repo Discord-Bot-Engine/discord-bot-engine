@@ -32,14 +32,14 @@
         App.selectedTrigger?.variables.set(variableEditName, variableEditType.toLowerCase())
         BotManager.selectedBot.markAsModified(App.selectedTrigger.id);
         const parser = new DOMParser()
-        const dom = parser.parseFromString(BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger?.type)?.html, 'text/html');
+        const dom = parser.parseFromString(BotManager.selectedBot.triggerClasses.find(t => t.type === App.selectedTrigger?.type)?.html?.replaceAll("<template", "<div").replaceAll("</template", "</div"), 'text/html');
         App.selectedTrigger.data.keys().forEach(key => {
-            replace(App.selectedTrigger, key, selectedVariable, variableEditName, dom)
+            replace(App.selectedTrigger, key, selectedVariable, variableEditName, dom.body, dom.body)
         })
         App.selectedTrigger.actions.forEach(action => {
-            const dom = parser.parseFromString(BotManager.selectedBot.actionClasses.find(a => a.type === action.actionType)?.html, 'text/html');
+            const dom = parser.parseFromString(BotManager.selectedBot.actionClasses.find(a => a.type === action.actionType)?.html?.replaceAll("<template", "<div").replaceAll("</template", "</div"), 'text/html');
             action.data.keys().forEach(key => {
-                replace(action, key, selectedVariable, variableEditName, dom)
+                replace(action, key, selectedVariable, variableEditName, dom.body, dom.body)
             })
         })
         selectedVariable = variableEditName;
@@ -48,16 +48,16 @@
 
     function replace(obj, key, variable, newVariable, dom) {
         if(Array.isArray(obj.data.get(key)) && obj.data.get(key)?.every(el => el instanceof CustomElement)) {
-               obj.data.get(key).forEach(obj => {
-                   obj.data.keys().forEach(key => {
-                       replace(obj, key, variable, newVariable, dom);
-                   })
-               })
+            obj.data.get(key).forEach(obj => {
+                obj.data.keys().forEach(key => {
+                    replace(obj, key, variable, newVariable, dom);
+                })
+            })
         } else {
             if (obj.data.get(key)?.includes(`$\{variables[\`${variable}\`]}`)) {
                 obj.data.set(key, obj.data.get(key).replaceAll(`$\{variables[\`${variable}\`]}`, `$\{variables[\`${newVariable}\`]}`))
             }
-            [...dom.body.querySelectorAll(`[name="${key}"]`)].forEach(el => {
+            [...dom.querySelectorAll(`[name="${key}"]`)].forEach(el => {
                 if (el.tagName === "DBE-VARIABLE-LIST" && obj.data.get(key) === variable) {
                     obj.data.set(key, newVariable)
                 }
