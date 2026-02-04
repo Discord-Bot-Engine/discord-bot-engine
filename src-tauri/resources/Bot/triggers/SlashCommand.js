@@ -439,7 +439,7 @@ export default class SlashCommand {
             else if (type === "Mentionable") setVariable(value, interaction.options.getMentionable(name));
             else if (type === "Number") setVariable(value, interaction.options.getNumber(name));
             else if (type === "Role") setVariable(value, interaction.options.getRole(name));
-            else if (type === "Text") setVariable(value, interaction.options.getString(name));
+            else if (type === "Text" || type === "Choice") setVariable(value, interaction.options.getString(name));
             else if (type === "User") setVariable(value, interaction.options.getUser(name));
         });
 
