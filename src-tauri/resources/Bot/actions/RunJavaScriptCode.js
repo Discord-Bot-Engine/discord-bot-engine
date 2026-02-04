@@ -28,6 +28,10 @@ export default class RunJavaScriptCode {
     }
     static async run(context) {
         const code = context.rawData.get("code")
+        const variables = {};
+        context.actionManager.variables.keys().forEach((key) => {
+            variables[key] = context.actionManager.variables.get(key);
+        });
         eval(`(async () => {${code}})()`)
         context.actionManager.runNext(context.id, "action")
     }
