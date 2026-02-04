@@ -99,7 +99,7 @@ export default class ShowModal {
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
                     <dbe-label name="Value"></dbe-label>
-                    <dbe-input name="tvalue" class="col-span-3"></dbe-input>
+                    <dbe-input name="tvalue" class="col-span-3" multiline="true"></dbe-input>
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
                     <dbe-label name="Placeholder"></dbe-label>
