@@ -215,7 +215,7 @@ Reflect.defineProperty(EmbedBuilder.prototype, "toDBEString", {
 });
 Reflect.defineProperty(GuildMember.prototype, "toDBEString", {
     value() {
-        return `mem-${this.id}_${this.guild.id}`;
+        return `mem-${this.id}_${this.guild?.id}`;
     }
 });
 Reflect.defineProperty(User.prototype, "toDBEString", {
@@ -230,7 +230,7 @@ Reflect.defineProperty(Guild.prototype, "toDBEString", {
 });
 Reflect.defineProperty(Message.prototype, "toDBEString", {
     value() {
-        return `msg-${this.id}_${this.channel.id}`;
+        return `msg-${this.id}_${this.channel?.id}`;
     }
 });
 Reflect.defineProperty(BaseChannel.prototype, "toDBEString", {
@@ -240,7 +240,7 @@ Reflect.defineProperty(BaseChannel.prototype, "toDBEString", {
 });
 Reflect.defineProperty(Role.prototype, "toDBEString", {
     value() {
-        return `r-${this.id}_${this.guild.id}`;
+        return `r-${this.id}_${this.guild?.id}`;
     }
 });
 Reflect.defineProperty(GuildEmoji.prototype, "toDBEString", {
