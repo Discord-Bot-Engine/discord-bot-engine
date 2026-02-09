@@ -5,10 +5,7 @@ export default class RunJavaScriptCode {
     static type = "Run JavaScript Code"
     static variableTypes = [];
     static html = `
-         <div class="grid grid-cols-4 items-center gap-4">
-            <dbe-label name="Code"></dbe-label>
-            <dbe-input name="code" class="col-span-3" multiline="true"></dbe-input>
-        </div>
+        <dbe-code name="code"></dbe-code>
         <dbe-list name="outputs" title="Outputs" modalId="outputsModal" itemTitle="async (item, i) => item.data.get('name') ?? await App.translate('Output', App.selectedLanguage)+' #'+i"></dbe-list>
         <template id="outputsModal">
             <div class="grid grid-cols-4 items-center gap-4">

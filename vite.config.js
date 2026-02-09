@@ -25,5 +25,8 @@ export default defineConfig(async () => ({
     hmr: host ? { protocol: "ws", host, port: 1421 } : undefined,
     watch: { // 3. tell vite to ignore watching `src-tauri`
     ignored: ["**/src-tauri/**"] }
-  }
+  },
+  optimizeDeps: {
+    exclude: ["svelte-codemirror-editor", "codemirror", "@codemirror/lang-javascript", "@codemirror/state", "@fsegurai/codemirror-theme-bundle"],
+  },
 }));

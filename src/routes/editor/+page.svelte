@@ -10,6 +10,7 @@
 	import DbeList from "$lib/components/DbeList.svelte";
 	import DbeVariableList from "$lib/components/DbeVariableList.svelte";
 	import DbeTriggerList from "$lib/components/DbeTriggerList.svelte";
+	import DbeCode from "$lib/components/DbeCode.svelte";
 	import {App} from "$lib/classes/App.svelte.js"
 	import TopBar from "$lib/components/TopBar.svelte";
 	import Run from "$lib/components/Run.svelte";
