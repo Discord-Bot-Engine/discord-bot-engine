@@ -811,9 +811,11 @@ export default class Reply {
                         else builder.setCustomId(id)
                         if(emoji) builder.setEmoji(emoji)
                         if(rows[currentCompRow] && (rows[currentCompRow].components.size >= 5 || rows[currentCompRow].components.every(c => c.type === ComponentType.Button))) currentCompRow++;
-                        if(!rows[currentCompRow]) rows[currentCompRow] = new ActionRowBuilder()
+                        if(!rows[currentCompRow]) {
+                            rows[currentCompRow] = new ActionRowBuilder()
+                            container.addActionRowComponents(rows[currentCompRow])
+                        }
                         rows[currentCompRow].addComponents(builder)
-                        container.addActionRowComponents(rows[currentCompRow])
                     } else if(type === "Select Menu") {
                         const stype = data.get("stype")
                         let builder
@@ -859,9 +861,11 @@ export default class Reply {
                             })
                         }
                         if(rows[currentCompRow]) currentCompRow++;
-                        if(!rows[currentCompRow]) rows[currentCompRow] = new ActionRowBuilder()
+                        if(!rows[currentCompRow]) {
+                            rows[currentCompRow] = new ActionRowBuilder()
+                            container.addActionRowComponents(rows[currentCompRow])
+                        }
                         rows[currentCompRow].addComponents(builder)
-                        container.addActionRowComponents(rows[currentCompRow])
                     }
                 })
                 list.push(container)
