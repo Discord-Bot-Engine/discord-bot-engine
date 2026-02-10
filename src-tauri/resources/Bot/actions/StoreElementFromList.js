@@ -48,6 +48,8 @@ export default class StoreElementFromList {
                 actionManager.onContinue = onContinue
                 actionManager.onBreak = onBreak
                 actionManager.onReturn = onReturn
+                setVariable(data.get("value"), undefined)
+                setVariable(data.get("pos"), -1)
                 actionManager.runNext(id, "action")
             }
             setVariable(data.get("value"), list[i])
