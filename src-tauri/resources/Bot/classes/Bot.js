@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import {Extension} from "./Extension.js";
 import extensions from "../data/extensions.json" with { type: "json" };
-import {EmbedBuilder, Collection, GuildMember, User, Guild, Message, BaseChannel, Role, GuildEmoji} from "discord.js";
+import {EmbedBuilder, Collection, GuildMember, User, Guild, Message, BaseChannel, Role, GuildEmoji, GuildScheduledEvent} from "discord.js";
 import Keyv from "keyv";
 import {KeyvFile} from "keyv-file"
 const __filename = fileURLToPath(import.meta.url);
@@ -118,6 +118,11 @@ class BotClass {
                 if (value.startsWith("big-")) {
                     const number = value.replace("big-", "");
                     return BigInt(number);
+                } else if (value.startsWith("ev-")) {
+                    const values = value.split("_");
+                    const event = values[0].replace("ev-", "");
+                    const server = values[1];
+                    return await this.client.guilds.resolve(server).scheduledEvents.fetch(event);
                 } else if (value.startsWith("mem-")) {
                     const values = value.split("_");
                     const member = values[0].replace("mem-", "");
@@ -211,6 +216,11 @@ Reflect.defineProperty(Collection.prototype, "toDBEString", {
 Reflect.defineProperty(EmbedBuilder.prototype, "toDBEString", {
     value() {
         return { type: "embed", data: this.data };
+    }
+});
+Reflect.defineProperty(GuildScheduledEvent.prototype, "toDBEString", {
+    value() {
+        return `ev-${this.id}_${this.guild?.id}`;
     }
 });
 Reflect.defineProperty(GuildMember.prototype, "toDBEString", {
