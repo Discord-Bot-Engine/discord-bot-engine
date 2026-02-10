@@ -67,7 +67,7 @@ class AppClass {
 		}
 		this.state.setButton(
 			[
-				new Button("Buy", "https://discordbotengine.itch.io/discord-bot-engine"),
+				new Button("Buy", "https://store.steampowered.com/app/4328120/Discord_Bot_Engine/"),
 				new Button("Join Discord", "https://discord.gg/wNCFpR6JJX")
 			]
 		)
