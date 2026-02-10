@@ -40,7 +40,7 @@
     }
     $host().getValue = () => statevalue
     $host().init = () => {
-        change = eval(`(${change})`)
+        change = new Function(`return (${change})`)()
         change(statevalue, $host())
     }
 </script>

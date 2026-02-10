@@ -5,7 +5,7 @@
     let { change = "() => {}", value, ...others} = $props()
     let state = $state(value)
     $host().init = () => {
-        change = eval(`(${change})`)
+        change = new Function(`return (${change})`)()
         change(state, $host())
     }
     let ref;

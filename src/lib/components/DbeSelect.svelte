@@ -32,7 +32,7 @@
     $host().init = () => {
         translate()
         init = true
-        change = eval(`(${change})`)
+        change = new Function(`return (${change})`)()
         change(statevalue, $host())
     }
 </script>

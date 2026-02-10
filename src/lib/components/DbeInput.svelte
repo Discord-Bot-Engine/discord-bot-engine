@@ -17,7 +17,7 @@
     })
     $host().init = () => {
         init = true;
-        change = eval(`(${change})`)
+        change = new Function(`return (${change})`)()
         change(state, $host())
     }
 </script>
