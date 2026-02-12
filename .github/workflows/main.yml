@@ -73,32 +73,32 @@ jobs:
       # -------------------------------
       - name: Download Node.js resources
         run: |
-          mkdir -p resources/node-macos-x64
-          mkdir -p resources/node-macos-arm64
-          mkdir -p resources/node-linux-x64
-          mkdir -p resources/nodejs
+          mkdir -p src-tauri/resources/node-macos-x64
+          mkdir -p src-tauri/resources/node-macos-arm64
+          mkdir -p src-tauri/resources/node-linux-x64
+          mkdir -p src-tauri/resources/nodejs
 
           if [[ "$RUNNER_OS" == "macOS" ]]; then
             # macOS x64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
-            tar -xzf node-v22.18.0-darwin-x64.tar.gz -C resources/node-macos-x64 --strip-components=1
-            chmod +x resources/node-macos-x64/bin/*
+            tar -xzf node-v22.18.0-darwin-x64.tar.gz -C src-tauri/resources/node-macos-x64 --strip-components=1
+            chmod +x src-tauri/resources/node-macos-x64/bin/*
 
             # macOS ARM64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
-            tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C resources/node-macos-arm64 --strip-components=1
-            chmod +x resources/node-macos-arm64/bin/*
+            tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C src-tauri/resources/node-macos-arm64 --strip-components=1
+            chmod +x src-tauri/resources/node-macos-arm64/bin/*
 
           elif [[ "$RUNNER_OS" == "Linux" ]]; then
             # Linux x64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
-            tar -xJf node-v22.18.0-linux-x64.tar.xz -C resources/node-linux-x64 --strip-components=1
-            chmod +x resources/node-linux-x64/bin/*
+            tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
+            chmod +x src-tauri/resources/node-linux-x64/bin/*
 
           else
             # Windows
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
-            unzip node-v22.18.0-win-x64.zip -d resources/nodejs
+            unzip node-v22.18.0-win-x64.zip -d src-tauri/resources/nodejs
           fi
         shell: bash
 
