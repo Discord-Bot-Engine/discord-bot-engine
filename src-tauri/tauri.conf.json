@@ -24,17 +24,5 @@
         "scope": ["**/*"]
       }
     }
-  },
-  "bundle": {
-    "active": true,
-    "targets": [],
-    "resources": [
-      "resources/Bot"
-    ],
-    "icon": [
-      "icons/dbe.ico"
-    ],
-    "licenseFile": "../LICENSE",
-    "license": "Proprietary"
   }
 }

@@ -5,8 +5,15 @@
       "appimage"
     ],
     "resources": [
+      "resources/Bot",
       "resources/sftp/sftp-linux",
       "resources/node-linux-x64"
-    ]
+    ],
+    "active": true,
+    "icon": [
+      "icons/dbe.ico"
+    ],
+    "licenseFile": "../LICENSE",
+    "license": "Proprietary"
   }
 }
