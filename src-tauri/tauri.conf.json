@@ -24,6 +24,13 @@
         "scope": ["**/*"]
       }
     }
+  },
+  "bundle": {
+    "icon": [
+      "icons/dbe.icns",
+      "icons/dbe.ico",
+      "icons/dbe.png"
+    ]
   }
 }
 
