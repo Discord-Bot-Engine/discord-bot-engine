@@ -59,25 +59,24 @@ jobs:
       - name: Download Node.js (macOS / Linux)
         if: runner.os != 'Windows'
         run: |
-          mkdir -p resources
+          mkdir -p resources/node-macos-x64
+          mkdir -p resources/node-macos-arm64
+          mkdir -p resources/node-linux-x64
 
           if [[ "$RUNNER_OS" == "macOS" ]]; then
             # macOS x64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
-            mkdir -p resources/node-macos-x64
             tar -xzf node-v22.18.0-darwin-x64.tar.gz -C resources/node-macos-x64 --strip-components=1
             chmod +x resources/node-macos-x64/bin/*
 
-            # macOS arm64
+            # macOS ARM64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
-            mkdir -p resources/node-macos-arm64
             tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C resources/node-macos-arm64 --strip-components=1
             chmod +x resources/node-macos-arm64/bin/*
 
           else
             # Linux x64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
-            mkdir -p resources/node-linux-x64
             tar -xJf node-v22.18.0-linux-x64.tar.xz -C resources/node-linux-x64 --strip-components=1
             chmod +x resources/node-linux-x64/bin/*
           fi
