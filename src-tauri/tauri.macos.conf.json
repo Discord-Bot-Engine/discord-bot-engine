@@ -1,7 +1,7 @@
 {
   "bundle": {
     "targets": [
-      "deb"
+      "dmg"
     ],
     "resources": [
       "resources/Bot",
