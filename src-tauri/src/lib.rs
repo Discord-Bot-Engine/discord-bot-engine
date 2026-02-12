@@ -183,11 +183,29 @@ async fn upload_bot(
         .resolve("resources/sftp", BaseDirectory::Resource)
         .map_err(|e| e.to_string())?;
 
-    let exe_path = node.join("sftp.exe");
-    const CREATE_NO_WINDOW: u32 = 0x08000000;
-    
-    let output = Command::new(exe_path)
-        .creation_flags(CREATE_NO_WINDOW)
+    #[cfg(target_os = "windows")]
+    let exe_path = node.join("sftp-win.exe");
+
+    #[cfg(target_os = "macos")]
+    let exe_path = if cfg!(target_arch = "aarch64") {
+        node.join("mac/sftp-macos-arm64")
+    } else {
+        node.join("mac/sftp-macos-x64")
+    };
+
+    #[cfg(target_os = "linux")]
+    let exe_path = node.join("sftp-linux");
+
+
+    let mut command = Command::new(exe_path);
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        command.creation_flags(CREATE_NO_WINDOW);
+    }
+
+    let output = command
         .args(vec![&bot_path, "/", &host, &username, &password, &port])
         .output()
         .map_err(|e| e.to_string())?;
@@ -213,11 +231,39 @@ async fn run_bot(
         .path()
         .resolve("resources/nodejs", BaseDirectory::Resource)
         .unwrap();
-    let mut run_command = _app
-        .shell()
-        .command(node.join("node.exe"))
-        .current_dir(&bot_path)
-        .args(vec![&bot_path, &node.join("npm.cmd").to_str().unwrap().to_string()]);
+    #[cfg(target_os = "windows")]
+    {
+        let mut run_command = _app
+            .shell()
+            .command(node.join("node.exe"))
+            .current_dir(&bot_path)
+            .args(vec![&bot_path, &node.join("npm.cmd").to_str().unwrap().to_string()]);
+    }
+    #[cfg(target_os = "macos")]
+    {
+         let mut run_command = if cfg!(target_arch = "aarch64") {
+                    _app
+                    .shell()
+                    .command(node.join("node-macos-arm64.tar.gz"))
+                    .current_dir(&bot_path)
+                    .args(vec![&bot_path, &node.join("npm.cmd").to_str().unwrap().to_string()]);
+                } else {
+                    _app
+                    .shell()
+                    .command(node.join("node-macos-x64.tar.gz"))
+                    .current_dir(&bot_path)
+                    .args(vec![&bot_path, &node.join("npm.cmd").to_str().unwrap().to_string()]);
+                };
+    }
+    #[cfg(target_os = "linux")]
+    {
+        let mut run_command = _app
+            .shell()
+            .command(node.join("node-linux-x64.tar.xz"))
+            .current_dir(&bot_path)
+            .args(vec![&bot_path, &node.join("npm.cmd").to_str().unwrap().to_string()]);
+    }
+
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
@@ -277,11 +323,38 @@ async fn load_bot_plugins(
         .path()
         .resolve("resources/nodejs", BaseDirectory::Resource)
         .unwrap();
-    let mut run_command = _app
-        .shell()
-        .command(node.join("node.exe"))
-        .current_dir(&bot_path)
-        .args([format!("{bot_path}/classes/PluginManager.js"), node.join("npm.cmd").to_str().unwrap().to_string()]);
+    #[cfg(target_os = "windows")]
+    {
+        let mut run_command = _app
+            .shell()
+            .command(node.join("node.exe"))
+            .current_dir(&bot_path)
+            .args([format!("{bot_path}/classes/PluginManager.js"), node.join("npm.cmd").to_str().unwrap().to_string()]);
+    }
+    #[cfg(target_os = "macos")]
+    {
+         let mut run_command = if cfg!(target_arch = "aarch64") {
+                    _app
+                    .shell()
+                    .command(node.join("node-macos-arm64.tar.gz"))
+                    .current_dir(&bot_path)
+                    .args([format!("{bot_path}/classes/PluginManager.js"), node.join("npm.cmd").to_str().unwrap().to_string()]);
+                } else {
+                    _app
+                    .shell()
+                    .command(node.join("node-macos-x64.tar.gz"))
+                    .current_dir(&bot_path)
+                    .args([format!("{bot_path}/classes/PluginManager.js"), node.join("npm.cmd").to_str().unwrap().to_string()]);
+                };
+    }
+    #[cfg(target_os = "linux")]
+    {
+        let mut run_command = _app
+            .shell()
+            .command(node.join("node-linux-x64.tar.xz"))
+            .current_dir(&bot_path)
+            .args([format!("{bot_path}/classes/PluginManager.js"), node.join("npm.cmd").to_str().unwrap().to_string()]);
+    }
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
