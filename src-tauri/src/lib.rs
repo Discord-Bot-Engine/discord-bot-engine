@@ -227,53 +227,64 @@ async fn run_bot(
 ) -> Result<(), String> {
     let mut run_command: tauri_plugin_shell::process::Command;
     #[cfg(target_os = "windows")]
-    {
-        let node = _app
+    let node = _app
+        .path()
+        .resolve("resources/nodejs", BaseDirectory::Resource)
+        .unwrap();
+
+    #[cfg(target_os = "macos")]
+    let node = if cfg!(target_arch = "aarch64") {
+        _app
             .path()
-            .resolve("resources/nodejs", BaseDirectory::Resource)
-            .unwrap();
+            .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
+            .unwrap()
+    } else {
+        _app
+            .path()
+            .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
+            .unwrap()
+    };
+
+    #[cfg(target_os = "linux")]
+    let node = _app
+        .path()
+        .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
+        .unwrap();
+
+    // Now assign run_command per platform
+    #[cfg(target_os = "windows")]
+    {
         run_command = _app
             .shell()
             .command(node.join("node.exe"))
             .current_dir(&bot_path)
-            .args(vec![
-                &bot_path,
-                &node.join("npm.cmd").to_str().unwrap().to_string(),
+            .args([
+                format!("{bot_path}/classes/PluginManager.js"),
+                node.join("npm.cmd").to_str().unwrap().to_string(),
             ]);
     }
+
     #[cfg(target_os = "macos")]
     {
-        let node = if cfg!(target_arch = "aarch64") {
-            _app.path()
-                .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
-                .unwrap();
-        } else {
-            _app.path()
-                .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
-                .unwrap();
-        };
         run_command = _app
             .shell()
             .command(node.join("node"))
             .current_dir(&bot_path)
-            .args(vec![
-                &bot_path,
-                &node.join("npm").to_str().unwrap().to_string(),
+            .args([
+                format!("{bot_path}/classes/PluginManager.js"),
+                node.join("npm").to_str().unwrap().to_string(),
             ]);
     }
+
     #[cfg(target_os = "linux")]
     {
-        let node = _app
-            .path()
-            .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
-            .unwrap();
         run_command = _app
             .shell()
             .command(node.join("node"))
             .current_dir(&bot_path)
-            .args(vec![
-                &bot_path,
-                &node.join("npm").to_str().unwrap().to_string(),
+            .args([
+                format!("{bot_path}/classes/PluginManager.js"),
+                node.join("npm").to_str().unwrap().to_string(),
             ]);
     }
 
@@ -324,11 +335,31 @@ fn is_bot_running(state: tauri::State<'_, BotManager>, bot_path: String) -> bool
 async fn load_bot_plugins(_app: tauri::AppHandle, bot_path: String) -> Result<(), String> {
     let mut run_command: tauri_plugin_shell::process::Command;
     #[cfg(target_os = "windows")]
-    {
-        let node = _app
+    let node = _app
+        .path()
+        .resolve("resources/nodejs", BaseDirectory::Resource)
+        .unwrap();
+
+    #[cfg(target_os = "macos")]
+    let node = if cfg!(target_arch = "aarch64") {
+        _app
             .path()
-            .resolve("resources/nodejs", BaseDirectory::Resource)
-            .unwrap();
+            .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
+            .unwrap()
+    } else {
+        _app
+            .path()
+            .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
+            .unwrap()
+    };
+
+    #[cfg(target_os = "linux")]
+    let node = _app
+        .path()
+        .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
+        .unwrap();
+    #[cfg(target_os = "windows")]
+    {
         run_command = _app
             .shell()
             .command(node.join("node.exe"))
@@ -338,17 +369,9 @@ async fn load_bot_plugins(_app: tauri::AppHandle, bot_path: String) -> Result<()
                 node.join("npm.cmd").to_str().unwrap().to_string(),
             ]);
     }
+
     #[cfg(target_os = "macos")]
     {
-        let node = if cfg!(target_arch = "aarch64") {
-            _app.path()
-                .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
-                .unwrap();
-        } else {
-            _app.path()
-                .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
-                .unwrap();
-        };
         run_command = _app
             .shell()
             .command(node.join("node"))
@@ -358,12 +381,9 @@ async fn load_bot_plugins(_app: tauri::AppHandle, bot_path: String) -> Result<()
                 node.join("npm").to_str().unwrap().to_string(),
             ]);
     }
+
     #[cfg(target_os = "linux")]
     {
-        let node = _app
-            .path()
-            .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
-            .unwrap();
         run_command = _app
             .shell()
             .command(node.join("node"))
