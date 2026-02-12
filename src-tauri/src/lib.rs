@@ -259,7 +259,7 @@ async fn run_bot(
             .command(node.join("node.exe"))
             .current_dir(&bot_path)
             .args([
-                bot_path,
+                bot_path.clone(),
                 node.join("npm.cmd").to_str().unwrap().to_string(),
             ]);
     }
@@ -271,7 +271,7 @@ async fn run_bot(
             .command(node.join("node"))
             .current_dir(&bot_path)
             .args([
-                bot_path,
+                bot_path.clone(),
                 node.join("npm").to_str().unwrap().to_string(),
             ]);
     }
@@ -283,7 +283,7 @@ async fn run_bot(
             .command(node.join("node"))
             .current_dir(&bot_path)
             .args([
-                bot_path,
+                bot_path.clone(),
                 node.join("npm").to_str().unwrap().to_string(),
             ]);
     }
