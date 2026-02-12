@@ -1,9 +1,10 @@
-name: 'publish'
+name: publish
 
 on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   publish-tauri:
@@ -27,89 +28,83 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # -------------------------------
+      # Install dependencies (Linux only)
+      # -------------------------------
       - name: install dependencies (ubuntu only)
-        if: runner.os == 'Linux'
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            libwebkit2gtk-4.0-dev \
-            libwebkit2gtk-4.1-dev \
-            libappindicator3-dev \
-            librsvg2-dev \
-            patchelf
+          sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
+      # -------------------------------
+      # Setup Node
+      # -------------------------------
       - name: setup node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'npm'
 
+      # -------------------------------
+      # Install Rust stable
+      # -------------------------------
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
+      # -------------------------------
+      # Rust cache
+      # -------------------------------
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
 
+      # -------------------------------
+      # Install frontend dependencies
+      # -------------------------------
       - name: install frontend dependencies
         run: npm install
 
-      # --------------------------------------------------
-      # Download Node.js into src-tauri/resources
-      # --------------------------------------------------
-
-      - name: Download Node.js (macOS / Linux)
-        if: runner.os != 'Windows'
-        shell: bash
+      # -------------------------------
+      # Download Node.js resources
+      # -------------------------------
+      - name: Download Node.js resources
         run: |
-          mkdir -p src-tauri/resources/node-macos-x64
-          mkdir -p src-tauri/resources/node-macos-arm64
-          mkdir -p src-tauri/resources/node-linux-x64
+          mkdir -p resources/node-macos-x64
+          mkdir -p resources/node-macos-arm64
+          mkdir -p resources/node-linux-x64
+          mkdir -p resources/nodejs
 
           if [[ "$RUNNER_OS" == "macOS" ]]; then
-
-            echo "Downloading macOS x64 Node..."
+            # macOS x64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
-            tar -xzf node-v22.18.0-darwin-x64.tar.gz \
-              -C src-tauri/resources/node-macos-x64 \
-              --strip-components=1
-            chmod +x src-tauri/resources/node-macos-x64/bin/*
+            tar -xzf node-v22.18.0-darwin-x64.tar.gz -C resources/node-macos-x64 --strip-components=1
+            chmod +x resources/node-macos-x64/bin/*
 
-            echo "Downloading macOS arm64 Node..."
+            # macOS ARM64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
-            tar -xzf node-v22.18.0-darwin-arm64.tar.gz \
-              -C src-tauri/resources/node-macos-arm64 \
-              --strip-components=1
-            chmod +x src-tauri/resources/node-macos-arm64/bin/*
+            tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C resources/node-macos-arm64 --strip-components=1
+            chmod +x resources/node-macos-arm64/bin/*
+
+          elif [[ "$RUNNER_OS" == "Linux" ]]; then
+            # Linux x64
+            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
+            tar -xJf node-v22.18.0-linux-x64.tar.xz -C resources/node-linux-x64 --strip-components=1
+            chmod +x resources/node-linux-x64/bin/*
 
           else
-
-            echo "Downloading Linux x64 Node..."
-            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
-            tar -xJf node-v22.18.0-linux-x64.tar.xz \
-              -C src-tauri/resources/node-linux-x64 \
-              --strip-components=1
-            chmod +x src-tauri/resources/node-linux-x64/bin/*
-
+            # Windows
+            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
+            unzip node-v22.18.0-win-x64.zip -d resources/nodejs
           fi
+        shell: bash
 
-      - name: Download Node.js (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "src-tauri/resources/nodejs"
-          Invoke-WebRequest `
-            https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip `
-            -OutFile node.zip
-          Expand-Archive node.zip -DestinationPath "src-tauri/resources/nodejs"
-
-      # --------------------------------------------------
-      # Build and publish Tauri app
-      # --------------------------------------------------
-
+      # -------------------------------
+      # Build and publish the Tauri app
+      # -------------------------------
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -120,3 +115,22 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      # -------------------------------
+      # Zip full target/release folder
+      # -------------------------------
+      - name: Zip full target/release folder
+        run: |
+          cd src-tauri/target/release
+          zip -r ../../../release-${{ runner.os }}-${{ matrix.args }}.zip .
+        shell: bash
+
+      # -------------------------------
+      # Upload zip as release asset
+      # -------------------------------
+      - name: Upload full release folder zip
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-${{ runner.os }}-${{ matrix.args }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
