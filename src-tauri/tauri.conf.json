@@ -27,14 +27,56 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": [
+      "msi",
+      "dmg",
+      "deb",
+      "appimage"
+    ],
     "resources": [
-      "resources/**/*"
+      "resources/Bot",
+      "resources/sftp/sftp-win.exe",
+      "resources/sftp/sftp-linux",
+      "resources/sftp/sftp-macos-arm64",
+      "resources/sftp/sftp-macos-x64",
+      "resources/nodejs",
+      "resources/node-macos-x64",
+      "resources/node-macos-arm64",
+      "resources/node-linux-x64"
     ],
     "icon": [
       "icons/dbe.ico"
     ],
     "licenseFile": "../LICENSE",
     "license": "Proprietary"
+  },
+  "windows": {
+    "bundle": {
+      "resources": [
+        "resources/Bot",
+        "resources/sftp/sftp-win.exe",
+        "resources/nodejs"
+      ]
+    }
+  },
+  "macOS": {
+    "bundle": {
+      "resources": [
+        "resources/Bot",
+        "resources/sftp/sftp-macos-x64",
+        "resources/sftp/sftp-macos-arm64",
+        "resources/node-macos-x64",
+        "resources/node-macos-arm64"
+      ]
+    }
+  },
+  "linux": {
+    "bundle": {
+      "resources": [
+        "resources/Bot",
+        "resources/sftp/sftp-linux",
+        "resources/node-linux-x64"
+      ]
+    }
   }
 }
