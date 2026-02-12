@@ -11,7 +11,7 @@
     ],
     "active": true,
     "icon": [
-      "icons/dbe.ico"
+      "icons/dbe.png"
     ],
     "licenseFile": "../LICENSE",
     "license": "Proprietary"
