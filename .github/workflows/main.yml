@@ -23,14 +23,20 @@ jobs:
             args: ''
 
     runs-on: ${{ matrix.platform }}
+
     steps:
       - uses: actions/checkout@v4
 
       - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y \
+            libwebkit2gtk-4.0-dev \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
 
       - name: setup node
         uses: actions/setup-node@v4
@@ -51,48 +57,59 @@ jobs:
       - name: install frontend dependencies
         run: npm install
 
-      # -------------------------------
-      # Download Node.js distributions
-      # -------------------------------
+      # --------------------------------------------------
+      # Download Node.js into src-tauri/resources
+      # --------------------------------------------------
 
-      # macOS / Linux step
       - name: Download Node.js (macOS / Linux)
         if: runner.os != 'Windows'
+        shell: bash
         run: |
-          mkdir -p resources/node-macos-x64
-          mkdir -p resources/node-macos-arm64
-          mkdir -p resources/node-linux-x64
+          mkdir -p src-tauri/resources/node-macos-x64
+          mkdir -p src-tauri/resources/node-macos-arm64
+          mkdir -p src-tauri/resources/node-linux-x64
 
           if [[ "$RUNNER_OS" == "macOS" ]]; then
-            # macOS x64
-            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
-            tar -xzf node-v22.18.0-darwin-x64.tar.gz -C resources/node-macos-x64 --strip-components=1
-            chmod +x resources/node-macos-x64/bin/*
 
-            # macOS ARM64
+            echo "Downloading macOS x64 Node..."
+            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
+            tar -xzf node-v22.18.0-darwin-x64.tar.gz \
+              -C src-tauri/resources/node-macos-x64 \
+              --strip-components=1
+            chmod +x src-tauri/resources/node-macos-x64/bin/*
+
+            echo "Downloading macOS arm64 Node..."
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
-            tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C resources/node-macos-arm64 --strip-components=1
-            chmod +x resources/node-macos-arm64/bin/*
+            tar -xzf node-v22.18.0-darwin-arm64.tar.gz \
+              -C src-tauri/resources/node-macos-arm64 \
+              --strip-components=1
+            chmod +x src-tauri/resources/node-macos-arm64/bin/*
 
           else
-            # Linux x64
+
+            echo "Downloading Linux x64 Node..."
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
-            tar -xJf node-v22.18.0-linux-x64.tar.xz -C resources/node-linux-x64 --strip-components=1
-            chmod +x resources/node-linux-x64/bin/*
+            tar -xJf node-v22.18.0-linux-x64.tar.xz \
+              -C src-tauri/resources/node-linux-x64 \
+              --strip-components=1
+            chmod +x src-tauri/resources/node-linux-x64/bin/*
+
           fi
 
-      # Windows step
       - name: Download Node.js (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          mkdir resources\nodejs
-          Invoke-WebRequest https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip -OutFile nodejs.zip
-          Expand-Archive nodejs.zip -DestinationPath resources\nodejs
+          New-Item -ItemType Directory -Force -Path "src-tauri/resources/nodejs"
+          Invoke-WebRequest `
+            https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip `
+            -OutFile node.zip
+          Expand-Archive node.zip -DestinationPath "src-tauri/resources/nodejs"
 
-      # -------------------------------
+      # --------------------------------------------------
       # Build and publish Tauri app
-      # -------------------------------
+      # --------------------------------------------------
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
