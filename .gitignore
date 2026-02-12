@@ -8,8 +8,3 @@ node_modules
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-/src-tauri/resources/node-linux-x64/
-/src-tauri/resources/node-macos-arm64/
-/src-tauri/resources/node-macos-x64/
-/src-tauri/resources/nodejs/
-/src-tauri/resources/sftp/
