@@ -1,34 +1,31 @@
-use std::path::{Path, PathBuf};
-use std::{env, fs, io};
-use tauri_plugin_drpc;
-use tauri::path::BaseDirectory;
-use tauri::{Emitter, Manager};
-use tauri_plugin_shell::process::{CommandChild, CommandEvent};
-use tauri_plugin_shell::ShellExt;
+use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::ops::Add;
 use std::os::windows::process::CommandExt;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::{Arc, Mutex};
-use serde_json::{json, Value};
+use std::{env, fs, io};
+use tauri::path::BaseDirectory;
+use tauri::{Emitter, Manager};
+use tauri_plugin_drpc;
+use tauri_plugin_shell::process::{CommandChild, CommandEvent};
+use tauri_plugin_shell::ShellExt;
 
 struct BotManager {
     bots: Mutex<HashMap<String, CommandChild>>,
 }
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command(rename_all = "snake_case")]
-fn save_translation(
-    app: tauri::AppHandle,
-    name: String,
-    translation: String,
-) {
-            let translation_path = app
-                .path()
-                .resolve("translations", BaseDirectory::AppLocalData)
-                .unwrap().join(format!("{name}.json"));
-            if let Err(err) = fs::write(&translation_path, &translation) {
-                eprintln!("Failed to write to {:?}: {}", &translation_path, err);
-            }
+fn save_translation(app: tauri::AppHandle, name: String, translation: String) {
+    let translation_path = app
+        .path()
+        .resolve("translations", BaseDirectory::AppLocalData)
+        .unwrap()
+        .join(format!("{name}.json"));
+    if let Err(err) = fs::write(&translation_path, &translation) {
+        eprintln!("Failed to write to {:?}: {}", &translation_path, err);
+    }
 }
 #[tauri::command]
 fn load_translations(app: tauri::AppHandle) -> String {
@@ -38,7 +35,7 @@ fn load_translations(app: tauri::AppHandle) -> String {
         .unwrap();
 
     if !translations_dir.exists() {
-            fs::create_dir(translations_dir).unwrap();
+        fs::create_dir(translations_dir).unwrap();
         return "{}".to_string();
     }
 
@@ -50,7 +47,10 @@ fn load_translations(app: tauri::AppHandle) -> String {
 
             if path.is_file() && path.extension().and_then(|e| e.to_str()) == Some("json") {
                 if let Some(file_stem) = path.file_stem().and_then(|s| s.to_str()) {
-                    map.insert(file_stem.to_string(), fs::read_to_string(&path).unwrap().parse().unwrap());
+                    map.insert(
+                        file_stem.to_string(),
+                        fs::read_to_string(&path).unwrap().parse().unwrap(),
+                    );
                 }
             }
         }
@@ -67,7 +67,7 @@ fn load_themes(app: tauri::AppHandle) -> Vec<String> {
         .unwrap();
 
     if !themes_dir.exists() {
-            fs::create_dir(themes_dir).unwrap();
+        fs::create_dir(themes_dir).unwrap();
         return vec![];
     }
 
@@ -94,7 +94,7 @@ fn debug_action(
     _app: tauri::AppHandle,
     state: tauri::State<'_, BotManager>,
     bot_path: String,
-    trigger_id:String,
+    trigger_id: String,
     action_id: String,
 ) -> Result<(), String> {
     let mut bots = state.bots.lock().map_err(|e| e.to_string())?;
@@ -196,7 +196,6 @@ async fn upload_bot(
     #[cfg(target_os = "linux")]
     let exe_path = node.join("sftp-linux");
 
-
     let mut command = Command::new(exe_path);
     #[cfg(target_os = "windows")]
     {
@@ -231,48 +230,53 @@ async fn run_bot(
     #[cfg(target_os = "windows")]
     {
         let node = _app
-                .path()
-                .resolve("resources/nodejs", BaseDirectory::Resource)
-                .unwrap();
+            .path()
+            .resolve("resources/nodejs", BaseDirectory::Resource)
+            .unwrap();
         run_command = _app
             .shell()
             .command(node.join("node.exe"))
             .current_dir(&bot_path)
-            .args(vec![&bot_path, &node.join("npm.cmd").to_str().unwrap().to_string()]);
+            .args(vec![
+                &bot_path,
+                &node.join("npm.cmd").to_str().unwrap().to_string(),
+            ]);
     }
     #[cfg(target_os = "macos")]
     {
-            let node = if cfg!(target_arch = "aarch64") {
-                _app
-                    .path()
-                    .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
-                    .unwrap();
-            } else {
-                _app
-                    .path()
-                    .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
-                    .unwrap();
-            };
-         run_command =
-                    _app
-                    .shell()
-                    .command(node.join("node"))
-                    .current_dir(&bot_path)
-                    .args(vec![&bot_path, &node.join("npm").to_str().unwrap().to_string()]);
-    }
-    #[cfg(target_os = "linux")]
-    {
-            let node = _app
-                .path()
-                .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
+        let node = if cfg!(target_arch = "aarch64") {
+            _app.path()
+                .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
                 .unwrap();
+        } else {
+            _app.path()
+                .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
+                .unwrap();
+        };
         run_command = _app
             .shell()
             .command(node.join("node"))
             .current_dir(&bot_path)
-            .args(vec![&bot_path, &node.join("npm").to_str().unwrap().to_string()]);
+            .args(vec![
+                &bot_path,
+                &node.join("npm").to_str().unwrap().to_string(),
+            ]);
     }
-
+    #[cfg(target_os = "linux")]
+    {
+        let node = _app
+            .path()
+            .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
+            .unwrap();
+        run_command = _app
+            .shell()
+            .command(node.join("node"))
+            .current_dir(&bot_path)
+            .args(vec![
+                &bot_path,
+                &node.join("npm").to_str().unwrap().to_string(),
+            ]);
+    }
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
@@ -299,10 +303,7 @@ async fn run_bot(
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn stop_bot(
-    state: tauri::State<'_, BotManager>,
-    bot_path: String,
-) -> Result<(), String> {
+fn stop_bot(state: tauri::State<'_, BotManager>, bot_path: String) -> Result<(), String> {
     let mut bots = state.bots.lock().unwrap();
 
     if let Some(mut child) = bots.remove(&bot_path) {
@@ -315,51 +316,48 @@ fn stop_bot(
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn is_bot_running(
-    state: tauri::State<'_, BotManager>,
-    bot_path: String,
-) -> bool {
+fn is_bot_running(state: tauri::State<'_, BotManager>, bot_path: String) -> bool {
     let mut bots = state.bots.lock().unwrap();
     bots.contains_key(&bot_path)
 }
 
 #[tauri::command(rename_all = "snake_case")]
-async fn load_bot_plugins(
-    _app: tauri::AppHandle,
-    bot_path: String,
-) -> Result<(), String> {
+async fn load_bot_plugins(_app: tauri::AppHandle, bot_path: String) -> Result<(), String> {
     let mut run_command: tauri::api::shell::Command<_>;
     #[cfg(target_os = "windows")]
     {
-            let node = _app
-                .path()
-                .resolve("resources/nodejs", BaseDirectory::Resource)
-                .unwrap();
+        let node = _app
+            .path()
+            .resolve("resources/nodejs", BaseDirectory::Resource)
+            .unwrap();
         run_command = _app
             .shell()
             .command(node.join("node.exe"))
             .current_dir(&bot_path)
-            .args([format!("{bot_path}/classes/PluginManager.js"), node.join("npm.cmd").to_str().unwrap().to_string()]);
+            .args([
+                format!("{bot_path}/classes/PluginManager.js"),
+                node.join("npm.cmd").to_str().unwrap().to_string(),
+            ]);
     }
     #[cfg(target_os = "macos")]
     {
-              let node =
-                  if cfg!(target_arch = "aarch64") {
-                      _app
-                          .path()
-                          .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
-                          .unwrap();
-                  } else {
-                      _app
-                          .path()
-                          .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
-                          .unwrap();
-                  };
+        let node = if cfg!(target_arch = "aarch64") {
+            _app.path()
+                .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
+                .unwrap();
+        } else {
+            _app.path()
+                .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
+                .unwrap();
+        };
         run_command = _app
-                    .shell()
-                    .command(node.join("node"))
-                    .current_dir(&bot_path)
-                    .args([format!("{bot_path}/classes/PluginManager.js"), node.join("npm").to_str().unwrap().to_string()]);
+            .shell()
+            .command(node.join("node"))
+            .current_dir(&bot_path)
+            .args([
+                format!("{bot_path}/classes/PluginManager.js"),
+                node.join("npm").to_str().unwrap().to_string(),
+            ]);
     }
     #[cfg(target_os = "linux")]
     {
@@ -371,7 +369,10 @@ async fn load_bot_plugins(
             .shell()
             .command(node.join("node"))
             .current_dir(&bot_path)
-            .args([format!("{bot_path}/classes/PluginManager.js"), node.join("npm").to_str().unwrap().to_string()]);
+            .args([
+                format!("{bot_path}/classes/PluginManager.js"),
+                node.join("npm").to_str().unwrap().to_string(),
+            ]);
     }
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
@@ -482,7 +483,6 @@ fn download_trigger(
     }
 }
 
-
 #[tauri::command(rename_all = "snake_case")]
 fn download_extension(
     _app: tauri::AppHandle,
@@ -527,14 +527,8 @@ fn download_extension(
     }
 }
 
-
 #[tauri::command(rename_all = "snake_case")]
-fn download_translation(
-    app: tauri::AppHandle,
-    translation: String,
-    sha: String,
-    data: String,
-) {
+fn download_translation(app: tauri::AppHandle, translation: String, sha: String, data: String) {
     let translations_dir = app
         .path()
         .resolve("translations", BaseDirectory::AppLocalData)
@@ -574,7 +568,6 @@ fn download_translation(
     }
 }
 
-
 #[tauri::command(rename_all = "snake_case")]
 fn download_dashboard_theme(
     _app: tauri::AppHandle,
@@ -603,14 +596,8 @@ fn download_dashboard_theme(
     }
 }
 
-
 #[tauri::command(rename_all = "snake_case")]
-fn download_theme(
-    app: tauri::AppHandle,
-    theme: String,
-    sha: String,
-    data: String,
-) {
+fn download_theme(app: tauri::AppHandle, theme: String, sha: String, data: String) {
     let themes_dir = app
         .path()
         .resolve("themes", BaseDirectory::AppLocalData)
@@ -654,32 +641,33 @@ fn download_theme(
     }
 }
 
-
 #[tauri::command(rename_all = "snake_case")]
-fn remove_action(_app: tauri::AppHandle, bot_path:String, action:String, sha:String) {
-    let path = Path::new(&bot_path).join("actions").join(sha+&action);
+fn remove_action(_app: tauri::AppHandle, bot_path: String, action: String, sha: String) {
+    let path = Path::new(&bot_path).join("actions").join(sha + &action);
     fs::remove_file(&path).unwrap();
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn remove_trigger(_app: tauri::AppHandle, bot_path:String, trigger:String, sha:String) {
-    let path = Path::new(&bot_path).join("triggers").join(sha+&trigger);
+fn remove_trigger(_app: tauri::AppHandle, bot_path: String, trigger: String, sha: String) {
+    let path = Path::new(&bot_path).join("triggers").join(sha + &trigger);
     fs::remove_file(&path).unwrap();
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn remove_extension(_app: tauri::AppHandle, bot_path:String, extension:String, sha:String) {
-    let path = Path::new(&bot_path).join("extensions").join(sha+&extension);
+fn remove_extension(_app: tauri::AppHandle, bot_path: String, extension: String, sha: String) {
+    let path = Path::new(&bot_path)
+        .join("extensions")
+        .join(sha + &extension);
     fs::remove_file(&path).unwrap();
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn remove_translation(_app: tauri::AppHandle, translation:String, sha:String) {
+fn remove_translation(_app: tauri::AppHandle, translation: String, sha: String) {
     let translations_dir = _app
         .path()
         .resolve("translations", BaseDirectory::AppLocalData)
         .unwrap();
-    let path = Path::new(&translations_dir).join(sha+&translation);
+    let path = Path::new(&translations_dir).join(sha + &translation);
     fs::remove_file(&path).unwrap();
 }
 
@@ -710,12 +698,12 @@ fn remove_dashboard_theme(
     }
 }
 #[tauri::command(rename_all = "snake_case")]
-fn remove_theme(_app: tauri::AppHandle, theme:String, sha:String) {
+fn remove_theme(_app: tauri::AppHandle, theme: String, sha: String) {
     let themes_dir = _app
         .path()
         .resolve("themes", BaseDirectory::AppLocalData)
         .unwrap();
-    let path = Path::new(&themes_dir).join(sha+&theme);
+    let path = Path::new(&themes_dir).join(sha + &theme);
     fs::remove_file(&path).unwrap();
 }
 
@@ -727,18 +715,21 @@ fn save_bot_triggers(
     trigger_contents: Vec<String>,
     removed_triggers: Vec<String>,
 ) {
-        for (file, content) in modified_triggers.into_iter().zip(trigger_contents.into_iter()) {
-            let trigger_path = Path::new(&bot_path).join("data").join(file + ".json");
-            if let Err(err) = fs::write(&trigger_path, content) {
-                eprintln!("Failed to write to {:?}: {}", trigger_path, err);
-            }
+    for (file, content) in modified_triggers
+        .into_iter()
+        .zip(trigger_contents.into_iter())
+    {
+        let trigger_path = Path::new(&bot_path).join("data").join(file + ".json");
+        if let Err(err) = fs::write(&trigger_path, content) {
+            eprintln!("Failed to write to {:?}: {}", trigger_path, err);
         }
-        for file in removed_triggers {
-            let trigger_path = Path::new(&bot_path).join("data").join(file + ".json");
-            if let Err(err) = fs::remove_file(&trigger_path) {
-                eprintln!("Failed to remove {:?}: {}", trigger_path, err);
-            }
+    }
+    for file in removed_triggers {
+        let trigger_path = Path::new(&bot_path).join("data").join(file + ".json");
+        if let Err(err) = fs::remove_file(&trigger_path) {
+            eprintln!("Failed to remove {:?}: {}", trigger_path, err);
         }
+    }
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -754,12 +745,12 @@ fn load_bot_triggers(bot_path: String) -> String {
                     if let Some(file_name) = entry.file_name().to_str() {
                         if file_name.len() == 41 {
                             match fs::read_to_string(entry.path()) {
-                                Ok(content) => {
-                                    match serde_json::from_str::<Value>(&content) {
-                                        Ok(json_obj) => triggers.push(json_obj),
-                                        Err(err) => eprintln!("Invalid JSON in {:?}: {}", entry.path(), err),
+                                Ok(content) => match serde_json::from_str::<Value>(&content) {
+                                    Ok(json_obj) => triggers.push(json_obj),
+                                    Err(err) => {
+                                        eprintln!("Invalid JSON in {:?}: {}", entry.path(), err)
                                     }
-                                }
+                                },
                                 Err(err) => eprintln!("Failed to read {:?}: {}", entry.path(), err),
                             }
                         }
@@ -773,25 +764,31 @@ fn load_bot_triggers(bot_path: String) -> String {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn save_bot_extensions(_app: tauri::AppHandle, bot_path:String, extensions_json:String) {
+fn save_bot_extensions(_app: tauri::AppHandle, bot_path: String, extensions_json: String) {
     let extensions_path = Path::new(&bot_path).join("data").join("extensions.json");
     fs::write(&extensions_path, extensions_json).unwrap();
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn load_bot_extensions(bot_path:String) -> String {
+fn load_bot_extensions(bot_path: String) -> String {
     let extensions_path = Path::new(&bot_path).join("data").join("extensions.json");
     fs::read_to_string(&extensions_path).expect("Failed to read extensions file")
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn load_bot_settings(bot_path:String) -> String {
+fn load_bot_settings(bot_path: String) -> String {
     let settings_path = Path::new(&bot_path).join("data").join("settings.json");
     fs::read_to_string(&settings_path).expect("Failed to read settings file")
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn save_bot_settings(_app: tauri::AppHandle, bot_path:String, bots_json:String, settings_json:String, theme:String) {
+fn save_bot_settings(
+    _app: tauri::AppHandle,
+    bot_path: String,
+    bots_json: String,
+    settings_json: String,
+    theme: String,
+) {
     let bots_path = _app
         .path()
         .resolve("bots.json", BaseDirectory::AppLocalData)
@@ -801,18 +798,20 @@ fn save_bot_settings(_app: tauri::AppHandle, bot_path:String, bots_json:String, 
         .resolve("themes", BaseDirectory::AppLocalData)
         .unwrap();
     let theme_path = themes_path.join(&theme);
-    let dashboard_theme_path = Path::new(&bot_path).join("dashboard").join("static").join("index.css");
+    let dashboard_theme_path = Path::new(&bot_path)
+        .join("dashboard")
+        .join("static")
+        .join("index.css");
     let settings_path = Path::new(&bot_path).join("data").join("settings.json");
-        fs::write(&bots_path, bots_json).unwrap();
-        fs::write(&settings_path, settings_json).unwrap();
-        if &theme == "default" {
-            if fs::exists(&dashboard_theme_path).unwrap()
-            {
-                fs::remove_file(&dashboard_theme_path).unwrap();
-            }
-        } else {
-            fs::copy(&theme_path, &dashboard_theme_path).unwrap();
+    fs::write(&bots_path, bots_json).unwrap();
+    fs::write(&settings_path, settings_json).unwrap();
+    if &theme == "default" {
+        if fs::exists(&dashboard_theme_path).unwrap() {
+            fs::remove_file(&dashboard_theme_path).unwrap();
         }
+    } else {
+        fs::copy(&theme_path, &dashboard_theme_path).unwrap();
+    }
 }
 
 #[tauri::command]
@@ -835,7 +834,7 @@ fn save_bots(_app: tauri::AppHandle, json: String) {
         .path()
         .resolve("bots.json", BaseDirectory::AppLocalData)
         .unwrap();
-        fs::write(&bots_path, json).unwrap();
+    fs::write(&bots_path, json).unwrap();
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -880,7 +879,11 @@ fn copy_dir_all(
         }
 
         if ty.is_dir() {
-            copy_dir_all(&entry_path, dst.as_ref().join(entry.file_name()), exclude_path)?;
+            copy_dir_all(
+                &entry_path,
+                dst.as_ref().join(entry.file_name()),
+                exclude_path,
+            )?;
         } else {
             std::fs::copy(&entry_path, dst.as_ref().join(entry.file_name()))?;
         }
