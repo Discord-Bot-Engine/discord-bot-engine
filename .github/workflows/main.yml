@@ -54,16 +54,14 @@ jobs:
       # -------------------------------
       # Download Node.js distributions
       # -------------------------------
-      - name: Download Node.js resources
+
+      # macOS / Linux step
+      - name: Download Node.js (macOS / Linux)
+        if: runner.os != 'Windows'
         run: |
           mkdir -p resources
 
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
-            mkdir -p resources/nodejs
-            tar -xf node-v22.18.0-win-x64.zip -C resources/nodejs --strip-components=1
-
-          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
             # macOS x64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
             mkdir -p resources/node-macos-x64
@@ -82,9 +80,19 @@ jobs:
             mkdir -p resources/node-linux-x64
             tar -xJf node-v22.18.0-linux-x64.tar.xz -C resources/node-linux-x64 --strip-components=1
             chmod +x resources/node-linux-x64/bin/*
+          fi
+
+      # Windows step
+      - name: Download Node.js (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          mkdir resources\nodejs
+          Invoke-WebRequest https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip -OutFile nodejs.zip
+          Expand-Archive nodejs.zip -DestinationPath resources\nodejs
 
       # -------------------------------
-      # Build and publish the Tauri app
+      # Build and publish Tauri app
       # -------------------------------
       - uses: tauri-apps/tauri-action@v0
         env:
