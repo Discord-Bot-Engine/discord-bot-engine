@@ -231,9 +231,10 @@ async fn run_bot(
         .path()
         .resolve("resources/nodejs", BaseDirectory::Resource)
         .unwrap();
+    let mut run_command: tauri::api::shell::Command<_>;
     #[cfg(target_os = "windows")]
     {
-        let mut run_command = _app
+        run_command = _app
             .shell()
             .command(node.join("node.exe"))
             .current_dir(&bot_path)
@@ -241,7 +242,7 @@ async fn run_bot(
     }
     #[cfg(target_os = "macos")]
     {
-         let mut run_command = if cfg!(target_arch = "aarch64") {
+         run_command = if cfg!(target_arch = "aarch64") {
                     _app
                     .shell()
                     .command(node.join("node-macos-arm64.tar.gz"))
@@ -257,7 +258,7 @@ async fn run_bot(
     }
     #[cfg(target_os = "linux")]
     {
-        let mut run_command = _app
+        run_command = _app
             .shell()
             .command(node.join("node-linux-x64.tar.xz"))
             .current_dir(&bot_path)
@@ -323,9 +324,10 @@ async fn load_bot_plugins(
         .path()
         .resolve("resources/nodejs", BaseDirectory::Resource)
         .unwrap();
+    let mut run_command: tauri::api::shell::Command<_>;
     #[cfg(target_os = "windows")]
     {
-        let mut run_command = _app
+        run_command = _app
             .shell()
             .command(node.join("node.exe"))
             .current_dir(&bot_path)
@@ -333,7 +335,7 @@ async fn load_bot_plugins(
     }
     #[cfg(target_os = "macos")]
     {
-         let mut run_command = if cfg!(target_arch = "aarch64") {
+         run_command = if cfg!(target_arch = "aarch64") {
                     _app
                     .shell()
                     .command(node.join("node-macos-arm64.tar.gz"))
@@ -349,7 +351,7 @@ async fn load_bot_plugins(
     }
     #[cfg(target_os = "linux")]
     {
-        let mut run_command = _app
+        run_command = _app
             .shell()
             .command(node.join("node-linux-x64.tar.xz"))
             .current_dir(&bot_path)
