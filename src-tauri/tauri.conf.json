@@ -27,9 +27,9 @@
   },
   "bundle": {
     "icon": [
+      "icons/dbe.png",
       "icons/dbe.icns",
-      "icons/dbe.ico",
-      "icons/dbe.png"
+      "icons/dbe.ico"
     ]
   }
 }

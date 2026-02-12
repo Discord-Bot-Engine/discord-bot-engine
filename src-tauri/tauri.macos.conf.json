@@ -12,6 +12,7 @@
     ],
     "active": true,
     "icon": [
+      "icons/dbe.png",
       "icons/dbe.icns"
     ],
     "licenseFile": "../LICENSE",
