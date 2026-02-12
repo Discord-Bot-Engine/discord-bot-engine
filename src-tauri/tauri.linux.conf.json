@@ -8,12 +8,6 @@
       "resources/Bot",
       "resources/sftp/sftp-linux",
       "resources/node-linux-x64"
-    ],
-    "active": true,
-    "icon": [
-      "icons/dbe.png"
-    ],
-    "licenseFile": "../LICENSE",
-    "license": "Proprietary"
+    ]
   }
 }

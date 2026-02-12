@@ -7,12 +7,6 @@
       "resources/Bot",
       "resources/sftp/sftp-win.exe",
       "resources/nodejs"
-    ],
-    "active": true,
-    "icon": [
-      "icons/dbe.ico"
-    ],
-    "licenseFile": "../LICENSE",
-    "license": "Proprietary"
+    ]
   }
 }

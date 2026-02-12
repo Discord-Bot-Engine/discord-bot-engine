@@ -30,7 +30,10 @@
       "icons/dbe.png",
       "icons/dbe.icns",
       "icons/dbe.ico"
-    ]
+    ],
+    "active": true,
+    "licenseFile": "../LICENSE",
+    "license": "Proprietary"
   }
 }
 

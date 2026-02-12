@@ -9,13 +9,6 @@
       "resources/sftp/sftp-macos-x64",
       "resources/node-macos-x64",
       "resources/node-macos-arm64"
-    ],
-    "active": true,
-    "icon": [
-      "icons/dbe.png",
-      "icons/dbe.icns"
-    ],
-    "licenseFile": "../LICENSE",
-    "license": "Proprietary"
+    ]
   }
 }
