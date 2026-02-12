@@ -121,12 +121,16 @@ jobs:
       # -------------------------------
       - name: Zip full target/release folder
         run: |
-          cd src-tauri/target/release
-          zip -r ../../../release-${{ runner.os }}-${{ matrix.args }}.zip .
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            powershell -Command "Compress-Archive -Path src-tauri/target/release/* -DestinationPath release-${{ runner.os }}-${{ matrix.args }}.zip"
+          else
+            cd src-tauri/target/release
+            zip -r ../../../release-${{ runner.os }}-${{ matrix.args }}.zip .
+          fi
         shell: bash
 
       # -------------------------------
-      # Upload zip as release asset
+      # Upload full release folder zip
       # -------------------------------
       - name: Upload full release folder zip
         uses: softprops/action-gh-release@v2
