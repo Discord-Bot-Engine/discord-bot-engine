@@ -226,7 +226,7 @@ async fn run_bot(
     state: tauri::State<'_, BotManager>,
     bot_path: String,
 ) -> Result<(), String> {
-    let mut run_command: tauri::api::shell::Command<_>;
+    let mut run_command: tauri_plugin_shell::process::Command;
     #[cfg(target_os = "windows")]
     {
         let node = _app
@@ -323,7 +323,7 @@ fn is_bot_running(state: tauri::State<'_, BotManager>, bot_path: String) -> bool
 
 #[tauri::command(rename_all = "snake_case")]
 async fn load_bot_plugins(_app: tauri::AppHandle, bot_path: String) -> Result<(), String> {
-    let mut run_command: tauri::api::shell::Command<_>;
+    let mut run_command: tauri_plugin_shell::process::Command;
     #[cfg(target_os = "windows")]
     {
         let node = _app
