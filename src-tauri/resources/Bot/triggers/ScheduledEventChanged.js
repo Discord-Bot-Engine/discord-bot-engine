@@ -15,7 +15,7 @@ export default class ScheduledEventChanged {
     static html = `
         <div class="grid grid-cols-4 items-center gap-4">
             <dbe-label name="Store old event in variable"></dbe-label>
-            <dbe-variable-list name="old" class="col-span-3"  variableType="Scheduled Event"></dbe-variable-list>
+            <dbe-variable-list name="old" class="col-span-3" variableType="Scheduled Event"></dbe-variable-list>
         </div>
 
         <div class="grid grid-cols-4 items-center gap-4">
