@@ -180,7 +180,15 @@ async fn upload_bot(
     let node = _app
         .path()
         .resolve("resources/sftp", BaseDirectory::Resource)
-        .map_err(|e| e.to_string())?;
+        .unwrap_or_else(|_| {
+            // Fallback for plain Linux executables (Steam) or dev mode
+            let exe_dir = std::env::current_exe()
+                .expect("Failed to get current executable path")
+                .parent()
+                .expect("Failed to get executable parent directory")
+                .to_path_buf();
+            exe_dir.join("resources/sftp")
+        });
 
     #[cfg(target_os = "windows")]
     let exe_path = node.join("sftp-win.exe");
@@ -229,27 +237,58 @@ async fn run_bot(
     #[cfg(target_os = "windows")]
     let node = _app
         .path()
-        .resolve("resources/nodejs", BaseDirectory::Resource)
-        .unwrap();
+        .resolve("resources/nodejs", BaseDirectory::Resource).unwrap_or_else(|_| {
+        // Fallback for plain Linux executables (Steam) or dev mode
+        let exe_dir = std::env::current_exe()
+            .expect("Failed to get current executable path")
+            .parent()
+            .expect("Failed to get executable parent directory")
+            .to_path_buf();
+        exe_dir.join("resources/nodejs")
+    });
 
     #[cfg(target_os = "macos")]
     let node = if cfg!(target_arch = "aarch64") {
         _app
             .path()
             .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
-            .unwrap()
+            .unwrap_or_else(|_| {
+                // Fallback for plain Linux executables (Steam) or dev mode
+                let exe_dir = std::env::current_exe()
+                    .expect("Failed to get current executable path")
+                    .parent()
+                    .expect("Failed to get executable parent directory")
+                    .to_path_buf();
+                exe_dir.join("resources/node-macos-arm64/bin")
+            });
     } else {
         _app
             .path()
             .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
-            .unwrap()
+            .unwrap_or_else(|_| {
+                // Fallback for plain Linux executables (Steam) or dev mode
+                let exe_dir = std::env::current_exe()
+                    .expect("Failed to get current executable path")
+                    .parent()
+                    .expect("Failed to get executable parent directory")
+                    .to_path_buf();
+                exe_dir.join("resources/node-macos-x64/bin")
+            });
     };
 
     #[cfg(target_os = "linux")]
     let node = _app
         .path()
         .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
-        .unwrap();
+        .unwrap_or_else(|_| {
+            // Fallback for plain Linux executables (Steam) or dev mode
+            let exe_dir = std::env::current_exe()
+                .expect("Failed to get current executable path")
+                .parent()
+                .expect("Failed to get executable parent directory")
+                .to_path_buf();
+            exe_dir.join("resources/node-linux-x64/bin")
+        });
 
     // Now assign run_command per platform
     #[cfg(target_os = "windows")]
@@ -338,26 +377,58 @@ async fn load_bot_plugins(_app: tauri::AppHandle, bot_path: String) -> Result<()
     let node = _app
         .path()
         .resolve("resources/nodejs", BaseDirectory::Resource)
-        .unwrap();
+        .unwrap_or_else(|_| {
+            // Fallback for plain Linux executables (Steam) or dev mode
+            let exe_dir = std::env::current_exe()
+                .expect("Failed to get current executable path")
+                .parent()
+                .expect("Failed to get executable parent directory")
+                .to_path_buf();
+            exe_dir.join("resources/nodejs")
+        });
 
     #[cfg(target_os = "macos")]
     let node = if cfg!(target_arch = "aarch64") {
         _app
             .path()
             .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
-            .unwrap()
+            .unwrap_or_else(|_| {
+                // Fallback for plain Linux executables (Steam) or dev mode
+                let exe_dir = std::env::current_exe()
+                    .expect("Failed to get current executable path")
+                    .parent()
+                    .expect("Failed to get executable parent directory")
+                    .to_path_buf();
+                exe_dir.join("resources/node-macos-arm64/bin")
+            });
     } else {
         _app
             .path()
             .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
-            .unwrap()
+            .unwrap_or_else(|_| {
+                // Fallback for plain Linux executables (Steam) or dev mode
+                let exe_dir = std::env::current_exe()
+                    .expect("Failed to get current executable path")
+                    .parent()
+                    .expect("Failed to get executable parent directory")
+                    .to_path_buf();
+                exe_dir.join("resources/node-macos-x64/bin")
+            });
     };
 
     #[cfg(target_os = "linux")]
     let node = _app
         .path()
         .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
-        .unwrap();
+        .unwrap_or_else(|_| {
+            // Fallback for plain Linux executables (Steam) or dev mode
+            let exe_dir = std::env::current_exe()
+                .expect("Failed to get current executable path")
+                .parent()
+                .expect("Failed to get executable parent directory")
+                .to_path_buf();
+            exe_dir.join("resources/node-linux-x64/bin")
+        });
     #[cfg(target_os = "windows")]
     {
         run_command = _app
@@ -861,7 +932,15 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
     let resource_path = _app
         .path()
         .resolve("resources/Bot", BaseDirectory::Resource)
-        .unwrap();
+        .unwrap_or_else(|_| {
+            // Fallback for plain Linux executables (Steam) or dev mode
+            let exe_dir = std::env::current_exe()
+                .expect("Failed to get current executable path")
+                .parent()
+                .expect("Failed to get executable parent directory")
+                .to_path_buf();
+            exe_dir.join("resources/Bot")
+        });
     tauri::async_runtime::spawn(async move {
         copy_dir_all(&resource_path, &bot_path, None).unwrap();
         _app.emit("finished_copying", &bot_path).unwrap();
@@ -873,7 +952,15 @@ fn update_bot_files(_app: tauri::AppHandle, bot_path: String) {
     let resource_path = _app
         .path()
         .resolve("resources/Bot", BaseDirectory::Resource)
-        .unwrap();
+        .unwrap_or_else(|_| {
+            // Fallback for plain Linux executables (Steam) or dev mode
+            let exe_dir = std::env::current_exe()
+                .expect("Failed to get current executable path")
+                .parent()
+                .expect("Failed to get executable parent directory")
+                .to_path_buf();
+            exe_dir.join("resources/Bot")
+        });
     tauri::async_runtime::spawn(async move {
         copy_dir_all(&resource_path, &bot_path, Some(&resource_path.join("data"))).unwrap();
         _app.emit("finished_copying", &bot_path).unwrap();
