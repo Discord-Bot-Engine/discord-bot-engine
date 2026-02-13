@@ -28,10 +28,14 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
+      # -------------------------------
       # Checkout
+      # -------------------------------
       - uses: actions/checkout@v4
 
+      # -------------------------------
       # Linux dependencies
+      # -------------------------------
       - name: Install Linux dependencies
         if: matrix.arch == 'linux'
         run: |
@@ -43,13 +47,42 @@ jobs:
             librsvg2-dev \
             patchelf
 
-      # Node
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: npm
+      # -------------------------------
+      # Node.js download per platform
+      # -------------------------------
+      - name: Download Node.js resources
+        run: |
+          mkdir -p src-tauri/resources/node-macos-x64
+          mkdir -p src-tauri/resources/node-macos-arm64
+          mkdir -p src-tauri/resources/node-linux-x64
+          mkdir -p src-tauri/resources/nodejs
 
-      # Rust
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            # macOS x64
+            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
+            tar -xzf node-v22.18.0-darwin-x64.tar.gz -C src-tauri/resources/node-macos-x64 --strip-components=1
+            chmod +x src-tauri/resources/node-macos-x64/bin/*
+
+            # macOS ARM64
+            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
+            tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C src-tauri/resources/node-macos-arm64 --strip-components=1
+            chmod +x src-tauri/resources/node-macos-arm64/bin/*
+
+          elif [[ "$RUNNER_OS" == "Linux" ]]; then
+            # Linux x64
+            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
+            tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
+            chmod +x src-tauri/resources/node-linux-x64/bin/*
+
+          else
+            # Windows x64
+            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
+            unzip node-v22.18.0-win-x64.zip -d src-tauri/resources/nodejs
+        shell: bash
+
+      # -------------------------------
+      # Rust & cache
+      # -------------------------------
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
@@ -58,10 +91,14 @@ jobs:
         with:
           workspaces: ./src-tauri -> target
 
-      # Install frontend deps
+      # -------------------------------
+      # Install frontend dependencies
+      # -------------------------------
       - run: npm install
 
-      # Build
+      # -------------------------------
+      # Build Tauri app
+      # -------------------------------
       - name: Build Tauri
         run: |
           npm run build
@@ -69,18 +106,19 @@ jobs:
             npx tauri build --target ${{ matrix.target }}
           else
             npx tauri build
-          fi
         shell: bash
 
-      # -------------------------
-      # WINDOWS (exe + dlls only)
-      # -------------------------
+      # -------------------------------
+      # Prepare and upload Steam artifacts
+      # -------------------------------
+
+      # Windows
       - name: Prepare Windows artifact
         if: matrix.arch == 'windows'
         run: |
           mkdir steam-output
-          cp -r src-tauri/target/release/*.exe steam-output/ || true
-          cp -r src-tauri/target/release/*.dll steam-output/ || true
+          cp -r src-tauri/target/release/*.exe steam-output/
+          cp -r src-tauri/target/release/*.dll steam-output/ 2>/dev/null || true
           cp -r src-tauri/target/release/resources steam-output/ 2>/dev/null || true
         shell: bash
 
@@ -91,14 +129,12 @@ jobs:
           name: windows-steam-build
           path: steam-output
 
-      # -------------------------
-      # LINUX (binary only)
-      # -------------------------
+      # Linux
       - name: Prepare Linux artifact
         if: matrix.arch == 'linux'
         run: |
           mkdir steam-output
-          cp src-tauri/target/release/* steam-output/ || true
+          cp src-tauri/target/release/* steam-output/
         shell: bash
 
       - name: Upload Linux
@@ -108,9 +144,7 @@ jobs:
           name: linux-steam-build
           path: steam-output
 
-      # -------------------------
-      # MACOS (.app only)
-      # -------------------------
+      # macOS
       - name: Prepare macOS artifact
         if: matrix.platform == 'macos-latest'
         run: |
