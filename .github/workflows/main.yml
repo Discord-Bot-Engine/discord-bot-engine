@@ -144,17 +144,3 @@ jobs:
         with:
           name: macos-${{ matrix.arch }}-steam-build
           path: src-tauri/target/${{ matrix.target }}/release/bundle/macos/*.app
-
-      # -------------------------------
-      # Tauri GitHub release (unchanged)
-      # -------------------------------
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tagName: app-v__VERSION__
-          releaseName: 'App v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
-          prerelease: false
-          args: ${{ matrix.args }}
