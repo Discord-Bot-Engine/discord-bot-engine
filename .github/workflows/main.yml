@@ -1,4 +1,4 @@
-name: steam-build
+name: publish
 
 on:
   push:
@@ -7,48 +7,76 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  publish-tauri:
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
         include:
-          - platform: macos-latest
-            target: aarch64-apple-darwin
-            arch: arm64
-          - platform: macos-latest
-            target: x86_64-apple-darwin
-            arch: x64
-          - platform: ubuntu-22.04
-            target: ""
-            arch: linux
-          - platform: windows-latest
-            target: ""
-            arch: windows
+          - platform: 'macos-latest'
+            target: 'aarch64-apple-darwin'
+            arch: 'arm64'
+          - platform: 'macos-latest'
+            target: 'x86_64-apple-darwin'
+            arch: 'x64'
+          - platform: 'ubuntu-22.04'
+            target: ''
+            arch: 'linux'
+          - platform: 'windows-latest'
+            target: ''
+            arch: 'windows'
 
     runs-on: ${{ matrix.platform }}
 
     steps:
       # -------------------------------
-      # Checkout
+      # Checkout code
       # -------------------------------
       - uses: actions/checkout@v4
 
       # -------------------------------
-      # Linux dependencies
+      # Install dependencies (Linux only)
       # -------------------------------
-      - name: Install Linux dependencies
-        if: matrix.arch == 'linux'
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            libwebkit2gtk-4.0-dev \
-            libwebkit2gtk-4.1-dev \
-            libappindicator3-dev \
-            librsvg2-dev \
-            patchelf
+          sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       # -------------------------------
-      # Node.js download per platform
+      # Setup Node
+      # -------------------------------
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      # -------------------------------
+      # Install Rust stable
+      # -------------------------------
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      # -------------------------------
+      # Rust cache
+      # -------------------------------
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      # -------------------------------
+      # Install frontend dependencies
+      # -------------------------------
+      - name: install frontend dependencies
+        run: npm install
+
+      # -------------------------------
+      # Download Node.js resources
       # -------------------------------
       - name: Download Node.js resources
         run: |
@@ -75,86 +103,57 @@ jobs:
             chmod +x src-tauri/resources/node-linux-x64/bin/*
 
           else
-            # Windows x64
+            # Windows
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
             unzip node-v22.18.0-win-x64.zip -d src-tauri/resources/nodejs
         shell: bash
 
       # -------------------------------
-      # Rust & cache
+      # Build the Tauri app
       # -------------------------------
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target }}
-
-      - uses: swatinem/rust-cache@v2
-        with:
-          workspaces: ./src-tauri -> target
-
-      # -------------------------------
-      # Install frontend dependencies
-      # -------------------------------
-      - run: npm install
-
-      # -------------------------------
-      # Build Tauri app
-      # -------------------------------
-      - name: Build Tauri
+      - name: Build Tauri App
         run: |
           npm run build
-          if [ -n "${{ matrix.target }}" ]; then
-            npx tauri build --target ${{ matrix.target }}
-          else
-            npx tauri build
-        shell: bash
+          npx tauri build ${{ matrix.args }}
 
       # -------------------------------
-      # Prepare and upload Steam artifacts
+      # Upload raw build artifacts for Steam
       # -------------------------------
 
       # Windows
-      - name: Prepare Windows artifact
-        if: matrix.arch == 'windows'
-        run: |
-          mkdir steam-output
-          cp -r src-tauri/target/release/*.exe steam-output/
-          cp -r src-tauri/target/release/*.dll steam-output/ 2>/dev/null || true
-          cp -r src-tauri/target/release/resources steam-output/ 2>/dev/null || true
-        shell: bash
-
-      - name: Upload Windows
-        if: matrix.arch == 'windows'
+      - name: Upload Windows raw build
+        if: matrix.platform == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: windows-steam-build
-          path: steam-output
+          path: src-tauri/target/release/*
 
       # Linux
-      - name: Prepare Linux artifact
-        if: matrix.arch == 'linux'
-        run: |
-          mkdir steam-output
-          cp src-tauri/target/release/* steam-output/
-        shell: bash
-
-      - name: Upload Linux
-        if: matrix.arch == 'linux'
+      - name: Upload Linux raw build
+        if: matrix.platform == 'ubuntu-22.04'
         uses: actions/upload-artifact@v4
         with:
           name: linux-steam-build
-          path: steam-output
+          path: src-tauri/target/release/*
 
-      # macOS
-      - name: Prepare macOS artifact
-        if: matrix.platform == 'macos-latest'
-        run: |
-          mkdir steam-output
-          cp -R src-tauri/target/${{ matrix.target }}/release/bundle/macos/*.app steam-output/
-        shell: bash
-
-      - name: Upload macOS
+      # macOS (fixed: unique per arch, only .app)
+      - name: Upload macOS app bundle
         if: matrix.platform == 'macos-latest'
         uses: actions/upload-artifact@v4
         with:
           name: macos-${{ matrix.arch }}-steam-build
-          path: steam-output
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/macos/*.app
+
+      # -------------------------------
+      # Tauri GitHub release (optional, unchanged)
+      # -------------------------------
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: app-v__VERSION__
+          releaseName: 'App v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
