@@ -101,7 +101,6 @@ jobs:
           mkdir -p src-tauri/resources/node-macos-x64
           mkdir -p src-tauri/resources/node-macos-arm64
           mkdir -p src-tauri/resources/node-linux-x64
-          mkdir -p src-tauri/resources/nodejs
 
           if [[ "$RUNNER_OS" == "macOS" ]]; then
             # macOS x64
@@ -119,11 +118,6 @@ jobs:
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
             tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
             chmod +x src-tauri/resources/node-linux-x64/bin/*
-
-          else
-            # Windows
-            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
-            unzip node-v22.18.0-win-x64.zip -d src-tauri/resources/nodejs
           fi
         shell: bash
 
