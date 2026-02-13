@@ -121,23 +121,21 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-steam-build
-          path: src-tauri/target/release/*
+          path: src-tauri/target
 
       - name: Upload macOS app bundle
         if: matrix.platform == 'macos-latest'
         uses: actions/upload-artifact@v4
         with:
           name: macos-steam-build
-          path: |
-            src-tauri/target/*/release/bundle/macos/*.app
-            src-tauri/target/release/bundle/macos/*.app
+          path: src-tauri/target
 
       - name: Upload Linux raw build
         if: matrix.platform == 'ubuntu-22.04'
         uses: actions/upload-artifact@v4
         with:
           name: linux-steam-build
-          path: src-tauri/target/release/*
+          path: src-tauri/target
       # -------------------------------
       - uses: tauri-apps/tauri-action@v0
         env:
