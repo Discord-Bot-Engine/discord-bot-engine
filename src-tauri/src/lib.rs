@@ -233,99 +233,58 @@ async fn run_bot(
     state: tauri::State<'_, BotManager>,
     bot_path: String,
 ) -> Result<(), String> {
-    let mut run_command: tauri_plugin_shell::process::Command;
-    #[cfg(target_os = "windows")]
-    let node = _app
-        .path()
-        .resolve("resources/nodejs", BaseDirectory::Resource).unwrap_or_else(|_| {
-        // Fallback for plain Linux executables (Steam) or dev mode
-        let exe_dir = std::env::current_exe()
-            .expect("Failed to get current executable path")
-            .parent()
-            .expect("Failed to get executable parent directory")
-            .to_path_buf();
-        exe_dir.join("resources/nodejs")
-    });
-
-    #[cfg(target_os = "macos")]
-    let node = if cfg!(target_arch = "aarch64") {
-        _app
-            .path()
-            .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
+    let node: std::path::PathBuf = if cfg!(target_os = "windows") {
+        _app.path()
+            .resolve("resources/nodejs", BaseDirectory::Resource)
             .unwrap_or_else(|_| {
-                // Fallback for plain Linux executables (Steam) or dev mode
                 let exe_dir = std::env::current_exe()
                     .expect("Failed to get current executable path")
                     .parent()
                     .expect("Failed to get executable parent directory")
                     .to_path_buf();
-                exe_dir.join("resources/node-macos-arm64/bin")
-            });
+                exe_dir.join("resources/nodejs")
+            })
+    } else if cfg!(target_os = "macos") {
+        let arch_dir = if cfg!(target_arch = "aarch64") {
+            "resources/node-macos-arm64/bin"
+        } else {
+            "resources/node-macos-x64/bin"
+        };
+        _app.path()
+            .resolve(arch_dir, BaseDirectory::Resource)
+            .unwrap_or_else(|_| {
+                let exe_dir = std::env::current_exe()
+                    .expect("Failed to get current executable path")
+                    .parent()
+                    .expect("Failed to get executable parent directory")
+                    .to_path_buf();
+                exe_dir.join(arch_dir)
+            })
     } else {
-        _app
-            .path()
-            .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
+        // Linux
+        _app.path()
+            .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
             .unwrap_or_else(|_| {
-                // Fallback for plain Linux executables (Steam) or dev mode
                 let exe_dir = std::env::current_exe()
                     .expect("Failed to get current executable path")
                     .parent()
                     .expect("Failed to get executable parent directory")
                     .to_path_buf();
-                exe_dir.join("resources/node-macos-x64/bin")
-            });
+                exe_dir.join("resources/node-linux-x64/bin")
+            })
     };
 
-    #[cfg(target_os = "linux")]
-    let node = _app
-        .path()
-        .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
-        .unwrap_or_else(|_| {
-            // Fallback for plain Linux executables (Steam) or dev mode
-            let exe_dir = std::env::current_exe()
-                .expect("Failed to get current executable path")
-                .parent()
-                .expect("Failed to get executable parent directory")
-                .to_path_buf();
-            exe_dir.join("resources/node-linux-x64/bin")
-        });
-
-    // Now assign run_command per platform
-    #[cfg(target_os = "windows")]
-    {
-        run_command = _app
-            .shell()
-            .command(node.join("node.exe"))
-            .current_dir(&bot_path)
-            .args([
-                bot_path.clone(),
-                node.join("npm.cmd").to_str().unwrap().to_string(),
-            ]);
-    }
-
-    #[cfg(target_os = "macos")]
-    {
-        run_command = _app
-            .shell()
-            .command(node.join("node"))
-            .current_dir(&bot_path)
-            .args([
-                bot_path.clone(),
-                node.join("npm").to_str().unwrap().to_string(),
-            ]);
-    }
-
-    #[cfg(target_os = "linux")]
-    {
-        run_command = _app
-            .shell()
-            .command(node.join("node"))
-            .current_dir(&bot_path)
-            .args([
-                bot_path.clone(),
-                node.join("npm").to_str().unwrap().to_string(),
-            ]);
-    }
+    let run_command = _app
+        .shell()
+        .command(node.join(if cfg!(windows) { "node.exe" } else { "node" }))
+        .current_dir(&bot_path)
+        .args([
+            bot_path.clone(),
+            node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
+                .to_str()
+                .unwrap()
+                .to_string(),
+        ]);
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
@@ -372,98 +331,57 @@ fn is_bot_running(state: tauri::State<'_, BotManager>, bot_path: String) -> bool
 
 #[tauri::command(rename_all = "snake_case")]
 async fn load_bot_plugins(_app: tauri::AppHandle, bot_path: String) -> Result<(), String> {
-    let mut run_command: tauri_plugin_shell::process::Command;
-    #[cfg(target_os = "windows")]
-    let node = _app
-        .path()
-        .resolve("resources/nodejs", BaseDirectory::Resource)
-        .unwrap_or_else(|_| {
-            // Fallback for plain Linux executables (Steam) or dev mode
-            let exe_dir = std::env::current_exe()
-                .expect("Failed to get current executable path")
-                .parent()
-                .expect("Failed to get executable parent directory")
-                .to_path_buf();
-            exe_dir.join("resources/nodejs")
-        });
-
-    #[cfg(target_os = "macos")]
-    let node = if cfg!(target_arch = "aarch64") {
-        _app
-            .path()
-            .resolve("resources/node-macos-arm64/bin", BaseDirectory::Resource)
+    let node: std::path::PathBuf = if cfg!(target_os = "windows") {
+        _app.path()
+            .resolve("resources/nodejs", BaseDirectory::Resource)
             .unwrap_or_else(|_| {
-                // Fallback for plain Linux executables (Steam) or dev mode
                 let exe_dir = std::env::current_exe()
                     .expect("Failed to get current executable path")
                     .parent()
                     .expect("Failed to get executable parent directory")
                     .to_path_buf();
-                exe_dir.join("resources/node-macos-arm64/bin")
-            });
+                exe_dir.join("resources/nodejs")
+            })
+    } else if cfg!(target_os = "macos") {
+        let arch_dir = if cfg!(target_arch = "aarch64") {
+            "resources/node-macos-arm64/bin"
+        } else {
+            "resources/node-macos-x64/bin"
+        };
+        _app.path()
+            .resolve(arch_dir, BaseDirectory::Resource)
+            .unwrap_or_else(|_| {
+                let exe_dir = std::env::current_exe()
+                    .expect("Failed to get current executable path")
+                    .parent()
+                    .expect("Failed to get executable parent directory")
+                    .to_path_buf();
+                exe_dir.join(arch_dir)
+            })
     } else {
-        _app
-            .path()
-            .resolve("resources/node-macos-x64/bin", BaseDirectory::Resource)
+        // Linux
+        _app.path()
+            .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
             .unwrap_or_else(|_| {
-                // Fallback for plain Linux executables (Steam) or dev mode
                 let exe_dir = std::env::current_exe()
                     .expect("Failed to get current executable path")
                     .parent()
                     .expect("Failed to get executable parent directory")
                     .to_path_buf();
-                exe_dir.join("resources/node-macos-x64/bin")
-            });
+                exe_dir.join("resources/node-linux-x64/bin")
+            })
     };
-
-    #[cfg(target_os = "linux")]
-    let node = _app
-        .path()
-        .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
-        .unwrap_or_else(|_| {
-            // Fallback for plain Linux executables (Steam) or dev mode
-            let exe_dir = std::env::current_exe()
-                .expect("Failed to get current executable path")
-                .parent()
-                .expect("Failed to get executable parent directory")
-                .to_path_buf();
-            exe_dir.join("resources/node-linux-x64/bin")
-        });
-    #[cfg(target_os = "windows")]
-    {
-        run_command = _app
-            .shell()
-            .command(node.join("node.exe"))
-            .current_dir(&bot_path)
-            .args([
-                format!("{bot_path}/classes/PluginManager.js"),
-                node.join("npm.cmd").to_str().unwrap().to_string(),
-            ]);
-    }
-
-    #[cfg(target_os = "macos")]
-    {
-        run_command = _app
-            .shell()
-            .command(node.join("node"))
-            .current_dir(&bot_path)
-            .args([
-                format!("{bot_path}/classes/PluginManager.js"),
-                node.join("npm").to_str().unwrap().to_string(),
-            ]);
-    }
-
-    #[cfg(target_os = "linux")]
-    {
-        run_command = _app
-            .shell()
-            .command(node.join("node"))
-            .current_dir(&bot_path)
-            .args([
-                format!("{bot_path}/classes/PluginManager.js"),
-                node.join("npm").to_str().unwrap().to_string(),
-            ]);
-    }
+    let run_command = _app
+        .shell()
+        .command(node.join(if cfg!(windows) { "node.exe" } else { "node" }))
+        .current_dir(&bot_path)
+        .args([
+            bot_path.clone(),
+            node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
+                .to_str()
+                .unwrap()
+                .to_string(),
+        ]);
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
