@@ -52,7 +52,14 @@ jobs:
         with:
           node-version: lts/*
           cache: 'npm'
-
+      
+      # -------------------------------
+      # Install npm dependencies in src-tauri/resources/Bot
+      # -------------------------------
+      - name: install bot dependencies
+        working-directory: src-tauri/resources/Bot
+        run: npm install
+        
       # -------------------------------
       # Install Rust stable
       # -------------------------------
