@@ -187,9 +187,9 @@ async fn upload_bot(
 
     #[cfg(target_os = "macos")]
     let exe_path = if cfg!(target_arch = "aarch64") {
-        node.join("mac/sftp-macos-arm64")
+        node.join("sftp-macos-arm64")
     } else {
-        node.join("mac/sftp-macos-x64")
+        node.join("sftp-macos-x64")
     };
 
     #[cfg(target_os = "linux")]
