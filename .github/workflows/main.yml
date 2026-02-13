@@ -114,28 +114,5 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
+          uploadWorkflowArtifacts: true
           args: ${{ matrix.args }}
-
-      # -------------------------------
-      # Zip full target/release folder
-      # -------------------------------
-      - name: Zip full target/release folder
-        run: |
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            powershell -Command "Compress-Archive -Path src-tauri/target/release/* -DestinationPath release-${{ runner.os }}-${{ matrix.args }}.zip"
-          else
-            cd src-tauri/target/release
-            zip -r ../../../release-${{ runner.os }}-${{ matrix.args }}.zip .
-          fi
-        shell: bash
-
-      # -------------------------------
-      # Upload full release folder zip
-      # -------------------------------
-      - name: Upload full release folder zip
-        uses: softprops/action-gh-release@v2
-        with:
-          files: release-${{ runner.os }}-${{ matrix.args }}.zip
-          tag_name: app-v__VERSION__
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
