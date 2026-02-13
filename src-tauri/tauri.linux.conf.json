@@ -1,8 +1,7 @@
 {
   "bundle": {
     "targets": [
-      "deb",
-      "appimage"
+      "deb"
     ],
     "resources": [
       "resources/Bot",
