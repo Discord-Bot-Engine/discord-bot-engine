@@ -26,6 +26,9 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
+      # -------------------------------
+      # Checkout code
+      # -------------------------------
       - uses: actions/checkout@v4
 
       # -------------------------------
@@ -103,7 +106,38 @@ jobs:
         shell: bash
 
       # -------------------------------
-      # Build and publish the Tauri app
+      # Build the Tauri app
+      # -------------------------------
+      - name: Build Tauri App
+        run: |
+          npm run build
+          npx tauri build ${{ matrix.args }}
+
+      # -------------------------------
+      # Upload raw build artifacts for Steam
+      # -------------------------------
+      - name: Upload Windows raw build
+        if: matrix.platform == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-steam-build
+          path: src-tauri/target/release/*
+
+      - name: Upload macOS app bundle
+        if: matrix.platform == 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-steam-build
+          path: |
+            src-tauri/target/*/release/bundle/macos/*.app
+            src-tauri/target/release/bundle/macos/*.app
+
+      - name: Upload Linux raw build
+        if: matrix.platform == 'ubuntu-22.04'
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-steam-build
+          path: src-tauri/target/release/*
       # -------------------------------
       - uses: tauri-apps/tauri-action@v0
         env:
@@ -114,5 +148,4 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
-          uploadPlainBinary: true
           args: ${{ matrix.args }}
