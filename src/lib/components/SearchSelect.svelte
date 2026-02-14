@@ -73,7 +73,7 @@
                             <Command.Item
                                     disabled={v.disabled}
                                     value={v.value}
-                                    onSelect={() => {type === "single" ? value = v.value : value.push(v.value); closeAndFocusTrigger(); onvaluechange(value)}}
+                                    onSelect={() => {type === "single" ? value = v.value : (value.includes(v.value) ? value = value.filter(x => x !== v.value) : value.push(v.value)); closeAndFocusTrigger(); onvaluechange(value)}}
                             >
                                 <CheckIcon
                                         class={cn("mr-2 size-4", (type === "single" ? value !== v.value : !value?.includes(v.value)) && "text-transparent")}
