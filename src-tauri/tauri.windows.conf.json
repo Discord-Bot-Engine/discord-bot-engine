@@ -1,7 +1,7 @@
 {
   "bundle": {
     "targets": [
-      "msi"
+      "nsis"
     ],
     "resources": [
       "resources/Bot",
