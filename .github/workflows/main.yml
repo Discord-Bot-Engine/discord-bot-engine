@@ -181,19 +181,20 @@ jobs:
       - name: Merge into Discord Bot Engine.app
         run: |
           APP_NAME="Discord Bot Engine.app"
-
+      
           # Copy ARM64 app as base
-          cp -R src-tauri/target/aarch64-apple-darwin/release/bundle/macos/$APP_NAME "$APP_NAME"
-
+          cp -R src-tauri/target/aarch64-apple-darwin/release/bundle/macos/"$APP_NAME" "$APP_NAME"
+      
           # Merge main executables
-          ARM_BIN="src-tauri/target/aarch64-apple-darwin/release/Discord Bot Engine"
-          X64_BIN="src-tauri/target/x86_64-apple-darwin/release/Discord Bot Engine"
+          ARM_BIN="src-tauri/target/aarch64-apple-darwin/release/bundle/macos/$APP_NAME/Contents/MacOS/Discord Bot Engine"
+          X64_BIN="src-tauri/target/x86_64-apple-darwin/release/bundle/macos/$APP_NAME/Contents/MacOS/Discord Bot Engine"
           UNIVERSAL_BIN="$APP_NAME/Contents/MacOS/Discord Bot Engine"
-
+      
           lipo -create "$ARM_BIN" "$X64_BIN" -output "$UNIVERSAL_BIN"
-
+      
           echo "Universal binary created:"
           lipo -info "$UNIVERSAL_BIN"
+
 
       # Keep Tauri ad-hoc signing (do not remove)
       - name: Upload macOS build
