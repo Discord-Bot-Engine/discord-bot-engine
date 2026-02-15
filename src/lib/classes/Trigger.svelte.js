@@ -26,18 +26,18 @@ class Trigger {
 	}
 
 	toJSON() {
-		const data = {}
-		this.data.keys().forEach(key => {
+		const data = {};
+		[...this.data.keys()].forEach(key => {
 			data[key] = this.data.get(key)
 		})
-		const variables = {}
-		this.variables.keys().forEach(key => {
+		const variables = {};
+		[...this.variables.keys()].forEach(key => {
 			variables[key] = this.variables.get(key)
 		})
 		const actions = []
 		this.actions.forEach(action => {
-			const data = {}
-			action.data.keys().forEach(key => {
+			const data = {};
+			[...action.data.keys()].forEach(key => {
 				data[key] = action.data.get(key)
 			})
 			actions.push({...action, data})
@@ -56,8 +56,8 @@ class Trigger {
 
 	toDebuggerJSON() {
 		const obj = this.toJSON()
-		const debugVariables = {}
-		this.debugVariables.keys().forEach(key => {
+		const debugVariables = {};
+		[...this.debugVariables.keys()].forEach(key => {
 			debugVariables[key] = this.debugVariables.get(key)
 		})
 		return {...obj, showInDebug: this.showInDebug, actionManagers: this.actionManagers, debugVariables: debugVariables};

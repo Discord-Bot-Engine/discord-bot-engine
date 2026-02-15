@@ -80,8 +80,8 @@ class AppClass {
 		BotManager.selectedBot.markAsModified(this.selectedTrigger.id);
 		const newActions = []
 		App.selectedTrigger.actions.forEach(action => {
-			const data = {}
-			action.data.keys().forEach(key => {
+			const data = {};
+			[...action.data.keys()].forEach(key => {
 				data[key] = action.data.get(key)
 			})
 			newActions.push({...action, data})

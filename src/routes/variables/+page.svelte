@@ -23,10 +23,10 @@
     const variables = $derived(trigger?.variables);
     const debugVariables = $derived.by(() => {
         let map = new Map();
-        loaded.keys().forEach(key => {
+        [...loaded.keys()].forEach(key => {
             map.set(key, loaded.get(key))
-        })
-        trigger?.debugVariables.keys().forEach(key => {
+        });
+        [...trigger?.debugVariables.keys()].forEach(key => {
             map.set(key, trigger.debugVariables.get(key))
         })
         return map;
@@ -34,7 +34,7 @@
 </script>
 <ScrollArea class="h-full">
     <div class="w-full h-full flex flex-col gap-1">
-        {#each variables?.keys() ?? [] as name}
+        {#each (variables ? [...variables.keys()] ?? []) as name}
             <Collapsible.Root>
                 <div class="flex w-full text-sm bg-card pl-5 pr-2 py-1 border-b-1">
                     <div class="flex gap-7 w-full">

@@ -6,8 +6,8 @@ class Extension {
     isModified = false
 
     toJSON() {
-        const data = {}
-        this.data.keys().forEach(key => {
+        const data = {};
+        [...this.data.keys()].forEach(key => {
             data[key] = this.data.get(key)
         })
         return {data}

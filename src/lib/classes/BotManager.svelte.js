@@ -160,9 +160,9 @@ class BotManagerClass {
 	}
 
 	async saveBotData() {
-		if(!this.selectedBot.modifiedTriggers.length && !this.selectedBot.removedTriggers.length && !this.selectedBot.extensions.keys().some(key => this.selectedBot.extensions.get(key).isModified)) return
-		const extensions = {}
-		this.selectedBot.extensions.keys().forEach(key => {
+		if(!this.selectedBot.modifiedTriggers.length && !this.selectedBot.removedTriggers.length && ![...this.selectedBot.extensions.keys()].some(key => this.selectedBot.extensions.get(key).isModified)) return
+		const extensions = {};
+		[...this.selectedBot.extensions.keys()].forEach(key => {
 			const ext = this.selectedBot.extensions.get(key)
 			ext.isModified = false
 			extensions[key] = ext

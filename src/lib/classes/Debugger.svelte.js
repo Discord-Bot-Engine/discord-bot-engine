@@ -29,8 +29,8 @@ class DebuggerClass {
 				height: 450,
 			});
 			webview.once("load" ,() => {
-				const debugVariables = {}
-				trigger.debugVariables.keys().forEach(key => {
+				const debugVariables = {};
+				[...trigger.debugVariables.keys()].forEach(key => {
 					debugVariables[key] = trigger.debugVariables.get(key);
 				})
 				webview.emit("data", JSON.stringify(debugVariables))
@@ -73,7 +73,7 @@ class DebuggerClass {
 			acts = acts.map(act => act instanceof Action ? act : Action.fromJSON(act))
 			actions.push(acts)
 			acts.forEach((act) => {
-				act.data.keys().toArray().forEach(key => {
+				[...act.data.keys()].toArray().forEach(key => {
 					if(Array.isArray(act.data.get(key)) && act.data.get(key).every(el => el.isAction)) {
 						getActions(act.data.get(key), actions)
 					}
