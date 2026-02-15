@@ -37,6 +37,15 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
+      # -------------------------
+      # Download Node.js for resources
+      # -------------------------
+      - name: Download Node.js resources
+        run: |
+          mkdir -p src-tauri/resources/node-win-x64
+          curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
+          unzip node-v22.18.0-win-x64.zip -d src-tauri/resources/node-win-x64
+
       - name: Build Tauri (Windows)
         run: |
           npm run build
@@ -92,6 +101,15 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
+      # -------------------------
+      # Download Node.js for resources
+      # -------------------------
+      - name: Download Node.js resources
+        run: |
+          mkdir -p src-tauri/resources/node-linux-x64
+          curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
+          tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
+
       - name: Build Tauri (Linux)
         run: |
           npm run build
@@ -134,6 +152,9 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
+      # -------------------------
+      # Download Node.js for resources (both macOS archs)
+      # -------------------------
       - name: Download Node.js resources
         run: |
           mkdir -p src-tauri/resources/node-macos-x64
@@ -141,21 +162,22 @@ jobs:
 
           curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
           tar -xzf node-v22.18.0-darwin-x64.tar.gz -C src-tauri/resources/node-macos-x64 --strip-components=1
-          chmod +x src-tauri/resources/node-macos-x64/bin/*
 
           curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
           tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C src-tauri/resources/node-macos-arm64 --strip-components=1
-          chmod +x src-tauri/resources/node-macos-arm64/bin/*
 
+      # Build ARM64
       - name: Build ARM64
         run: |
           npm run build
           npx tauri build --target aarch64-apple-darwin
 
+      # Build x64
       - name: Build x64
         run: |
           npx tauri build --target x86_64-apple-darwin
 
+      # Merge into Discord Bot Engine.app
       - name: Merge into Discord Bot Engine.app
         run: |
           APP_NAME="Discord Bot Engine.app"
@@ -173,7 +195,7 @@ jobs:
           echo "Universal binary created:"
           lipo -info "$UNIVERSAL_BIN"
 
-      # Keep Tauri ad-hoc signing; do NOT remove
+      # Keep Tauri ad-hoc signing (do not remove)
       - name: Upload macOS build
         uses: actions/upload-artifact@v4
         with:
