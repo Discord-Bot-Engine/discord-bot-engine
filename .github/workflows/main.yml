@@ -10,40 +10,55 @@ jobs:
   publish-tauri:
     permissions:
       contents: write
+
     strategy:
       fail-fast: false
       matrix:
         include:
-          - platform: 'macos-latest'
-            target: 'aarch64-apple-darwin'
-            arch: 'arm64'
-          - platform: 'macos-latest'
-            target: 'x86_64-apple-darwin'
-            arch: 'x64'
-          - platform: 'ubuntu-22.04'
-            target: ''
-            arch: 'linux'
-          - platform: 'windows-latest'
-            target: ''
-            arch: 'windows'
+          # -------------------------------
+          # macOS ARM64
+          # -------------------------------
+          - platform: macos-latest
+            target: aarch64-apple-darwin
+            arch: arm64
+
+          # -------------------------------
+          # macOS x64
+          # -------------------------------
+          - platform: macos-latest
+            target: x86_64-apple-darwin
+            arch: x64
+
+          # -------------------------------
+          # Linux
+          # -------------------------------
+          - platform: ubuntu-22.04
+            target: ""
+            arch: linux
+
+          # -------------------------------
+          # Windows
+          # -------------------------------
+          - platform: windows-latest
+            target: ""
+            arch: windows
 
     runs-on: ${{ matrix.platform }}
 
     steps:
       # -------------------------------
-      # Checkout code
+      # Checkout
       # -------------------------------
       - uses: actions/checkout@v4
 
       # -------------------------------
-      # Install dependencies (Linux only)
+      # Linux system dependencies
       # -------------------------------
-      - name: install dependencies (ubuntu only)
+      - name: Install dependencies (Ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libwebkit2gtk-4.0-dev \
             libwebkit2gtk-4.1-dev \
             libappindicator3-dev \
             librsvg2-dev \
@@ -58,23 +73,29 @@ jobs:
       # -------------------------------
       # Setup Node
       # -------------------------------
-      - name: setup node
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'npm'
-      
+          cache: npm
+
       # -------------------------------
-      # Install npm dependencies in src-tauri/resources/Bot
+      # Install frontend deps
       # -------------------------------
-      - name: install bot dependencies
+      - name: Install frontend dependencies
+        run: npm install
+
+      # -------------------------------
+      # Install bot deps
+      # -------------------------------
+      - name: Install bot dependencies
         working-directory: src-tauri/resources/Bot
         run: npm install
-        
+
       # -------------------------------
-      # Install Rust stable
+      # Install Rust
       # -------------------------------
-      - name: install Rust stable
+      - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
@@ -88,71 +109,70 @@ jobs:
           workspaces: './src-tauri -> target'
 
       # -------------------------------
-      # Install frontend dependencies
-      # -------------------------------
-      - name: install frontend dependencies
-        run: npm install
-
-      # -------------------------------
-      # Download Node.js resources (fixed)
+      # Download Node runtime binaries
       # -------------------------------
       - name: Download Node.js resources
+        shell: bash
         run: |
           mkdir -p src-tauri/resources/node-macos-x64
           mkdir -p src-tauri/resources/node-macos-arm64
           mkdir -p src-tauri/resources/node-linux-x64
 
           if [[ "$RUNNER_OS" == "macOS" ]]; then
-            # macOS x64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
             tar -xzf node-v22.18.0-darwin-x64.tar.gz -C src-tauri/resources/node-macos-x64 --strip-components=1
             chmod +x src-tauri/resources/node-macos-x64/bin/*
 
-            # macOS ARM64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
             tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C src-tauri/resources/node-macos-arm64 --strip-components=1
             chmod +x src-tauri/resources/node-macos-arm64/bin/*
 
           elif [[ "$RUNNER_OS" == "Linux" ]]; then
-            # Linux x64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
             tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
             chmod +x src-tauri/resources/node-linux-x64/bin/*
           fi
-        shell: bash
 
       # -------------------------------
-      # Build the Tauri app
+      # Build Tauri
       # -------------------------------
       - name: Build Tauri App
+        shell: bash
         run: |
           npm run build
-          npx tauri build ${{ matrix.args }}
+
+          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
+            npx tauri build --target ${{ matrix.target }}
+          else
+            npx tauri build
+          fi
 
       # -------------------------------
-      # Upload raw build artifacts for Steam
+      # Upload Windows build
       # -------------------------------
-
-      # Windows
-      - name: Upload Windows raw build
+      - name: Upload Windows build
         if: matrix.platform == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: windows-steam-build
           path: src-tauri/target/release/*
 
-      # Linux
-      - name: Upload Linux raw build
+      # -------------------------------
+      # Upload Linux build
+      # -------------------------------
+      - name: Upload Linux build
         if: matrix.platform == 'ubuntu-22.04'
         uses: actions/upload-artifact@v4
         with:
           name: linux-steam-build
           path: src-tauri/target/release/*
 
-      # macOS (fixed: unique per arch, only .app)
+      # -------------------------------
+      # Upload macOS build (per arch)
+      # -------------------------------
       - name: Upload macOS app bundle
         if: matrix.platform == 'macos-latest'
         uses: actions/upload-artifact@v4
         with:
           name: macos-${{ matrix.arch }}-steam-build
-          path: src-tauri/target/release/*
+          path: src-tauri/target/${{ matrix.target }}/release/*
