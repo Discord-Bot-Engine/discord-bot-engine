@@ -7,55 +7,59 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish-tauri:
+
+  # ---------------------------------
+  # WINDOWS
+  # ---------------------------------
+  build-windows:
+    runs-on: windows-latest
     permissions:
       contents: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # -------------------------------
-          # macOS ARM64
-          # -------------------------------
-          - platform: macos-latest
-            target: aarch64-apple-darwin
-            arch: arm64
-
-          # -------------------------------
-          # macOS x64
-          # -------------------------------
-          - platform: macos-latest
-            target: x86_64-apple-darwin
-            arch: x64
-
-          # -------------------------------
-          # Linux
-          # -------------------------------
-          - platform: ubuntu-22.04
-            target: ""
-            arch: linux
-
-          # -------------------------------
-          # Windows
-          # -------------------------------
-          - platform: windows-latest
-            target: ""
-            arch: windows
-
-    runs-on: ${{ matrix.platform }}
-
     steps:
-      # -------------------------------
-      # Checkout
-      # -------------------------------
       - uses: actions/checkout@v4
 
-      # -------------------------------
-      # Linux system dependencies
-      # -------------------------------
-      - name: Install dependencies (Ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Install bot dependencies
+        working-directory: src-tauri/resources/Bot
+        run: npm install
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Build Tauri (Windows)
+        run: |
+          npm run build
+          npx tauri build
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-steam-build
+          path: src-tauri/target/release/*
+
+  # ---------------------------------
+  # LINUX
+  # ---------------------------------
+  build-linux:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -70,109 +74,108 @@ jobs:
             libglib2.0-dev \
             libgtk-3-dev
 
-      # -------------------------------
-      # Setup Node
-      # -------------------------------
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: npm
 
-      # -------------------------------
-      # Install frontend deps
-      # -------------------------------
       - name: Install frontend dependencies
         run: npm install
 
-      # -------------------------------
-      # Install bot deps
-      # -------------------------------
       - name: Install bot dependencies
         working-directory: src-tauri/resources/Bot
         run: npm install
 
-      # -------------------------------
-      # Install Rust
-      # -------------------------------
-      - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - uses: dtolnay/rust-toolchain@stable
 
-      # -------------------------------
-      # Rust cache
-      # -------------------------------
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
+      - uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
 
-      # -------------------------------
-      # Download Node runtime binaries
-      # -------------------------------
-      - name: Download Node.js resources
-        shell: bash
-        run: |
-          mkdir -p src-tauri/resources/node-macos-x64
-          mkdir -p src-tauri/resources/node-macos-arm64
-          mkdir -p src-tauri/resources/node-linux-x64
-
-          if [[ "$RUNNER_OS" == "macOS" ]]; then
-            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
-            tar -xzf node-v22.18.0-darwin-x64.tar.gz -C src-tauri/resources/node-macos-x64 --strip-components=1
-            chmod +x src-tauri/resources/node-macos-x64/bin/*
-
-            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
-            tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C src-tauri/resources/node-macos-arm64 --strip-components=1
-            chmod +x src-tauri/resources/node-macos-arm64/bin/*
-
-          elif [[ "$RUNNER_OS" == "Linux" ]]; then
-            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
-            tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
-            chmod +x src-tauri/resources/node-linux-x64/bin/*
-          fi
-
-      # -------------------------------
-      # Build Tauri
-      # -------------------------------
-      - name: Build Tauri App
-        shell: bash
+      - name: Build Tauri (Linux)
         run: |
           npm run build
+          npx tauri build
 
-          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
-            npx tauri build --target ${{ matrix.target }}
-          else
-            npx tauri build
-          fi
-
-      # -------------------------------
-      # Upload Windows build
-      # -------------------------------
-      - name: Upload Windows build
-        if: matrix.platform == 'windows-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-steam-build
-          path: src-tauri/target/release/*
-
-      # -------------------------------
-      # Upload Linux build
-      # -------------------------------
       - name: Upload Linux build
-        if: matrix.platform == 'ubuntu-22.04'
         uses: actions/upload-artifact@v4
         with:
           name: linux-steam-build
           path: src-tauri/target/release/*
 
-      # -------------------------------
-      # Upload macOS build (per arch)
-      # -------------------------------
-      - name: Upload macOS app bundle
-        if: matrix.platform == 'macos-latest'
+  # ---------------------------------
+  # MACOS (ARM64 + x64, Discord Bot Engine.app)
+  # ---------------------------------
+  build-macos:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Install bot dependencies
+        working-directory: src-tauri/resources/Bot
+        run: npm install
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Download Node.js resources
+        run: |
+          mkdir -p src-tauri/resources/node-macos-x64
+          mkdir -p src-tauri/resources/node-macos-arm64
+
+          curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
+          tar -xzf node-v22.18.0-darwin-x64.tar.gz -C src-tauri/resources/node-macos-x64 --strip-components=1
+          chmod +x src-tauri/resources/node-macos-x64/bin/*
+
+          curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
+          tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C src-tauri/resources/node-macos-arm64 --strip-components=1
+          chmod +x src-tauri/resources/node-macos-arm64/bin/*
+
+      - name: Build ARM64
+        run: |
+          npm run build
+          npx tauri build --target aarch64-apple-darwin
+
+      - name: Build x64
+        run: |
+          npx tauri build --target x86_64-apple-darwin
+
+      - name: Merge into Discord Bot Engine.app
+        run: |
+          APP_NAME="Discord Bot Engine.app"
+
+          # Copy ARM64 app as base
+          cp -R src-tauri/target/aarch64-apple-darwin/release/bundle/macos/$APP_NAME "$APP_NAME"
+
+          # Merge main executables
+          ARM_BIN="src-tauri/target/aarch64-apple-darwin/release/Discord Bot Engine"
+          X64_BIN="src-tauri/target/x86_64-apple-darwin/release/Discord Bot Engine"
+          UNIVERSAL_BIN="$APP_NAME/Contents/MacOS/Discord Bot Engine"
+
+          lipo -create "$ARM_BIN" "$X64_BIN" -output "$UNIVERSAL_BIN"
+
+          echo "Universal binary created:"
+          lipo -info "$UNIVERSAL_BIN"
+
+      # Keep Tauri ad-hoc signing; do NOT remove
+      - name: Upload macOS build
         uses: actions/upload-artifact@v4
         with:
-          name: macos-${{ matrix.arch }}-steam-build
-          path: src-tauri/target/${{ matrix.target }}/release/bundle/macos/*
+          name: macos-steam-build
+          path: Discord\ Bot\ Engine.app
