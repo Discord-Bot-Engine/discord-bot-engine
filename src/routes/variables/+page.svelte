@@ -34,7 +34,7 @@
 </script>
 <ScrollArea class="h-full">
     <div class="w-full h-full flex flex-col gap-1">
-        {#each (variables ? [...variables.keys()] ?? []) as name}
+        {#each [...(variables ? variables.keys() : [])] as name}
             <Collapsible.Root>
                 <div class="flex w-full text-sm bg-card pl-5 pr-2 py-1 border-b-1">
                     <div class="flex gap-7 w-full">
