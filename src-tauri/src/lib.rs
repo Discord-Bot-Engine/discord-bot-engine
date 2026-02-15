@@ -1025,7 +1025,7 @@ pub fn run() {
         .plugin(tauri_plugin_drpc::init())
         .build(tauri::generate_context!())
         .expect("error while running tauri application");
-    prepare_app_paths(&app);
+    prepare_app_paths(&app.handle());
     app.run(move |app_handle, event| {
         #[cfg(all(desktop, not(test)))]
         match &event {
