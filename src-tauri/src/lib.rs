@@ -14,6 +14,61 @@ use tauri_plugin_shell::ShellExt;
 struct BotManager {
     bots: Mutex<HashMap<String, CommandChild>>,
 }
+/// Ensures a directory exists, creating it if missing
+fn ensure_dir(path: &Path) -> PathBuf {
+    if !path.exists() {
+        fs::create_dir_all(path).expect(&format!("Failed to create directory {:?}", path));
+    }
+    path.to_path_buf()
+}
+
+/// Ensures a file exists, creating it empty if missing
+fn ensure_file(path: &Path) -> PathBuf {
+    if !path.exists() {
+        fs::write(path, "[]").expect(&format!("Failed to create file {:?}", path));
+    }
+    path.to_path_buf()
+}
+
+/// Call at app startup
+fn prepare_app_paths(app: &tauri::AppHandle) {
+    // translations directory
+    let translations_dir = ensure_dir(
+        &app.path().resolve("translations", BaseDirectory::AppLocalData).unwrap()
+    );
+
+    // themes directory
+    let themes_dir = ensure_dir(
+        &app.path().resolve("themes", BaseDirectory::AppLocalData).unwrap()
+    );
+
+    // bots.json
+    let bots_path = app.path()
+        .resolve("bots.json", BaseDirectory::AppLocalData)
+        .unwrap();
+    ensure_file(&bots_path);
+
+    // resources/Bot (for copying/updating bots later)
+    let bot_resources = app.path()
+        .resolve("resources/Bot", BaseDirectory::Resource)
+        .unwrap_or_else(|_| {
+            // fallback for dev mode or Steam
+            let exe_dir = std::env::current_exe()
+                .expect("Failed to get exe path")
+                .parent()
+                .unwrap()
+                .to_path_buf();
+            exe_dir.join("resources/Bot")
+        });
+    ensure_dir(&bot_resources);
+
+    // optional: print paths for debugging
+    println!("translations_dir: {:?}", translations_dir);
+    println!("themes_dir: {:?}", themes_dir);
+    println!("bots.json path: {:?}", bots_path);
+    println!("Bot resources: {:?}", bot_resources);
+}
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command(rename_all = "snake_case")]
 fn save_translation(app: tauri::AppHandle, name: String, translation: String) {
@@ -970,6 +1025,7 @@ pub fn run() {
         .plugin(tauri_plugin_drpc::init())
         .build(tauri::generate_context!())
         .expect("error while running tauri application");
+    prepare_app_paths(&app);
     app.run(move |app_handle, event| {
         #[cfg(all(desktop, not(test)))]
         match &event {
