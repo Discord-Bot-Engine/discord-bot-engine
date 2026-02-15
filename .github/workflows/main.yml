@@ -109,54 +109,28 @@ jobs:
           workspaces: './src-tauri -> target'
 
       # -------------------------------
-      # Download Node runtime (arch-specific)
+      # Download Node runtime binaries
       # -------------------------------
-      - name: Download Node.js runtime
+      - name: Download Node.js resources
         shell: bash
         run: |
-          mkdir -p src-tauri/resources
+          mkdir -p src-tauri/resources/node-macos-x64
+          mkdir -p src-tauri/resources/node-macos-arm64
+          mkdir -p src-tauri/resources/node-linux-x64
 
           if [[ "$RUNNER_OS" == "macOS" ]]; then
+            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
+            tar -xzf node-v22.18.0-darwin-x64.tar.gz -C src-tauri/resources/node-macos-x64 --strip-components=1
+            chmod +x src-tauri/resources/node-macos-x64/bin/*
 
-            if [[ "${{ matrix.target }}" == "x86_64-apple-darwin" ]]; then
-              mkdir -p src-tauri/resources/node-macos-x64
-              curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
-              tar -xzf node-v22.18.0-darwin-x64.tar.gz \
-                -C src-tauri/resources/node-macos-x64 \
-                --strip-components=1
-              chmod +x src-tauri/resources/node-macos-x64/bin/*
-              rm -rf src-tauri/resources/node-macos-arm64
-
-            elif [[ "${{ matrix.target }}" == "aarch64-apple-darwin" ]]; then
-              mkdir -p src-tauri/resources/node-macos-arm64
-              curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
-              tar -xzf node-v22.18.0-darwin-arm64.tar.gz \
-                -C src-tauri/resources/node-macos-arm64 \
-                --strip-components=1
-              chmod +x src-tauri/resources/node-macos-arm64/bin/*
-              rm -rf src-tauri/resources/node-macos-x64
-            fi
+            curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
+            tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C src-tauri/resources/node-macos-arm64 --strip-components=1
+            chmod +x src-tauri/resources/node-macos-arm64/bin/*
 
           elif [[ "$RUNNER_OS" == "Linux" ]]; then
-            mkdir -p src-tauri/resources/node-linux-x64
             curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
-            tar -xJf node-v22.18.0-linux-x64.tar.xz \
-              -C src-tauri/resources/node-linux-x64 \
-              --strip-components=1
+            tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
             chmod +x src-tauri/resources/node-linux-x64/bin/*
-          fi
-
-      # -------------------------------
-      # Remove unused SFTP binaries (macOS only)
-      # -------------------------------
-      - name: Remove unused SFTP binaries
-        if: matrix.platform == 'macos-latest'
-        shell: bash
-        run: |
-          if [[ "${{ matrix.target }}" == "x86_64-apple-darwin" ]]; then
-            rm -rf src-tauri/resources/sftp-macos-arm64
-          elif [[ "${{ matrix.target }}" == "aarch64-apple-darwin" ]]; then
-            rm -rf src-tauri/resources/sftp-macos-x64
           fi
 
       # -------------------------------
