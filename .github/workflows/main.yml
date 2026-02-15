@@ -155,7 +155,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-steam-build
-          path: src-tauri/target/release/*
+          path: src-tauri/target/release/bundle/nsis/*
 
       # -------------------------------
       # Upload Linux build
@@ -165,7 +165,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-steam-build
-          path: src-tauri/target/release/*
+          path: src-tauri/target/release/bundle/deb/*
 
       # -------------------------------
       # Upload macOS build (per arch)
