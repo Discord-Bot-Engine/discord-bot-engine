@@ -197,14 +197,9 @@ jobs:
 
 
 
-        # Keep Tauri ad-hoc signing (do not remove)
-      - name: Zip macOS app
-        run: |
-          ditto -c -k --keepParent "Discord Bot Engine.app" "Discord Bot Engine.zip"
-      
-      - name: Upload macOS zip
+      - name: Upload macOS build
         uses: actions/upload-artifact@v4
         with:
           name: macos-steam-build
-          path: Discord\ Bot\ Engine.zip
+          path: Discord\ Bot\ Engine.app
 
