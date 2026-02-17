@@ -27,10 +27,6 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
-      - name: Install bot dependencies
-        working-directory: src-tauri/resources/Bot
-        run: npm install
-
       - uses: dtolnay/rust-toolchain@stable
 
       - uses: swatinem/rust-cache@v2
