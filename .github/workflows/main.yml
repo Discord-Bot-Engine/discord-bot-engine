@@ -61,7 +61,7 @@ jobs:
   # LINUX
   # ---------------------------------
   build-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
 
@@ -70,6 +70,7 @@ jobs:
 
       - name: Install system dependencies
         run: |
+          run: |
           sudo apt-get update
           sudo apt-get install -y \
             libwebkit2gtk-4.0-dev \
