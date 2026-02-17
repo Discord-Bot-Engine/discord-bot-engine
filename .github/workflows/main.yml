@@ -61,7 +61,7 @@ jobs:
   # LINUX
   # ---------------------------------
   build-linux:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     permissions:
       contents: write
 
@@ -72,16 +72,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libwebkit2gtk-4.1-dev \
-            libappindicator3-dev \
+            libwebkit2gtk-4.0-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
             librsvg2-dev \
             patchelf \
             fuse \
             libfuse2 \
             zlib1g-dev \
             libc6-dev \
-            libglib2.0-dev \
-            libgtk-3-dev
+            libglib2.0-dev
 
       - uses: actions/setup-node@v4
         with:
