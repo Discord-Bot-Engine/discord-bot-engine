@@ -964,7 +964,13 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
             .args([
                 "install"
             ]);
-        let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
+        let (mut _rx, child) = match run_command.spawn() {
+            Ok(tuple) => tuple,
+            Err(e) => {
+                eprintln!("Failed to spawn npm: {}", e);
+                return; // exit the async block
+            }
+        };
         tauri::async_runtime::spawn(async move {
             while let Some(event) = _rx.recv().await {
                 if let CommandEvent::Terminated(status) = event {
