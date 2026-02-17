@@ -27,10 +27,6 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
-      - name: Install bot dependencies
-        working-directory: src-tauri/resources/Bot
-        run: npm install
-
       - uses: dtolnay/rust-toolchain@stable
 
       - uses: swatinem/rust-cache@v2
@@ -91,10 +87,6 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
-      - name: Install bot dependencies
-        working-directory: src-tauri/resources/Bot
-        run: npm install
-
       - uses: dtolnay/rust-toolchain@stable
 
       - uses: swatinem/rust-cache@v2
@@ -119,7 +111,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-steam-build
-          path: src-tauri/target/release/bundle/deb/Discord\ Bot\ Engine_0.1.0_amd64/data
+          path: src-tauri/target/release/bundle/appimage/*
 
   # ---------------------------------
   # MACOS (ARM64 + x64, Discord Bot Engine.app)
@@ -138,10 +130,6 @@ jobs:
           cache: npm
 
       - name: Install frontend dependencies
-        run: npm install
-
-      - name: Install bot dependencies
-        working-directory: src-tauri/resources/Bot
         run: npm install
 
       - uses: dtolnay/rust-toolchain@stable
