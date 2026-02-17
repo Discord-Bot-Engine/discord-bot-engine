@@ -913,7 +913,65 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
         });
     tauri::async_runtime::spawn(async move {
         copy_dir_all(&resource_path, &bot_path, None).unwrap();
-        _app.emit("finished_copying", &bot_path).unwrap();
+        let node: std::path::PathBuf = if cfg!(target_os = "windows") {
+            _app.path()
+                .resolve("resources/nodejs", BaseDirectory::Resource)
+                .unwrap_or_else(|_| {
+                    let exe_dir = std::env::current_exe()
+                        .expect("Failed to get current executable path")
+                        .parent()
+                        .expect("Failed to get executable parent directory")
+                        .to_path_buf();
+                    exe_dir.join("resources/nodejs")
+                })
+        } else if cfg!(target_os = "macos") {
+            let arch_dir = if cfg!(target_arch = "aarch64") {
+                "resources/node-macos-arm64/bin"
+            } else {
+                "resources/node-macos-x64/bin"
+            };
+            _app.path()
+                .resolve(arch_dir, BaseDirectory::Resource)
+                .unwrap_or_else(|_| {
+                    let exe_dir = std::env::current_exe()
+                        .expect("Failed to get current executable path")
+                        .parent()
+                        .expect("Failed to get executable parent directory")
+                        .to_path_buf();
+                    exe_dir.join(arch_dir)
+                })
+        } else {
+            // Linux
+            _app.path()
+                .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
+                .unwrap_or_else(|_| {
+                    let exe_dir = std::env::current_exe()
+                        .expect("Failed to get current executable path")
+                        .parent()
+                        .expect("Failed to get executable parent directory")
+                        .to_path_buf();
+                    exe_dir.join("resources/node-linux-x64/bin")
+                })
+        };
+
+        let run_command = _app
+            .shell()
+            .command(node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
+                         .to_str()
+                         .unwrap()
+                         .to_string())
+            .current_dir(&bot_path)
+            .args([
+                "install"
+            ]);
+        let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
+        tauri::async_runtime::spawn(async move {
+            while let Some(event) = _rx.recv().await {
+                if let CommandEvent::Terminated(status) = event {
+                    _app.emit("finished_copying", &bot_path).unwrap();
+                }
+            }
+        });
     });
 }
 
