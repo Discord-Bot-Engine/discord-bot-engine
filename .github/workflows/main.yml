@@ -27,6 +27,10 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
+      - name: Install bot dependencies
+        working-directory: src-tauri/resources/Bot
+        run: npm install
+
       - uses: dtolnay/rust-toolchain@stable
 
       - uses: swatinem/rust-cache@v2
@@ -87,10 +91,6 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
-      - name: Install bot dependencies
-        working-directory: src-tauri/resources/Bot
-        run: npm install
-
       - uses: dtolnay/rust-toolchain@stable
 
       - uses: swatinem/rust-cache@v2
@@ -108,7 +108,6 @@ jobs:
 
       - name: Build Tauri (Linux)
         run: |
-          cargo install tauri-cli --git https://github.com/tauri-apps/tauri
           npm run build
           npx tauri build
 
