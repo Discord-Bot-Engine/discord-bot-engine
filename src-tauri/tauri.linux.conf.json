@@ -1,6 +1,8 @@
 {
   "bundle": {
-    "targets": [],
+    "targets": [
+      "deb"
+    ],
     "resources": [
       "resources/Bot",
       "resources/sftp/sftp-linux",
