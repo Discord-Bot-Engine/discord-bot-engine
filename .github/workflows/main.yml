@@ -60,65 +60,58 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
-  
+
     steps:
       - uses: actions/checkout@v4
-  
-      - name: Build inside Steam Runtime (soldier)
+
+      - name: Install system dependencies
         run: |
-          docker pull registry.gitlab.steamos.cloud/steamrt/soldier/sdk:latest
-      
-          docker run --rm \
-            -v $PWD:/project \
-            -w /project \
-            registry.gitlab.steamos.cloud/steamrt/soldier/sdk:latest \
-            bash -c "
-              set -e
-      
-              # Base build tools
-             apt-get update &&
-              apt-get install -y \
-                curl \
-                git \
-                xz-utils \
-                pkg-config \
-                build-essential \
-                libssl-dev \
-                libglib2.0-dev \
-                libgtk-3-dev \
-                libwebkit2gtk-4.0-dev \
-                libappindicator3-dev \
-                librsvg2-dev
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            fuse \
+            libfuse2 \
+            zlib1g-dev \
+            libc6-dev \
+            libglib2.0-dev \
+            libgtk-3-dev
 
-      
-              # Install Node (for npm + tauri CLI)
-              curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - &&
-              apt-get install -y nodejs
-      
-              # Install Rust
-              curl https://sh.rustup.rs -sSf | sh -s -- -y
-              source \$HOME/.cargo/env
-      
-              # Install frontend deps
-              npm install
-      
-              # Download Node.js runtime to bundle inside app
-              mkdir -p src-tauri/resources/node-linux-x64 &&
-              curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz &&
-              tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
-      
-              # Build frontend + tauri
-              npm run build &&
-              npx tauri build
-            "
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
 
-  
+      - name: Install frontend dependencies
+        run: npm install
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      # -------------------------
+      # Download Node.js for resources
+      # -------------------------
+      - name: Download Node.js resources
+        run: |
+          mkdir -p src-tauri/resources/node-linux-x64
+          curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
+          tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
+
+      - name: Build Tauri (Linux)
+        run: |
+          npm run build
+          npx tauri build
+
       - name: Upload Linux build
         uses: actions/upload-artifact@v4
         with:
           name: linux-steam-build
           path: src-tauri/target/release/bundle/appimage/*
-
 
   # ---------------------------------
   # MACOS (ARM64 + x64, Discord Bot Engine.app)
@@ -197,4 +190,3 @@ jobs:
         with:
           name: macos-steam-build
           path: Discord\ Bot\ Engine.app
-
