@@ -1,8 +1,6 @@
 {
   "bundle": {
-    "targets": [
-      "nsis"
-    ],
+    "targets": [],
     "resources": [
       "resources/Bot",
       "resources/sftp/sftp-win.exe",
