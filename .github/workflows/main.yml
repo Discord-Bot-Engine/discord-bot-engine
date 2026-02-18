@@ -111,7 +111,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-steam-build
-          path: src-tauri/target/release/bundle/deb/*
+          path: src-tauri/target/release/bundle/*
 
   # ---------------------------------
   # MACOS (ARM64 + x64, Discord Bot Engine.app)
