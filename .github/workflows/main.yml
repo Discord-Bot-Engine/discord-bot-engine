@@ -84,11 +84,16 @@ jobs:
                 pkg-config \
                 build-essential \
                 libssl-dev \
-                libglib2.0-dev \
-                libgtk-3-dev \
                 libwebkit2gtk-4.1-dev \
                 libappindicator3-dev \
-                librsvg2-dev
+                librsvg2-dev \
+                patchelf \
+                fuse \
+                libfuse2 \
+                zlib1g-dev \
+                libc6-dev \
+                libglib2.0-dev \
+                libgtk-3-dev
       
               # Install Node (for npm + tauri CLI)
               curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - &&
