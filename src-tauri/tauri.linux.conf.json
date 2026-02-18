@@ -1,6 +1,8 @@
 {
   "bundle": {
-    "targets": [],
+    "targets": [
+      "appimage"
+    ],
     "resources": [
       "resources/Bot",
       "resources/sftp/sftp-linux",
