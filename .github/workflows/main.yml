@@ -68,9 +68,9 @@ jobs:
       - uses: actions/checkout@v4
   
       # -------------------------
-      # Install build dependencies inside Sniper SDK
+      # Install minimal build essentials
       # -------------------------
-      - name: Install system dependencies
+      - name: Install build essentials
         run: |
           apt-get update
           apt-get install -y \
@@ -79,14 +79,11 @@ jobs:
             pkg-config \
             build-essential \
             patchelf \
-            libwebkit2gtk-4.1-dev \
-            libgtk-3-dev \
-            libglib2.0-dev \
-            libappindicator3-dev \
-            librsvg2-dev
+            git \
+            python3
   
       # -------------------------
-      # Install Node
+      # Setup Node.js
       # -------------------------
       - uses: actions/setup-node@v4
         with:
@@ -97,35 +94,39 @@ jobs:
         run: npm ci
   
       # -------------------------
-      # Install Rust
+      # Rust
       # -------------------------
       - uses: dtolnay/rust-toolchain@stable
   
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
-
+  
+      # -------------------------
+      # Download Node.js resources for Tauri
+      # -------------------------
       - name: Download Node.js resources
         run: |
           mkdir -p src-tauri/resources/node-linux-x64
           curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
           tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
-
+  
       # -------------------------
-      # Build inside Steam Runtime Sniper
+      # Build Tauri (raw binary)
       # -------------------------
       - name: Build Tauri (Steam Runtime Sniper 3.0)
         run: |
           npm run build
           npx tauri build --bundles none
   
+      # -------------------------
+      # Upload Linux build
+      # -------------------------
       - name: Upload Linux build
         uses: actions/upload-artifact@v4
         with:
           name: linux-steam-sniper-raw
-          path: |
-            src-tauri/target/release/*
-  
+          path: src-tauri/target/release/*
 
   # ---------------------------------
   # MACOS (ARM64 + x64, Discord Bot Engine.app)
