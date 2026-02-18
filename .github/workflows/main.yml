@@ -104,7 +104,13 @@ jobs:
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
-  
+
+      - name: Download Node.js resources
+        run: |
+          mkdir -p src-tauri/resources/node-linux-x64
+          curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
+          tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
+
       # -------------------------
       # Build inside Steam Runtime Sniper
       # -------------------------
