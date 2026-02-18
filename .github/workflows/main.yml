@@ -61,8 +61,13 @@ jobs:
     permissions:
       contents: write
   
+    # Use the full Steam Runtime SDK for headers & development libs
     container:
-      image: registry.gitlab.steamos.cloud/steamrt/sniper/sdk:latest
+      image: registry.gitlab.steamos.cloud/steamrt/steam-runtime-sdk:0.2023.09
+  
+    env:
+      # Ensure pkg-config can find all development .pc files
+      PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig
   
     steps:
       - uses: actions/checkout@v4
@@ -94,7 +99,7 @@ jobs:
         run: npm install
   
       # -------------------------
-      # Rust
+      # Rust toolchain & cache
       # -------------------------
       - uses: dtolnay/rust-toolchain@stable
   
@@ -114,9 +119,8 @@ jobs:
       # -------------------------
       # Build Tauri (raw binary)
       # -------------------------
-      - name: Build Tauri (Steam Runtime Sniper 3.0)
+      - name: Build Tauri (Steam Runtime SDK)
         run: |
-          export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig
           npm run build
           npx tauri build
   
@@ -126,9 +130,9 @@ jobs:
       - name: Upload Linux build
         uses: actions/upload-artifact@v4
         with:
-          name: linux-steam-sniper-raw
+          name: linux-steam-raw
           path: src-tauri/target/release/*
-
+  
   # ---------------------------------
   # MACOS (ARM64 + x64, Discord Bot Engine.app)
   # ---------------------------------
