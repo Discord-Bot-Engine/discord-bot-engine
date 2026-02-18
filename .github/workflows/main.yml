@@ -60,84 +60,59 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
-  
-    # Use the full Steam Runtime SDK for headers & development libs
-    container:
-      image: registry.gitlab.steamos.cloud/steamrt/sniper/sdk:latest
-  
-    env:
-      # Ensure pkg-config can find all development .pc files
-      PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig
-  
+
     steps:
       - uses: actions/checkout@v4
-  
-      # -------------------------
-      # Install minimal build essentials
-      # -------------------------
-      - name: Install build essentials
-        run: |
-          apt-get update
-          apt-get install -y \
-            curl \
-            xz-utils \
-            pkg-config \
-            build-essential \
-            patchelf \
-            git \
-            python3
-      
-      - name: Install glib development headers
-        run: |
-          apt-get update
-          apt-get install -y libglib2.0-dev libgtk-3-dev libwebkit2gtk-4.1-dev pkg-config build-essential
 
-      # -------------------------
-      # Setup Node.js
-      # -------------------------
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            fuse \
+            libfuse2 \
+            zlib1g-dev \
+            libc6-dev \
+            libglib2.0-dev \
+            libgtk-3-dev
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: npm
-  
+
       - name: Install frontend dependencies
         run: npm install
-  
-      # -------------------------
-      # Rust toolchain & cache
-      # -------------------------
+
       - uses: dtolnay/rust-toolchain@stable
-  
+
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
-  
+
       # -------------------------
-      # Download Node.js resources for Tauri
+      # Download Node.js for resources
       # -------------------------
       - name: Download Node.js resources
         run: |
           mkdir -p src-tauri/resources/node-linux-x64
           curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
           tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
-  
-      # -------------------------
-      # Build Tauri (raw binary)
-      # -------------------------
-      - name: Build Tauri (Steam Runtime SDK)
+
+      - name: Build Tauri (Linux)
         run: |
           npm run build
           npx tauri build
-  
-      # -------------------------
-      # Upload Linux build
-      # -------------------------
+
       - name: Upload Linux build
         uses: actions/upload-artifact@v4
         with:
-          name: linux-steam-raw
+          name: linux-steam-build
           path: src-tauri/target/release/*
-  
+
   # ---------------------------------
   # MACOS (ARM64 + x64, Discord Bot Engine.app)
   # ---------------------------------
