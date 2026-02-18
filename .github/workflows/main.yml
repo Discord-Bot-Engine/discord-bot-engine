@@ -116,6 +116,7 @@ jobs:
       # -------------------------
       - name: Build Tauri (Steam Runtime Sniper 3.0)
         run: |
+          export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig
           npm run build
           npx tauri build
   
