@@ -63,7 +63,7 @@ jobs:
   
     # Use the full Steam Runtime SDK for headers & development libs
     container:
-      image: registry.gitlab.steamos.cloud/steamrt/steam-runtime-sdk:0.2023.09
+      image: registry.gitlab.steamos.cloud/steamrt/sniper/sdk:latest
   
     env:
       # Ensure pkg-config can find all development .pc files
@@ -86,7 +86,12 @@ jobs:
             patchelf \
             git \
             python3
-  
+      
+      - name: Install glib development headers
+        run: |
+          apt-get update
+          apt-get install -y libglib2.0-dev libgtk-3-dev libwebkit2gtk-4.1-dev pkg-config build-essential
+
       # -------------------------
       # Setup Node.js
       # -------------------------
