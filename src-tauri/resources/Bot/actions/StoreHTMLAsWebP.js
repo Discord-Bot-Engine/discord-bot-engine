@@ -16,14 +16,14 @@ export default class StoreHTMLAsWebP {
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="Width"></dbe-label>
-        <dbe-input name="width" class="col-span-3" change="(v) => document.getElementById('preview').width = v + 'px'" value="100"></dbe-input>
+        <dbe-input name="width" class="col-span-3" change="(v) => document.getElementById('preview').width = v + 'px'" value="1000"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="Height"></dbe-label>
-        <dbe-input name="height" class="col-span-3" change="(v) => document.getElementById('preview').height = v + 'px'" value="100"></dbe-input>
+        <dbe-input name="height" class="col-span-3" change="(v) => document.getElementById('preview').height = v + 'px'" value="500"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
-        <dbe-label name="Duration in seconds"></dbe-label>
+        <dbe-label name="Duration (seconds)"></dbe-label>
         <dbe-input name="duration" class="col-span-3" value="1"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
