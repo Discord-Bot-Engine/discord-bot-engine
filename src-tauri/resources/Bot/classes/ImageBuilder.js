@@ -19,11 +19,6 @@ export class ImageBuilder{
         return this
     }
 
-    setDuration(duration) {
-        this.duration = duration;
-        return this
-    }
-
     setWidth(width) {
         this.width = width;
         return this
@@ -107,7 +102,7 @@ class Tag{
         })
         this.tags.forEach(tag => {
             if(tag.build)
-                el.appendChild(tag.build())
+                el.appendChild(tag.build(dom))
             else {
                 const text = dom.createTextNode(tag)
                 el.appendChild(text)
@@ -125,6 +120,67 @@ async function preparePageContent(page, {background, width, height, tags}) {
     await page.setContent(`  <html>
     <head>
       <style>
+        @keyframes fade {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        @keyframes swipeLeft {
+            0% {
+                transform: translateX(-${width}px);
+            }
+            100% {
+                transform: translateX(0px);
+            }
+        }
+        @keyframes swipeRight {
+            0% {
+                transform: translateX(${width}px);
+            }
+            100% {
+                transform: translateX(0px);
+            }
+        }
+        @keyframes swipeTop {
+            0% {
+                transform: translateY(-${height}px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        @keyframes swipeBottom {
+            0% {
+                transform: translateY(${height}px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        @keyframes fillHorizontal {
+            0% {
+                transform: scaleX(0);
+            }
+            100% {
+                transform: scaleX(1);
+            }
+        @keyframes fillVertical {
+            0% {
+                transform: scaleY(0);
+            }
+            100% {
+                transform: scaleY(1);
+            }
+        @keyframes fill {
+            0% {
+                transform: scale(0);
+            }
+            100% {
+                transform: scale(1);
+            }
         * {
             box-sizing: border-box;
         }
