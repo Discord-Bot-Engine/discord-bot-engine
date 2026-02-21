@@ -341,7 +341,7 @@ export default class ShowModal {
                 const min = Number(data.get("tmin"));
                 const max = Number(data.get("tmax"));
                 const label = data.get("tlabel");
-                const desc = data.get("tdesc");
+                const desc = data.get("tdesc").trim();
                 Bot.modals[customId].data[id] = {
                     type: "TextInput",
                     variable: data.get("ttext"),
@@ -358,8 +358,8 @@ export default class ShowModal {
                 }
                 const inputLabel = new LabelBuilder()
                     .setLabel(label)
-                    .setDescription(desc)
                     .setTextInputComponent(input);
+                if(desc) inputLabel.setDescription(desc)
                 modal.addLabelComponents(inputLabel);
             } else if (type === "Select Menu") {
                 const stype = data.get("stype");
@@ -377,7 +377,7 @@ export default class ShowModal {
                 }
                 const id = data.get("sid");
                 const label = data.get("slabel");
-                const desc = data.get("sdesc");
+                const desc = data.get("sdesc").trim();
                 const placeholder = data.get("splaceholder");
                 const srequired = data.get("srequired") === "True";
                 const smin = Number(data.get("smin"));
@@ -421,7 +421,7 @@ export default class ShowModal {
                 }
                 const selectLabel = new LabelBuilder()
                     .setLabel(label)
-                    .setDescription(desc);
+                if(desc) selectLabel.setDescription(desc)
                 if (stype === "User") {
                     selectLabel.setUserSelectMenuComponent(builder);
                 } else if (stype === "Role") {
@@ -437,7 +437,7 @@ export default class ShowModal {
             } else if (type === "File Upload") {
                 const id = data.get("fid");
                 const label = data.get("flabel");
-                const desc = data.get("fdesc");
+                const desc = data.get("fdesc").trim();
                 const required = data.get("frequired") === "True";
                 const min = Number(data.get("fmin"));
                 const max = Number(data.get("fmax"));
@@ -454,6 +454,7 @@ export default class ShowModal {
                     .setLabel(label)
                     .setDescription(desc)
                     .setFileUploadComponent(file);
+                if(desc) fileLabel.setDescription(desc)
                 modal.addLabelComponents(fileLabel);
             }
         });
