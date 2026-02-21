@@ -53,12 +53,16 @@ export default class AddContainerToImageBuilder {
         <dbe-input name="gap" class="col-span-3" value="10"></dbe-input>
     </div>
     <div class="grid grid-cols-4 items-center gap-4">
-        <dbe-label name="Store container in variable"></dbe-label>
-        <dbe-variable-list name="container" class="col-span-3" variableType="container"></dbe-variable-list>
+        <dbe-label name="Roundness"></dbe-label>
+        <dbe-input name="roundness" class="col-span-3" value="0"></dbe-input>
     </div>
-    <div class="grid grid-cols-4 items-center gap-4">
+     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="Animation"></dbe-label>
         <dbe-select name="animation" class="col-span-3" value="None" values="None,Fade,Swipe From Left,Swipe From Right,Swipe From Top,Swipe From Bottom,Fill From Left,Fill From Right,Fill From Top,Fill From Bottom,Fill"></dbe-select>
+    </div>
+    <div class="grid grid-cols-4 items-center gap-4">
+        <dbe-label name="Store container in variable"></dbe-label>
+        <dbe-variable-list name="container" class="col-span-3" variableType="container"></dbe-variable-list>
     </div>
     `;
     static load(context) {}
@@ -75,27 +79,28 @@ export default class AddContainerToImageBuilder {
         const topP = Number(data.get("topP"));
         const bottomP = Number(data.get("bottomP"));
         const gap = Number(data.get("gap"));
+        const roundness = Number(data.get("roundness")) / 2;
         const animation = data.get("animation");
         const builder = getVariable(data.get("builder"));
         if(animation !== "None")
             builder.duration = 3
         const animations = {
-            "Fade": "animation-name:fade;",
-            "Swipe From Left": "animation-name:swipeLeft;",
-            "Swipe From Right": "animation-name:swipeRight;",
-            "Swipe From Top": "animation-name:swipeTop;",
-            "Swipe From Bottom": "animation-name:swipeBottom;",
-            "Fill From Left": "animation-name:fillHorizontal;transform-origin: left center;",
-            "Fill From Right": "animation-name:fillHorizontal;transform-origin: right center;",
-            "Fill From Top": "animation-name:fillVertical;transform-origin: center top;",
-            "Fill From Bottom": "animation-name:fillHorizontal;transform-origin: center bottom;",
-            "Fill": "animation-name:fill;transform-origin: center center;",
+            "Fade": "animation-name:fade;opacity:0;",
+            "Swipe From Left": "animation-name:swipeLeft;transform:translateX(-1000000px);",
+            "Swipe From Right": "animation-name:swipeRight;transform:translateX(1000000px);",
+            "Swipe From Top": "animation-name:swipeTop;transform:translateY(-1000000px);",
+            "Swipe From Bottom": "animation-name:swipeBottom;transform:translateY(1000000px);",
+            "Fill From Left": "animation-name:fillHorizontal;transform-origin: left center;transform:scaleX(0);",
+            "Fill From Right": "animation-name:fillHorizontal;transform-origin: right center;transform:scaleX(0);",
+            "Fill From Top": "animation-name:fillVertical;transform-origin: center top;transform:scaleY(0);",
+            "Fill From Bottom": "animation-name:fillHorizontal;transform-origin: center bottom;transform:scaleY(0);",
+            "Fill": "animation-name:fill;transform-origin: center center;transform:scale(0);",
             "None": ""
         }
         builder.addTags(tag => {
             tag
                 .setType("div")
-                .setProperty("style", `display:flex;margin-left:${x}px;margin-top:${y}px;${background.length ? `background-image:url("${background}");` : ""}width:${width}px;height:${height}px;flex-direction:${orientation === "Horizontal" ? "row" : "column"};padding-left:${leftP}px;padding-right:${rightP}px;padding-top:${topP}px;padding-bottom:${bottomP}px;gap:${gap}px;animation-duration:3s;animation-delay:1s;${animations[animation]}`)
+                .setProperty("style", `display:flex;overflow:hidden;margin-left:${x}px;margin-top:${y}px;${background.length ? `background-image:url("${background}");` : ""}width:${width}px;height:${height}px;flex-direction:${orientation === "Horizontal" ? "row" : "column"};padding-left:${leftP}px;padding-right:${rightP}px;padding-top:${topP}px;padding-bottom:${bottomP}px;gap:${gap}px;border-radius:${roundness}%;animation-duration:3s;animation-delay:1s;${animations[animation]}`)
             setVariable(data.get("container"), tag);
             return tag;
         })

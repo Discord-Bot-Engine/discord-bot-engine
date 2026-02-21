@@ -167,6 +167,7 @@ async function preparePageContent(page, {background, width, height, tags}) {
             100% {
                 transform: scaleX(1);
             }
+        }
         @keyframes fillVertical {
             0% {
                 transform: scaleY(0);
@@ -174,6 +175,7 @@ async function preparePageContent(page, {background, width, height, tags}) {
             100% {
                 transform: scaleY(1);
             }
+        }
         @keyframes fill {
             0% {
                 transform: scale(0);
@@ -181,10 +183,12 @@ async function preparePageContent(page, {background, width, height, tags}) {
             100% {
                 transform: scale(1);
             }
+        }
         * {
             box-sizing: border-box;
         }
         body {
+            display: flex;
           overflow:hidden;
           margin:0;
           width: ${width}px;
