@@ -56,7 +56,7 @@
 				<Select.Content>
 					<Select.Group>
 						<Select.Label>Options</Select.Label>
-						{#each input.values as value, i (i)}
+						{#each input.values.split(',').map((el) => el.trim()) as value, i (i)}
 							<Select.Item {value} label={value}>
 								{value}
 							</Select.Item>
