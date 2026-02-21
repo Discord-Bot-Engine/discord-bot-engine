@@ -36,7 +36,7 @@ export default class PlayYouTubeSong {
             const queue = useQueue(vc.guild.id)
             queue.delete()
         }
-        await player.play(vc, song, {
+        await player.play(vc, song.startsWith("https://www.youtube.com/") ? song : `ytsearch:${song}`, {
             nodeOptions: {
                 disableSeeker: false
             }
