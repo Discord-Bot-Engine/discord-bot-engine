@@ -4,7 +4,24 @@ export async function load({ locals, params }) {
 		...i,
 		value: locals.dashboard.getInputValue(params.id, i.name)
 	}));
-	const guild = locals.guilds.find((g) => g.id === params.id);
+	const guilds = (
+		await locals.bot.client.cluster.broadcastEval(
+			(c, { id }) =>
+				c.guilds.cache
+					.filter((g) => {
+						const member = g.members.cache.get(id);
+						if (!member) return;
+						if (member.permissions.has(0x20)) return g;
+					})
+					.map((g) => ({ id: g.id, name: g.name, icon: g.icon })),
+			{
+				context: {
+					id: locals.user.id
+				}
+			}
+		)
+	).flat();
+	const guild = guilds.find((g) => g.id === params.id);
 	if (!guild) {
 		throw error(404, 'Not found');
 	}
