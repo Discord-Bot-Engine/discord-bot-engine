@@ -39,10 +39,10 @@ jobs:
       - name: Download Node (Windows x64)
         shell: bash
         run: |
-          mkdir -p src-tauri/resources/node-win-x64 temp-node
+          mkdir -p src-tauri/resources/nodejs temp-node
           curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
           unzip -q node-v22.18.0-win-x64.zip -d temp-node
-          mv temp-node/node-v22.18.0-win-x64/* src-tauri/resources/node-win-x64/
+          mv temp-node/node-v22.18.0-win-x64/* src-tauri/resources/nodejs/
           rm -rf temp-node node-v22.18.0-win-x64.zip
 
       - name: Build Tauri (Windows)
