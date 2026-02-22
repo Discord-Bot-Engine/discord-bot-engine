@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 
-const MANAGE_GUILD = 32;
 async function GET({ url, platform }) {
   const code = url.searchParams.get("code");
   let origin = url.origin;
@@ -29,18 +28,11 @@ async function GET({ url, platform }) {
     headers: { Authorization: `Bearer ${tokenData.access_token}` }
   });
   const user = await userRes.json();
-  const guildsRes = await fetch("https://discord.com/api/users/@me/guilds", {
-    headers: { Authorization: `Bearer ${tokenData.access_token}` }
-  });
-  const guilds = await guildsRes.json();
   platform.req.session.user = user;
   const application = bot.application.partial ? await bot.application.fetch() : bot.application;
   platform.req.session.isAdmin = application.owner.id === user.id || application.owner.members?.has(user.id);
-  platform.req.session.guilds = guilds.filter(
-    (guild) => bot.guilds.cache.get(guild.id) && (BigInt(guild.permissions) & BigInt(MANAGE_GUILD)) === BigInt(MANAGE_GUILD)
-  );
   return Response.redirect(origin, 302);
 }
 
 export { GET };
-//# sourceMappingURL=_server-CLHBvy9p.js.map
+//# sourceMappingURL=_server-DhPGFGm4.js.map

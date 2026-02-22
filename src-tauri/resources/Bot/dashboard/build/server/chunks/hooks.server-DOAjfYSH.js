@@ -5,7 +5,6 @@ async function handle({ event, resolve }) {
   if (req?.session?.user) {
     event.locals.user = req.session.user;
     event.locals.isAdmin = req.session.isAdmin;
-    event.locals.guilds = req.session.guilds;
   }
   event.locals.bot = bot;
   event.locals.dashboard = dashboard;
@@ -19,4 +18,4 @@ async function handle({ event, resolve }) {
 }
 
 export { handle };
-//# sourceMappingURL=hooks.server-CAGQaTCs.js.map
+//# sourceMappingURL=hooks.server-DOAjfYSH.js.map
