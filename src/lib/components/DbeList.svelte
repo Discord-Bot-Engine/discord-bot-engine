@@ -19,13 +19,7 @@
     $host().style.overflow = "hidden"
     let selected = $state(new CustomElement())
     let ref;
-    document.getElementById(modalId).querySelectorAll("*").forEach((el) => {
-        if(el.getAttribute("ignoreParsing") === modalId) el.removeAttribute("ignoreParsing")
-    })
-    let html = document.getElementById(modalId).innerHTML
-    document.getElementById(modalId).querySelectorAll("*").forEach((el) => {
-        if(!el.hasAttribute("ignoreParsing")) el.setAttribute("ignoreParsing", modalId)
-    })
+    let html = ""
     function editItem() {
         const data = selected.data
         App.saveUIData(ref, data)
@@ -34,6 +28,13 @@
 </script>
 <List {...props} ondblclick={(item) => {
     open = true;
+        document.getElementById(modalId).querySelectorAll("*").forEach((el) => {
+        if(el.getAttribute("ignoreParsing") === modalId) el.removeAttribute("ignoreParsing")
+    })
+    html = document.getElementById(modalId).innerHTML
+    document.getElementById(modalId).querySelectorAll("*").forEach((el) => {
+        if(!el.hasAttribute("ignoreParsing")) el.setAttribute("ignoreParsing", modalId)
+    })
     let interval = setInterval(() => {
         if(!ref) return;
         clearInterval(interval);

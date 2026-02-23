@@ -58,6 +58,13 @@
             alert(`${App.selectedTrigger.type}\n${e.stack}`)
         }
     }
+    function disableVars(el) {
+        if(el.tagName === "TEMPLATE") {
+            el.content.querySelectorAll("*").forEach(el => disableVars(el))
+        } else {
+            el.setAttribute("noVariables", "")
+        }
+    }
 </script>
 {#snippet html(item, i)}
     {#if !BotManager.selectedBot.triggerClasses.find(t => t.type === item.type)}
@@ -77,7 +84,7 @@
         if(!ref) return;
         clearInterval(interval);
         const data = App.selectedTrigger.data
-        ref.querySelectorAll("*").forEach(el => el.setAttribute("noVariables", ""))
+        ref.querySelectorAll("*").forEach(el => disableVars(el))
         App.loadUIData(ref, data, true)
         handlersCopy = window.handlers
         Object.freeze(handlersCopy)
@@ -116,11 +123,11 @@
     <div class="grid gap-4 py-4 px-1">
         <div class="grid grid-cols-4 items-center gap-4">
             <Label for="name" class="text-right"><Translation text="Name"/></Label>
-            <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={triggerName} noVariables />
+            <Input id="name" class="col-span-3 invalid:ring-2 invalid:ring-destructive" required bind:value={triggerName}/>
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <Label for="folder" class="text-right"><Translation text="Folder"/></Label>
-            <Input id="folder" class="col-span-3 capitalize" bind:value={triggerFolder} noVariables />
+            <Input id="folder" class="col-span-3 capitalize" bind:value={triggerFolder} />
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
             <Label for="type" class="text-right"><Translation text="Type"/></Label>
@@ -133,10 +140,10 @@
     </div>
 </Modal>
 <Modal bind:open={isEditingTrigger} title="{App.selectedTrigger?.name} - {App.selectedTrigger?.type}" onDone={editTrigger} url="https://discord-bot-engine.gitbook.io/discord-bot-engine/triggers/{App.selectedTrigger?.type.toLowerCase().replaceAll(' ', '-')}">
-        <div class="grid gap-4 py-4 px-1" bind:this={ref} >
+        <div class="grid gap-4 py-4 px-1" bind:this={ref}>
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="id" class="text-right">File ID</Label>
-                <Input id="id" class="col-span-3 invalid:ring-2 invalid:ring-destructive" value={App.selectedTrigger?.id} required disabled noVariables />
+                <Input id="id" class="col-span-3 invalid:ring-2 invalid:ring-destructive" value={App.selectedTrigger?.id} required disabled />
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
                     <Label for="name" class="text-right">Name</Label>
