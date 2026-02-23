@@ -13,6 +13,7 @@
 	let page = $state('general');
 	let types = [
 		'Text',
+		'Paragraph',
 		'Dropdown',
 		'Member',
 		'Text Channel',
@@ -34,7 +35,10 @@
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				name,
-				value: type.toLowerCase() !== 'text' && multiple ? value.split(',') : value,
+				value:
+					type.toLowerCase() !== 'text' && type.toLowerCase() !== 'Paragraph' && multiple
+						? value.split(',')
+						: value,
 				page: page.toLowerCase().trim(),
 				type: type.toLowerCase(),
 				values,
@@ -101,7 +105,7 @@
 							</Select.Content>
 						</Select.Root>
 					</div>
-					{#if type === 'Dropdown' || type === 'Text'}
+					{#if type === 'Dropdown' || type === 'Text' || type === 'Paragraph'}
 						<div class="grid grid-cols-4 items-center gap-4">
 							<Label for="value" class="text-right">Value</Label>
 							<Input id="value" bind:value class="col-span-3" />
@@ -118,7 +122,7 @@
 							/>
 						</div>
 					{/if}
-					{#if type !== 'Text'}
+					{#if type !== 'Text' && type !== 'Paragraph'}
 						<div class="grid grid-cols-4 items-center gap-4">
 							<Label for="multiple" class="text-right">Select Multiple?</Label>
 							<Select.Root id="multiple" type="single" bind:value={multiple}>

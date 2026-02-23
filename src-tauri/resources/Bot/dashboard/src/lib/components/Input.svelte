@@ -1,6 +1,7 @@
 <script>
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	const { input, isAdmin, onChange, onDelete, roles = [], members = [], channels = [] } = $props();
 	const mentionables = [...roles, ...members];
 	import * as Select from '$lib/components/ui/select/index.js';
@@ -10,7 +11,7 @@
 </script>
 
 <Card.Root>
-	<Card.Header>
+	<Card.Header class="flex flex-col gap-3">
 		<div class="flex w-full">
 			<Card.Title>
 				{input.name}
@@ -27,13 +28,24 @@
 		{#if input.type === 'text'}
 			<Input
 				disabled={isAdmin}
-				class="mt-1 w-full"
+				class="w-full"
 				bind:value
 				onchange={(ev) => {
 					input.value = ev.target.value;
 					onChange(input.name, input.value);
 				}}
 			></Input>
+		{:else if input.type === 'paragraph'}
+			<Textarea
+				disabled={isAdmin}
+				class="max-h-9 min-h-0 w-full resize-none"
+				style="scrollbar-width: none;"
+				bind:value
+				onchange={(ev) => {
+					input.value = ev.target.value;
+					onChange(input.name, input.value);
+				}}
+			></Textarea>
 		{:else if input.type === 'dropdown'}
 			<Select.Root
 				disabled={isAdmin}
