@@ -62,6 +62,74 @@ fn prepare_app_paths(app: &tauri::AppHandle) {
         });
     ensure_dir(&bot_resources);
 
+
+    let node_dir: PathBuf = if cfg!(target_os = "windows") {
+        _app.path()
+            .resolve("resources/nodejs", BaseDirectory::Resource)
+            .unwrap_or_else(|_| {
+                let exe_dir = std::env::current_exe()
+                    .expect("Failed to get current executable path")
+                    .parent()
+                    .expect("Failed to get executable parent directory")
+                    .to_path_buf();
+                exe_dir.join("resources/nodejs")
+            })
+    } else if cfg!(target_os = "macos") {
+        let arch_dir = if cfg!(target_arch = "aarch64") {
+            "resources/node-macos-arm64/bin"
+        } else {
+            "resources/node-macos-x64/bin"
+        };
+        _app.path()
+            .resolve(arch_dir, BaseDirectory::Resource)
+            .unwrap_or_else(|_| {
+                let exe_dir = std::env::current_exe()
+                    .expect("Failed to get current executable path")
+                    .parent()
+                    .expect("Failed to get executable parent directory")
+                    .to_path_buf();
+                exe_dir.join(arch_dir)
+            })
+    } else {
+        // Linux
+        _app.path()
+            .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
+            .unwrap_or_else(|_| {
+                let exe_dir = std::env::current_exe()
+                    .expect("Failed to get current executable path")
+                    .parent()
+                    .expect("Failed to get executable parent directory")
+                    .to_path_buf();
+                exe_dir.join("resources/node-linux-x64/bin")
+            })
+    };
+
+    // Add Node directory to PATH
+    #[cfg(windows)]
+    let path_sep = ";";
+    #[cfg(not(windows))]
+    let path_sep = ":";
+
+    let current_path = env::var("PATH").unwrap_or_default();
+    let new_path = format!("{}{}{}", node_dir.display(), path_sep, current_path);
+    env::set_var("PATH", new_path);
+
+    // Also set NODE env variable (some scripts use it)
+    let node_executable = if cfg!(windows) {
+        node_dir.join("node.exe")
+    } else {
+        node_dir.join("node")
+    };
+    env::set_var("NODE", node_executable);
+
+    // Optionally, set NPM env variable if you have a bundled npm
+    let npm_executable = if cfg!(windows) {
+        node_dir.join("npm.cmd") // Windows npm binary
+    } else {
+        node_dir.join("npm")     // Unix npm binary
+    };
+    env::set_var("NPM", npm_executable);
+
     // optional: print paths for debugging
     println!("translations_dir: {:?}", translations_dir);
     println!("themes_dir: {:?}", themes_dir);
@@ -953,7 +1021,25 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
                     exe_dir.join("resources/node-linux-x64/bin")
                 })
         };
-
+        let clean_command = _app
+            .shell()
+            .command(node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
+                         .to_str()
+                         .unwrap()
+                         .to_string())
+            .current_dir(&bot_path)
+            .args([
+                "cache",
+                "clean",
+                "--force"
+            ]);
+        let (mut _rx, child) = match clean_command.spawn() {
+            Ok(tuple) => tuple,
+            Err(e) => {
+                eprintln!("Failed to spawn npm: {}", e);
+                return;
+            }
+        };
         let run_command = _app
             .shell()
             .command(node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })

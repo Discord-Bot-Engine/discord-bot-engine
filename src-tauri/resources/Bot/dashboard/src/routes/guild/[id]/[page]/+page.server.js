@@ -10,8 +10,7 @@ export async function load({ locals, params }) {
 				c.guilds.cache
 					.filter((g) => {
 						const member = g.members.cache.get(id);
-						if (!member) return;
-						if (member.permissions.has(0x20)) return g;
+						if (member && member.permissions.has(0x20)) return g;
 					})
 					.map((g) => ({ id: g.id, name: g.name, icon: g.icon })),
 			{
