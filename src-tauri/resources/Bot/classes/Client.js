@@ -27,6 +27,7 @@ export default class Client {
             shards: getInfo().SHARD_LIST,
             shardCount: getInfo().TOTAL_SHARDS
         })
+        this.client.setMaxListeners(0)
         this.client.cluster = new ClusterClient(this.client)
         this.client.login(token)
     }
