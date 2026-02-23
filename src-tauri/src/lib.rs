@@ -64,7 +64,7 @@ fn prepare_app_paths(app: &tauri::AppHandle) {
 
 
     let node_dir: PathBuf = if cfg!(target_os = "windows") {
-        _app.path()
+        app.path()
             .resolve("resources/nodejs", BaseDirectory::Resource)
             .unwrap_or_else(|_| {
                 let exe_dir = std::env::current_exe()
@@ -80,7 +80,7 @@ fn prepare_app_paths(app: &tauri::AppHandle) {
         } else {
             "resources/node-macos-x64/bin"
         };
-        _app.path()
+        app.path()
             .resolve(arch_dir, BaseDirectory::Resource)
             .unwrap_or_else(|_| {
                 let exe_dir = std::env::current_exe()
@@ -92,7 +92,7 @@ fn prepare_app_paths(app: &tauri::AppHandle) {
             })
     } else {
         // Linux
-        _app.path()
+        app.path()
             .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
             .unwrap_or_else(|_| {
                 let exe_dir = std::env::current_exe()
