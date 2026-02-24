@@ -519,7 +519,7 @@ export default class ReplyToDeferredInteraction {
             Bot.initComponents = true
             Bot.client.on(Events.InteractionCreate, async (i) => {
                 if(!i.isButton() && !i.isAnySelectMenu()) return;
-                const raw = await Bot.getData(`$COMPONENTS$$$${i.channel.id}${i.message.id}`);
+                const raw = await Bot.getData(`$COMPONENTS$$$${i.channel?.id}${i.message.id}`);
                 if(!raw) return;
                 const data = JSON.parse(raw)
                 const triggerId = data.triggerId
@@ -903,7 +903,7 @@ export default class ReplyToDeferredInteraction {
             actionManager.variables.keys().forEach(key => {
                 variables[key] = Bot.serialize(getVariable(key))
             })
-            await Bot.setData(`$COMPONENTS$$$${r.channel.id}${r.id}`, JSON.stringify({
+            await Bot.setData(`$COMPONENTS$$$${r.channel?.id}${r.id}`, JSON.stringify({
                 triggerId: actionManager.trigger.id,
                 actionId: id,
                 variables,
