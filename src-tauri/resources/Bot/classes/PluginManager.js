@@ -34,7 +34,7 @@ import { execSync } from "child_process";
                 fs.promises.readFile(path.join(extensionClassesPath, f), "utf8"),
             ),
     );
-    (await triggerContents).forEach(async (contents) => {
+    (await triggerContents).forEach((contents) => {
         const ast = parse(contents, {
             sourceType: "module",
             ecmaVersion: "latest",
@@ -45,7 +45,7 @@ import { execSync } from "child_process";
             }
         }
     });
-    (await actionContents).forEach(async (contents) => {
+    (await actionContents).forEach((contents) => {
         const ast = parse(contents, {
             sourceType: "module",
             ecmaVersion: "latest",
@@ -56,7 +56,7 @@ import { execSync } from "child_process";
             }
         }
     });
-    (await extensionContents).forEach(async (contents) => {
+    (await extensionContents).forEach((contents) => {
         const ast = parse(contents, {
             sourceType: "module",
             ecmaVersion: "latest",
