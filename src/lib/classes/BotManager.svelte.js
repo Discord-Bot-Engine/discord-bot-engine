@@ -10,6 +10,7 @@ class BotManagerClass {
 	bots = $state([]);
 	constructor() {
 		listen("plugins", ({payload}) => {
+			console.log(payload[1])
 			if(payload[1].trim() === "RERUN") return invoke("load_bot_plugins", {bot_path: payload[0]})
 			const plugins = JSON.parse(payload[1])
 			const bot = this.bots.find(b => b.path === payload[0])
