@@ -9,15 +9,32 @@ import { execSync } from "child_process";
     const actionClassesPath = path.resolve(__dirname, "../actions");
     const extensionClassesPath = path.resolve(__dirname, "../extensions");
 
-    const triggersFolder = fs.readdirSync(triggerClassesPath).filter((file) => file.endsWith(".js"));
-    const actionsFolder = fs.readdirSync(actionClassesPath).filter((file) => file.endsWith(".js"));
-    const extensionsFolder = fs.readdirSync(extensionClassesPath).filter((file) => file.endsWith(".js"));
+    const triggersFolder = fs.promises.readdir(triggerClassesPath);
+    const actionsFolder = fs.promises.readdir(actionClassesPath);
+    const extensionsFolder = fs.promises.readdir(extensionClassesPath);
     let imports = [];
-    triggersFolder.forEach((file) => {
-        const contents = fs.readFileSync(
-            path.join(triggerClassesPath, file),
-            "utf8"
-        );
+    let triggerContents = Promise.all(
+        (await triggersFolder)
+            .filter((file) => file.endsWith(".js"))
+            .map((f) =>
+                fs.promises.readFile(path.join(triggerClassesPath, f), "utf8"),
+            ),
+    );
+    let actionContents = Promise.all(
+        (await actionsFolder)
+            .filter((file) => file.endsWith(".js"))
+            .map((f) =>
+                fs.promises.readFile(path.join(actionClassesPath, f), "utf8"),
+            ),
+    );
+    let extensionContents = Promise.all(
+        (await extensionsFolder)
+            .filter((file) => file.endsWith(".js"))
+            .map((f) =>
+                fs.promises.readFile(path.join(extensionClassesPath, f), "utf8"),
+            ),
+    );
+    (await triggerContents).forEach(async (contents) => {
         const ast = parse(contents, {
             sourceType: "module",
             ecmaVersion: "latest",
@@ -28,11 +45,7 @@ import { execSync } from "child_process";
             }
         }
     });
-    actionsFolder.forEach((file) => {
-        const contents = fs.readFileSync(
-            path.join(actionClassesPath, file),
-            "utf8"
-        );
+    (await actionContents).forEach(async (contents) => {
         const ast = parse(contents, {
             sourceType: "module",
             ecmaVersion: "latest",
@@ -43,11 +56,7 @@ import { execSync } from "child_process";
             }
         }
     });
-    extensionsFolder.forEach((file) => {
-        const contents = fs.readFileSync(
-            path.join(extensionClassesPath, file),
-            "utf8"
-        );
+    (await extensionContents).forEach(async (contents) => {
         const ast = parse(contents, {
             sourceType: "module",
             ecmaVersion: "latest",
@@ -78,22 +87,28 @@ import { execSync } from "child_process";
         }
     }
     let triggerClasses = await Promise.all(
-        triggersFolder.map(async (file) => ({
+        (await triggersFolder).map(async (file) => ({
             file,
-            content: await import("file://" + path.join(triggerClassesPath, file)).catch(() => {}),
-        }))
-      );
+            content: await import(
+            "file://" + path.join(triggerClassesPath, file)
+                ).catch(() => {}),
+        })),
+    );
     let actionClasses = await Promise.all(
-        actionsFolder.map(async (file) => ({
+        (await actionsFolder).map(async (file) => ({
             file,
-            content: await import("file://" + path.join(actionClassesPath, file)).catch(() => {}),
-        }))
+            content: await import(
+            "file://" + path.join(actionClassesPath, file)
+                ).catch(() => {}),
+        })),
     );
     let extensionClasses = await Promise.all(
-        extensionsFolder.map(async (file) => ({
+        (await extensionsFolder).map(async (file) => ({
             file,
-            content: await import("file://" + path.join(extensionClassesPath, file)).catch(() => {}),
-        }))
+            content: await import(
+            "file://" + path.join(extensionClassesPath, file)
+                ).catch(() => {}),
+        })),
     );
 
     triggerClasses = triggerClasses
