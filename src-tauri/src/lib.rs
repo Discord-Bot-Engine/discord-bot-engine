@@ -942,6 +942,11 @@ fn save_bot_settings(
     }
 }
 
+#[tauri::command(rename_all = "snake_case")]
+fn path_exists(_app: tauri::AppHandle, path: String) -> bool {
+    Path::new(&path).exists()
+}
+
 #[tauri::command]
 fn load_bots(app: tauri::AppHandle) -> String {
     let bots_path = app
@@ -1165,6 +1170,7 @@ pub fn run() {
             load_bot_extensions,
             load_bot_settings,
             save_bot_settings,
+            path_exists,
             load_bots,
             save_bots,
             copy_bot_files,

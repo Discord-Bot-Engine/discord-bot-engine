@@ -60,14 +60,20 @@ class BotManagerClass {
 	}
 
 	loadBots() {
-		invoke("load_bots").then(data => {
+		invoke("load_bots").then(async data => {
 			const bots = JSON.parse(data);
 			const selected = Number(localStorage.getItem("selectedBot") ?? 0)
-			bots.forEach(async (bot, i) => {
+			const filtered = []
+			for(let i = 0; i < bots.length; i++) {
+				const bot = bots[i];
+				const exists = await invoke("path_exists", {path: bot.path});
+				if(!exists) continue;
 				const botClass = new Bot(bot.name, bot.path);
 				this.bots.push(botClass);
+				filtered.push(bot)
 				if(i === selected) this.selectBot(botClass)
-			})
+			}
+			await invoke("save_bots", {json:JSON.stringify(filtered)})
 		})
 	}
 
