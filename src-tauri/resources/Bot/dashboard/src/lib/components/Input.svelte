@@ -38,7 +38,7 @@
 		{:else if input.type === 'paragraph'}
 			<Textarea
 				disabled={isAdmin}
-				class="max-h-9 min-h-0 w-full resize-none"
+				class="h-9 w-full"
 				style="scrollbar-width: none;"
 				bind:value
 				onchange={(ev) => {
