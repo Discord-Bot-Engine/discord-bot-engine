@@ -18,7 +18,8 @@ export default class ConvertTextToList {
     static load(context) {
     }
     static async run({id, data, actionManager, setVariable}) {
-        setVariable(data.get("value"), String(data.get("text")).split(data.get("sep")));
+        const text = data.get("text")?.trim()
+        setVariable(data.get("value"), text ? text.split(data.get("sep")) : []);
         actionManager.runNext(id, "action")
     }
 }
