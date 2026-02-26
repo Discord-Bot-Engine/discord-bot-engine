@@ -38,7 +38,7 @@ export default class SetCooldown {
                             if (date >= member.timestamp) {
                                 delete triggerIds[triggerId].actionIds[actionId].members[memberId]
                                 const t = Bot.triggers.find(t => t.id === triggerId)
-                                const actionManager = t.lastManager ?? new ActionManager(t)
+                                const actionManager = new ActionManager(t)
                                 for (const key in (triggerIds[triggerId].variables ?? {})) {
                                     const val = await Bot.restore(triggerIds[triggerId].variables[key])
                                     actionManager.setVariable(key, val);
@@ -48,7 +48,7 @@ export default class SetCooldown {
                                 setTimeout(async () => {
                                     delete triggerIds[triggerId].actionIds[actionId].members[memberId]
                                     const t = Bot.triggers.find(t => t.id === triggerId)
-                                    const actionManager = t.lastManager ?? new ActionManager(t)
+                                    const actionManager = new ActionManager(t)
                                     for (const key in (triggerIds[triggerId].variables ?? {})) {
                                         actionManager.setVariable(key, await Bot.restore(triggerIds[triggerId].variables[key]));
                                     }

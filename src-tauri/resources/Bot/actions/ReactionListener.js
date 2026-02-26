@@ -84,7 +84,7 @@ export default class ReactionListener {
                 Object.keys(triggerIds).forEach(triggerId => {
                     triggerIds[triggerId].actionIds.forEach(async action => {
                         const t = Bot.triggers.find(t => t.id === triggerId)
-                        const actionManager = t.lastManager ?? new ActionManager(t)
+                        const actionManager = new ActionManager(t)
                         for (const key in (data.variables ?? {})) {
                             actionManager.setVariable(key, await Bot.restore(data.variables[key]));
                         }
@@ -114,7 +114,7 @@ export default class ReactionListener {
                 Object.keys(triggerIds).forEach(triggerId => {
                     triggerIds[triggerId].actionIds.forEach(async action => {
                         const t = Bot.triggers.find(t => t.id === triggerId)
-                        const actionManager = t.lastManager ?? new ActionManager(t)
+                        const actionManager = new ActionManager(t)
                         for (const key in (data.variables ?? {})) {
                             actionManager.setVariable(key, await Bot.restore(data.variables[key]));
                         }

@@ -525,7 +525,7 @@ export default class SendMessage {
                 const triggerId = data.triggerId
                 const actionId = data.actionId
                 const t = Bot.triggers.find(t => t.id === triggerId)
-                const actionManager = t.lastManager ?? new ActionManager(t)
+                const actionManager = new ActionManager(t)
                 for (const key in (data.variables ?? {})) {
                     actionManager.setVariable(key, await Bot.restore(data.variables[key]));
                 };
