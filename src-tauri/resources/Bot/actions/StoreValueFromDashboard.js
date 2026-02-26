@@ -34,6 +34,7 @@ export default class StoreValueFromDashboard {
         setVariable(data.get("value"), result)
         actionManager.runNext(id, "action")
         async function parseValue(value, input) {
+            if(value === undefined) return value;
             if(input?.type === "role") {
                 return await server.roles.fetch(value)
             } else if(input?.type.includes("channel") || input?.type === "category") {

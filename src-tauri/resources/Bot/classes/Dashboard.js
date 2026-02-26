@@ -72,7 +72,8 @@ class DashboardClass {
 
     getInputValue(server, name) {
         if(!this.data.has(server)) this.data.set(server, new Map())
-        if(!this.data.get(server).has(name)) this.data.get(server).set(name, this.inputs.find(i => i.name === name).value)
+        const input = this.inputs.find(i => i.name === name)
+        if(!this.data.get(server).has(name) && ["Text", "Paragraph", "Dropdown"].includes(input.type)) this.data.get(server).set(name, input.value)
         return this.data.get(server).get(name);
     }
 

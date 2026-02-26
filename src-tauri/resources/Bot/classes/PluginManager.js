@@ -1,8 +1,8 @@
 import path from "node:path";
-import { parse } from "acorn";
+import {parse} from "acorn";
 import * as fs from "node:fs";
-import { __dirname } from "./Bot.js";
-import { execSync } from "child_process";
+import {__dirname} from "./Bot.js";
+import {execSync} from "child_process";
 
 (async () => {
     const triggerClassesPath = path.resolve(__dirname, "../triggers");
@@ -74,40 +74,51 @@ import { execSync } from "child_process";
         await install(imp);
     }
     if (rerun) return console.log("RERUN");
+
     async function install(name) {
-        const npm = process.argv[2] ? `"${process.argv[2]?.replace("\\\\?\\", "")}"` : "npm";
+        const npm = process.argv[2]
+            ? `"${process.argv[2]?.replace("\\\\?\\", "")}"`
+            : "npm";
         try {
             await import(name);
         } catch (e) {
             rerun = true;
+            console.log(`Installing ${name}`);
             execSync(`${npm} install ${name}`, {
                 stdio: "ignore",
                 cwd: __dirname,
             });
         }
     }
+
+    console.log("Loading triggers");
     let triggerClasses = await Promise.all(
         (await triggersFolder).map(async (file) => ({
             file,
             content: await import(
             "file://" + path.join(triggerClassesPath, file)
-                ).catch(() => {}),
+                ).catch(() => {
+            }),
         })),
     );
+    console.log("Loading actions");
     let actionClasses = await Promise.all(
         (await actionsFolder).map(async (file) => ({
             file,
             content: await import(
             "file://" + path.join(actionClassesPath, file)
-                ).catch(() => {}),
+                ).catch(() => {
+            }),
         })),
     );
+    console.log("Loading extensions");
     let extensionClasses = await Promise.all(
         (await extensionsFolder).map(async (file) => ({
             file,
             content: await import(
             "file://" + path.join(extensionClassesPath, file)
-                ).catch(() => {}),
+                ).catch(() => {
+            }),
         })),
     );
 
@@ -135,7 +146,7 @@ import { execSync } from "child_process";
             close: extension.content.default.close?.toString(),
             file: extension.file,
         }));
-    console.log(JSON.stringify({ type: "triggers", data: triggerClasses }));
-    console.log(JSON.stringify({ type: "actions", data: actionClasses }));
-    console.log(JSON.stringify({ type: "extensions", data: extensionClasses }));
+    console.log(JSON.stringify({type: "triggers", data: triggerClasses}));
+    console.log(JSON.stringify({type: "actions", data: actionClasses}));
+    console.log(JSON.stringify({type: "extensions", data: extensionClasses}));
 })();

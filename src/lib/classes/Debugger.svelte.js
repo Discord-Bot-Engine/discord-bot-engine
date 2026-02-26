@@ -73,7 +73,7 @@ class DebuggerClass {
 			acts = acts.map(act => act instanceof Action ? act : Action.fromJSON(act))
 			actions.push(acts)
 			acts.forEach((act) => {
-				[...act.data.keys()].toArray().forEach(key => {
+				[...act.data.keys()].forEach(key => {
 					if(Array.isArray(act.data.get(key)) && act.data.get(key).every(el => el.isAction)) {
 						getActions(act.data.get(key), actions)
 					}

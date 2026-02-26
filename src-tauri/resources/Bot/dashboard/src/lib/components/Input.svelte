@@ -10,7 +10,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 </script>
 
-<Card.Root>
+<Card.Root class="h-fit">
 	<Card.Header class="flex flex-col gap-3">
 		<div class="flex w-full">
 			<Card.Title>
@@ -38,7 +38,7 @@
 		{:else if input.type === 'paragraph'}
 			<Textarea
 				disabled={isAdmin}
-				class="h-9 w-full"
+				class="h-9 min-h-9 w-full"
 				style="scrollbar-width: none;"
 				bind:value
 				onchange={(ev) => {
