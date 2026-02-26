@@ -79,7 +79,7 @@ class BotManagerClass {
             const filtered = []
             for (let i = 0; i < bots.length; i++) {
                 const bot = bots[i];
-                const exists = await invoke("path_exists", {path: bot.path});
+                const exists = await invoke("path_exists", {path: `${bot.path}/index.js`});
                 if (!exists) {
                     if (i === selected) selected = 0;
                     continue
