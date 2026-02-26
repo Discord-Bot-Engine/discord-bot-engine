@@ -510,7 +510,7 @@ async fn load_bot_plugins(_app: tauri::AppHandle, bot_path: String) -> Result<()
         .current_dir(&bot_path)
         .args([
             format!("{bot_path}/classes/PluginManager.js"),
-            node.join("npm").to_str().unwrap().to_string(),
+            node.join(if cfg!(windows) { "npm.cmd" } else { "npm" }).to_str().unwrap().to_string(),
         ]);
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
