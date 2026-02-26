@@ -32,7 +32,7 @@ class Bot {
 	actionVariableTypes = $derived(BotManager.selectedBot?.actionClasses?.map(t => t.variableTypes).flat() ?? [])
 	variableTypes = $derived([...new Set([...this.triggerVariableTypes, ...this.actionVariableTypes])].sort())
 	extensions = new SvelteMap();
-	isLoading = $state(true)
+	isLoading = $state(false)
 	modifiedTriggers = []
 	removedTriggers = []
 	undos = []
@@ -43,10 +43,12 @@ class Bot {
 	}
 
 	async loadFiles() {
-		this.isLoading = true
+		this.isLoading = "Loading triggers"
 		this.triggers = JSON.parse(await invoke("load_bot_triggers", {bot_path: this.path})).map(t => Trigger.fromJSON(t)).sort((a, b) => a.name.localeCompare(b.name));
+		this.isLoading = "Loading extensions"
 		const extensions = JSON.parse(await invoke("load_bot_extensions", {bot_path: this.path}));
 		Object.keys(extensions).forEach(t => this.extensions.set(t, Extension.fromJSON(extensions[t])));
+		this.isLoading = "Loading settings"
 		const data = JSON.parse(await invoke("load_bot_settings", {bot_path: this.path}))
 		this.clientSecret = data.clientSecret;
 		this.token = data.token;
@@ -60,6 +62,7 @@ class Bot {
 		this.membersIntent = data.membersIntent;
 		this.messageContentIntent = data.messageContentIntent;
 		this.isRunning = await invoke("is_bot_running", {bot_path: this.path});
+		this.isLoading = "Loading plugins"
 		await invoke("load_bot_plugins", {bot_path: this.path});
 		App.selectedTrigger = this.triggers.find(t => t.id === App.selectedTrigger?.id)
 	}

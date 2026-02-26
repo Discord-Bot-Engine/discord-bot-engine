@@ -19,8 +19,11 @@
 		if(!botName.trim() || !botPath.trim()) return;
 		if(BotManager.bots.find(b => b.name === botName.trim() || b.path === botPath.trim())) return alert("Project already exists!");
 		isCreating = false
-		isLoading = true;
-		await BotManager.createBot(botName, botPath)
+		isLoading = "Copying files";
+		const callback = await BotManager.createBot(botName, botPath)
+		isLoading = "Installing packages";
+		await BotManager.installPackages(botPath)
+		await callback()
 		isLoading = false;
 	}
 	function selectFolder() {

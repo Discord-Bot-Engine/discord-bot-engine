@@ -34,22 +34,28 @@ fn ensure_file(path: &Path) -> PathBuf {
 fn prepare_app_paths(app: &tauri::AppHandle) {
     // translations directory
     let translations_dir = ensure_dir(
-        &app.path().resolve("translations", BaseDirectory::AppLocalData).unwrap()
+        &app.path()
+            .resolve("translations", BaseDirectory::AppLocalData)
+            .unwrap(),
     );
 
     // themes directory
     let themes_dir = ensure_dir(
-        &app.path().resolve("themes", BaseDirectory::AppLocalData).unwrap()
+        &app.path()
+            .resolve("themes", BaseDirectory::AppLocalData)
+            .unwrap(),
     );
 
     // bots.json
-    let bots_path = app.path()
+    let bots_path = app
+        .path()
         .resolve("bots.json", BaseDirectory::AppLocalData)
         .unwrap();
     ensure_file(&bots_path);
 
     // resources/Bot (for copying/updating bots later)
-    let bot_resources = app.path()
+    let bot_resources = app
+        .path()
         .resolve("resources/Bot", BaseDirectory::Resource)
         .unwrap_or_else(|_| {
             // fallback for dev mode or Steam
@@ -61,7 +67,6 @@ fn prepare_app_paths(app: &tauri::AppHandle) {
             exe_dir.join("resources/Bot")
         });
     ensure_dir(&bot_resources);
-
 
     let node_dir: PathBuf = if cfg!(target_os = "windows") {
         app.path()
@@ -126,7 +131,7 @@ fn prepare_app_paths(app: &tauri::AppHandle) {
     let npm_executable = if cfg!(windows) {
         node_dir.join("npm.cmd") // Windows npm binary
     } else {
-        node_dir.join("npm")     // Unix npm binary
+        node_dir.join("npm") // Unix npm binary
     };
     env::set_var("NPM", npm_executable);
 
@@ -326,28 +331,33 @@ async fn upload_bot(
     #[cfg(target_os = "linux")]
     let exe_path = node.join("sftp-linux");
 
-    let mut command = Command::new(exe_path);
-    #[cfg(target_os = "windows")]
-    {
-        use std::os::windows::process::CommandExt;
-        const CREATE_NO_WINDOW: u32 = 0x08000000;
-        command.creation_flags(CREATE_NO_WINDOW);
-    }
+    let run_command = _app
+        .shell()
+        .command(exe_path)
+        .current_dir(&bot_path)
+        .args([&bot_path, "/", &host, &username, &password, &port]);
 
-    let output = command
-        .args(vec![&bot_path, "/", &host, &username, &password, &port])
-        .output()
-        .map_err(|e| e.to_string())?;
+    let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
-    if output.status.success() {
-        Ok(())
-    } else {
-        Err(format!(
-            "Uploader failed with code {:?}. stderr: {}",
-            output.status.code(),
-            String::from_utf8_lossy(&output.stderr)
-        ))
-    }
+    let mut bots = state.bots.lock().unwrap();
+    bots.insert(bot_path.clone(), child);
+
+    tauri::async_runtime::spawn(async move {
+        while let Some(event) = _rx.recv().await {
+            match event {
+                CommandEvent::Stdout(line_bytes) => {
+                    let line = String::from_utf8_lossy(&line_bytes).to_string();
+                    let _ = _app.emit("upload_stdout", [&bot_path, &line]);
+                }
+                CommandEvent::Stderr(line_bytes) => {
+                    let line = String::from_utf8_lossy(&line_bytes).to_string();
+                    let _ = _app.emit("upload_stderr", [&bot_path, &line]);
+                }
+                _ => {}
+            }
+        }
+    });
+    Ok(())
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -986,6 +996,13 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
         });
     tauri::async_runtime::spawn(async move {
         copy_dir_all(&resource_path, &bot_path, None).unwrap();
+        _app.emit("finished_copying", &bot_path).unwrap();
+    });
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn install_bot_packages(_app: tauri::AppHandle, bot_path: String) {
+    tauri::async_runtime::spawn(async move {
         let node: std::path::PathBuf = if cfg!(target_os = "windows") {
             _app.path()
                 .resolve("resources/nodejs", BaseDirectory::Resource)
@@ -1028,16 +1045,14 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
         };
         let clean_command = _app
             .shell()
-            .command(node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
-                         .to_str()
-                         .unwrap()
-                         .to_string())
+            .command(
+                node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
+                    .to_str()
+                    .unwrap()
+                    .to_string(),
+            )
             .current_dir(&bot_path)
-            .args([
-                "cache",
-                "clean",
-                "--force"
-            ]);
+            .args(["cache", "clean", "--force"]);
         let (mut _rx, child) = match clean_command.spawn() {
             Ok(tuple) => tuple,
             Err(e) => {
@@ -1047,14 +1062,14 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
         };
         let run_command = _app
             .shell()
-            .command(node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
-                         .to_str()
-                         .unwrap()
-                         .to_string())
+            .command(
+                node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
+                    .to_str()
+                    .unwrap()
+                    .to_string(),
+            )
             .current_dir(&bot_path)
-            .args([
-                "install"
-            ]);
+            .args(["install"]);
         let (mut _rx, child) = match run_command.spawn() {
             Ok(tuple) => tuple,
             Err(e) => {
@@ -1065,7 +1080,7 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
         tauri::async_runtime::spawn(async move {
             while let Some(event) = _rx.recv().await {
                 if let CommandEvent::Terminated(status) = event {
-                    _app.emit("finished_copying", &bot_path).unwrap();
+                    _app.emit("finished_installing", &bot_path).unwrap();
                 }
             }
         });
@@ -1174,6 +1189,7 @@ pub fn run() {
             load_bots,
             save_bots,
             copy_bot_files,
+            install_bot_packages,
             update_bot_files
         ])
         .plugin(tauri_plugin_fs::init())
