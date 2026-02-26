@@ -23,7 +23,7 @@ export default class SetMemberData {
     static async run({id, data, actionManager, getVariable}) {
         const member = getVariable(data.get("member"))
         const field = `${member.id}${member.guild.id}${data.get("field")}`
-        Bot.setData(field, data.get("value"))
+        await Bot.setData(field, data.get("value"))
         actionManager.runNext(id, "action")
     }
 }

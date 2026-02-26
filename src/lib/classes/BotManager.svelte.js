@@ -13,27 +13,25 @@ class BotManagerClass {
 			if(payload[1].trim() === "RERUN") return invoke("load_bot_plugins", {bot_path: payload[0]})
 			const plugins = JSON.parse(payload[1])
 			const bot = this.bots.find(b => b.path === payload[0])
-			if(plugins.type === "extensions") {
-				bot.extensionClasses = plugins.data
-				bot.extensionClasses.forEach(p => {
-					if(p.open) p.open = eval(`(${p.open.replace("open", "function ")})`)
-					if(p.close) p.close = eval(`(${p.close.replace("close", "function ")})`)
-				})
-				bot.isLoading = false
-			}
 			if(plugins.type === "triggers") {
 				bot.triggerClasses = plugins.data
 				bot.triggerClasses.forEach(p => {
 					if(p.open) p.open = eval(`(${p.open.replace("open", "function ")})`)
 					if(p.close) p.close = eval(`(${p.close.replace("close", "function ")})`)
 				})
-			}
-			if(plugins.type === "actions") {
+			} else if(plugins.type === "actions") {
 				bot.actionClasses = plugins.data
 				bot.actionClasses.forEach(p => {
 					if(p.open) p.open = eval(`(${p.open.replace("open", "function ")})`)
 					if(p.close) p.close = eval(`(${p.close.replace("close", "function ")})`)
 				})
+			} else if(plugins.type === "extensions") {
+				bot.extensionClasses = plugins.data
+				bot.extensionClasses.forEach(p => {
+					if(p.open) p.open = eval(`(${p.open.replace("open", "function ")})`)
+					if(p.close) p.close = eval(`(${p.close.replace("close", "function ")})`)
+				})
+				bot.isLoading = false
 			}
 		})
 		listen('stdout', ({payload}) => {
@@ -62,17 +60,20 @@ class BotManagerClass {
 	loadBots() {
 		invoke("load_bots").then(async data => {
 			const bots = JSON.parse(data);
-			const selected = Number(localStorage.getItem("selectedBot") ?? 0)
+			let selected = Number(localStorage.getItem("selectedBot") ?? 0)
 			const filtered = []
 			for(let i = 0; i < bots.length; i++) {
 				const bot = bots[i];
 				const exists = await invoke("path_exists", {path: bot.path});
-				if(!exists) continue;
+				if(!exists) {
+					if(i === selected) selected = 0;
+					continue
+				};
 				const botClass = new Bot(bot.name, bot.path);
 				this.bots.push(botClass);
 				filtered.push(bot)
-				if(i === selected) this.selectBot(botClass)
 			}
+			if(filtered[selected]) this.selectBot(this.bots[selected]);
 			await invoke("save_bots", {json:JSON.stringify(filtered)})
 		})
 	}
@@ -210,8 +211,8 @@ class BotManagerClass {
 				await invoke("upload_bot", {
 					host,
 					port,
-					username:this.selectedBot.username,
-					password:this.selectedBot.password,
+					username: this.selectedBot.username,
+					password: this.selectedBot.password,
 					bot_path: this.selectedBot.path
 				});
 				setTimeout(() => this.selectedBot.isLoading = false, 5000)

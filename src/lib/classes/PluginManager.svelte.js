@@ -74,18 +74,21 @@ class PluginManagerClass {
 	}
 
 	async removeAction(name, path) {
+		this.isLoading = true
 		const action = this.actions.find(x => x.name === name)
 		await invoke("remove_action", {bot_path: path, action: name, sha: action.sha})
 		invoke("load_bot_plugins", {bot_path: path});
 	}
 
 	async removeTrigger(name, path) {
+		this.isLoading = true
 		const trigger = this.triggers.find(x => x.name === name)
 		await invoke("remove_trigger", {bot_path: path, trigger: name, sha: trigger.sha})
 		invoke("load_bot_plugins", {bot_path: path});
 	}
 
 	async removeExtension(name, path) {
+		this.isLoading = true
 		const extension = this.extensions.find(x => x.name === name)
 		await invoke("remove_extension", {bot_path: path, extension: name, sha: extension.sha})
 		invoke("load_bot_plugins", {bot_path: path});
@@ -106,6 +109,7 @@ class PluginManagerClass {
 	}
 
 	async downloadAction(name, path) {
+		this.isLoading = true
 		const action = this.actions.find(x => x.name === name)
 		const data = await fetch(action.url).then(res => res.text())
 		await invoke("download_action", {bot_path: path, action: name, sha: action.sha, data})
@@ -113,6 +117,7 @@ class PluginManagerClass {
 	}
 
 	async downloadTrigger(name, path) {
+		this.isLoading = true
 		const trigger = this.triggers.find(x => x.name === name)
 		const data = await fetch(trigger.url).then(res => res.text())
 		await invoke("download_trigger", {bot_path: path, trigger: name, sha: trigger.sha, data})
@@ -120,6 +125,7 @@ class PluginManagerClass {
 	}
 
 	async downloadExtension(name, path) {
+		this.isLoading = true
 		const extension = this.extensions.find(x => x.name === name)
 		const data = await fetch(extension.url).then(res => res.text())
 		await invoke("download_extension", {bot_path: path, extension: name, sha: extension.sha, data})
