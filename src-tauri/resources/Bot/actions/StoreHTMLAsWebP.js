@@ -10,10 +10,7 @@ export default class StoreHTMLAsWebP {
     static type = "Store HTML As WebP";
     static variableTypes = ["Buffer"];
     static html = `
-    <div class="grid grid-cols-4 items-center gap-4">
-        <dbe-label name="HTML"></dbe-label>
-        <dbe-input name="html" multiline={true} class="col-span-3" change="(v) => document.getElementById('preview').contentWindow.document.body.innerHTML = v"></dbe-input>
-    </div>
+    <dbe-code name="html" lang="html" change="(v) => handlers.onChange(v)"></dbe-code>
     <div class="grid grid-cols-4 items-center gap-4">
         <dbe-label name="Width"></dbe-label>
         <dbe-input name="width" class="col-span-3" change="(v) => document.getElementById('preview').width = v + 'px'" value="1000"></dbe-input>
@@ -39,7 +36,8 @@ export default class StoreHTMLAsWebP {
 
     static open(action, handlers) {
         const iframe = document.getElementById("preview");
-        iframe.contentWindow.document.body.innerHTML = `  <html>
+        handlers.onChange = (html) => {
+            iframe.contentWindow.document.body.innerHTML = `  <html>
     <head>
       <style>
         * {
@@ -56,6 +54,7 @@ export default class StoreHTMLAsWebP {
     </head>
     <body>${html}</body>
   </html>`
+        }
     }
 
     static async run({ id, data, actionManager, setVariable }) {

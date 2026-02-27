@@ -2,8 +2,9 @@
 <script>
     import CodeMirror from "svelte-codemirror-editor";
     import { javascript } from "@codemirror/lang-javascript";
+    import { html } from "@codemirror/lang-html";
     import { tokyoNightStorm } from '@fsegurai/codemirror-theme-bundle'
-    let {change = "() => {}", value = "", ...other} = $props()
+    let {change = "() => {}", value = "", lang="javascript", ...other} = $props()
     let init = false
     let statevalue = $state(value)
     $host().setValue = (value) => {
@@ -18,4 +19,4 @@
         change(statevalue, $host())
     }
 </script>
-<CodeMirror bind:value={statevalue} onchange={(v) => {change(v, $host())}} lang={javascript()} theme={tokyoNightStorm} {...other} />
+<CodeMirror bind:value={statevalue} onchange={(v) => {change(v, $host())}} lang={lang === "javascript" ? javascript() : html()} theme={tokyoNightStorm} {...other} />
