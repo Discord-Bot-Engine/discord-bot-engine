@@ -38,7 +38,7 @@ export default class StartThreadFromMessage {
     static load() {}
 
     static async run({ id, data, actionManager, getVariable, setVariable }) {
-        const parent = getVariable(data.get("channel"));
+        const parent = getVariable(data.get("message"));
         const name = data.get("threadName");
         const archive = data.get("archive");
         const thread = await parent.threads.create({

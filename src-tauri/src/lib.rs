@@ -1043,23 +1043,6 @@ fn install_bot_packages(_app: tauri::AppHandle, bot_path: String) {
                     exe_dir.join("resources/node-linux-x64/bin")
                 })
         };
-        let clean_command = _app
-            .shell()
-            .command(
-                node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
-                    .to_str()
-                    .unwrap()
-                    .to_string(),
-            )
-            .current_dir(&bot_path)
-            .args(["cache", "clean", "--force"]);
-        let (mut _rx, child) = match clean_command.spawn() {
-            Ok(tuple) => tuple,
-            Err(e) => {
-                eprintln!("Failed to spawn npm: {}", e);
-                return;
-            }
-        };
         let run_command = _app
             .shell()
             .command(
@@ -1079,8 +1062,19 @@ fn install_bot_packages(_app: tauri::AppHandle, bot_path: String) {
         };
         tauri::async_runtime::spawn(async move {
             while let Some(event) = _rx.recv().await {
-                if let CommandEvent::Terminated(status) = event {
-                    _app.emit("finished_installing", &bot_path).unwrap();
+                match event {
+                    CommandEvent::Stdout(line_bytes) => {
+                        let line = String::from_utf8_lossy(&line_bytes).to_string();
+                        let _ = _app.emit("npm_stdout", [&bot_path, &line]);
+                    }
+                    CommandEvent::Stderr(line_bytes) => {
+                        let line = String::from_utf8_lossy(&line_bytes).to_string();
+                        let _ = _app.emit("npm_stderr", [&bot_path, &line]);
+                    }
+                    CommandEvent::Terminated(status) => {
+                        _app.emit("finished_installing", &bot_path).unwrap();
+                    }
+                    _ => {}
                 }
             }
         });

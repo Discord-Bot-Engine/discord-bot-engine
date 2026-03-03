@@ -52,7 +52,6 @@ class BotManagerClass {
         })
         listen('upload_stdout', ({payload}) => {
             const bot = this.bots.find(b => b.path === payload[0])
-            console.log(`"${payload[1]}"`, payload[1] === "Folder upload complete!")
             if (payload[1].startsWith("Progress:")) {
                 bot.isLoading = `Uploaded ${payload[1].replace("Progress: ", "")}`
             } else if(payload[1].trim() === "Folder upload complete!")
@@ -62,6 +61,12 @@ class BotManagerClass {
             const bot = this.bots.find(b => b.path === payload[0])
             alert(`SFTP error: ${err}`);
             bot.isLoading = false
+        })
+        listen('npm_stdout', ({payload}) => {
+            console.log(payload)
+        })
+        listen('npm_stderr', ({payload}) => {
+            console.error(payload)
         })
         this.loadBots()
     }
@@ -116,6 +121,7 @@ class BotManagerClass {
 
     updateBotFiles() {
         return new Promise(async (resolve) => {
+            await this.stopBot()
             this.selectedBot.isLoading = "Copying files"
             const unlisten = await listen('finished_copying', async () => {
                 this.selectedBot.isLoading = "Installing packages"

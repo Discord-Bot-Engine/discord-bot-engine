@@ -3,6 +3,10 @@
 
     let {isLoading} = $props()
     import {Loader2Icon} from "@lucide/svelte";
+
+    $effect(() => {
+        document.body.inert = isLoading
+    })
 </script>
 {#if isLoading}
     <div class="w-screen h-screen absolute top-0 left-0 flex flex-col justify-center items-center bg-black/50 z-10">

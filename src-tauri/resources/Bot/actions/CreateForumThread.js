@@ -544,13 +544,13 @@ export default class CreateForumThread {
             Bot.initComponents = true
             Bot.client.on(Events.InteractionCreate, async (i) => {
                 if(!i.isButton() && !i.isAnySelectMenu()) return;
-                const raw = await Bot.getData(`$COMPONENTS$$$${i.channel.id}${i.message.id}`);
+                const raw = await Bot.getData(`$COMPONENTS$$$${i.channel?.id}${i.message.id}`);
                 if(!raw) return;
                 const data = JSON.parse(raw)
                 const triggerId = data.triggerId
                 const actionId = data.actionId
                 const t = Bot.triggers.find(t => t.id === triggerId)
-                const actionManager = t.lastManager ?? new ActionManager(t)
+                const actionManager = new ActionManager(t)
                 for (const key in (data.variables ?? {})) {
                     actionManager.setVariable(key, await Bot.restore(data.variables[key]));
                 };
@@ -608,8 +608,6 @@ export default class CreateForumThread {
         const parent = getVariable(data.get("channel"));
         const name = data.get("threadName");
         const archive = data.get("archive");
-
-
         const temp = data.get("mode") === "Temporary"
         const components = data.get("components")
         const buttons = []
@@ -836,9 +834,11 @@ export default class CreateForumThread {
                         else builder.setCustomId(id)
                         if(emoji) builder.setEmoji(emoji)
                         if(rows[currentCompRow] && (rows[currentCompRow].components.size >= 5 || rows[currentCompRow].components.every(c => c.type === ComponentType.Button))) currentCompRow++;
-                        if(!rows[currentCompRow]) rows[currentCompRow] = new ActionRowBuilder()
+                        if(!rows[currentCompRow]) {
+                            rows[currentCompRow] = new ActionRowBuilder()
+                            container.addActionRowComponents(rows[currentCompRow])
+                        }
                         rows[currentCompRow].addComponents(builder)
-                        container.addActionRowComponents(rows[currentCompRow])
                     } else if(type === "Select Menu") {
                         const stype = data.get("stype")
                         let builder
@@ -884,9 +884,11 @@ export default class CreateForumThread {
                             })
                         }
                         if(rows[currentCompRow]) currentCompRow++;
-                        if(!rows[currentCompRow]) rows[currentCompRow] = new ActionRowBuilder()
+                        if(!rows[currentCompRow]) {
+                            rows[currentCompRow] = new ActionRowBuilder()
+                            container.addActionRowComponents(rows[currentCompRow])
+                        }
                         rows[currentCompRow].addComponents(builder)
-                        container.addActionRowComponents(rows[currentCompRow])
                     }
                 })
                 list.push(container)
@@ -937,7 +939,7 @@ export default class CreateForumThread {
             actionManager.variables.keys().forEach(key => {
                 variables[key] = Bot.serialize(getVariable(key))
             })
-            await Bot.setData(`$COMPONENTS$$$${r.channel.id}${r.id}`, JSON.stringify({
+            await Bot.setData(`$COMPONENTS$$$${r.channel?.id}${r.id}`, JSON.stringify({
                 triggerId: actionManager.trigger.id,
                 actionId: id,
                 variables,
