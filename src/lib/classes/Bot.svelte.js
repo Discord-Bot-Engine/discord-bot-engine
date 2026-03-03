@@ -37,6 +37,7 @@ class Bot {
 	removedTriggers = []
 	undos = []
 	redos = []
+	logs = ""
 	constructor(name, path) {
 		this.name = name;
 		this.path = path;

