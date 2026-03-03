@@ -63,10 +63,10 @@ class BotManagerClass {
             bot.isLoading = false
         })
         listen('npm_stdout', ({payload}) => {
-            console.log(payload)
+            console.log(payload[1])
         })
         listen('npm_stderr', ({payload}) => {
-            console.error(payload)
+            console.error(payload[1])
         })
         this.loadBots()
     }
