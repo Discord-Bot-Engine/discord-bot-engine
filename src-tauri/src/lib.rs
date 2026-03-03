@@ -1057,7 +1057,7 @@ fn install_bot_packages(_app: tauri::AppHandle, bot_path: String) {
             .current_dir(&bot_path)
             .args([npm_cli.to_str().unwrap(), "install"]);
 
-        let (mut rx, _child) = match run_command.spawn() {
+        let (mut _rx, _child) = match run_command.spawn() {
             Ok(tuple) => tuple,
             Err(e) => {
                 eprintln!("Failed to spawn npm: {}", e);
