@@ -1003,63 +1003,68 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
 #[tauri::command(rename_all = "snake_case")]
 fn install_bot_packages(_app: tauri::AppHandle, bot_path: String) {
     tauri::async_runtime::spawn(async move {
-        let node: std::path::PathBuf = if cfg!(target_os = "windows") {
+        let node_dir: PathBuf = if cfg!(target_os = "windows") {
             _app.path()
                 .resolve("resources/nodejs", BaseDirectory::Resource)
                 .unwrap_or_else(|_| {
-                    let exe_dir = std::env::current_exe()
-                        .expect("Failed to get current executable path")
+                    std::env::current_exe()
+                        .expect("Failed to get executable path")
                         .parent()
-                        .expect("Failed to get executable parent directory")
-                        .to_path_buf();
-                    exe_dir.join("resources/nodejs")
+                        .expect("Failed to get executable parent")
+                        .join("resources/nodejs")
                 })
         } else if cfg!(target_os = "macos") {
             let arch_dir = if cfg!(target_arch = "aarch64") {
-                "resources/node-macos-arm64/bin"
+                "resources/node-macos-arm64"
             } else {
-                "resources/node-macos-x64/bin"
+                "resources/node-macos-x64"
             };
             _app.path()
                 .resolve(arch_dir, BaseDirectory::Resource)
                 .unwrap_or_else(|_| {
-                    let exe_dir = std::env::current_exe()
-                        .expect("Failed to get current executable path")
+                    std::env::current_exe()
+                        .expect("Failed to get executable path")
                         .parent()
-                        .expect("Failed to get executable parent directory")
-                        .to_path_buf();
-                    exe_dir.join(arch_dir)
+                        .expect("Failed to get executable parent")
+                        .join(arch_dir)
                 })
         } else {
-            // Linux
             _app.path()
-                .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
+                .resolve("resources/node-linux-x64", BaseDirectory::Resource)
                 .unwrap_or_else(|_| {
-                    let exe_dir = std::env::current_exe()
-                        .expect("Failed to get current executable path")
+                    std::env::current_exe()
+                        .expect("Failed to get executable path")
                         .parent()
-                        .expect("Failed to get executable parent directory")
-                        .to_path_buf();
-                    exe_dir.join("resources/node-linux-x64/bin")
+                        .expect("Failed to get executable parent")
+                        .join("resources/node-linux-x64")
                 })
         };
-        let run_command = _app
-            .shell()
-            .command(
-                node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
-                    .to_str()
-                    .unwrap()
-                    .to_string(),
+
+        let (node_bin, npm_cli) = if cfg!(windows) {
+            (
+                node_dir.join("node.exe"),
+                node_dir.join("node_modules/npm/bin/npm-cli.js"),
             )
+        } else {
+            (
+                node_dir.join("bin/node"),
+                node_dir.join("lib/node_modules/npm/bin/npm-cli.js"),
+            )
+        };
+
+        let mut run_command = _app.shell()
+            .command(node_bin.to_str().unwrap().to_string())
             .current_dir(&bot_path)
-            .args(["install"]);
-        let (mut _rx, child) = match run_command.spawn() {
+            .args([npm_cli.to_str().unwrap(), "install"]);
+
+        let (mut rx, _child) = match run_command.spawn() {
             Ok(tuple) => tuple,
             Err(e) => {
                 eprintln!("Failed to spawn npm: {}", e);
-                return; // exit the async block
+                return;
             }
         };
+
         tauri::async_runtime::spawn(async move {
             while let Some(event) = _rx.recv().await {
                 match event {
