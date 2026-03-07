@@ -32,19 +32,7 @@ jobs:
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
-
-      # -------------------------
-      # Download Node.js for resources
-      # -------------------------
-      - name: Download Node (Windows x64)
-        shell: bash
-        run: |
-          mkdir -p src-tauri/resources/nodejs temp-node
-          curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
-          unzip -q node-v22.18.0-win-x64.zip -d temp-node
-          mv temp-node/node-v22.18.0-win-x64/* src-tauri/resources/nodejs/
-          rm -rf temp-node node-v22.18.0-win-x64.zip
-
+          
       - name: Build Tauri (Windows)
         run: |
           npm run build
@@ -95,16 +83,6 @@ jobs:
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
-
-      # -------------------------
-      # Download Node.js for resources
-      # -------------------------
-      - name: Download Node.js resources
-        run: |
-          mkdir -p src-tauri/resources/node-linux-x64
-          curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
-          tar -xJf node-v22.18.0-linux-x64.tar.xz -C src-tauri/resources/node-linux-x64 --strip-components=1
-
       - name: Build Tauri (Linux)
         run: |
           npm run build
@@ -142,21 +120,6 @@ jobs:
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
-
-      # -------------------------
-      # Download Node.js for resources (both macOS archs)
-      # -------------------------
-      - name: Download Node.js resources
-        run: |
-          mkdir -p src-tauri/resources/node-macos-x64
-          mkdir -p src-tauri/resources/node-macos-arm64
-
-          curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-x64.tar.gz
-          tar -xzf node-v22.18.0-darwin-x64.tar.gz -C src-tauri/resources/node-macos-x64 --strip-components=1
-
-          curl -LO https://nodejs.org/dist/v22.18.0/node-v22.18.0-darwin-arm64.tar.gz
-          tar -xzf node-v22.18.0-darwin-arm64.tar.gz -C src-tauri/resources/node-macos-arm64 --strip-components=1
-
       # Build ARM64
       - name: Build ARM64
         run: |
