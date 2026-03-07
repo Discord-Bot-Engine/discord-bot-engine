@@ -109,7 +109,7 @@
                     <small>
                         <Translation text="Please click "/>
                         <a class="underline cursor-pointer text-primary"
-                           onclick={() => openUrl("https://www.python.org/downloads/")}>
+                           onclick={() => openUrl("https://nodejs.org/en/download")}>
                             <Translation text="here"/>
                         </a>
                         <Translation text=" to download then restart."/>
