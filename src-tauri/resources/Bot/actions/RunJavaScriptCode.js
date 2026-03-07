@@ -29,11 +29,7 @@ export default class RunJavaScriptCode {
         context.actionManager.variables.keys().forEach((key) => {
             variables[key] = context.actionManager.variables.get(key);
         });
-        try {
-            await eval(`(async () => {${code}})()`)
-        } catch (e) {
-            console.log(e)
-        }
+        await eval(`(async () => {${code}})()\n//# sourceURL=code`)
         context.actionManager.runNext(context.id, "action")
     }
 }
