@@ -31,6 +31,7 @@
 	import {Button} from "$lib/components/ui/button/index.js";
 	import * as Alert from "$lib/components/ui/alert/index.js";
 	import CheckCircle2Icon from "@lucide/svelte/icons/check-circle-2";
+	import Translation from "$lib/components/Translation.svelte";
 	if(!BotManager.selectedBot) {
 		App.translate("Please select a project!", App.selectedLanguage).then(text => {
 			alert(text)
@@ -59,7 +60,7 @@
 		<SvelteFlowProvider>
 			<Triggers />
 			<div class="grow">
-				<Actions title="Actions" actions={App.selectedTrigger?.actions} />
+				<Actions actions={App.selectedTrigger?.actions} />
 			</div>
 		</SvelteFlowProvider>
 		<Variables />
@@ -74,7 +75,7 @@
 <Alert.Root class="absolute left-1/2 -translate-x-1/2 top-21 w-fit bg-primary text-primary-content animate-[fade_3s_2s]">
 	<CheckCircle2Icon />
 	<Alert.Title
-	>Project saved successfully!</Alert.Title
+	><Translation text="Project saved successfully!"/></Alert.Title
 	>
 </Alert.Root>
 {/if}

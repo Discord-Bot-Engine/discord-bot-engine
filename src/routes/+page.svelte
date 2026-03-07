@@ -43,7 +43,8 @@
 </script>
 <Dialog.Root bind:open={isCreating}>
     {#snippet createBtn(text)}
-        <Dialog.Trigger disabled={!App.hasNode || !App.hasPython} title={text} class="absolute top-3 right-3 z-10 {buttonVariants()}"
+        <Dialog.Trigger disabled={!App.hasNode || !App.hasPython} title={text}
+                        class="absolute top-3 right-3 z-10 {buttonVariants()}"
         >
             <PlusIcon/>
         </Dialog.Trigger
@@ -102,10 +103,17 @@
             <div class="flex gap-3">
                 <ErrorIcon class="relative text-md w-7 h-7"/>
                 <div class="flex flex-col">
-                    <Label>Could not find a compatible version of nodejs. </Label>
-                    <small>Please click <a class="underline cursor-pointer text-primary"
-                                           onclick={() => openUrl("https://nodejs.org/en/download")}>here</a> to
-                        download then restart.</small>
+                    <Label>
+                        <Translation text="Could not find a compatible version of nodejs."/>
+                    </Label>
+                    <small>
+                        <Translation text="Please click "/>
+                        <a class="underline cursor-pointer text-primary"
+                           onclick={() => openUrl("https://www.python.org/downloads/")}>
+                            <Translation text="here"/>
+                        </a>
+                        <Translation text=" to download then restart."/>
+                    </small>
                 </div>
             </div>
         {/if}
@@ -113,10 +121,17 @@
             <div class="flex gap-3">
                 <ErrorIcon class="relative text-md w-7 h-7"/>
                 <div class="flex flex-col">
-                    <Label>Could not find a compatible version of python. </Label>
-                    <small>Please click <a class="underline cursor-pointer text-primary"
-                                           onclick={() => openUrl("https://www.python.org/downloads/")}>here</a> to
-                        download then restart.</small>
+                    <Label>
+                        <Translation text="Could not find a compatible version of python."/>
+                    </Label>
+                    <small>
+                        <Translation text="Please click "/>
+                        <a class="underline cursor-pointer text-primary"
+                           onclick={() => openUrl("https://www.python.org/downloads/")}>
+                            <Translation text="here"/>
+                        </a>
+                        <Translation text=" to download then restart."/>
+                    </small>
                 </div>
             </div>
         {/if}
