@@ -68,73 +68,6 @@ fn prepare_app_paths(app: &tauri::AppHandle) {
         });
     ensure_dir(&bot_resources);
 
-    let node_dir: PathBuf = if cfg!(target_os = "windows") {
-        app.path()
-            .resolve("resources/nodejs", BaseDirectory::Resource)
-            .unwrap_or_else(|_| {
-                let exe_dir = std::env::current_exe()
-                    .expect("Failed to get current executable path")
-                    .parent()
-                    .expect("Failed to get executable parent directory")
-                    .to_path_buf();
-                exe_dir.join("resources/nodejs")
-            })
-    } else if cfg!(target_os = "macos") {
-        let arch_dir = if cfg!(target_arch = "aarch64") {
-            "resources/node-macos-arm64/bin"
-        } else {
-            "resources/node-macos-x64/bin"
-        };
-        app.path()
-            .resolve(arch_dir, BaseDirectory::Resource)
-            .unwrap_or_else(|_| {
-                let exe_dir = std::env::current_exe()
-                    .expect("Failed to get current executable path")
-                    .parent()
-                    .expect("Failed to get executable parent directory")
-                    .to_path_buf();
-                exe_dir.join(arch_dir)
-            })
-    } else {
-        // Linux
-        app.path()
-            .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
-            .unwrap_or_else(|_| {
-                let exe_dir = std::env::current_exe()
-                    .expect("Failed to get current executable path")
-                    .parent()
-                    .expect("Failed to get executable parent directory")
-                    .to_path_buf();
-                exe_dir.join("resources/node-linux-x64/bin")
-            })
-    };
-
-    // Add Node directory to PATH
-    #[cfg(windows)]
-    let path_sep = ";";
-    #[cfg(not(windows))]
-    let path_sep = ":";
-
-    let current_path = env::var("PATH").unwrap_or_default();
-    let new_path = format!("{}{}{}", node_dir.display(), path_sep, current_path);
-    env::set_var("PATH", new_path);
-
-    // Also set NODE env variable (some scripts use it)
-    let node_executable = if cfg!(windows) {
-        node_dir.join("node.exe")
-    } else {
-        node_dir.join("node")
-    };
-    env::set_var("NODE", node_executable);
-
-    // Optionally, set NPM env variable if you have a bundled npm
-    let npm_executable = if cfg!(windows) {
-        node_dir.join("npm.cmd") // Windows npm binary
-    } else {
-        node_dir.join("npm") // Unix npm binary
-    };
-    env::set_var("NPM", npm_executable);
-
     // optional: print paths for debugging
     println!("translations_dir: {:?}", translations_dir);
     println!("themes_dir: {:?}", themes_dir);
@@ -361,63 +294,64 @@ async fn upload_bot(
 }
 
 #[tauri::command(rename_all = "snake_case")]
+fn has_node() -> bool {
+    let output = Command::new("node").arg("--version").output();
+    let output = match output {
+        Ok(o) => o,
+        Err(_) => return false,
+    };
+    let output_str = String::from_utf8_lossy(&output.stdout);
+    let version_str = output_str.trim();
+    let version_str = version_str.strip_prefix('v').unwrap_or(version_str);
+
+    if let Some(major_str) = version_str.split('.').next() {
+        if let Ok(major) = major_str.parse::<u32>() {
+            return major >= 20;
+        }
+    }
+    false
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn has_python() -> bool {
+    // Try `python3 --version`, fallback to `python --version`
+    let output = Command::new("python3")
+        .arg("--version")
+        .output()
+        .or_else(|_| Command::new("python").arg("--version").output());
+
+    let output = match output {
+        Ok(o) => o,
+        Err(_) => return false, // Python not installed
+    };
+
+    // Python outputs "Python 3.11.2"
+    let output_str = String::from_utf8_lossy(&output.stdout);
+    let version_str = output_str.trim();
+    let version_str = version_str.strip_prefix("Python ").unwrap_or(version_str);
+
+    // Parse major and minor
+    let mut parts = version_str.split('.');
+    if let (Some(major_str), Some(minor_str)) = (parts.next(), parts.next()) {
+        if let (Ok(major), Ok(minor)) = (major_str.parse::<u32>(), minor_str.parse::<u32>()) {
+            return major > 3 || (major == 3 && minor >= 10);
+        }
+    }
+
+    false
+}
+
+#[tauri::command(rename_all = "snake_case")]
 async fn run_bot(
     _app: tauri::AppHandle,
     state: tauri::State<'_, BotManager>,
     bot_path: String,
 ) -> Result<(), String> {
-    let node: std::path::PathBuf = if cfg!(target_os = "windows") {
-        _app.path()
-            .resolve("resources/nodejs", BaseDirectory::Resource)
-            .unwrap_or_else(|_| {
-                let exe_dir = std::env::current_exe()
-                    .expect("Failed to get current executable path")
-                    .parent()
-                    .expect("Failed to get executable parent directory")
-                    .to_path_buf();
-                exe_dir.join("resources/nodejs")
-            })
-    } else if cfg!(target_os = "macos") {
-        let arch_dir = if cfg!(target_arch = "aarch64") {
-            "resources/node-macos-arm64/bin"
-        } else {
-            "resources/node-macos-x64/bin"
-        };
-        _app.path()
-            .resolve(arch_dir, BaseDirectory::Resource)
-            .unwrap_or_else(|_| {
-                let exe_dir = std::env::current_exe()
-                    .expect("Failed to get current executable path")
-                    .parent()
-                    .expect("Failed to get executable parent directory")
-                    .to_path_buf();
-                exe_dir.join(arch_dir)
-            })
-    } else {
-        // Linux
-        _app.path()
-            .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
-            .unwrap_or_else(|_| {
-                let exe_dir = std::env::current_exe()
-                    .expect("Failed to get current executable path")
-                    .parent()
-                    .expect("Failed to get executable parent directory")
-                    .to_path_buf();
-                exe_dir.join("resources/node-linux-x64/bin")
-            })
-    };
-
     let run_command = _app
         .shell()
-        .command(node.join(if cfg!(windows) { "node.exe" } else { "node" }))
+        .command("node")
         .current_dir(&bot_path)
-        .args([
-            bot_path.clone(),
-            node.join(if cfg!(windows) { "npm.cmd" } else { "npm" })
-                .to_str()
-                .unwrap()
-                .to_string(),
-        ]);
+        .args([bot_path.clone()]);
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
@@ -464,54 +398,11 @@ fn is_bot_running(state: tauri::State<'_, BotManager>, bot_path: String) -> bool
 
 #[tauri::command(rename_all = "snake_case")]
 async fn load_bot_plugins(_app: tauri::AppHandle, bot_path: String) -> Result<(), String> {
-    let node: std::path::PathBuf = if cfg!(target_os = "windows") {
-        _app.path()
-            .resolve("resources/nodejs", BaseDirectory::Resource)
-            .unwrap_or_else(|_| {
-                let exe_dir = std::env::current_exe()
-                    .expect("Failed to get current executable path")
-                    .parent()
-                    .expect("Failed to get executable parent directory")
-                    .to_path_buf();
-                exe_dir.join("resources/nodejs")
-            })
-    } else if cfg!(target_os = "macos") {
-        let arch_dir = if cfg!(target_arch = "aarch64") {
-            "resources/node-macos-arm64/bin"
-        } else {
-            "resources/node-macos-x64/bin"
-        };
-        _app.path()
-            .resolve(arch_dir, BaseDirectory::Resource)
-            .unwrap_or_else(|_| {
-                let exe_dir = std::env::current_exe()
-                    .expect("Failed to get current executable path")
-                    .parent()
-                    .expect("Failed to get executable parent directory")
-                    .to_path_buf();
-                exe_dir.join(arch_dir)
-            })
-    } else {
-        // Linux
-        _app.path()
-            .resolve("resources/node-linux-x64/bin", BaseDirectory::Resource)
-            .unwrap_or_else(|_| {
-                let exe_dir = std::env::current_exe()
-                    .expect("Failed to get current executable path")
-                    .parent()
-                    .expect("Failed to get executable parent directory")
-                    .to_path_buf();
-                exe_dir.join("resources/node-linux-x64/bin")
-            })
-    };
     let run_command = _app
         .shell()
-        .command(node.join("node"))
+        .command("node")
         .current_dir(&bot_path)
-        .args([
-            format!("{bot_path}/classes/PluginManager.js"),
-            node.join(if cfg!(windows) { "npm.cmd" } else { "npm" }).to_str().unwrap().to_string(),
-        ]);
+        .args([format!("{bot_path}/classes/PluginManager.js")]);
 
     let (mut _rx, child) = run_command.spawn().map_err(|e| e.to_string())?;
 
@@ -1003,59 +894,11 @@ fn copy_bot_files(_app: tauri::AppHandle, bot_path: String) {
 #[tauri::command(rename_all = "snake_case")]
 fn install_bot_packages(_app: tauri::AppHandle, bot_path: String) {
     tauri::async_runtime::spawn(async move {
-        let node_dir: PathBuf = if cfg!(target_os = "windows") {
-            _app.path()
-                .resolve("resources/nodejs", BaseDirectory::Resource)
-                .unwrap_or_else(|_| {
-                    std::env::current_exe()
-                        .expect("Failed to get executable path")
-                        .parent()
-                        .expect("Failed to get executable parent")
-                        .join("resources/nodejs")
-                })
-        } else if cfg!(target_os = "macos") {
-            let arch_dir = if cfg!(target_arch = "aarch64") {
-                "resources/node-macos-arm64"
-            } else {
-                "resources/node-macos-x64"
-            };
-            _app.path()
-                .resolve(arch_dir, BaseDirectory::Resource)
-                .unwrap_or_else(|_| {
-                    std::env::current_exe()
-                        .expect("Failed to get executable path")
-                        .parent()
-                        .expect("Failed to get executable parent")
-                        .join(arch_dir)
-                })
-        } else {
-            _app.path()
-                .resolve("resources/node-linux-x64", BaseDirectory::Resource)
-                .unwrap_or_else(|_| {
-                    std::env::current_exe()
-                        .expect("Failed to get executable path")
-                        .parent()
-                        .expect("Failed to get executable parent")
-                        .join("resources/node-linux-x64")
-                })
-        };
-
-        let (node_bin, npm_cli) = if cfg!(windows) {
-            (
-                node_dir.join("node.exe"),
-                node_dir.join("node_modules/npm/bin/npm-cli.js"),
-            )
-        } else {
-            (
-                node_dir.join("bin/node"),
-                node_dir.join("lib/node_modules/npm/bin/npm-cli.js"),
-            )
-        };
-
-        let mut run_command = _app.shell()
-            .command(node_bin.to_str().unwrap().to_string())
+        let mut run_command = _app
+            .shell()
+            .command("npm")
             .current_dir(&bot_path)
-            .args([npm_cli.to_str().unwrap(), "install"]);
+            .args(["install"]);
 
         let (mut _rx, _child) = match run_command.spawn() {
             Ok(tuple) => tuple,
@@ -1153,6 +996,8 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            has_node,
+            has_python,
             save_translation,
             load_translations,
             load_themes,

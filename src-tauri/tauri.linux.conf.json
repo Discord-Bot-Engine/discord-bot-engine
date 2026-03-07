@@ -5,8 +5,7 @@
     ],
     "resources": [
       "resources/Bot",
-      "resources/sftp/sftp-linux",
-      "resources/node-linux-x64"
+      "resources/sftp/sftp-linux"
     ]
   }
 }

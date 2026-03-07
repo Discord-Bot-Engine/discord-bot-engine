@@ -76,15 +76,12 @@ import {execSync} from "child_process";
     if (rerun) return console.log("RERUN");
 
     async function install(name) {
-        const npm = process.argv[2]
-            ? `"${process.argv[2]?.replace("\\\\?\\", "")}"`
-            : "npm";
         try {
             await import(name);
         } catch (e) {
             rerun = true;
             console.log(`Installing ${name}`);
-            execSync(`${npm} install ${name}`, {
+            execSync(`npm install ${name}`, {
                 stdio: "ignore",
                 cwd: __dirname,
             });

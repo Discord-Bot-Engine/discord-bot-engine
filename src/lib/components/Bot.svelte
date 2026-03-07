@@ -20,7 +20,7 @@
         <Button onclick={() => {
             BotManager.selectBot(bot)
             localStorage.setItem("selectedBot", BotManager.bots.indexOf(bot))
-        }} variant={bot.path === BotManager.selectedBot?.path ? "outline" : undefined} disabled={bot.path === BotManager.selectedBot?.path} class="flex-auto">
+        }} variant={bot.path === BotManager.selectedBot?.path ? "outline" : undefined} disabled={bot.path === BotManager.selectedBot?.path || !App.hasNode || !App.hasPython} class="flex-auto">
             <Translation text={bot.path === BotManager.selectedBot?.path ? "Selected" : "Select"}/>
         </Button>
         {#await App.translate("Delete Project", App.selectedLanguage)}

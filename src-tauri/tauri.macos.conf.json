@@ -6,9 +6,7 @@
     "resources": [
       "resources/Bot",
       "resources/sftp/sftp-macos-arm64",
-      "resources/sftp/sftp-macos-x64",
-      "resources/node-macos-x64",
-      "resources/node-macos-arm64"
+      "resources/sftp/sftp-macos-x64"
     ]
   }
 }

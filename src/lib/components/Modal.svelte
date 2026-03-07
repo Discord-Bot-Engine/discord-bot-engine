@@ -5,7 +5,7 @@
     import Translation from "$lib/components/Translation.svelte";
     import {ExternalLink} from "@lucide/svelte"
     import { openUrl } from '@tauri-apps/plugin-opener';
-    let {open = $bindable(), url, title, children, onDone = () => {}, onOpenChange = () => {} } = $props()
+    let {open = $bindable(), url, title, children, onDone = () => {}, onOpenChange = () => {}, showCancel = true, doneText="Done" } = $props()
 </script>
 <Dialog.Root bind:open onOpenChange={onOpenChange}>
     <Dialog.Content class="sm:max-w-[65vw] w-full px-4.5 overflow-hidden" interactOutsideBehavior="ignore">
@@ -26,9 +26,11 @@
             {@render children()}
         </ScrollArea>
         <Dialog.Footer>
+            {#if showCancel}
             <Dialog.Close class="{buttonVariants({variant:'secondary'})} !p-3 !h-fit">
                 <Translation text="Cancel" />
             </Dialog.Close>
+            {/if}
             <Button class="!p-3 !h-fit" onclick={onDone}>
                 <Translation text="Done" />
             </Button>

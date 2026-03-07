@@ -1,4 +1,4 @@
-import {execSync} from 'child_process';
+import {execSync, spawnSync} from 'child_process';
 import { parse } from "acorn";
 import path from "node:path";
 import fs from "node:fs";
@@ -58,15 +58,26 @@ export default class PackageManager {
             await install(name)
         });
         async function install(name) {
-            const npm = Bot.npm ? `"${Bot.npm}"` : "npm";
             try {
                 await import(name);
             } catch (e) {
+                console.log(`Installing ${name}`);
+                let node = Bot.node
+                let npm = Bot.npm
                 console.log(`Installing ${name} module...`);
-                execSync(`${npm} install ${name}`, {
-                    stdio: 'pipe',
-                    cwd: __dirname
-                });
+                if (node) {
+                    node = node.replace("\\\\?\\", "")
+                    npm = npm.replace("\\\\?\\", "")
+                    spawnSync(node, [npm, "install"], {
+                        stdio: "ignore",
+                        cwd: __dirname,
+                    });
+                } else {
+                    spawnSync("npm", ["install"], {
+                        stdio: "pipe",
+                        cwd: __dirname,
+                    });
+                }
                 console.log(`A restart might be required in order to finish installing this module!`);
             }
         }

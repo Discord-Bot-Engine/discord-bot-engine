@@ -3,8 +3,7 @@
     "targets": [],
     "resources": [
       "resources/Bot",
-      "resources/sftp/sftp-win.exe",
-      "resources/nodejs"
+      "resources/sftp/sftp-win.exe"
     ]
   }
 }
