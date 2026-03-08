@@ -10,6 +10,8 @@ use tauri::{Emitter, Manager};
 use tauri_plugin_drpc;
 use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
 
 struct BotManager {
     bots: Mutex<HashMap<String, CommandChild>>,
@@ -294,51 +296,85 @@ async fn upload_bot(
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn has_node() -> bool {
-    let output = Command::new("node").arg("--version").output();
-    let output = match output {
-        Ok(o) => o,
-        Err(_) => return false,
-    };
-    let output_str = String::from_utf8_lossy(&output.stdout);
-    let version_str = output_str.trim();
-    let version_str = version_str.strip_prefix('v').unwrap_or(version_str);
-
-    if let Some(major_str) = version_str.split('.').next() {
-        if let Ok(major) = major_str.parse::<u32>() {
-            return major >= 20;
+async fn has_node() -> bool {
+    tauri::async_runtime::spawn(async move {
+        #[cfg(target_os = "windows")]
+        fn hide(cmd: &mut Command) {
+            cmd.creation_flags( 0x08000000);
         }
-    }
-    false
+
+        #[cfg(not(target_os = "windows"))]
+        fn hide(_cmd: &mut Command) {}
+
+        let mut cmd = Command::new("node");
+        hide(&mut cmd);
+
+        let output = cmd.arg("--version").output();
+
+        let output = match output {
+            Ok(o) => o,
+            Err(_) => return false,
+        };
+
+        let output_str = String::from_utf8_lossy(&output.stdout);
+        let version_str = output_str.trim();
+        let version_str = version_str.strip_prefix('v').unwrap_or(version_str);
+
+        if let Some(major_str) = version_str.split('.').next() {
+            if let Ok(major) = major_str.parse::<u32>() {
+                return major >= 20;
+            }
+        }
+
+        false
+    })
+        .await
+        .unwrap_or(false)
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn has_python() -> bool {
-    // Try `python3 --version`, fallback to `python --version`
-    let output = Command::new("python3")
-        .arg("--version")
-        .output()
-        .or_else(|_| Command::new("python").arg("--version").output());
-
-    let output = match output {
-        Ok(o) => o,
-        Err(_) => return false, // Python not installed
-    };
-
-    // Python outputs "Python 3.11.2"
-    let output_str = String::from_utf8_lossy(&output.stdout);
-    let version_str = output_str.trim();
-    let version_str = version_str.strip_prefix("Python ").unwrap_or(version_str);
-
-    // Parse major and minor
-    let mut parts = version_str.split('.');
-    if let (Some(major_str), Some(minor_str)) = (parts.next(), parts.next()) {
-        if let (Ok(major), Ok(minor)) = (major_str.parse::<u32>(), minor_str.parse::<u32>()) {
-            return major > 3 || (major == 3 && minor >= 10);
+async fn has_python() -> bool {
+    tauri::async_runtime::spawn(async move {
+        #[cfg(target_os = "windows")]
+        fn hide(cmd: &mut Command) {
+            cmd.creation_flags( 0x08000000);
         }
-    }
 
-    false
+        #[cfg(not(target_os = "windows"))]
+        fn hide(_cmd: &mut Command) {}
+
+        let mut cmd = Command::new("python3");
+        hide(&mut cmd);
+
+        let output = cmd.arg("--version").output()
+            .or_else(|_| {
+                let mut cmd = Command::new("python");
+                hide(&mut cmd);
+                cmd.arg("--version").output()
+            });
+
+        let output = match output {
+            Ok(o) => o,
+            Err(_) => return false,
+        };
+
+        let output_str = String::from_utf8_lossy(&output.stdout);
+        let version_str = output_str.trim();
+        let version_str = version_str.strip_prefix("Python ").unwrap_or(version_str);
+
+        let mut parts = version_str.split('.');
+        if let (Some(major_str), Some(minor_str)) = (parts.next(), parts.next()) {
+            if let (Ok(major), Ok(minor)) =
+                (major_str.parse::<u32>(), minor_str.parse::<u32>())
+            {
+                return major > 3 || (major == 3 && minor >= 10);
+            }
+        }
+
+        false
+    })
+        .await
+        .unwrap_or(false)
 }
 
 #[tauri::command(rename_all = "snake_case")]
